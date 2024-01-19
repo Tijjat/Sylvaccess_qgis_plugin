@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1018</width>
+    <width>943</width>
     <height>817</height>
    </rect>
   </property>
@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>550</x>
-     <y>700</y>
+     <x>640</x>
+     <y>720</y>
      <width>211</width>
      <height>31</height>
     </rect>
@@ -37,12 +37,12 @@
     <rect>
      <x>10</x>
      <y>20</y>
-     <width>831</width>
-     <height>671</height>
+     <width>921</width>
+     <height>681</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>4</number>
+    <number>5</number>
    </property>
    <widget class="QWidget" name="general">
     <property name="font">
@@ -2216,8 +2216,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>821</width>
-       <height>650</height>
+       <width>894</width>
+       <height>655</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_18">
@@ -2225,6 +2225,12 @@
        <layout class="QVBoxLayout" name="verticalLayout_19">
         <item>
          <widget class="QLabel" name="label_72">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -2243,6 +2249,11 @@
            <layout class="QHBoxLayout" name="horizontalLayout_32">
             <item>
              <widget class="QLabel" name="label_76">
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Type de machine</string>
               </property>
@@ -2250,6 +2261,11 @@
             </item>
             <item>
              <widget class="QComboBox" name="comboBox">
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <item>
                <property name="text">
                 <string>Câble-mât sur tracteur agricole</string>
@@ -2290,6 +2306,11 @@
                 <height>16777215</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Nombre max de supports intermédiaire</string>
               </property>
@@ -2309,6 +2330,11 @@
                 <height>16777215</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="value">
                <number>2</number>
               </property>
@@ -2316,6 +2342,11 @@
             </item>
             <item>
              <widget class="QLabel" name="label_79">
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Hauteur du mât (cm)</string>
               </property>
@@ -2334,6 +2365,11 @@
                 <width>100</width>
                 <height>16777215</height>
                </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
               </property>
               <property name="maximum">
                <number>999999</number>
@@ -2361,6 +2397,11 @@
                 <height>16777215</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Longueure max du câble porteur (m)</string>
               </property>
@@ -2380,6 +2421,11 @@
                 <height>16777215</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="maximum">
                <number>99999</number>
               </property>
@@ -2390,6 +2436,11 @@
             </item>
             <item>
              <widget class="QLabel" name="label_78">
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Longueur min du câble porteur (m)</string>
               </property>
@@ -2409,6 +2460,11 @@
                 <height>16777215</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="maximum">
                <number>999999</number>
               </property>
@@ -2427,6 +2483,12 @@
        <layout class="QVBoxLayout" name="verticalLayout_26">
         <item>
          <widget class="QLabel" name="label_87">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -2445,6 +2507,11 @@
            <layout class="QHBoxLayout" name="horizontalLayout_38">
             <item>
              <widget class="QLabel" name="label_88">
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Type de chariot</string>
               </property>
@@ -2452,6 +2519,11 @@
             </item>
             <item>
              <widget class="QComboBox" name="comboBox_3">
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <item>
                <property name="text">
                 <string>Chariot classique</string>
@@ -2482,6 +2554,11 @@
                 <height>16777215</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Masse à vide (kg)</string>
               </property>
@@ -2500,6 +2577,11 @@
                 <width>100</width>
                 <height>16777215</height>
                </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
               </property>
               <property name="maximum">
                <number>99999</number>
@@ -2537,6 +2619,11 @@
                   <height>16777215</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>Pente min pour descente du </string>
                 </property>
@@ -2556,6 +2643,11 @@
                   <height>16777215</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>chariot par gravité ( % )</string>
                 </property>
@@ -2570,6 +2662,11 @@
                 <width>100</width>
                 <height>16777215</height>
                </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
               </property>
               <property name="maximum">
                <number>180</number>
@@ -2599,6 +2696,11 @@
                   <height>16777215</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>Pente max du câble porteur pour </string>
                 </property>
@@ -2617,6 +2719,11 @@
                   <width>224</width>
                   <height>16777215</height>
                  </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
                 </property>
                 <property name="text">
                  <string>un débardage vers l'amont ( % )</string>
@@ -2638,6 +2745,11 @@
                 <width>100</width>
                 <height>16777215</height>
                </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
               </property>
               <property name="maximum">
                <number>180</number>
@@ -2663,6 +2775,11 @@
                   <height>16777215</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>Pente max du câble porteur pour</string>
                 </property>
@@ -2676,6 +2793,11 @@
                   <height>16777215</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>un débardge vers l'aval ( % ) </string>
                 </property>
@@ -2685,6 +2807,23 @@
             </item>
             <item>
              <widget class="QSpinBox" name="spinBox_25">
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="maximum">
                <number>180</number>
               </property>
@@ -2703,6 +2842,12 @@
        <layout class="QVBoxLayout" name="verticalLayout_20">
         <item>
          <widget class="QLabel" name="label_73">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -2731,6 +2876,11 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Diamètre (mm)</string>
             </property>
@@ -2749,6 +2899,11 @@
               <width>100</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
             </property>
             <property name="maximum">
              <number>99999</number>
@@ -2772,6 +2927,11 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Masse linéique (kg/m)!!!!!!!!</string>
             </property>
@@ -2790,6 +2950,11 @@
               <width>100</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
             </property>
             <property name="maximum">
              <number>999999</number>
@@ -2820,6 +2985,11 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Tension de rupture ( kgF ) </string>
             </property>
@@ -2838,6 +3008,11 @@
               <width>100</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
             </property>
             <property name="maximum">
              <number>99999</number>
@@ -2861,6 +3036,11 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Module de Young (Elasticité) (N/mm²)</string>
             </property>
@@ -2880,6 +3060,11 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="maximum">
              <number>999999999</number>
             </property>
@@ -2896,6 +3081,12 @@
        <layout class="QVBoxLayout" name="verticalLayout_21">
         <item>
          <widget class="QLabel" name="label_74">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>10</pointsize>
@@ -2924,8 +3115,13 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="text">
-             <string>Hureur support intermédiaire (cm)</string>
+             <string>hauteur support intermédiaire (cm)</string>
             </property>
            </widget>
           </item>
@@ -2943,6 +3139,11 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="maximum">
              <number>99999</number>
             </property>
@@ -2953,6 +3154,11 @@
           </item>
           <item>
            <widget class="QLabel" name="label_108">
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Hauteur du mât terminal (cm)</string>
             </property>
@@ -2971,6 +3177,11 @@
               <width>100</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
             </property>
             <property name="maximum">
              <number>999999</number>
@@ -3012,6 +3223,11 @@
                 <height>16777215</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Hauteur min du câble porteur en</string>
               </property>
@@ -3030,6 +3246,11 @@
                 <width>220</width>
                 <height>16777215</height>
                </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
               </property>
               <property name="text">
                <string>tout point (cm)</string>
@@ -3051,6 +3272,11 @@
               <width>100</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
             </property>
             <property name="maximum">
              <number>99999</number>
@@ -3088,6 +3314,11 @@
                 <height>16777215</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Hauteur max du câble porteur en</string>
               </property>
@@ -3106,6 +3337,11 @@
                 <width>224</width>
                 <height>16777215</height>
                </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
               </property>
               <property name="text">
                <string>tout point (cm)</string>
@@ -3127,6 +3363,11 @@
               <width>100</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
             </property>
             <property name="maximum">
              <number>999999</number>
@@ -3154,6 +3395,11 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Distance latérale de pêchage (m)</string>
             </property>
@@ -3173,6 +3419,11 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="maximum">
              <number>99999</number>
             </property>
@@ -3183,6 +3434,11 @@
           </item>
           <item>
            <widget class="QLabel" name="label_110">
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Masse maximale suspendue (kg)</string>
             </property>
@@ -3201,6 +3457,11 @@
               <width>100</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
             </property>
             <property name="maximum">
              <number>999999</number>
@@ -3228,8 +3489,13 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="text">
-             <string>Facteur de sécurité</string>
+             <string>Facteur de sécurité!!!!</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -3249,6 +3515,11 @@
               <width>100</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
             </property>
             <property name="maximum">
              <number>99999</number>
@@ -3296,14 +3567,40 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_48">
           <item>
-           <widget class="QCheckBox" name="checkBox_5">
-            <property name="text">
-             <string>Optimiser la hauteur de fixation du câble aux pylônes intermédiaire et à l'ancrage</string>
-            </property>
-           </widget>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QCheckBox" name="checkBox_5">
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Optimiser la hauteur de fixation du câble </string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_81">
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>      aux pylônes intermédiaires et à l'ancrage</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="QLabel" name="label_112">
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Précision de la modélisation câble</string>
             </property>
@@ -3322,6 +3619,11 @@
               <width>100</width>
               <height>16777215</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+             </font>
             </property>
             <property name="maximum">
              <number>999999</number>
@@ -3342,13 +3644,490 @@
     <attribute name="title">
      <string>Câble - Optimisation des lignes</string>
     </attribute>
+    <widget class="QWidget" name="verticalLayoutWidget_6">
+     <property name="geometry">
+      <rect>
+       <x>9</x>
+       <y>9</y>
+       <width>871</width>
+       <height>631</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_7">
+      <item>
+       <widget class="QLabel" name="label_82">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Module câble - Optimisation d'un plan de câblage</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_16">
+        <item>
+         <widget class="QLabel" name="label_126">
+          <property name="text">
+           <string>Prélevement ( % du volume sur pied )</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBox_48">
+          <property name="maximum">
+           <number>9999</number>
+          </property>
+          <property name="value">
+           <number>45</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_84">
+          <property name="text">
+           <string>%</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_24">
+        <item>
+         <widget class="QLabel" name="label_127">
+          <property name="text">
+           <string>Dossier de résultats</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_15"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_14">
+          <property name="text">
+           <string>Parcourir</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox_6">
+        <property name="text">
+         <string>Recalculer les caractéristiques des lignes de cables </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_44">
+        <item>
+         <widget class="QLabel" name="label_128">
+          <property name="text">
+           <string>Forêt ( .shp)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_14"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_15">
+          <property name="text">
+           <string>Parcourir</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_37">
+        <item>
+         <widget class="QLabel" name="label_129">
+          <property name="text">
+           <string>Volume de bois sur pied (raster)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_16"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_16">
+          <property name="text">
+           <string>Parcourir</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_36">
+        <item>
+         <widget class="QLabel" name="label_130">
+          <property name="text">
+           <string>Volume de l'arbre moyen (raster)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_17"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_17">
+          <property name="text">
+           <string>Parcourir</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_35">
+        <item>
+         <widget class="QLabel" name="label_132">
+          <property name="text">
+           <string>Distance latérale de pêchage</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBox_49">
+          <property name="maximum">
+           <number>999999</number>
+          </property>
+          <property name="value">
+           <number>35</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_131">
+          <property name="text">
+           <string>m</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_83">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Critères utilisés pour l'optimisation</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="4">
+         <widget class="QLabel" name="label_103">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Poids</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="label_104">
+          <property name="text">
+           <string>ha</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="2">
+         <widget class="QLabel" name="label_123">
+          <property name="text">
+           <string>Maximiser</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QCheckBox" name="checkBox_9">
+          <property name="text">
+           <string>Sens de débardage à privilégier</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="4">
+         <widget class="QSpinBox" name="spinBox_31"/>
+        </item>
+        <item row="7" column="4">
+         <widget class="QSpinBox" name="spinBox_33"/>
+        </item>
+        <item row="6" column="0">
+         <widget class="QCheckBox" name="checkBox_12">
+          <property name="text">
+           <string>Indice de prélèvement câble</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QLabel" name="label_118">
+          <property name="text">
+           <string>m^3</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QLabel" name="label_122">
+          <property name="text">
+           <string>Maximiser</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QCheckBox" name="checkBox_13">
+          <property name="text">
+           <string>Volume de l'arbre moyen</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QCheckBox" name="checkBox_11">
+          <property name="text">
+           <string>Volume total de laligne</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="label_106">
+          <property name="text">
+           <string>/</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <item>
+           <widget class="QLabel" name="label_121">
+            <property name="text">
+             <string>-1 : vers l'aval</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_133">
+            <property name="text">
+             <string>1 : vers l'amont</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_134">
+            <property name="text">
+             <string>0 : indifférrent</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="7" column="3">
+         <widget class="QSpinBox" name="spinBox_40"/>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLabel" name="label_120">
+          <property name="text">
+           <string>Minimiser</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="label_86">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Objectif</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="4">
+         <widget class="QSpinBox" name="spinBox_32"/>
+        </item>
+        <item row="2" column="3">
+         <widget class="QSpinBox" name="spinBox_46"/>
+        </item>
+        <item row="4" column="4">
+         <widget class="QSpinBox" name="spinBox_21"/>
+        </item>
+        <item row="7" column="2">
+         <widget class="QLabel" name="label_125">
+          <property name="text">
+           <string>Maximiser</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="3">
+         <widget class="QSpinBox" name="spinBox_44"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QCheckBox" name="checkBox_8">
+          <property name="text">
+           <string>Nombre de support(s) intermédiaire(s)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QSpinBox" name="spinBox_47"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="checkBox_7">
+          <property name="text">
+           <string>Surface de forêt impactée</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="4">
+         <widget class="QSpinBox" name="spinBox_19"/>
+        </item>
+        <item row="6" column="1">
+         <widget class="QLabel" name="label_117">
+          <property name="text">
+           <string>m^3/m</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4">
+         <widget class="QSpinBox" name="spinBox_18"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QCheckBox" name="checkBox_10">
+          <property name="text">
+           <string>Longueur total de la ligne</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QLabel" name="label_116">
+          <property name="text">
+           <string>m^3</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_85">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Unité</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLabel" name="label_114">
+          <property name="text">
+           <string>/</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLabel" name="label_119">
+          <property name="text">
+           <string>Maximiser</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="3">
+         <widget class="QSpinBox" name="spinBox_42"/>
+        </item>
+        <item row="3" column="3">
+         <widget class="QSpinBox" name="spinBox_45"/>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLabel" name="label_115">
+          <property name="text">
+           <string>m</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="4">
+         <widget class="QSpinBox" name="spinBox_20"/>
+        </item>
+        <item row="5" column="3">
+         <widget class="QSpinBox" name="spinBox_43"/>
+        </item>
+        <item row="0" column="3">
+         <widget class="QLabel" name="label_102">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Valeur limite</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="2">
+         <widget class="QLabel" name="label_124">
+          <property name="text">
+           <string>Maximiser</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QLabel" name="label_135">
+          <property name="text">
+           <string>m</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0">
+         <widget class="QCheckBox" name="checkBox_14">
+          <property name="text">
+           <string>Distance moyenne du chariot</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="2">
+         <widget class="QLabel" name="label_136">
+          <property name="text">
+           <string>Maximiser</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="3">
+         <widget class="QSpinBox" name="spinBox_50"/>
+        </item>
+        <item row="8" column="4">
+         <widget class="QSpinBox" name="spinBox_51"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </widget>
   </widget>
   <widget class="QWidget" name="horizontalLayoutWidget_2">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>699</y>
+     <y>710</y>
      <width>401</width>
      <height>91</height>
     </rect>
