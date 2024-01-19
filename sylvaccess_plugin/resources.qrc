@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/sylvaccess_plugin" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
