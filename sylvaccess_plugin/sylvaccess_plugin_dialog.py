@@ -22,8 +22,6 @@
  ***************************************************************************/
 """
 
-import os
-
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
 import os
@@ -44,19 +42,27 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
 
-    def open_folder(self, button_number):
-        # Obtient le chemin du fichier ou du dossier sélectionné par l'utilisateur
+    def open_folder(self, button_number):    
+        # Définit les filtres génériques pour Shapefiles et fichiers raster
+        shapefile_filter = "Shapefiles (*.shp);;All files (*)"
+        raster_filter = "Raster files (*.tif *.asc *.txt);;All files (*)"
+
+        # Définit les options de la boîte de dialogue
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        file_path, _ = QFileDialog.getOpenFileName(None, "Choisir un fichier", "", options=options)
 
-        if file_path:
+        # Affiche le dialogue de sélection de fichier avec les filtres appropriés
+        if button_number in [4, 5, 6, 14]:
+            selected_file, _ = QFileDialog.getOpenFileName(
+                None, "Choisir un fichier", filter=shapefile_filter, options=options)
+        elif button_number in [3, 11, 12, 13, 15, 16]:
+            selected_file, _ = QFileDialog.getOpenFileName(
+                None, "Choisir un fichier", filter=raster_filter, options=options)
+        elif button_number in [1, 2, 7, 8, 9, 10, 17]:  # Pour le bouton qui doit ouvrir un dossier
+            selected_file = QFileDialog.getExistingDirectory(
+                None, "Choisir un dossier", options=options)
+
+        if selected_file:
             # Mise à jour du champ de texte approprié
             text_edit = getattr(self, f"lineEdit_{button_number}")
-            text_edit.setText(file_path)
-
-# Exemple d'utilisation
-if __name__ == '__main__':
-    app = QtWidgets.QApplication([])
-    dialog = Sylvaccess_pluginDialog()
-    dialog.exec_()
+            text_edit.setText(selected_file)
