@@ -3763,7 +3763,7 @@
            </font>
           </property>
           <property name="maximum">
-           <number>99999</number>
+           <number>7</number>
           </property>
           <property name="value">
            <number>4</number>
@@ -3776,6 +3776,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="maximum">
+           <number>7</number>
           </property>
          </widget>
         </item>
@@ -3898,7 +3901,7 @@
            </font>
           </property>
           <property name="maximum">
-           <number>99999</number>
+           <number>7</number>
           </property>
           <property name="value">
            <number>3</number>
@@ -3926,6 +3929,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="maximum">
+           <number>7</number>
           </property>
          </widget>
         </item>
@@ -3976,7 +3982,7 @@
            </font>
           </property>
           <property name="maximum">
-           <number>9999</number>
+           <number>7</number>
           </property>
           <property name="value">
            <number>2</number>
@@ -3999,6 +4005,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="maximum">
+           <number>7</number>
           </property>
          </widget>
         </item>
@@ -4062,6 +4071,12 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="minimum">
+           <number>-1</number>
+          </property>
+          <property name="maximum">
+           <number>1</number>
+          </property>
          </widget>
         </item>
         <item row="4" column="1">
@@ -4080,6 +4095,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="maximum">
+           <number>7</number>
           </property>
          </widget>
         </item>
@@ -4172,6 +4190,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="maximum">
+           <number>7</number>
           </property>
          </widget>
         </item>
