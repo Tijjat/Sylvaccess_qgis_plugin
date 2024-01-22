@@ -24,21 +24,39 @@
 
 import os
 
-from qgis.PyQt import uic
-from qgis.PyQt import QtWidgets
+from PyQt5 import QtWidgets, uic
+from PyQt5.QtWidgets import QFileDialog
+import os
 
-# This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'sylvaccess_plugin_dialog_base.ui'))
-
+# Chargement de l'interface utilisateur depuis le fichier .ui
+FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'sylvaccess_plugin_dialog_base.ui'))
 
 class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
-        """Constructor."""
         super(Sylvaccess_pluginDialog, self).__init__(parent)
-        # Set up the user interface from Designer through FORM_CLASS.
-        # After self.setupUi() you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+
+        # Connexion des signaux des boutons à la fonction open_folder
+        for i in range(1, 18):
+            button = getattr(self, f"pushButton_{i}")
+            button.clicked.connect(lambda _, num=i: self.open_folder(num))
+
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+
+    def open_folder(self, button_number):
+        # Obtient le chemin du fichier ou du dossier sélectionné par l'utilisateur
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file_path, _ = QFileDialog.getOpenFileName(None, "Choisir un fichier", "", options=options)
+
+        if file_path:
+            # Mise à jour du champ de texte approprié
+            text_edit = getattr(self, f"lineEdit_{button_number}")
+            text_edit.setText(file_path)
+
+# Exemple d'utilisation
+if __name__ == '__main__':
+    app = QtWidgets.QApplication([])
+    dialog = Sylvaccess_pluginDialog()
+    dialog.exec_()

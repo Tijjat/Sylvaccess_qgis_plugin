@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>960</width>
-    <height>829</height>
+    <width>964</width>
+    <height>838</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,7 +42,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>3</number>
+    <number>5</number>
    </property>
    <widget class="QWidget" name="general">
     <property name="font">
@@ -248,7 +248,7 @@
       <item>
        <layout class="QGridLayout" name="gridLayout_13">
         <item row="0" column="3">
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="pushButton_1">
           <property name="minimumSize">
            <size>
             <width>75</width>
@@ -3569,7 +3569,7 @@
          </widget>
         </item>
         <item row="6" column="2">
-         <widget class="QPushButton" name="pushButton_17">
+         <widget class="QPushButton" name="pushButton_16">
           <property name="text">
            <string>Parcourir</string>
           </property>
@@ -3622,7 +3622,7 @@
          </widget>
         </item>
         <item row="1" column="2">
-         <widget class="QPushButton" name="pushButton_14">
+         <widget class="QPushButton" name="pushButton_17">
           <property name="text">
            <string>Parcourir</string>
           </property>
@@ -3660,7 +3660,7 @@
          </widget>
         </item>
         <item row="5" column="2">
-         <widget class="QPushButton" name="pushButton_16">
+         <widget class="QPushButton" name="pushButton_15">
           <property name="text">
            <string>Parcourir</string>
           </property>
@@ -3674,7 +3674,7 @@
          </widget>
         </item>
         <item row="4" column="2">
-         <widget class="QPushButton" name="pushButton_15">
+         <widget class="QPushButton" name="pushButton_14">
           <property name="text">
            <string>Parcourir</string>
           </property>
