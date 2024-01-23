@@ -60,7 +60,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
         # Définit les options de la boîte de dialogue
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+        #options |= QFileDialog.DontUseNativeDialog
 
         # Affiche le dialogue de sélection de fichier avec les filtres appropriés
         if button_number in [4, 5, 6]:
@@ -120,25 +120,35 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.skidder.setEnabled(True)
 
     def launch(self):
-        
+        get_variable()
+
         for i in range (1,6):
             if f"lineEdit_{i}".text() == '':
                 #Error("Veuillez remplir tous les champs")
                 return
-            elif getattr(f"checkBox_4".isChecked()):
-                #Skidder(f"lineEdit_{i}".text())
-                return
-            elif getattr(f"checkBox_3".isChecked()):
-                #Porteur(f"lineEdit_{i}".text())
-                return
-            elif getattr(f"checkBox_2".isChecked()):
-                #Cable(f"lineEdit_{i}".text())
+        if getattr(f"checkBox_4".isChecked()):
+            #Skidder()
+            return
+        elif getattr(f"checkBox_3".isChecked()):
+            #Porteur()
+            return
+        elif f"lineEdit_6".text() == '':
+            #Error("Veuillez remplir les Départs potentiels de câble")
+            return
+            if getattr(f"checkBox_2".isChecked()):
+                #Cable()
                 return
             elif getattr(f"checkBox_1".isChecked()):
-                #Cable_opti(f"lineEdit_{i}".text())
+                #Cable_opti()
                 return
-            else:
-                #Error("Veuillez choisir au moins un type de machine")
-                return
+        else:
+            #Error("Veuillez choisir au moins un type de machine")
+            return
 
+    def get_variable(self):
+        #get variable from general tab
+        global Pente_max_bucheron
+        Pente_max_bucheron = self.spinBox_1.value()
 
+        #get path to spatial files
+        

@@ -22,7 +22,7 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtWidgets import QMessageBox
+from qgis_core import *
 
 class Error():
 
