@@ -51,6 +51,9 @@
     <number>5</number>
    </property>
    <widget class="QWidget" name="general">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="font">
      <font>
       <pointsize>9</pointsize>
@@ -68,9 +71,9 @@
        <height>141</height>
       </rect>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="verticalLayout_1">
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="label_1">
         <property name="font">
          <font>
           <pointsize>10</pointsize>
@@ -120,7 +123,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox">
+       <widget class="QCheckBox" name="checkBox_1">
         <property name="font">
          <font>
           <pointsize>9</pointsize>
@@ -175,7 +178,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBox">
+         <widget class="QSpinBox" name="spinBox_1">
           <property name="maximumSize">
            <size>
             <width>170</width>
@@ -224,6 +227,9 @@
     </widget>
    </widget>
    <widget class="QWidget" name="donnees_spatiale">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <attribute name="title">
      <string>Données spatiales</string>
     </attribute>
@@ -1158,6 +1164,9 @@
     </widget>
    </widget>
    <widget class="QWidget" name="skidder">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <attribute name="title">
      <string>Skidder</string>
     </attribute>
@@ -1666,6 +1675,9 @@
     </widget>
    </widget>
    <widget class="QWidget" name="porteur">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <attribute name="title">
      <string>Porteur</string>
     </attribute>
@@ -2137,6 +2149,9 @@
     </widget>
    </widget>
    <widget class="QWidget" name="cable">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <attribute name="title">
      <string>Câble</string>
     </attribute>
@@ -3552,6 +3567,9 @@
     </widget>
    </widget>
    <widget class="QWidget" name="cable_opti">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <attribute name="title">
      <string>Câble - Optimisation des lignes</string>
     </attribute>
@@ -3584,7 +3602,7 @@
         <item row="6" column="2">
          <widget class="QPushButton" name="pushButton_14">
           <property name="enabled">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="text">
            <string>Parcourir</string>
@@ -3597,7 +3615,7 @@
         <item row="8" column="2">
          <widget class="QPushButton" name="pushButton_16">
           <property name="enabled">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="text">
            <string>Parcourir</string>
@@ -3639,7 +3657,7 @@
         <item row="7" column="2">
          <widget class="QPushButton" name="pushButton_15">
           <property name="enabled">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="text">
            <string>Parcourir</string>
@@ -3677,7 +3695,7 @@
         <item row="3" column="2">
          <widget class="QPushButton" name="pushButton_17">
           <property name="enabled">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="text">
            <string>Parcourir</string>
@@ -3756,7 +3774,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QGridLayout" name="gridLayout">
+       <layout class="QGridLayout" name="gridLayout_1">
         <item row="0" column="4">
          <widget class="QLabel" name="label_103">
           <property name="font">
