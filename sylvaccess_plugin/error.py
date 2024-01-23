@@ -22,9 +22,7 @@
  ***************************************************************************/
 """
 
-from PyQt5 import QtWidgets, uic
-from PyQt5.QtWidgets import QFileDialog
-import os
+from sylvaccess_plugin_dialog import *
 
 class Error():
     pass 

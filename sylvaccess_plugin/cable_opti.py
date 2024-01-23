@@ -22,10 +22,9 @@
  ***************************************************************************/
 """
 
-from PyQt5 import QtWidgets, uic
-from PyQt5.QtWidgets import QFileDialog
-from error import Error
-import os
+
+from sylvaccess_plugin_dialog import *
+
 
 class Cable_opti():
     pass
