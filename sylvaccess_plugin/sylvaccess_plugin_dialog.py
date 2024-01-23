@@ -25,6 +25,11 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
 import os
+from skidder import Skidder
+from porteur import Porteur
+from cable import Cable
+from cable_opti import Cable_opti
+from error import Error
 
 # Chargement de l'interface utilisateur depuis le fichier .ui
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'sylvaccess_plugin_dialog_base.ui'))
@@ -102,6 +107,11 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         if checkbox_state:
             if checkbox_number == 1:
                 self.cable_opti.setEnabled(True)
+                # désactive les lineEdis pour éviter les erreurs
+                self.lineEdit_14.setEnabled(False)
+                self.lineEdit_15.setEnabled(False)
+                self.lineEdit_16.setEnabled(False)
+                self.lineEdit_17.setEnabled(False)
             if checkbox_number == 2:
                 self.cable.setEnabled(True)
             if checkbox_number == 3:
