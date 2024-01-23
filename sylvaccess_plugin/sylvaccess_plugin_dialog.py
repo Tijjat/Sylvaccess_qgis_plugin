@@ -64,5 +64,28 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
         if selected_file:
             # Mise à jour du champ de texte approprié
-            text_edit = getattr(self, f"lineEdit_{button_number}")
-            text_edit.setText(selected_file)
+            if button_number in [2, 17] :
+                text_edit = getattr(self, f"lineEdit_2")
+                text_edit.setText(selected_file)
+                text_edit = getattr(self, f"lineEdit_17")
+                text_edit.setText(selected_file)
+            elif button_number in [4, 14] :
+                text_edit = getattr(self, f"lineEdit_4")
+                text_edit.setText(selected_file)
+                text_edit = getattr(self, f"lineEdit_14")
+                text_edit.setText(selected_file)
+            elif button_number in [13, 15] :
+                text_edit = getattr(self, f"lineEdit_13")
+                text_edit.setText(selected_file)
+                text_edit = getattr(self, f"lineEdit_15")
+                text_edit.setText(selected_file)
+            elif button_number in [12, 16] :
+                text_edit = getattr(self, f"lineEdit_12")
+                text_edit.setText(selected_file)
+                text_edit = getattr(self, f"lineEdit_16")
+                text_edit.setText(selected_file)
+            else:
+                text_edit = getattr(self, f"lineEdit_{button_number}")
+                text_edit.setText(selected_file)
+
+        
