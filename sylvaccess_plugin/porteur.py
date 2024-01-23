@@ -27,4 +27,4 @@ from sylvaccess_plugin_dialog import *
 
 
 class Porteur():
-    pass
+    print("porteur")

@@ -27,4 +27,4 @@ from sylvaccess_plugin_dialog import *
 
 
 class Cable_opti():
-    pass
+    print("cable_opti")

@@ -22,7 +22,20 @@
  ***************************************************************************/
 """
 
-from sylvaccess_plugin_dialog import *
+from qgis.PyQt.QtWidgets import QMessageBox
 
 class Error():
-    pass 
+
+    def __init__(self, iface):
+        self.iface = iface
+
+    def error(self, message):
+        message_title = "Erreur"
+        message_text = message
+        message_icon = QMessageBox.Critical
+        msg_box= QMessageBox(message_icon, message_title, message_text)
+        msg_box.exec_()
+
+
+    
+        

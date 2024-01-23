@@ -26,4 +26,4 @@ from sylvaccess_plugin_dialog import *
 
 
 class Skidder():
-    pass 
+    print("skidder")
