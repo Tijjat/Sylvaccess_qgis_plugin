@@ -34,12 +34,18 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         super(Sylvaccess_pluginDialog, self).__init__(parent)
         self.setupUi(self)
 
-        # Connexion des signaux des boutons à la fonction open_folder
-        for i in range(1, 18):
+        # Connexion des signaux des boutons d'ouverture de fichier à la fonction open_folder
+        for i in range(1, 14):
             button = getattr(self, f"pushButton_{i}")
             button.clicked.connect(lambda _, num=i: self.open_folder(num))
 
-        self.button_box.accepted.connect(self.accept)
+        # Connexion des signaux des checkbox
+        for i in range(1, 5):
+            checkbox = getattr(self, f"checkBox_{i}")
+            checkbox.stateChanged.connect(lambda _, num=i: self.checkbox_state_changed(num))
+
+        # Connexion des signaux des boutons OK et Annuler
+        self.button_box.accepted.connect(self.launch)
         self.button_box.rejected.connect(self.reject)
 
     def open_folder(self, button_number):    
@@ -52,34 +58,34 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         options |= QFileDialog.DontUseNativeDialog
 
         # Affiche le dialogue de sélection de fichier avec les filtres appropriés
-        if button_number in [4, 5, 6, 14]:
+        if button_number in [4, 5, 6]:
             selected_file, _ = QFileDialog.getOpenFileName(
                 None, "Choisir un fichier", filter=shapefile_filter, options=options)
-        elif button_number in [3, 11, 12, 13, 15, 16]:
+        elif button_number in [3, 11, 12, 13]:
             selected_file, _ = QFileDialog.getOpenFileName(
                 None, "Choisir un fichier", filter=raster_filter, options=options)
-        elif button_number in [1, 2, 7, 8, 9, 10, 17]:  # Pour le bouton qui doit ouvrir un dossier
+        elif button_number in [1, 2, 7, 8, 9, 10]:  # Pour le bouton qui doit ouvrir un dossier
             selected_file = QFileDialog.getExistingDirectory(
                 None, "Choisir un dossier", options=options)
 
         if selected_file:
             # Mise à jour du champ de texte approprié
-            if button_number in [2, 17] :
+            if button_number == 2:
                 text_edit = getattr(self, f"lineEdit_2")
                 text_edit.setText(selected_file)
                 text_edit = getattr(self, f"lineEdit_17")
                 text_edit.setText(selected_file)
-            elif button_number in [4, 14] :
+            elif button_number == 4 :
                 text_edit = getattr(self, f"lineEdit_4")
                 text_edit.setText(selected_file)
                 text_edit = getattr(self, f"lineEdit_14")
                 text_edit.setText(selected_file)
-            elif button_number in [13, 15] :
+            elif button_number == 13:
                 text_edit = getattr(self, f"lineEdit_13")
                 text_edit.setText(selected_file)
                 text_edit = getattr(self, f"lineEdit_15")
                 text_edit.setText(selected_file)
-            elif button_number in [12, 16] :
+            elif button_number == 12 :
                 text_edit = getattr(self, f"lineEdit_12")
                 text_edit.setText(selected_file)
                 text_edit = getattr(self, f"lineEdit_16")
@@ -88,4 +94,21 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 text_edit = getattr(self, f"lineEdit_{button_number}")
                 text_edit.setText(selected_file)
 
-        
+    def checkbox_state_changed(self, checkbox_number):
+        # Récupère l'état de la checkbox
+        checkbox = getattr(self, f"checkBox_{checkbox_number}")
+        checkbox_state = checkbox.isChecked()
+
+        if checkbox_state:
+            if checkbox_number == 1:
+                self.cable_opti.setEnabled(True)
+            if checkbox_number == 2:
+                self.cable.setEnabled(True)
+            if checkbox_number == 3:
+                self.porteur.setEnabled(True) 
+            if checkbox_number == 4:
+                self.skidder.setEnabled(True)
+
+    def launch(self):
+        pass # TODO: Lancer le plugin
+
