@@ -27,6 +27,7 @@ from PyQt5.QtWidgets import QFileDialog
 import os
 from qgis.core import *
 from PyQt5.QtWidgets import QMessageBox
+from fontTools.misc.etree import tostring
 #from skidder import Skidder
 #from porteur import Porteur
 #from cable import Cable
@@ -125,40 +126,38 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
   
     def launch(self):
         for i in range (1,5):
-            if not f"lineEdit_{i}".text():
-                error("Veuillez remplir tous les champs")
+            if not getattr(self, f"lineEdit_{i}").text():
+                console_writer("Veuillez remplir tous les champs")
                 return
-        if getattr(f"checkBox_4".isChecked()):
+        if self.checkBox_4.isChecked():
             Skidder()
-            return
-        elif getattr(f"checkBox_3".isChecked()):
+        if self.checkBox_3.isChecked():
             Porteur()
-            return
-        elif not f"lineEdit_6".text():
-            error("Veuillez remplir les Départs potentiels de câble")
-            return
-            if getattr(f"checkBox_2".isChecked()):
-                Cable()
+        if self.checkBox_2.isChecked() or self.checkBox_1.isChecked():
+            if not getattr(self, f"lineEdit_6".text()):
+                console_writer("Veuillez remplir les Départs potentiels de câble")
                 return
-            elif getattr(f"checkBox_1".isChecked()):
-                Cable_opti()
-                return
+                if self.checkBox_2.isChecked():
+                    Cable()
+                if self.checkBox_1.isChecked():
+                    Cable_opti()
         else:
-            error("Veuillez choisir au moins un type de machine")
+            console_writer("Veuillez choisir au moins un type de machine")
             return
 
 def Skidder(self):
-    print("Skidder")
+    console_writer("Skidder")
 
 def Porteur(self):
-    print("Porteur")
+    console_writer("Porteur")
 
 def Cable(self):
-    print("Cable")
+    console_writer("Cable")
 
 def Cable_opti(self):
-    print("Cable_opti")
+    console_writer("Cable_opti")
 
-def error(message):
+def console_writer(message):
     message_text = message
+
     QgsMessageLog.logMessage(message_text,'Sylvaccess',Qgis.Warning)
