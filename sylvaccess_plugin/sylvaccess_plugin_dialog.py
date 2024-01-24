@@ -25,11 +25,13 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
 import os
+from qgis.core import *
+from PyQt5.QtWidgets import QMessageBox
 #from skidder import Skidder
 #from porteur import Porteur
 #from cable import Cable
 #from cable_opti import Cable_opti
-#from error import Error
+
 
 # Chargement de l'interface utilisateur depuis le fichier .ui
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'sylvaccess_plugin_dialog_base.ui'))
@@ -107,7 +109,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         if checkbox_state:
             if checkbox_number == 1:
                 self.cable_opti.setEnabled(True)
-                # désactive les lineEdis pour éviter les erreurs
+                # désactive les lineEdit pour éviter les erreurs
                 self.lineEdit_14.setEnabled(False)
                 self.lineEdit_15.setEnabled(False)
                 self.lineEdit_16.setEnabled(False)
@@ -118,37 +120,45 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.porteur.setEnabled(True) 
             if checkbox_number == 4:
                 self.skidder.setEnabled(True)
+   
 
+  
     def launch(self):
-        get_variable()
-
-        for i in range (1,6):
-            if f"lineEdit_{i}".text() == '':
-                #Error("Veuillez remplir tous les champs")
+        for i in range (1,5):
+            if not f"lineEdit_{i}".text():
+                error("Veuillez remplir tous les champs")
                 return
         if getattr(f"checkBox_4".isChecked()):
-            #Skidder()
+            Skidder()
             return
         elif getattr(f"checkBox_3".isChecked()):
-            #Porteur()
+            Porteur()
             return
-        elif f"lineEdit_6".text() == '':
-            #Error("Veuillez remplir les Départs potentiels de câble")
+        elif not f"lineEdit_6".text():
+            error("Veuillez remplir les Départs potentiels de câble")
             return
             if getattr(f"checkBox_2".isChecked()):
-                #Cable()
+                Cable()
                 return
             elif getattr(f"checkBox_1".isChecked()):
-                #Cable_opti()
+                Cable_opti()
                 return
         else:
-            #Error("Veuillez choisir au moins un type de machine")
+            error("Veuillez choisir au moins un type de machine")
             return
 
-    def get_variable(self):
-        #get variable from general tab
-        global Pente_max_bucheron
-        Pente_max_bucheron = self.spinBox_1.value()
+def Skidder(self):
+    print("Skidder")
 
-        #get path to spatial files
-        
+def Porteur(self):
+    print("Porteur")
+
+def Cable(self):
+    print("Cable")
+
+def Cable_opti(self):
+    print("Cable_opti")
+
+def error(message):
+    message_text = message
+    QgsMessageLog.logMessage(message_text,'Sylvaccess',Qgis.Warning)

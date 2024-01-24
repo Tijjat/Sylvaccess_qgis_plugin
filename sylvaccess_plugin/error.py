@@ -22,7 +22,14 @@
  ***************************************************************************/
 """
 
-from qgis_core import *
+from qgis.core import *
+QgsApplication.setPrefixPath("C:/PROGRA~1/QGIS33~1.2/apps/qgis", True)
+
+# second argument to False disables the GUI.
+qgs = QgsApplication([], True)
+
+# Load providers
+qgs.initQgis()
 
 class Error():
 
@@ -36,6 +43,6 @@ class Error():
         msg_box= QMessageBox(message_icon, message_title, message_text)
         msg_box.exec_()
 
-
+qgs.exitQgis()
     
         
