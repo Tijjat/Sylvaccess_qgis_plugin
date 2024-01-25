@@ -27,6 +27,10 @@ from PyQt5.QtWidgets import QFileDialog
 import os
 from qgis.core import *
 from PyQt5.QtWidgets import QMessageBox
+from math import degrees, atan, cos, sin, radians, sqrt
+from scipy import spatial
+import numpy as np
+from osgeo import gdal, osr, ogr
 
 
 
@@ -151,6 +155,101 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             console_warning("Veuillez choisir au moins un type de machine")
             return
 
+    # Fonction qui vérifie que tous les fichiers nécessaires sont bien présents
+    def check_files(self):
+        test=True
+        test_Skidder = self.checkBox_4.isChecked()
+        test_Forwarder = self.checkBox_3.isChecked()
+        test_cable_optim = self.checkBox_1.isChecked()
+        test_Cable = self.checkBox_2.isChecked()
+        file_MNT = getattr(self, f"lineEdit_3".text())
+        file_shp_Desserte = getattr(self, f"lineEdit_5".text())
+        file_shp_Foret = getattr(self, f"lineEdit_4".text())
+        file_Vol_ha = getattr(self, f"lineEdit_13".text())
+        file_Vol_AM = getattr(self, f"lineEdit_12".text())
+        file_Htree = getattr(self, f"lineEdit_14".text())
+        new_calc = self.checkBox_6.isChecked()
+        Cabsel_For = file_shp_Foret
+        file_shp_Cable_dep = getattr(self, f"lineEdit_6".text())
+
+        mess="\nLES PROBLEMES SUIVANTS ONT ETE IDENTIFIES CONCERNANT LES ENTREES SPATIALES: \n"
+        #Check MNT
+        if test_Skidder+test_Forwarder+test_Cable>0:
+            try:
+                a,values,b,Extent = raster_get_info(file_MNT)   
+                if values[5]==None:
+                    test=False
+                    mess+=" -   Raster MNT: Aucune valeur de NoData definie\n" 
+            except:
+                mess+=" -   Raster MNT:  Le chemin d'acces est manquant ou incorrect. Ce raster est obligatoire pour lancer Sylvaccess\n" 
+                
+        #Check file_shp_Desserte   
+        if test_Skidder+test_Forwarder>0:
+            try:    
+                if not check_field(file_shp_Desserte,"CL_SVAC"):
+                    test=False
+                    mess+=" -   Couche desserte: Le champs 'CL_SVAC' est manquant\n"  
+            except:
+                test=False
+                mess+=" -   Couche desserte: Le chemin d'acces est manquant ou incorrect. Cette couche est obligatoire pour les modules skidder et porteur\n" 
+            
+
+        #Check file_shp_Cable_Dep    
+        if test_Cable:   
+            try: 
+                if not check_field(file_shp_Cable_dep,"CABLE"):
+                    test=False
+                    mess+=" -   Couche desserte: Le champs 'CABLE' est manquant\n"  
+            except:
+                test=False
+                mess+=" -   Couche départs de cable potentiels: Le chemin d'acces est manquant ou incorrect. Cette couche est obligatoire pour le module cable\n" 
+
+            
+        #Check file_shp_Foret   
+        if test_Skidder+test_Forwarder+test_Cable>0:    
+            try:     
+                if not check_field(file_shp_Foret,"FORET"):
+                    test=False
+                    mess+=" -   Couche foret: Le champs 'FORET' est manquant\n" 
+            except:
+                test=False
+                mess+=" -   Couche foret: Le chemin d'acces est manquant ou incorrect. Cette couche est obligatoire pour lancer Sylvaccess\n"     
+                    
+        #Check Cabsel_For for cable optim
+        if not test_Cable and test_cable_optim and new_calc and Cabsel_For!="":
+            try:     
+                if not check_field(Cabsel_For,"FORET"):
+                    test=False
+                    mess+=" -   Couche foret (onglet optimisation cable): Le champs 'FORET' est manquant\n" 
+            except:
+                test=False
+                mess+=" -   Couche foret (onglet optimisation cable): Le chemin d'acces est manquant ou incorrect. \n"     
+            
+        #Check file_Vol_ha,file_Vol_AM,file_Htree
+        FR_name = ["Raster Volume/ha","Raster volume arbre moyen","Raster hauteur des arbres"]
+        for i,f in enumerate([file_Vol_ha,file_Vol_AM,file_Htree]):
+            if f!="":
+                try:
+                    c,values2,d,Extent2 = raster_get_info(f)    
+                    if values2[5]==None:
+                        test=False
+                        mess+=" -   "+FR_name[i]+": Aucune valeur de NoData definie\n" 
+                    if not values[4]==values2[4]:
+                        test=False
+                        mess+=" -   "+FR_name[i]+": La taille de cellules du raster doit etre la meme que celle du MNT\n" 
+                    if not np.all(Extent==Extent2):
+                        test=False
+                        mess+=" -   "+FR_name[i]+": L'etendue du raster doit etre la meme que celle du MNT\n" 
+                except:
+                    test=False
+                    mess+=" -   "+FR_name[i]+": Le chemin d'access est incorrect\n"     
+
+        if not test:
+            mess+="\n"
+            mess+="MERCI DE CORRIGER AVANT DE RELANCER SYLVACCESS\n"
+            console_warning(mess)
+        return test
+             
 # Fonctions qui fait tout les calculs liés au skidder
 def Skidder(self):
     console_info("Skidder")
@@ -174,4 +273,95 @@ def console_warning(message):
 # Fonctions qui affiche un message d'information dans la console
 def console_info(message):
     QgsMessageLog.logMessage(message,'Sylvaccess',Qgis.Info)
+
+
+def heures(Hdebut):
+    Hfin = datetime.datetime.now()
+    duree = Hfin - Hdebut
+    ts = duree.seconds
+    nb_days = int(ts/3600./24.)
+    ts -= nb_days*3600*24
+    nb_hours = int(ts/3600)
+    ts -= nb_hours*3600
+    nb_minutes = int(ts/60)
+    ts -= nb_minutes*60  
+    if nb_days>0:
+        str_duree = str(nb_days)+'j '+str(nb_hours)+'h '+str(nb_minutes)+'min '+str(ts)+'s'
+    elif nb_hours >0:
+        str_duree = str(nb_hours)+'h '+str(nb_minutes)+'min '+str(ts)+'s'
+    elif nb_minutes>0:
+        str_duree = str(nb_minutes)+'min '+str(ts)+'s'
+    else:
+        str_duree = str(ts)+'s'        
+        str_debut = str(Hdebut.day)+'/'+str(Hdebut.month)+'/'+str(Hdebut.year)+' '+str(Hdebut.hour)+':'+str(Hdebut.minute)+':'+str(Hdebut.second)
+        str_fin = str(Hfin.day)+'/'+str(Hfin.month)+'/'+str(Hfin.year)+' '+str(Hfin.hour)+':'+str(Hfin.minute)+':'+str(Hfin.second)
+
+    return str_duree,str_fin,str_debut
+
+
+def get_info_ascii(file_name):
+    fs = open(file_name, 'r')
+    head_text=''
+    line = 1
+    while line<7:
+        head_text = head_text+fs.readline()
+        line=line+1
+    fs.close()
+    Csize = np.genfromtxt(file_name, dtype=None,usecols=(1))[4]
+    return head_text, Csize
+
+
+def save_integer_ascii(file_name,head_text,data):
+    np.savetxt(file_name, data, fmt='%i', delimiter=' ')
+    with open(file_name, "r+") as f:
+        old = f.read()
+        f.seek(0)
+        f.write(head_text + old)
+        f.close()
+
+
+def save_float_ascii(file_name,head_text,data):
+    np.savetxt(file_name, data, fmt='%f', delimiter=' ')
+    with open(file_name, "r+") as f:
+        old = f.read()
+        f.seek(0)
+        f.write(head_text + old)
+        f.close()
+
+
+def replace_all(text, dic):
+    for i, j in dic.iteritems(): text = text.replace(i, j)
+    return text
+
+
+def read_info(info_file):
+    names = np.genfromtxt(info_file, dtype=None,usecols=(0),encoding ='latin1')
+    values = np.genfromtxt(info_file, dtype=None,usecols=(1),encoding ='latin1')  
+    return list(names),list(values)
+
+def raster_get_info(in_file_name):
+    source_ds = gdal.Open(in_file_name)    
+    src_proj = osr.SpatialReference(wkt=source_ds.GetProjection())
+    src_ncols = source_ds.RasterXSize
+    src_nrows = source_ds.RasterYSize
+    xmin,Csize_x,a,ymax,b,Csize_y = source_ds.GetGeoTransform()
+    ymin = ymax+src_nrows*Csize_y
+    nodata = source_ds.GetRasterBand(1).GetNoDataValue()
+    names = ['ncols', 'nrows', 'xllcorner', 'yllcorner', 'cellsize','NODATA_value']
+    values = [src_ncols,src_nrows,xmin,ymin,Csize_x,nodata]
+    Extent = [xmin,xmin+src_ncols*Csize_x,ymin,ymax]
+    return names,values,src_proj,Extent
+
+def check_field(filename,fieldname):
+    test=False    
+    source_ds = ogr.Open(filename)
+    layer = source_ds.GetLayer()    
+    ldefn = layer.GetLayerDefn()
+    for n in range(ldefn.GetFieldCount()):
+        fdefn = ldefn.GetFieldDefn(n)
+        if fdefn.name==fieldname:
+            test= True
+            break    
+    source_ds.Destroy() 
+    return test
 
