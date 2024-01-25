@@ -52,7 +52,8 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         self.button_box.accepted.connect(self.launch)
         self.button_box.rejected.connect(self.reject)
 
-    def open_folder(self, button_number):    
+    # Connexion des signaux des boutons d'ouverture de fichier à la fonction open_folder
+    def open_folder(self, button_number):
         # Définit les filtres génériques pour Shapefiles et fichiers raster
         shapefile_filter = "Shapefiles (*.shp);;All files (*)"
         raster_filter = "Raster files (*.tif *.asc *.txt);;All files (*)"
@@ -98,7 +99,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 text_edit = getattr(self, f"lineEdit_{button_number}")
                 text_edit.setText(selected_file)
 
-
+    # Fonction appelée lorsqu'une checkbox est cochée ou décochée
     def checkbox_state_changed(self, checkbox_number):
         # Récupère l'état de la checkbox
         checkbox = getattr(self, f"checkBox_{checkbox_number}")
@@ -128,7 +129,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             if checkbox_number == 4:
                 self.skidder.setEnabled(False)
 
-  
+    # Fonction appelée lorsqu'on clique sur le bouton OK
     def launch(self):
         for i in range (1,5):
             if not getattr(self, f"lineEdit_{i}").text():
@@ -150,20 +151,27 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             console_warning("Veuillez choisir au moins un type de machine")
             return
 
+# Fonctions qui fait tout les calculs liés au skidder
 def Skidder(self):
     console_info("Skidder")
 
+# Fonctions qui fait tout les calculs liés au porteur
 def Porteur(self):
     console_info("Porteur")
 
+# Fonctions qui fait tout les calculs liés au cable
 def Cable(self):
     console_info("Cable")
 
+# Fonctions qui fait tout les calculs liés à l'optimisation des emplacement des lignes de cable
 def Cable_opti(self):
     console_info("Cable_opti")
 
+# Fonctions qui affiche un message d'erreur dans la console
 def console_warning(message):
     QgsMessageLog.logMessage(message,'Sylvaccess',Qgis.Warning)
 
+# Fonctions qui affiche un message d'information dans la console
 def console_info(message):
     QgsMessageLog.logMessage(message,'Sylvaccess',Qgis.Info)
+
