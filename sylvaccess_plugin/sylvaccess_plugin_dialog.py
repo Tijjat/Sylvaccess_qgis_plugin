@@ -102,6 +102,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 text_edit = getattr(self, f"lineEdit_{button_number}")
                 text_edit.setText(selected_file)
 
+
     def checkbox_state_changed(self, checkbox_number):
         # Récupère l'état de la checkbox
         checkbox = getattr(self, f"checkBox_{checkbox_number}")
@@ -121,13 +122,21 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.porteur.setEnabled(True) 
             if checkbox_number == 4:
                 self.skidder.setEnabled(True)
-   
+        elif not checkbox_state:
+            if checkbox_number == 1:
+                self.cable_opti.setEnabled(False)
+            if checkbox_number == 2:
+                self.cable.setEnabled(False)
+            if checkbox_number == 3:
+                self.porteur.setEnabled(False) 
+            if checkbox_number == 4:
+                self.skidder.setEnabled(False)
 
   
     def launch(self):
         for i in range (1,5):
             if not getattr(self, f"lineEdit_{i}").text():
-                console_writer("Veuillez remplir tous les champs")
+                console_warning("Veuillez remplir tous les champs")
                 return
         if self.checkBox_4.isChecked():
             Skidder()
@@ -135,29 +144,30 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             Porteur()
         if self.checkBox_2.isChecked() or self.checkBox_1.isChecked():
             if not getattr(self, f"lineEdit_6".text()):
-                console_writer("Veuillez remplir les Départs potentiels de câble")
+                console_warning("Veuillez remplir les Départs potentiels de câble")
                 return
                 if self.checkBox_2.isChecked():
                     Cable()
                 if self.checkBox_1.isChecked():
                     Cable_opti()
         else:
-            console_writer("Veuillez choisir au moins un type de machine")
+            console_warning("Veuillez choisir au moins un type de machine")
             return
 
 def Skidder(self):
-    console_writer("Skidder")
+    console_info("Skidder")
 
 def Porteur(self):
-    console_writer("Porteur")
+    console_info("Porteur")
 
 def Cable(self):
-    console_writer("Cable")
+    console_info("Cable")
 
 def Cable_opti(self):
-    console_writer("Cable_opti")
+    console_info("Cable_opti")
 
-def console_writer(message):
-    message_text = message
+def console_warning(message):
+    QgsMessageLog.logMessage(message,'Sylvaccess',Qgis.Warning)
 
-    QgsMessageLog.logMessage(message_text,'Sylvaccess',Qgis.Warning)
+def console_info(message):
+    QgsMessageLog.logMessage(message,'Sylvaccess',Qgis.Info)
