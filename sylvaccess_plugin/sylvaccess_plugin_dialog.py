@@ -31,10 +31,11 @@ from scipy import spatial
 import numpy as np
 from osgeo import gdal, osr, ogr
 import math
-from cython import pyximport
-pyximport.install()
-import sylvaccess_cython3 as fc
+#from cython import pyximport
+#pyximport.install()
+#import sylvaccess_cython3 as fc
 from math import sqrt
+from fontTools.misc.etree import tostring
 
 
 
@@ -59,6 +60,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         # Connexion des signaux des boutons OK et Annuler
         self.button_box.accepted.connect(self.launch)
         self.button_box.rejected.connect(self.reject)
+        self.spinBox_40.valueChanged.connect(self.spinBox_40_changed)
 
     # Connexion des signaux des boutons d'ouverture de fichier à la fonction open_folder
     def open_folder(self, button_number):
@@ -121,6 +123,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.lineEdit_15.setEnabled(False)
                 self.lineEdit_16.setEnabled(False)
                 self.lineEdit_17.setEnabled(False)
+                self.spinBox_49.setEnabled(False)
             if checkbox_number == 2:
                 self.cable.setEnabled(True)
             if checkbox_number == 3:
@@ -137,10 +140,16 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             if checkbox_number == 4:
                 self.skidder.setEnabled(False)
 
+    def spinBox_40_changed(self):
+        value = self.spinBox_40.value()
+        self.spinBox_49.setValue(value)
+
     # Fonction appelée lorsqu'on clique sur le bouton OK
     def launch(self):
         a = self.spinBox_1.value()
+        b = self.plainTextEdit_1.toPlainText()
         console_info(a)
+        console_info(b)
         for i in range (1,5):
             if not getattr(self, f"lineEdit_{i}").text():
                 console_warning("Veuillez remplir tous les champs")
@@ -297,6 +306,173 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
         return Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP
 
+    def get_skidder(self,pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes):
+        if pente_max:
+            pente_max = self.spinBox_3.value()
+        if distance_max_amont:
+            distance_max_amont = self.spinBox_4.value()
+        if distance_max_aval:
+            distance_max_aval = self.spinBox_5.value()
+        if distance_max_hors_frt_dsrt:
+            distance_max_hors_frt_dsrt = self.spinBox_6.value() 
+        if pente_amont_max:
+            pente_amont_max = self.spinBox_7.value()
+        if pente_aval_max:
+            pente_aval_max = self.spinBox_1.value()
+        if limite:
+            if self.radioButton_1.isChecked():
+                limite = True
+            else:
+                limite = False
+        if bornes:
+            bornes = self.plainTextEdit_1.toPlainText()
+            if not bornes:
+                console_warning("Veuillez remplir les bornes minimales des classes de débardages pour le skidder")
+                return
+        return pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes   
+
+    def get_porteur(self,pente_max,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes):
+        if pente_max:
+            pente_max = self.spinBox_8.value()
+        if pente_max_remonant:
+            pente_max_remonant = self.spinBox_9.value()
+        if pente_max_descendant:
+            pente_max_descendant = self.spinBox_12.value()
+        if distance_max_pente_sup:
+            distance_max_pente_sup = self.spinBox_10.value()
+        if distance_max_hors_frt:
+            distance_max_hors_frt = self.spinBox_11.value()
+        if taille_grue:
+            taille_grue = self.doublespinBox_1.value()
+        if bornes:
+            bornes = self.plainTextEdit_2.toPlainText()
+            if not bornes:
+                console_warning("Veuillez remplir les bornes minimales des classes de débardages pour le porteur")
+                return
+        return pente_max,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes
+
+    def get_type_cable(self, type_machine,supports_inter,hauteur,longueure_max,longueure_min):
+        if type_machine:
+            type_machine = self.comboBox_1.currentText()
+        if supports_inter:
+            supports_inter = self.spinBox_14.value()
+        if hauteur:
+            hauteur = self.doublespinBox_2.value()
+        if longueure_max:
+            longueure_max = self.spinBox_16.value()
+        if longueure_min:
+            longueure_min = self.spinBox_17.value()
+        return type_machine,supports_inter,hauteur,longueure_max,longueure_min
+
+    def get_type_chariot(self, type_chariot,masse,pente_min,pente_max_amont,pente_max_aval):
+        if type_chariot:
+            type_chariot = self.comboBox_2.currentText()
+        if masse:
+            masse = self.spinBox_22.value()
+        if pente_min:
+            pente_min = self.spinBox_23.value()
+        if pente_max_amont:
+            pente_max_amont = self.spinBox_24.value()
+        if pente_max_aval:
+            pente_max_aval = self.spinBox_25.value()
+        return type_chariot,masse,pente_min,pente_max_amont,pente_max_aval      
+
+    def get_proprietes_cable(self,diamètre,masse_li,tension_rupt,elasticité):
+        if diamètre:
+            diamètre = self.doublespinBox_3.value()
+        if masse_li:
+            masse_li = self.doublespinBox_4.value()
+        if tension_rupt:
+            tension_rupt = self.spinBox_26.value()
+        if elasticité:
+            elasticité = self.spinBox_27.value()
+        return diamètre,masse_li,tension_rupt,elasticité
+
+    def get_param_modelisation(self,hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,masse_max,securite):
+        if hauteur_sup:
+            hauteur_sup = self.doublespinBox_5.value()
+        if hauteur_mat:
+            hauteur_mat = self.doublespinBox_8.value()
+        if hauteur_min_cable:
+            hauteur_min_cable = self.doublespinBox_6.value()
+        if hauteur_max_cable:
+            hauteur_max_cable = self.doublespinBox_9.value()
+        if pechage:
+            pechage = self.spinBox_40.value()
+        if masse_max:
+            masse_max = self.spinBox_39.value()
+        if securite:
+            securite = self.doublespinBox_10.value()
+        return hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,masse_max,securite
+
+    def get_options(self,opti,precision):
+        if opti:
+            opti = self.checkBox_5.isChecked()
+        if precision:
+            precision = self.spinBox_41.value()
+        return opti,precision
+
+    def get_opti_cable(self,prelevement,recalculer,Rspace,foret,VBP,VAM,pechage):
+        if prelevement:
+            prelevement = self.spinBox_48.value()
+        if recalculer:
+            recalculer = self.checkBox_6.isChecked()
+        if Rspace:
+            Rspace = getattr(self, f"lineEdit_17").text()
+        if foret:
+            foret = getattr(self, f"lineEdit_14").text()
+        if VBP:
+            VBP = getattr(self, f"lineEdit_15").text()
+        if VAM:
+            VAM = getattr(self, f"lineEdit_16").text()
+        if pechage:
+            pechage = self.spinBox_49.value()
+        return prelevement,recalculer,Rspace,foret,VBP,VAM,pechage
+
+    def get_crit_opti(self,surface,nbr_sup_int,sens_debardage,longueure_ligne,vol_ligne,indice_prelev,VAM,dist_chariot):
+        surface_poids,nbr_sup_int_poids,sens_debardage_poids,longueure_ligne_poids,vol_ligne_poids,indice_prelev_poids,VAM_poids,dist_chariot_poids = 0,0,0,0,0,0,0,0   
+        if surface and self.checkBox_7.isChecked():
+            surface = self.doublespinBox_11.value()
+            surface_poids = self.spinBox_18.value()
+        else:
+            surface = 0
+        if nbr_sup_int and self.checkBox_8.isChecked():
+            nbr_sup_int = self.spinBox_46.value()
+            nbr_sup_int_poids = self.spinBox_19.value()
+        else:
+            nbr_sup_int = 0
+        if sens_debardage and self.checkBox_9.isChecked():
+            sens_debardage = self.spinBox_45.value()
+            sens_debardage_poids = self.spinBox_20.value()
+        else:
+            sens_debardage = 0
+        if longueure_ligne and self.checkBox_10.isChecked():
+            longueure_ligne = self.spinBox_44.value()
+            longueure_ligne_poids = self.spinBox_21.value()
+        else:
+            longueure_ligne = 0
+        if vol_ligne and self.checkBox_11.isChecked():
+            vol_ligne = self.spinBox_43.value()
+            vol_ligne_poids = self.spinBox_31.value()
+        else:
+            vol_ligne = 0
+        if indice_prelev and self.checkBox_12.isChecked():
+            indice_prelev = self.doublespinBox_12.value()
+            indice_prelev_poids = self.spinBox_32.value()
+        else:
+            indice_prelev = 0
+        if VAM and self.checkBox_13.isChecked():
+            VAM = self.doublespinBox_13.value()
+            VAM_poids = self.spinBox_33.value()
+        else:
+            VAM = 0
+        if dist_chariot and self.checkBox_14.isChecked():
+            dist_chariot = self.spinBox_50.value()
+            dist_chariot_poids = self.spinBox_51.value()
+        else:
+            dist_chariot = 0
+        return surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM,VAM_poids,dist_chariot,dist_chariot_poids
+
 
 
 # Fonctions qui fait tout les calculs liés au skidder
@@ -317,10 +493,12 @@ def Cable_opti(self):
 
 # Fonctions qui affiche un message d'erreur dans la console
 def console_warning(message):
+    message = str(message)
     QgsMessageLog.logMessage(message,'Sylvaccess',Qgis.Warning)
 
 # Fonctions qui affiche un message d'information dans la console
 def console_info(message):
+    message = str(message)
     QgsMessageLog.logMessage(message,'Sylvaccess',Qgis.Info)
 
 
@@ -1021,7 +1199,7 @@ def get_ligne3(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,P
               Fo,Tmax,q1,q2,q3,Htower,Hend,Hline_max,Hintsup,Lslope,PropSlope):
                   
     npix = Nbpix_line[az]
-    npix = fc.get_npix(az,npix,coordY,coordX,ncols,nrows,Row_line,Col_line)   
+    #npix = fc.get_npix(az,npix,coordY,coordX,ncols,nrows,Row_line,Col_line)   
     if D_line[az,npix-1]>Lmin:  
         Line=np.zeros((npix,11),dtype=np.float)
         inds = (Row_line[az,0:npix]+coordY,Col_line[az,0:npix]+coordX)        
@@ -1058,10 +1236,11 @@ def get_ligne3(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,P
             if test:
                 break
         Line=Line[0:i+1]
-        test,indmax,Lline=fc.check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret,Lslope,PropSlope)    
+        #test,indmax,Lline=fc.check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret,Lslope,PropSlope)
+        Lline = 2 # A modifier    
         return test,Lline,Line[0:indmax, [0, 1, 2, 3, 4, 5, 6,10,9]]
     else:
-        return 0,0,0
+        return 0,0,0 
 
 
 

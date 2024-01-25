@@ -63,7 +63,7 @@
     </font>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>5</number>
    </property>
    <widget class="QWidget" name="general">
     <property name="enabled">
@@ -1640,7 +1640,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="radioButton">
+       <widget class="QRadioButton" name="radioButton_1">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -1686,7 +1686,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QPlainTextEdit" name="plainTextEdit_4">
+         <widget class="QPlainTextEdit" name="plainTextEdit_1">
           <property name="minimumSize">
            <size>
             <width>400</width>
@@ -2115,7 +2115,7 @@
          </widget>
         </item>
         <item row="5" column="1">
-         <widget class="QDoubleSpinBox" name="doubleSpinBox">
+         <widget class="QDoubleSpinBox" name="doubleSpinBox_1">
           <property name="font">
            <font>
             <pointsize>9</pointsize>
@@ -2427,7 +2427,7 @@
          </widget>
         </item>
         <item row="0" column="2">
-         <widget class="QComboBox" name="comboBox">
+         <widget class="QComboBox" name="comboBox_1">
           <property name="maximumSize">
            <size>
             <width>250</width>
@@ -3571,45 +3571,6 @@
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout_7">
-        <item row="1" column="2">
-         <widget class="QSpinBox" name="spinBox_41">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="maximum">
-           <number>999999</number>
-          </property>
-          <property name="value">
-           <number>3</number>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="label_112">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Précision de la modélisation câble</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="0">
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
@@ -3637,6 +3598,45 @@
            </widget>
           </item>
          </layout>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="label_112">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Précision de la modélisation câble</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QSpinBox" name="spinBox_41">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="maximum">
+           <number>999999</number>
+          </property>
+          <property name="value">
+           <number>3</number>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -3924,7 +3924,7 @@
         <item row="5" column="0">
          <widget class="QCheckBox" name="checkBox_11">
           <property name="text">
-           <string>Volume total de laligne</string>
+           <string>Volume total de la ligne</string>
           </property>
          </widget>
         </item>
