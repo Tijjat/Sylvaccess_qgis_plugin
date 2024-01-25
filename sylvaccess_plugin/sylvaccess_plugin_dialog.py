@@ -27,10 +27,11 @@ from PyQt5.QtWidgets import QFileDialog
 import os
 from qgis.core import *
 from PyQt5.QtWidgets import QMessageBox
-from math import degrees, atan, cos, sin, radians, sqrt
 from scipy import spatial
 import numpy as np
 from osgeo import gdal, osr, ogr
+import math
+import sylaccess_cython3 as fc
 
 
 
@@ -157,98 +158,97 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
     # Fonction qui vérifie que tous les fichiers nécessaires sont bien présents
     def check_files(self):
-        test=True
+        verif=True
         test_Skidder = self.checkBox_4.isChecked()
-        test_Forwarder = self.checkBox_3.isChecked()
+        test_Porteur = self.checkBox_3.isChecked()
         test_cable_optim = self.checkBox_1.isChecked()
         test_Cable = self.checkBox_2.isChecked()
         file_MNT = getattr(self, f"lineEdit_3".text())
         file_shp_Desserte = getattr(self, f"lineEdit_5".text())
         file_shp_Foret = getattr(self, f"lineEdit_4".text())
-        file_Vol_ha = getattr(self, f"lineEdit_13".text())
-        file_Vol_AM = getattr(self, f"lineEdit_12".text())
-        file_Htree = getattr(self, f"lineEdit_14".text())
+        file_vol_BP = getattr(self, f"lineEdit_13".text())
+        file_vol_AM = getattr(self, f"lineEdit_12".text())
+        file_HA = getattr(self, f"lineEdit_14".text())
         new_calc = self.checkBox_6.isChecked()
-        Cabsel_For = file_shp_Foret
         file_shp_Cable_dep = getattr(self, f"lineEdit_6".text())
 
-        mess="\nLES PROBLEMES SUIVANTS ONT ETE IDENTIFIES CONCERNANT LES ENTREES SPATIALES: \n"
+        msg="\nLES PROBLEMES SUIVANTS ONT ETE IDENTIFIES CONCERNANT LES ENTREES SPATIALES: \n"
         #Check MNT
-        if test_Skidder+test_Forwarder+test_Cable>0:
+        if test_Skidder+test_Porteur+test_Cable>0:
             try:
                 a,values,b,Extent = raster_get_info(file_MNT)   
                 if values[5]==None:
-                    test=False
-                    mess+=" -   Raster MNT: Aucune valeur de NoData definie\n" 
+                    verif=False
+                    msg+=" -   Raster MNT: Aucune valeur de NoData definie\n" 
             except:
-                mess+=" -   Raster MNT:  Le chemin d'acces est manquant ou incorrect. Ce raster est obligatoire pour lancer Sylvaccess\n" 
+                msg+=" -   Raster MNT:  Le chemin d'acces est manquant ou incorrect. Ce raster est obligatoire pour lancer Sylvaccess\n" 
                 
         #Check file_shp_Desserte   
-        if test_Skidder+test_Forwarder>0:
+        if test_Skidder+test_Porteur>0:
             try:    
                 if not check_field(file_shp_Desserte,"CL_SVAC"):
-                    test=False
-                    mess+=" -   Couche desserte: Le champs 'CL_SVAC' est manquant\n"  
+                    verif=False
+                    msg+=" -   Couche desserte: Le champs 'CL_SVAC' est manquant\n"  
             except:
-                test=False
-                mess+=" -   Couche desserte: Le chemin d'acces est manquant ou incorrect. Cette couche est obligatoire pour les modules skidder et porteur\n" 
+                verif=False
+                msg+=" -   Couche desserte: Le chemin d'acces est manquant ou incorrect. Cette couche est obligatoire pour les modules skidder et porteur\n" 
             
 
         #Check file_shp_Cable_Dep    
         if test_Cable:   
             try: 
                 if not check_field(file_shp_Cable_dep,"CABLE"):
-                    test=False
-                    mess+=" -   Couche desserte: Le champs 'CABLE' est manquant\n"  
+                    verif=False
+                    msg+=" -   Couche desserte: Le champs 'CABLE' est manquant\n"  
             except:
-                test=False
-                mess+=" -   Couche départs de cable potentiels: Le chemin d'acces est manquant ou incorrect. Cette couche est obligatoire pour le module cable\n" 
+                verif=False
+                msg+=" -   Couche départs de cable potentiels: Le chemin d'acces est manquant ou incorrect. Cette couche est obligatoire pour le module cable\n" 
 
             
         #Check file_shp_Foret   
-        if test_Skidder+test_Forwarder+test_Cable>0:    
+        if test_Skidder+test_Porteur+test_Cable>0:    
             try:     
                 if not check_field(file_shp_Foret,"FORET"):
-                    test=False
-                    mess+=" -   Couche foret: Le champs 'FORET' est manquant\n" 
+                    verif=False
+                    msg+=" -   Couche foret: Le champs 'FORET' est manquant\n" 
             except:
-                test=False
-                mess+=" -   Couche foret: Le chemin d'acces est manquant ou incorrect. Cette couche est obligatoire pour lancer Sylvaccess\n"     
+                verif=False
+                msg+=" -   Couche foret: Le chemin d'acces est manquant ou incorrect. Cette couche est obligatoire pour lancer Sylvaccess\n"     
                     
-        #Check Cabsel_For for cable optim
-        if not test_Cable and test_cable_optim and new_calc and Cabsel_For!="":
+        #Check file_shp_Foret for cable optim
+        if not test_Cable and test_cable_optim and new_calc and file_shp_Foret!="":
             try:     
-                if not check_field(Cabsel_For,"FORET"):
-                    test=False
-                    mess+=" -   Couche foret (onglet optimisation cable): Le champs 'FORET' est manquant\n" 
+                if not check_field(file_shp_Foret,"FORET"):
+                    verif=False
+                    msg+=" -   Couche foret (onglet optimisation cable): Le champs 'FORET' est manquant\n" 
             except:
-                test=False
-                mess+=" -   Couche foret (onglet optimisation cable): Le chemin d'acces est manquant ou incorrect. \n"     
+                verif=False
+                msg+=" -   Couche foret (onglet optimisation cable): Le chemin d'acces est manquant ou incorrect. \n"     
             
-        #Check file_Vol_ha,file_Vol_AM,file_Htree
+        #Check file_vol_BP,file_vol_AM,file_HA
         FR_name = ["Raster Volume/ha","Raster volume arbre moyen","Raster hauteur des arbres"]
-        for i,f in enumerate([file_Vol_ha,file_Vol_AM,file_Htree]):
+        for i,f in enumerate([file_vol_BP,file_vol_AM,file_HA]):
             if f!="":
                 try:
-                    c,values2,d,Extent2 = raster_get_info(f)    
+                    a,values2,b,Extent2 = raster_get_info(f)    
                     if values2[5]==None:
-                        test=False
-                        mess+=" -   "+FR_name[i]+": Aucune valeur de NoData definie\n" 
+                        verif=False
+                        msg+=" -   "+FR_name[i]+": Aucune valeur de NoData definie\n" 
                     if not values[4]==values2[4]:
-                        test=False
-                        mess+=" -   "+FR_name[i]+": La taille de cellules du raster doit etre la meme que celle du MNT\n" 
+                        verif=False
+                        msg+=" -   "+FR_name[i]+": La taille de cellules du raster doit etre la meme que celle du MNT\n" 
                     if not np.all(Extent==Extent2):
-                        test=False
-                        mess+=" -   "+FR_name[i]+": L'etendue du raster doit etre la meme que celle du MNT\n" 
+                        verif=False
+                        msg+=" -   "+FR_name[i]+": L'etendue du raster doit etre la meme que celle du MNT\n" 
                 except:
-                    test=False
-                    mess+=" -   "+FR_name[i]+": Le chemin d'access est incorrect\n"     
+                    verif=False
+                    msg+=" -   "+FR_name[i]+": Le chemin d'access est incorrect\n"     
 
-        if not test:
-            mess+="\n"
-            mess+="MERCI DE CORRIGER AVANT DE RELANCER SYLVACCESS\n"
-            console_warning(mess)
-        return test
+        if not verif:
+            msg+="\n"
+            msg+="MERCI DE CORRIGER AVANT DE RELANCER SYLVACCESS\n"
+            console_warning(msg)
+        return verif
              
 # Fonctions qui fait tout les calculs liés au skidder
 def Skidder(self):
@@ -353,15 +353,611 @@ def raster_get_info(in_file_name):
     return names,values,src_proj,Extent
 
 def check_field(filename,fieldname):
-    test=False    
+    verif=False    
     source_ds = ogr.Open(filename)
     layer = source_ds.GetLayer()    
     ldefn = layer.GetLayerDefn()
     for n in range(ldefn.GetFieldCount()):
         fdefn = ldefn.GetFieldDefn(n)
         if fdefn.name==fieldname:
-            test= True
+            verif= True
             break    
     source_ds.Destroy() 
-    return test
+    return verif
+
+def check_field_EXIST(filename,fieldname):    
+    verif=False
+    source_ds = ogr.Open(filename)
+    layer = source_ds.GetLayer()    
+    ldefn = layer.GetLayerDefn()
+    for n in range(ldefn.GetFieldCount()):
+        fdefn = ldefn.GetFieldDefn(n)
+        if fdefn.name==fieldname:
+            verif= True
+            break
+    if verif:
+        vals = []
+        for feat in layer:
+            val = feat.GetField(fieldname)
+            if val is not None:
+                vals.append(feat.GetField(fieldname))      
+        nbval = np.unique(vals).shape[0]
+        if nbval==1:
+            verif=False
+    source_ds.Destroy() 
+    return verif
+
+def generate_HeadText(names,values):    
+    head_text=""
+    for i,item in enumerate(names):
+        head_text = head_text+item+(14-len(item))*" "+str(values[i])+"\n"
+    return head_text
+
+def save_raster_info(values,Rspace_c):   
+    np.savetxt(Rspace_c+"Area_extent.txt", values, fmt='%f', delimiter=';')
+
+def loadrasterinfo_from_file(Rspace_c):
+    values = list(np.loadtxt(Rspace_c+"Area_extent.txt"))
+    names = ['ncols', 'nrows', 'xllcorner', 'yllcorner', 'cellsize','NODATA_value']    
+    ncols = values[0]
+    nrows = values[1]
+    xmin=values[2]
+    ymin = values[3]    
+    Csize = values[4] 
+    Extent = [xmin,xmin+ncols*Csize,ymin,ymin+nrows*Csize]
+    return names,values,Extent
+
+def load_float_raster(raster_file,Dir_temp):
+    dataset = gdal.Open(raster_file,gdal.GA_ReadOnly)
+    cols = dataset.RasterXSize
+    rows = dataset.RasterYSize    
+    geotransform = dataset.GetGeoTransform()
+    xmin = geotransform[0]
+    xmax = xmin + geotransform[1]*cols
+    ymax = geotransform[3]
+    ymin = geotransform[3] + geotransform[5]*rows
+    Extent = [xmin,xmax,ymin,ymax]
+    Csize = abs(geotransform[1])
+    proj = dataset.GetProjection()
+    dataset_val = dataset.GetRasterBand(1)
+    nodatavalue = dataset_val.GetNoDataValue()
+    names = ['ncols', 'nrows', 'xllcorner', 'yllcorner', 'cellsize','NODATA_value']
+    values = [round(cols,2), round(rows,2), round(xmin,2), round(ymin,2), round(Csize,2),round(nodatavalue,2)]
+    head_text=""
+    for i,item in enumerate(names):
+        head_text = head_text+item+(14-len(item))*" "+str(values[i])+"\n"
+    f = open(Dir_temp+'info_extent.txt',"w")
+    f.write(head_text)
+    f.close()
+    Array = dataset_val.ReadAsArray()
+    Array[Array==nodatavalue]=-9999
+    dataset.FlushCache()
+    return np.float_(Array),Extent,Csize,proj 
+
+def load_float_raster_simple(raster_file):
+    dataset = gdal.Open(raster_file,gdal.GA_ReadOnly)    
+    dataset_val = dataset.GetRasterBand(1)
+    nodatavalue = dataset_val.GetNoDataValue()    
+    Array = dataset_val.ReadAsArray()
+    Array[Array==nodatavalue]=-9999
+    dataset.FlushCache()
+    return np.float_(Array)
+
+def get_source_src(file_name):
+    source_ds = ogr.Open(file_name)
+    source_layer = source_ds.GetLayer()
+    return source_layer.GetSpatialRef()
+
+def shapefile_to_np_array(file_name,Extent,Csize,attribute_name,order_field=None,order=None):
+    #Recupere les dimensions du raster ascii
+    xmin,xmax,ymin,ymax = Extent[0],Extent[1],Extent[2],Extent[3]
+    nrows,ncols = int((ymax-ymin)/float(Csize)+0.5),int((xmax-xmin)/float(Csize)+0.5)
+    # Get information from source shapefile
+    orig_data_source = ogr.Open(file_name)
+    source_ds = ogr.GetDriverByName("Memory").CopyDataSource(orig_data_source, "")
+    source_layer = source_ds.GetLayer()
+    if order:
+        source_layer_ordered = source_ds.ExecuteSQL('SELECT * FROM '+str(source_layer.GetName())+' ORDER BY '+order_field+' '+order)
+    else:source_layer_ordered=source_layer
+    source_srs = source_layer.GetSpatialRef()
+    # Initialize the new memory raster
+    maskvalue = 1    
+    xres=float(Csize)
+    yres=float(Csize)
+    geotransform=(xmin,xres,0,ymax,0, -yres)    
+    target_ds = gdal.GetDriverByName('MEM').Create('', int(ncols), int(nrows), 1, gdal.GDT_Int32)
+    target_ds.SetGeoTransform(geotransform)
+    if source_srs:
+        # Make the target raster have the same projection as the source
+        target_ds.SetProjection(source_srs.ExportToWkt())
+    else:
+        # Source has no projection (needs GDAL >= 1.7.0 to work)
+        target_ds.SetProjection('LOCAL_CS["arbitrary"]')
+    # Rasterize
+    err = gdal.RasterizeLayer(target_ds, [maskvalue], source_layer_ordered,options=["ATTRIBUTE="+attribute_name,"ALL_TOUCHED=TRUE"])
+    if err != 0:
+        raise Exception("error rasterizing layer: %s" % err)
+    else:
+        target_ds.FlushCache()
+        mask_arr = target_ds.GetRasterBand(1).ReadAsArray()
+        return mask_arr
+
+def select_in_shapefile(source_shapefile,out_Shape_Path,expression):
+    #Recupere le driver
+    driver = ogr.GetDriverByName('ESRI Shapefile')
+    #Get information from source shapefile
+    source_ds = ogr.Open(source_shapefile)
+    source_layer = source_ds.GetLayer()    
+    source_srs = source_layer.GetSpatialRef()
+    source_type = source_layer.GetGeomType()
+    try: source_layer_bis = source_ds.ExecuteSQL('SELECT * FROM '+str(source_layer.GetName())+' '+expression)   
+    except: print("Erreur de syntaxe dans l'expression")
+    # Initialize the output shapefile
+    if os.path.exists(out_Shape_Path):
+        driver.DeleteDataSource(out_Shape_Path)
+    target_ds = driver.CreateDataSource(out_Shape_Path)
+    layerName = os.path.splitext(os.path.split(out_Shape_Path)[1])[0]
+    layer = target_ds.CreateLayer(layerName, source_srs, source_type)
+    layerDefinition = layer.GetLayerDefn()
+    new_field = ogr.FieldDefn('Route', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    ind=0
+    for feat in source_layer_bis:
+        geometry = feat.GetGeometryRef()
+        feature = ogr.Feature(layerDefinition)
+        feature.SetGeometry(geometry)
+        feature.SetFID(ind)
+        feature.SetField('Route',1)
+        # Save feature
+        layer.CreateFeature(feature)
+        # Cleanup
+        feature.Destroy()
+        ind +=1
+    # Cleanup
+    target_ds.Destroy()
+    source_ds.Destroy()
+
+def linestring_to_point(Line_shapefile,Point_Shape_Path):
+    #Get driver
+    driver = ogr.GetDriverByName('ESRI Shapefile')
+    # Get line info
+    source_ds = ogr.Open(Line_shapefile)
+    source_layer = source_ds.GetLayer()
+    source_srs = source_layer.GetSpatialRef()
+    geoLocations = []
+    ind = 1
+    for feat in source_layer:
+        geom = feat.GetGeometryRef()
+        points = geom.GetPointCount()          
+        for p in range(points):
+            lon, lat,a = geom.GetPoint(p)
+            geoLocations.append([lon,lat,ind])
+        ind +=1
+    geoLocations = np.array(geoLocations)
+    fins_ligne = fin_ligne(geoLocations)
+    # Create output point shapefile
+    if os.path.exists(Point_Shape_Path):driver.DeleteDataSource(Point_Shape_Path)
+    target_ds = driver.CreateDataSource(Point_Shape_Path)
+    layerName = os.path.splitext(os.path.split(Point_Shape_Path)[1])[0]
+    layer = target_ds.CreateLayer(layerName, source_srs, ogr.wkbPoint)
+    layerDefinition = layer.GetLayerDefn()
+    new_field = ogr.FieldDefn('IND_LINE', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('FIN_LIGNE', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    ind = 0
+    for pointIndex, geoLocation in enumerate(geoLocations):
+        # Create point
+        geometry = ogr.Geometry(ogr.wkbPoint)
+        geometry.SetPoint(0, geoLocation[0], geoLocation[1])
+        # Create feature
+        feature = ogr.Feature(layerDefinition)
+        feature.SetGeometry(geometry)
+        feature.SetFID(pointIndex)
+        feature.SetField('IND_LINE',int(geoLocation[2]))
+        if pointIndex==fins_ligne[ind]:
+            feature.SetField('FIN_LIGNE',1)
+            ind +=1
+            if ind > len(fins_ligne)-1:
+                ind-=1
+        else:
+            feature.SetField('FIN_LIGNE',0)
+        # Save feature
+        layer.CreateFeature(feature)
+        # Cleanup
+        geometry.Destroy()
+        feature.Destroy()
+    # Cleanup
+    target_ds.Destroy()
+    return geoLocations,source_srs
+
+def fin_ligne(point_coords):
+    fin_ligne = []
+    for i in range(point_coords.shape[0]-1):
+        ind = np.sum((point_coords[:,0]==point_coords[i,0])*(point_coords[:,1]==point_coords[i,1]))
+        if ind ==1:
+            if i>0 and i+1<point_coords.shape[0]:
+                if point_coords[i-1,2]!=point_coords[i,2] or point_coords[i+1,2]!=point_coords[i,2]:
+                    fin_ligne.append(i)
+            elif i==0 and point_coords[i+1,2]==point_coords[i,2]:fin_ligne.append(i)
+            elif i==point_coords.shape[0]-1 and point_coords[i-1,2]==point_coords[i,2]:fin_ligne.append(i)
+    return fin_ligne  
+
+def points_to_lineshape(point_coords,Line_Shape_Path,projection):
+    #Recupere le driver
+    driver = ogr.GetDriverByName('ESRI Shapefile')
+    # Create output line shapefile 
+    if os.path.exists(Line_Shape_Path):driver.DeleteDataSource(Line_Shape_Path)
+    target_ds = driver.CreateDataSource(Line_Shape_Path)
+    layerName = os.path.splitext(os.path.split(Line_Shape_Path)[1])[0]
+    layer = target_ds.CreateLayer(layerName, projection, ogr.wkbLineString)
+    layerDefinition = layer.GetLayerDefn()
+    new_field = ogr.FieldDefn('DIRECTION', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    ind = 0
+    while ind<point_coords.shape[0]-1:        
+        if point_coords[ind+1,2]==point_coords[ind,2]:
+            line = ogr.Geometry(ogr.wkbLineString)
+            line.AddPoint(point_coords[ind,0],point_coords[ind,1])
+            line.AddPoint(point_coords[ind+1,0],point_coords[ind+1,1])
+            feature = ogr.Feature(layerDefinition)
+            feature.SetGeometry(line)
+            feature.SetFID(ind)
+            direction = calculate_direction(point_coords[ind,0],point_coords[ind,1], point_coords[ind+1,0],point_coords[ind+1,1])
+            if ind+2< point_coords.shape[0] and point_coords[ind+1,2]==point_coords[ind+2,2]:
+                feature.SetField('DIRECTION',direction)
+            else:
+                if direction <0:feature.SetField('DIRECTION',direction%180)
+                else:feature.SetField('DIRECTION',direction%(-180))
+            layer.CreateFeature(feature)
+            ind +=1
+            line.Destroy()
+            feature.Destroy()
+        else:
+            ind +=1
+    target_ds.Destroy()
+
+def calculate_direction(x1,y1,x2,y2):
+    DX = x2-x1
+    DY = y2-y1
+    Deuc = math.sqrt(DX**2+DY**2)
+    if x2>x1:Fact=1
+    else:Fact=-1
+    Angle = math.degrees(math.acos(DY/Deuc))
+    Angle *=Fact
+    return int(Angle+0.5)
+
+def get_head_text(ASCII_file):
+    names = np.genfromtxt(ASCII_file, dtype=None,usecols=(0))[0:6]
+    values = np.genfromtxt(ASCII_file, dtype=np.float,usecols=(1))[0:6]
+    Extent = [values[2],values[2]+values[4]*values[0],values[3],values[3]+values[4]*values[1]]
+    return names,values,Extent
+
+def generate_head_text(names,values,Csize):
+    rap = int(Csize/values[4])
+    values[0],values[1],values[4]= int(values[0]/rap+0.5),int(values[1]/rap+0.5),Csize
+    head_text=""
+    for i,item in enumerate(names):
+        head_text = head_text+item+(14-len(item))*" "+str(values[i])+"\n"
+    return head_text
+
+def buffer_shp(infile,outfile,buffdist):
+    try:
+        ds_in=ogr.Open( infile )
+        lyr_in=ds_in.GetLayer( 0 )
+        drv=ds_in.GetDriver()
+        if os.path.exists( outfile ):
+            drv.DeleteDataSource(outfile)
+        ds_out = drv.CreateDataSource( outfile )
+        layer = ds_out.CreateLayer(lyr_in.GetLayerDefn().GetName(),lyr_in.GetSpatialRef(), ogr.wkbPolygon)
+        for i in range ( lyr_in.GetLayerDefn().GetFieldCount() ):
+            field_in = lyr_in.GetLayerDefn().GetFieldDefn( i )
+            fielddef = ogr.FieldDefn( field_in.GetName(), field_in.GetType() )
+            layer.CreateField ( fielddef )
+        for feat in lyr_in:
+            geom = feat.GetGeometryRef()
+            feature = feat.Clone()
+            feature.SetGeometry(geom.Buffer(float(buffdist)))
+            layer.CreateFeature(feature)
+            del geom
+        ds_out.Destroy()
+    except:
+        return False
+    return True
+
+def shapefile_obs_to_np_array(file_list,Extent,Csize):
+    #Get raster dimension
+    xmin,xmax,ymin,ymax = Extent[0],Extent[1],Extent[2],Extent[3]
+    nrows,ncols = int((ymax-ymin)/float(Csize)+0.5),int((xmax-xmin)/float(Csize)+0.5)        
+    #Create obstacle raster
+    Obstacle = np.zeros((nrows,ncols),dtype=np.int)
+    #Loop on all shaefile
+    for shp in file_list:        
+        # Get shapefile info
+        source_ds = ogr.Open(shp)
+        source_layer = source_ds.GetLayer()    
+        source_srs = source_layer.GetSpatialRef()
+        source_type = source_layer.GetGeomType()
+        # Create copy
+        target_ds1 = ogr.GetDriverByName("Memory").CreateDataSource("")
+        layerName = os.path.splitext(os.path.split(shp)[1])[0]
+        layer = target_ds1.CreateLayer(layerName, source_srs, source_type)
+        layerDefinition = layer.GetLayerDefn()
+        new_field = ogr.FieldDefn('Transfo', ogr.OFTInteger)
+        layer.CreateField(new_field)
+        ind=0
+        for feat in source_layer:
+            geometry = feat.GetGeometryRef()
+            feature = ogr.Feature(layerDefinition)
+            feature.SetGeometry(geometry)
+            feature.SetFID(ind)
+            feature.SetField('Transfo',1)
+            # Save feature
+            layer.CreateFeature(feature)
+            # Cleanup
+            feature.Destroy()
+            ind +=1
+        # Initialize raster
+        maskvalue = 1    
+        xres=float(Csize)
+        yres=float(Csize)
+        geotransform=(xmin,xres,0,ymax,0, -yres)         
+        target_ds = gdal.GetDriverByName('MEM').Create('', int(ncols), int(nrows), 1, gdal.GDT_Int32)
+        target_ds.SetGeoTransform(geotransform)
+        if source_srs:
+            # Make the target raster have the same projection as the source
+            target_ds.SetProjection(source_srs.ExportToWkt())
+        else:
+            # Source has no projection (needs GDAL >= 1.7.0 to work)
+            target_ds.SetProjection('LOCAL_CS["arbitrary"]')
+        # Rasterize
+        err = gdal.RasterizeLayer(target_ds, [maskvalue], layer,options=["ATTRIBUTE=Transfo","ALL_TOUCHED=TRUE"])
+        if err != 0:
+            raise Exception("error rasterizing layer: %s" % err)
+        else:
+            target_ds.FlushCache()
+            mask_arr = target_ds.GetRasterBand(1).ReadAsArray()
+        Obstacle = Obstacle + mask_arr
+        target_ds1.Destroy()
+        source_ds.Destroy()
+    Obstacle = np.int8(Obstacle>0)
+    return Obstacle
+
+def shapefile_to_int8array(file_name,Extent,Csize):
+    #Get raster dimension
+    xmin,xmax,ymin,ymax = Extent[0],Extent[1],Extent[2],Extent[3]
+    nrows,ncols = int((ymax-ymin)/float(Csize)+0.5),int((xmax-xmin)/float(Csize)+0.5)        
+    #Create obstacle raster
+    Array = np.zeros((nrows,ncols),dtype=np.int8)      
+    # Get shapefile info
+    source_ds = ogr.Open(file_name)
+    source_layer = source_ds.GetLayer()    
+    source_srs = source_layer.GetSpatialRef()
+    source_type = source_layer.GetGeomType()
+    # Create copy
+    target_ds1 = ogr.GetDriverByName("Memory").CreateDataSource("")
+    layerName = "shp"
+    layer = target_ds1.CreateLayer(layerName, source_srs, source_type)
+    layerDefinition = layer.GetLayerDefn()
+    new_field = ogr.FieldDefn('Transfo', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    ind=0
+    for feat in source_layer:
+        geometry = feat.GetGeometryRef()
+        feature = ogr.Feature(layerDefinition)
+        feature.SetGeometry(geometry)
+        feature.SetFID(ind)
+        feature.SetField('Transfo',1)
+        # Save feature
+        layer.CreateFeature(feature)
+        # Cleanup
+        feature.Destroy()
+        ind +=1
+    # Initialize raster
+    maskvalue = 1    
+    xres=float(Csize)
+    yres=float(Csize)
+    geotransform=(xmin,xres,0,ymax,0, -yres)         
+    target_ds = gdal.GetDriverByName('MEM').Create('', int(ncols), int(nrows), 1, gdal.GDT_Int32)
+    target_ds.SetGeoTransform(geotransform)
+    if source_srs:
+        # Make the target raster have the same projection as the source
+        target_ds.SetProjection(source_srs.ExportToWkt())
+    else:
+        # Source has no projection (needs GDAL >= 1.7.0 to work)
+        target_ds.SetProjection('LOCAL_CS["arbitrary"]')
+    # Rasterize
+    err = gdal.RasterizeLayer(target_ds, [maskvalue], layer,options=["ATTRIBUTE=Transfo","ALL_TOUCHED=TRUE"])
+    if err != 0:
+        raise Exception("error rasterizing layer: %s" % err)
+    else:
+        target_ds.FlushCache()
+        Array = target_ds.GetRasterBand(1).ReadAsArray()
+    target_ds1.Destroy()
+    source_ds.Destroy()
+    return Array
+
+def raster_to_ASCII_int(raster_name,ascii_name):
+    source_ds = gdal.Open(raster_name)
+    content = source_ds.GetRasterBand(1).ReadAsArray()
+    xmin,Csize_x,a,ymax,b,Csize_y = source_ds.GetGeoTransform() 
+    ymin = ymax + Csize_y*source_ds.RasterYSize
+    names = ['ncols','nrows','xllcorner','yllcorner','cellsize','NODATA_value']
+    values = [source_ds.RasterXSize,source_ds.RasterYSize,xmin,ymin,Csize_x,-9999]
+    nodata = source_ds.GetRasterBand(1).GetNoDataValue()
+    content[content==nodata]=-10000
+    head_text=generate_head_text(names,values,Csize_x)
+    save_integer_ascii(ascii_name,head_text,np.int_(content+0.5))
+
+def raster_to_ASCII(raster_name,ascii_name):
+    source_ds = gdal.Open(raster_name)
+    content = source_ds.GetRasterBand(1).ReadAsArray()
+    xmin,Csize_x,a,ymax,b,Csize_y = source_ds.GetGeoTransform()   
+    ymin = ymax + Csize_y*source_ds.RasterYSize
+    names = ['ncols','nrows','xllcorner','yllcorner','cellsize','NODATA_value']
+    values = [source_ds.RasterXSize,source_ds.RasterYSize,xmin,ymin,Csize_x,-9999]
+    nodata = source_ds.GetRasterBand(1).GetNoDataValue()
+    content[content==nodata]=-9999    
+    head_text=generate_head_text(names,values,Csize_x)
+    save_float_ascii(ascii_name,head_text,content)
+
+def resample_raster(in_file_name,out_file_name,newCsize,methode=gdal.GRA_Bilinear):
+    # Get info from source
+    source_ds = gdal.Open(in_file_name)    
+    driver = source_ds.GetDriver()
+    src_proj = source_ds.GetProjection()
+    src_ncols = source_ds.RasterXSize
+    src_nrows = source_ds.RasterYSize
+    xmin,Csize_x,a,ymax,b,Csize_y = source_ds.GetGeoTransform()
+    xmin,ymax = int(xmin+0.5),int(ymax+0.5)    
+    Bandnb = source_ds.RasterCount    
+    # Create ouptut raster
+    xres=float(newCsize)
+    yres=float(newCsize)
+    xmax,ymin = xmin+int(float(src_ncols)*float(Csize_x)+0.5),ymax+int(float(src_nrows)*float(Csize_y)-0.5)
+    nrows,ncols = int((ymax-ymin)/float(newCsize)+0.5),int((xmax-xmin)/float(newCsize)+0.5) 
+    geotransform=(xmin,xres,0,ymax,0,-yres)    
+    if os.path.exists(out_file_name):driver.Delete(out_file_name)
+    target_ds = driver.Create(out_file_name, int(ncols), int(nrows), Bandnb, gdal.GDT_Float32)    
+    target_ds.SetGeoTransform(geotransform)
+    if src_proj:
+        # Make the target raster have the same projection as the source
+        target_ds.SetProjection(src_proj)
+    else:
+        # Source has no projection (needs GDAL >= 1.7.0 to work)
+        target_ds.SetProjection('LOCAL_CS["arbitrary"]')
+        src_proj = 'LOCAL_CS["arbitrary"]'    
+    gdal.ReprojectImage(source_ds, target_ds, src_proj, src_proj, methode)
+    target_ds.GetRasterBand(1).SetNoDataValue(0)
+    target_ds.GetRasterBand(1).GetStatistics(0,1)
+    target_ds.FlushCache() # Flush 
+
+def get_proj_from_road_network(road_network_file):
+    source_ds = ogr.Open(road_network_file)
+    source_layer = source_ds.GetLayer()    
+    source_srs = source_layer.GetSpatialRef()
+    return source_srs.ExportToWkt()
+
+def ArrayToGtiff(Array,file_name,Extent,nrows,ncols,road_network_proj,nodata_value,raster_type='INT32'):
+    xmin,xmax,ymin,ymax=Extent[0],Extent[1],Extent[2],Extent[3]
+    xres=(xmax-xmin)/float(ncols)
+    yres=(ymax-ymin)/float(nrows)
+    geotransform=(xmin,xres,0,ymax,0, -yres)
+    if raster_type=='INT32':
+        #-2147483648 to 2147483647
+        DataType = gdal.GDT_Int32    
+    elif raster_type=='UINT8':
+        #0 to 255
+        DataType = gdal.GDT_Byte
+    elif raster_type=='UINT16':
+        #0 to 65535    
+        DataType = gdal.GDT_UInt16
+    elif raster_type=='INT16':
+        #-32768 to 32767 
+        DataType = gdal.GDT_Int16
+    elif raster_type=='FLOAT32':
+        #Single precision float: sign bit, 8 bits exponent, 23 bits mantissa
+        DataType = gdal.GDT_Float32
+    elif raster_type=='FLOAT16':
+        #Half precision float: sign bit, 5 bits exponent, 10 bits mantissa
+        DataType = gdal.GDT_Float16
+    target_ds = gdal.GetDriverByName('GTiff').Create(file_name+'.tif', int(ncols), int(nrows), 1, DataType)
+    target_ds.SetGeoTransform(geotransform)
+    target_ds.SetProjection(road_network_proj)
+    target_ds.GetRasterBand(1).WriteArray( Array )
+    target_ds.GetRasterBand(1).SetNoDataValue(nodata_value)
+    target_ds.GetRasterBand(1).GetStatistics(0,1)
+    target_ds.FlushCache()
+
+def ArrayToGtiff(Array,file_name,Extent,nrows,ncols,Csize,road_network_proj,nodata_value,raster_type='INT32'):
+    """
+    Create Tiff raster from numpy array   
+    ----------
+    Parameters
+    ----------
+    Array:             np.array    Array name
+    file_name:         string      Complete name of the output raster
+    Extent:            list        Extent of the area : [xmin,xmax,ymin,ymax]
+    nrows:             int         Number of rows in the array
+    ncols:             int         Number of columns in the array
+    Csize:             int, float  Cell resolution of the array  
+    road_network_proj: string      Spatial projection
+    nodata_value:      int, float  Value representing nodata in the array
+    raster_type:       string      'INT32' (default),'UINT8','UINT16','FLOAT32','FLOAT16'
+
+    """
+    xmin,xmax,ymin,ymax=Extent[0],Extent[1],Extent[2],Extent[3]
+    xres=(xmax-xmin)/float(ncols)
+    yres=(ymax-ymin)/float(nrows)
+    geotransform=(xmin,xres,0,ymax,0, -yres)
+    if raster_type=='INT32':
+        #-2147483648 to 2147483647
+        DataType = gdal.GDT_Int32    
+    elif raster_type=='UINT8':
+        #0 to 255
+        DataType = gdal.GDT_Byte
+    elif raster_type=='UINT16':
+        #0 to 65535    
+        DataType = gdal.GDT_UInt16
+    elif raster_type=='INT16':
+        #-32768 to 32767 
+        DataType = gdal.GDT_Int16
+    elif raster_type=='FLOAT32':
+        #Single precision float: sign bit, 8 bits exponent, 23 bits mantissa
+        DataType = gdal.GDT_Float32
+    elif raster_type=='FLOAT16':
+        #Half precision float: sign bit, 5 bits exponent, 10 bits mantissa
+        DataType = gdal.GDT_Float16
+    target_ds = gdal.GetDriverByName('GTiff').Create(file_name+'.tif', int(ncols), int(nrows), 1, DataType)
+    target_ds.SetGeoTransform(geotransform)
+    target_ds.SetProjection(road_network_proj)
+    target_ds.GetRasterBand(1).WriteArray( Array )
+    target_ds.GetRasterBand(1).SetNoDataValue(nodata_value)
+    target_ds.GetRasterBand(1).GetStatistics(0,1)
+    target_ds.FlushCache()
+
+# Calculate local statistics from a raster
+def focal_stat(in_file_name,out_file_name,methode='MEAN',nbcell=3):    
+    # Get info of the input raster
+    source_ds = gdal.Open(in_file_name)
+    nodata = source_ds.GetRasterBand(1).GetNoDataValue()
+    driver = source_ds.GetDriver()
+    src_proj = source_ds.GetProjection()
+    nrows,ncols = source_ds.RasterYSize,source_ds.RasterXSize
+    geotransform = source_ds.GetGeoTransform()
+    Bandnb = source_ds.RasterCount   
+    Data = source_ds.GetRasterBand(1).ReadAsArray()  
+    #Make analysis
+    if methode=='MEAN':
+        outData = fc.focal_stat_mean(np.float_(Data),float(nodata),nbcell)
+    elif methode=='MIN':
+        outData = fc.focal_stat_min(np.float_(Data),float(nodata),nbcell)
+    elif methode=='MAX':
+        outData = fc.focal_stat_max(np.float_(Data),float(nodata),nbcell) 
+    elif methode=='NB':
+        outData = fc.focal_stat_nb(np.float_(Data),float(nodata),nbcell)   
+    elif methode=='SUM':
+        outData = fc.focal_stat_sum(np.float_(Data),float(nodata),nbcell)   
+    #Inititialiaze output raster
+    if os.path.exists(out_file_name):driver.Delete(out_file_name)
+    target_ds = driver.Create(out_file_name, int(ncols), int(nrows), Bandnb, gdal.GDT_Float32)    
+    target_ds.SetGeoTransform(geotransform)
+    if src_proj:
+        # Make the target raster have the same projection as the source
+        target_ds.SetProjection(src_proj)
+    else:
+        # Source has no projection (needs GDAL >= 1.7.0 to work)
+        target_ds.SetProjection('LOCAL_CS["arbitrary"]')
+        src_proj = 'LOCAL_CS["arbitrary"]' 
+    target_ds.GetRasterBand(1).WriteArray(outData)
+    target_ds.GetRasterBand(1).SetNoDataValue(nodata)
+    target_ds.GetRasterBand(1).GetStatistics(0,1)
+    target_ds.FlushCache() # Flush
+
+
+
+
+
+
+
 
