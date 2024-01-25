@@ -27,11 +27,7 @@ from PyQt5.QtWidgets import QFileDialog
 import os
 from qgis.core import *
 from PyQt5.QtWidgets import QMessageBox
-from fontTools.misc.etree import tostring
-#from skidder import Skidder
-#from porteur import Porteur
-#from cable import Cable
-#from cable_opti import Cable_opti
+
 
 
 # Chargement de l'interface utilisateur depuis le fichier .ui
