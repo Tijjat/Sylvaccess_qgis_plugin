@@ -16,6 +16,11 @@
     <height>843</height>
    </size>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Sylvaccess plugin</string>
   </property>
@@ -27,6 +32,11 @@
      <width>211</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
@@ -43,9 +53,14 @@
     <rect>
      <x>20</x>
      <y>0</y>
-     <width>921</width>
+     <width>911</width>
      <height>691</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
    </property>
    <property name="currentIndex">
     <number>0</number>
@@ -1742,12 +1757,17 @@
        <height>619</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout_16">
       <item>
        <widget class="QLabel" name="label_55">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>9</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -1798,7 +1818,7 @@
            </font>
           </property>
           <property name="maximum">
-           <number>100000</number>
+           <number>180</number>
           </property>
           <property name="value">
            <number>30</number>
@@ -1854,7 +1874,7 @@
            </font>
           </property>
           <property name="maximum">
-           <number>10000</number>
+           <number>100000</number>
           </property>
           <property name="value">
            <number>200</number>
@@ -1992,7 +2012,7 @@
            </font>
           </property>
           <property name="text">
-           <string>%</string>
+           <string>m</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -2048,7 +2068,7 @@
            </font>
           </property>
           <property name="text">
-           <string>m</string>
+           <string>%</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -2121,7 +2141,7 @@
        <widget class="QLabel" name="label_69">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>9</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -2159,6 +2179,11 @@
             <height>200</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
           <property name="layoutDirection">
            <enum>Qt::LeftToRight</enum>
           </property>
@@ -2183,7 +2208,7 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>7</pointsize>
+            <pointsize>9</pointsize>
             <italic>true</italic>
            </font>
           </property>
@@ -3795,6 +3820,7 @@
          <widget class="QLabel" name="label_103">
           <property name="font">
            <font>
+            <pointsize>9</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -3960,6 +3986,7 @@
          <widget class="QLabel" name="label_86">
           <property name="font">
            <font>
+            <pointsize>9</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -4111,6 +4138,7 @@
          <widget class="QLabel" name="label_85">
           <property name="font">
            <font>
+            <pointsize>9</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -4199,6 +4227,7 @@
          <widget class="QLabel" name="label_102">
           <property name="font">
            <font>
+            <pointsize>9</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -4386,6 +4415,11 @@
      <height>91</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <property name="spacing">
      <number>0</number>
@@ -4394,6 +4428,7 @@
      <widget class="QLabel" name="label_8">
       <property name="font">
        <font>
+        <pointsize>9</pointsize>
         <stylestrategy>PreferDefault</stylestrategy>
        </font>
       </property>
@@ -4409,6 +4444,11 @@
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <widget class="QLabel" name="label_5">
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Copyright : Sylvain DUPIRE - Sylvalab</string>
         </property>
@@ -4416,6 +4456,11 @@
       </item>
       <item>
        <widget class="QLabel" name="label_7">
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Auteur : Sylvain DUPIRE</string>
         </property>
@@ -4423,6 +4468,11 @@
       </item>
       <item>
        <widget class="QLabel" name="label_6">
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Logiciel libre régit par la licence GNU-GPL-v3</string>
         </property>
