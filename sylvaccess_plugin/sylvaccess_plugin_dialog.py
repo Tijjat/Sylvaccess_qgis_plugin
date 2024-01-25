@@ -31,7 +31,10 @@ from scipy import spatial
 import numpy as np
 from osgeo import gdal, osr, ogr
 import math
-import sylaccess_cython3 as fc
+from cython import pyximport
+pyximport.install()
+import sylvaccess_cython3 as fc
+from math import sqrt
 
 
 
@@ -136,6 +139,8 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
     # Fonction appelée lorsqu'on clique sur le bouton OK
     def launch(self):
+        a = self.spinBox_1.value()
+        console_info(a)
         for i in range (1,5):
             if not getattr(self, f"lineEdit_{i}").text():
                 console_warning("Veuillez remplir tous les champs")
@@ -249,7 +254,51 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             msg+="MERCI DE CORRIGER AVANT DE RELANCER SYLVACCESS\n"
             console_warning(msg)
         return verif
-             
+
+    def get_general(self,ski,por,cab,opti,pente):
+        if ski:
+            ski = getattr(self, f"checkBox_4").isChecked()
+        if por:
+            por = getattr(self, f"checkBox_3").isChecked()
+        if cab:
+            cab = getattr(self, f"checkBox_2").isChecked()
+        if opti:
+            opti = getattr(self, f"checkBox_1").isChecked()
+        if pente:
+            pente = self.spinBox_1.value()
+
+    def get_spatial(self,Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP):
+        if Wspace: 
+            Wspace = getattr(self, f"lineEdit_1").text()
+        if Rspace:
+            Rspace = getattr(self, f"lineEdit_2").text()
+        if mnt:
+            mnt = getattr(self, f"lineEdit_3").text()
+        if foret:
+            foret = getattr(self, f"lineEdit_4").text()
+        if desserte:
+            desserte = getattr(self, f"lineEdit_5").text()
+        if dep_cable:
+            dep_cable = getattr(self, f"lineEdit_6").text()
+        if ski_no_t_d:
+            ski_no_t_d = getattr(self, f"lineEdit_7").text()
+        if ski_no_t:
+            ski_no_t = getattr(self, f"lineEdit_8").text()
+        if por_obstacle:
+            por_obstacle = getattr(self, f"lineEdit_9").text()
+        if cab_obstacle:
+            cab_obstacle = getattr(self, f"lineEdit_10").text()
+        if HA:
+            HA = getattr(self, f"lineEdit_11").text()
+        if VAM:
+            VAM = getattr(self, f"lineEdit_12").text()
+        if VBP:
+            VBP = getattr(self, f"lineEdit_13").text()
+
+        return Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP
+
+
+
 # Fonctions qui fait tout les calculs liés au skidder
 def Skidder(self):
     console_info("Skidder")
@@ -869,53 +918,6 @@ def ArrayToGtiff(Array,file_name,Extent,nrows,ncols,road_network_proj,nodata_val
     target_ds.GetRasterBand(1).GetStatistics(0,1)
     target_ds.FlushCache()
 
-def ArrayToGtiff(Array,file_name,Extent,nrows,ncols,Csize,road_network_proj,nodata_value,raster_type='INT32'):
-    """
-    Create Tiff raster from numpy array   
-    ----------
-    Parameters
-    ----------
-    Array:             np.array    Array name
-    file_name:         string      Complete name of the output raster
-    Extent:            list        Extent of the area : [xmin,xmax,ymin,ymax]
-    nrows:             int         Number of rows in the array
-    ncols:             int         Number of columns in the array
-    Csize:             int, float  Cell resolution of the array  
-    road_network_proj: string      Spatial projection
-    nodata_value:      int, float  Value representing nodata in the array
-    raster_type:       string      'INT32' (default),'UINT8','UINT16','FLOAT32','FLOAT16'
-
-    """
-    xmin,xmax,ymin,ymax=Extent[0],Extent[1],Extent[2],Extent[3]
-    xres=(xmax-xmin)/float(ncols)
-    yres=(ymax-ymin)/float(nrows)
-    geotransform=(xmin,xres,0,ymax,0, -yres)
-    if raster_type=='INT32':
-        #-2147483648 to 2147483647
-        DataType = gdal.GDT_Int32    
-    elif raster_type=='UINT8':
-        #0 to 255
-        DataType = gdal.GDT_Byte
-    elif raster_type=='UINT16':
-        #0 to 65535    
-        DataType = gdal.GDT_UInt16
-    elif raster_type=='INT16':
-        #-32768 to 32767 
-        DataType = gdal.GDT_Int16
-    elif raster_type=='FLOAT32':
-        #Single precision float: sign bit, 8 bits exponent, 23 bits mantissa
-        DataType = gdal.GDT_Float32
-    elif raster_type=='FLOAT16':
-        #Half precision float: sign bit, 5 bits exponent, 10 bits mantissa
-        DataType = gdal.GDT_Float16
-    target_ds = gdal.GetDriverByName('GTiff').Create(file_name+'.tif', int(ncols), int(nrows), 1, DataType)
-    target_ds.SetGeoTransform(geotransform)
-    target_ds.SetProjection(road_network_proj)
-    target_ds.GetRasterBand(1).WriteArray( Array )
-    target_ds.GetRasterBand(1).SetNoDataValue(nodata_value)
-    target_ds.GetRasterBand(1).GetStatistics(0,1)
-    target_ds.FlushCache()
-
 # Calculate local statistics from a raster
 def focal_stat(in_file_name,out_file_name,methode='MEAN',nbcell=3):    
     # Get info of the input raster
@@ -953,6 +955,129 @@ def focal_stat(in_file_name,out_file_name,methode='MEAN',nbcell=3):
     target_ds.GetRasterBand(1).SetNoDataValue(nodata)
     target_ds.GetRasterBand(1).GetStatistics(0,1)
     target_ds.FlushCache() # Flush
+
+def prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize):
+    rastLosup,rastTh,rastTv = fc.Tabmesh(d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize)
+    np.save(Dir_temp+"rastLosup.npy",rastLosup)
+    np.save(Dir_temp+"rastTh.npy",rastTh)
+    np.save(Dir_temp+"rastTv.npy",rastTv)
+    text  = "d    "+" "+str(round(d,2))+"\n"
+    text += "E    "+" "+str(round(E,2))+"\n"
+    text += "Tmax "+" "+str(round(Tmax,2))+"\n"
+    text += "Lmax "+" "+str(round(Lmax,2))+"\n"
+    text += "Fo   "+" "+str(round(Fo,2))+"\n"
+    text += "Csize"+" "+str(round(Csize,2))+"\n"
+    text += "q1   "+" "+str(round(q1,2))+"\n"
+    text += "q2   "+" "+str(round(q2,2))+"\n"
+    text += "q3   "+" "+str(round(q3,2))+"\n"
+    f = open(Dir_temp+'info_config.txt',"w")
+    f.write(text)
+    f.close()
+    return rastLosup,rastTh,rastTv
+
+def check_tabconv(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize):
+    try:
+        a,v1=read_info(Dir_temp+"info_config.txt")
+        if np.all(np.array([round(d,2),round(E,2),round(Tmax,2),round(Lmax,2),round(Fo,2),round(Csize,2),round(q1,2),round(q2,2),round(q3,2)])==v1):
+            rastLosup = np.load(Dir_temp+"rastLosup.npy")
+            rastTh = np.load(Dir_temp+"rastTh.npy")
+            rastTv = np.load(Dir_temp+"rastTv.npy")
+        else:
+            rastLosup,rastTh,rastTv = prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize)
+    except:
+        rastLosup,rastTh,rastTv = prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize)        
+    return rastLosup,rastTh,rastTv
+
+def check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret):
+    indmax = 0
+    npix = Line.shape[0]
+    test = 1
+    i=0
+    Lline=Lmin-1
+    Dsansforet=0.
+    for i in range(0,npix): 
+        if Line[i,5]<0:break
+        if Line[i,5]>=ncols:break
+        if Line[i,6]<0:break
+        if Line[i,6]>=nrows:break
+        if Line[i,7]==1:break
+        if sqrt(Line[i,0]*Line[i,0]+(Line[i,1]-Line[0,1])*(Line[i,1]-Line[0,1]))>Lmax:break        
+        if (Line[i,8]+Line[i,9])>0:                 
+            if Line[i,2]==1:
+                indmax = i 
+                Dsansforet=0
+            else:
+                if i>0: Dsansforet+=Line[i,0]-Line[i-1,0]
+                if Dsansforet>=Lsans_foret:break
+        else:        
+            break
+    Lline = Line[indmax,0]
+    if Lline <= Lmin:
+        test=0
+    return test,indmax+1,Lline
+
+def get_ligne3(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,Pente,Hfor,test_hfor,Lmax,Lmin,Csize,
+              Row_line,Col_line,D_line,Nbpix_line,angle_transv,slope_trans,ncols,nrows,Lsans_foret,
+              Fo,Tmax,q1,q2,q3,Htower,Hend,Hline_max,Hintsup,Lslope,PropSlope):
+                  
+    npix = Nbpix_line[az]
+    npix = fc.get_npix(az,npix,coordY,coordX,ncols,nrows,Row_line,Col_line)   
+    if D_line[az,npix-1]>Lmin:  
+        Line=np.zeros((npix,11),dtype=np.float)
+        inds = (Row_line[az,0:npix]+coordY,Col_line[az,0:npix]+coordX)        
+        Line[:,0],Line[:,1],Line[:,2]=D_line[az,0:npix],MNT[inds],Forest[inds]
+        Line[:,3],Line[:,4]=Csize*Col_line[az,0:npix]+posiX,-Csize*Row_line[az,0:npix]+posiY
+        Line[:,5],Line[:,6]=Col_line[az,0:npix]+coordX,Row_line[az,0:npix]+coordY 
+        Line[:,7],Line[:,8],Line[:,9]=Fin_ligne_forcee[inds],np.abs(((az-np.int_(Aspect[inds]))+180)%360-180),(np.int_(Pente[inds])<slope_trans)*1
+        ### Check pente en devers
+        Line[:,8] = (Line[:,8]>(90+angle_transv))*1+(Line[:,8]<(90-angle_transv))*1 
+        if test_hfor:
+            Line[:,10]=np.round(np.minimum(np.maximum(-7.76961+0.71858*Hfor[inds],0),26))
+        else:
+            Line[:,10]=Hintsup
+        ####Raccourci pour ne pas depasser Hline_max
+        indmax=Line.shape[0]-1
+        for i in range(indmax,1,-1):  
+            test=1
+            D = Line[i,0]
+            H = abs(Line[0,1]+Htower-(Line[i,1]+Hend))    
+            if Line[0,1]+Htower>=Line[i,1]+Hend:
+                Xup,Zup =0,Line[0,1]+Htower
+                fact = 1. 
+            else:    
+                Xup,Zup = Line[i,0],Line[i,1]+Hend
+                fact = -1.             
+            L=sqrt(H*H+D*D)
+            F = 0.5*(0.5*L*q2+0.5*L*q3)*9.80665 + Fo  
+            fleche = 1.1*(F*L/(4*Tmax)+q1*9.80665*L*L/(8*Tmax))
+            for j in range(1,i-1):
+                droite = -fact*H/D*(Line[j,0]-Xup)+Zup-Line[j,1]
+                if droite-fleche > Hline_max:
+                    test=0
+                    break
+            if test:
+                break
+        Line=Line[0:i+1]
+        test,indmax,Lline=fc.check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret,Lslope,PropSlope)    
+        return test,Lline,Line[0:indmax, [0, 1, 2, 3, 4, 5, 6,10,9]]
+    else:
+        return 0,0,0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

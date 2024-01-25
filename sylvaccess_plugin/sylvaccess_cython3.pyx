@@ -98,7 +98,7 @@ ctypedef np.float32_t dtypef32_t
 # Retourne le maximum d'un array
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef int max_array(np.ndarray[dtype_t, ndim=1] a):
+cdef int max_array(np.ndarray[dtype_t, ndim=1] a):
     cdef int max_a = a[0]
     cdef unsigned int item = 1
     for item from 1 <= item < a.shape[0]:
@@ -141,7 +141,7 @@ cdef double g = 9.80665,pi=3.141592653589793
 @cython.cdivision(True)
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[dtype8_t,ndim=2] copy_int8_array(np.ndarray[dtype8_t,ndim=2] arraystock,np.ndarray[dtype8_t,ndim=2] arraytocopy, int nline, int ncol):
+cdef np.ndarray[dtype8_t,ndim=2] copy_int8_array(np.ndarray[dtype8_t,ndim=2] arraystock,np.ndarray[dtype8_t,ndim=2] arraytocopy, int nline, int ncol):
     cdef int i,j
     for i from 0<=i<nline:
         for j from 0<=j<ncol:            
@@ -151,7 +151,7 @@ cpdef np.ndarray[dtype8_t,ndim=2] copy_int8_array(np.ndarray[dtype8_t,ndim=2] ar
 # Renvoie la somme des valeurs d'un array d'entier 8
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef long int8_array_sum(np.ndarray[dtype8_t, ndim=2] matrice):
+cdef long int8_array_sum(np.ndarray[dtype8_t, ndim=2] matrice):
     cdef long somme = 0
     cdef unsigned int y = 0
     cdef unsigned int x = 0
@@ -163,7 +163,7 @@ cpdef long int8_array_sum(np.ndarray[dtype8_t, ndim=2] matrice):
 # Renvoie la somme des valeurs d'un array d'entier 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef long int_array_sum(np.ndarray[dtype_t, ndim=2] matrice):
+cdef long int_array_sum(np.ndarray[dtype_t, ndim=2] matrice):
     cdef long somme = 0
     cdef unsigned int y = 0
     cdef unsigned int x = 0
@@ -180,7 +180,7 @@ cpdef long int_array_sum(np.ndarray[dtype_t, ndim=2] matrice):
 @cython.cdivision(True)
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[dtypef32_t,ndim=2] pente(np.ndarray[dtypef_t,ndim=2] raster_mnt,double Csize,double nodata):
+cdef np.ndarray[dtypef32_t,ndim=2] pente(np.ndarray[dtypef_t,ndim=2] raster_mnt,double Csize,double nodata):
     """
     Calcule la pente en % a partir d'un raster MNT et d'une taille de cellule donnee
     -----
@@ -354,7 +354,7 @@ cpdef np.ndarray[dtypef32_t,ndim=2] pente(np.ndarray[dtypef_t,ndim=2] raster_mnt
 @cython.cdivision(True)
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[dtypef_t,ndim=2] exposition(np.ndarray[dtypef_t,ndim=2] raster_mnt,double Csize,double nodata):
+cdef np.ndarray[dtypef_t,ndim=2] exposition(np.ndarray[dtypef_t,ndim=2] raster_mnt,double Csize,double nodata):
     """
     Calcule la expo en % a partir d'un raster MNT et d'une taille de cellule donnee
     -----
@@ -603,7 +603,7 @@ cdef mask_zone(np.ndarray[dtype8_t,ndim=2] matrice):
 # Fonction permettant de calculer la distance avec un raster de cout
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef calcul_distance_de_cout(np.ndarray[dtype8_t,ndim=2] from_rast,np.ndarray[dtypef32_t,ndim=2] cost_rast,
+cdef calcul_distance_de_cout(np.ndarray[dtype8_t,ndim=2] from_rast,np.ndarray[dtypef32_t,ndim=2] cost_rast,
                             np.ndarray[dtype8_t,ndim=2] zone_rast,
                             double Csize,unsigned int Max_distance=100000):    
     """
@@ -683,7 +683,7 @@ cpdef calcul_distance_de_cout(np.ndarray[dtype8_t,ndim=2] from_rast,np.ndarray[d
 # Fonction permettant de calculer la distance avec un raster de cout et 2 allocations
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef calcul_distance_de_cout_2_alloc(np.ndarray[dtype_t,ndim=2] from_rast1,np.ndarray[dtype_t,ndim=2] from_rast2,
+cdef calcul_distance_de_cout_2_alloc(np.ndarray[dtype_t,ndim=2] from_rast1,np.ndarray[dtype_t,ndim=2] from_rast2,
                                     np.ndarray[dtypef_t,ndim=2] cost_rast, np.ndarray[dtype_t,ndim=2] zone_rast,
                                     double Csize,unsigned int Max_distance=100000):    
     """
@@ -764,7 +764,7 @@ cpdef calcul_distance_de_cout_2_alloc(np.ndarray[dtype_t,ndim=2] from_rast1,np.n
 @cython.cdivision(True)
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[dtypef_t,ndim=2] focal_stat_mean(np.ndarray[dtypef_t,ndim=2] raster,double nodata,unsigned int cote):
+cdef np.ndarray[dtypef_t,ndim=2] focal_stat_mean(np.ndarray[dtypef_t,ndim=2] raster,double nodata,unsigned int cote):
     """
     Calcule la moyenne locale sur un raster
     -----
@@ -796,7 +796,7 @@ cpdef np.ndarray[dtypef_t,ndim=2] focal_stat_mean(np.ndarray[dtypef_t,ndim=2] ra
 @cython.cdivision(True)
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[dtypef_t,ndim=2] focal_stat_sum(np.ndarray[dtypef_t,ndim=2] raster,double nodata,unsigned int cote):
+cdef np.ndarray[dtypef_t,ndim=2] focal_stat_sum(np.ndarray[dtypef_t,ndim=2] raster,double nodata,unsigned int cote):
     """
     Calcule la moyenne locale sur un raster
     -----
@@ -826,7 +826,7 @@ cpdef np.ndarray[dtypef_t,ndim=2] focal_stat_sum(np.ndarray[dtypef_t,ndim=2] ras
 #Renvoie le nombre de cellule non vides dans les cellules adjacentes
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[dtypef_t,ndim=2] focal_stat_nb(np.ndarray[dtypef_t,ndim=2] raster,double nodata,unsigned int cote):
+cdef np.ndarray[dtypef_t,ndim=2] focal_stat_nb(np.ndarray[dtypef_t,ndim=2] raster,double nodata,unsigned int cote):
     """
     Calcule le nombre de cellule non null sur un raster
     -----
@@ -856,7 +856,7 @@ cpdef np.ndarray[dtypef_t,ndim=2] focal_stat_nb(np.ndarray[dtypef_t,ndim=2] rast
 #Renvoie le minimum des cellules adjacentes
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[dtypef_t,ndim=2] focal_stat_min(np.ndarray[dtypef_t,ndim=2] raster,double nodata,unsigned int cote):
+cdef np.ndarray[dtypef_t,ndim=2] focal_stat_min(np.ndarray[dtypef_t,ndim=2] raster,double nodata,unsigned int cote):
     """
     Calcule le minimum local sur un raster
     -----
@@ -887,7 +887,7 @@ cpdef np.ndarray[dtypef_t,ndim=2] focal_stat_min(np.ndarray[dtypef_t,ndim=2] ras
 #Renvoie le maximum des cellules adjacentes
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[dtypef_t,ndim=2] focal_stat_max(np.ndarray[dtypef_t,ndim=2] raster,double nodata,unsigned int cote):
+cdef np.ndarray[dtypef_t,ndim=2] focal_stat_max(np.ndarray[dtypef_t,ndim=2] raster,double nodata,unsigned int cote):
     """
     Calcule le maximum local sur un raster
     -----
@@ -922,7 +922,7 @@ cpdef np.ndarray[dtypef_t,ndim=2] focal_stat_max(np.ndarray[dtypef_t,ndim=2] ras
 # Renvoie la zone correspondant a l'azimuth cherche
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[dtype8_t,ndim=2] get_zone(int direction,np.ndarray[dtype8_t,ndim=2] Matrice,int Buffer_cote):
+cdef np.ndarray[dtype8_t,ndim=2] get_zone(int direction,np.ndarray[dtype8_t,ndim=2] Matrice,int Buffer_cote):
     cdef unsigned int h3 = direction*(Buffer_cote+1)
     cdef unsigned int b3 = h3 + Buffer_cote+1
     return Matrice[h3:b3]
@@ -930,7 +930,7 @@ cpdef np.ndarray[dtype8_t,ndim=2] get_zone(int direction,np.ndarray[dtype8_t,ndi
 # Renvoie le cadran correspondant a l'azimuth
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef get_cadran(unsigned int direction,unsigned int Buffer_cote):
+cdef get_cadran(unsigned int direction,unsigned int Buffer_cote):
     cdef unsigned int h,l
     if direction <=90:
         h = 0        
@@ -948,7 +948,7 @@ cpdef get_cadran(unsigned int direction,unsigned int Buffer_cote):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef get_npix(int az, int npix,int coordY, int coordX, int ncols, int nrows,
+cdef get_npix(int az, int npix,int coordY, int coordX, int ncols, int nrows,
                np.ndarray[dtype16_t,ndim=2] Row_line, np.ndarray[dtype16_t,ndim=2] Col_line):                   
     cdef int i=0,x,y
     for i from 0<=i<npix:
@@ -967,7 +967,7 @@ cpdef get_npix(int az, int npix,int coordY, int coordX, int ncols, int nrows,
 
 #@cython.boundscheck(False)
 #@cython.wraparound(False)
-#cpdef check_line(np.ndarray[dtypef_t,ndim=2] Line,int Lmax,int Lmin,int nrows, int ncols,double Lsans_foret):
+#cdef check_line(np.ndarray[dtypef_t,ndim=2] Line,int Lmax,int Lmin,int nrows, int ncols,double Lsans_foret):
 #    cdef int indmax = 0
 #    cdef int npix = Line.shape[0]
 #    cdef int test = 1
@@ -994,7 +994,7 @@ cpdef get_npix(int az, int npix,int coordY, int coordX, int ncols, int nrows,
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef check_line(np.ndarray[dtypef_t,ndim=2] Line,int Lmax,int Lmin,int nrows, int ncols,double Lsans_foret,double Lslope,double PropSlope):
+cdef check_line(np.ndarray[dtypef_t,ndim=2] Line,int Lmax,int Lmin,int nrows, int ncols,double Lsans_foret,double Lslope,double PropSlope):
     cdef int indmax = 0,indmax2=0
     cdef int npix = Line.shape[0]
     cdef int test = 1
@@ -1038,7 +1038,7 @@ cpdef check_line(np.ndarray[dtypef_t,ndim=2] Line,int Lmax,int Lmin,int nrows, i
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True) 
-cpdef get_line_carac_simple(int coordX, int coordY, int az,double Csize,int ncols,int nrows,
+cdef get_line_carac_simple(int coordX, int coordY, int az,double Csize,int ncols,int nrows,
                             double Lline,np.ndarray[dtype16_t,ndim=2] Row_ext,np.ndarray[dtype16_t,ndim=2] Col_ext,
                             np.ndarray[dtypef_t,ndim=2] D_ext, np.ndarray[dtype8_t,ndim=2] Forest, np.ndarray[dtype8_t,ndim=2] Rast_couv):
     cdef int x,y                          
@@ -1075,7 +1075,7 @@ cpdef get_line_carac_simple(int coordX, int coordY, int az,double Csize,int ncol
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True) 
-cpdef get_line_carac_vol(int coordX, int coordY, int az,double Csize,int ncols,int nrows,
+cdef get_line_carac_vol(int coordX, int coordY, int az,double Csize,int ncols,int nrows,
                          double Lline,np.ndarray[dtype16_t,ndim=2] Row_ext,np.ndarray[dtype16_t,ndim=2] Col_ext,
                          np.ndarray[dtypef_t,ndim=2] D_ext, np.ndarray[dtype8_t,ndim=2] Forest, np.ndarray[dtype8_t,ndim=2] Rast_couv,
                          np.ndarray[dtypef_t,ndim=2] Vol_ha, np.ndarray[dtypef_t,ndim=2] Vol_AM):
@@ -1127,7 +1127,7 @@ cpdef get_line_carac_vol(int coordX, int coordY, int az,double Csize,int ncols,i
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef Check_line(int coordX, int coordY, int az,int ncols,int nrows, double Lline,
+cdef Check_line(int coordX, int coordY, int az,int ncols,int nrows, double Lline,
                  np.ndarray[dtype16_t,ndim=2] Row_ext,np.ndarray[dtype16_t,ndim=2] Col_ext,
                  np.ndarray[dtypef_t,ndim=2] D_ext, np.ndarray[dtypef_t,ndim=2] D_lat,
                  np.ndarray[dtype8_t,ndim=2] Rast_couv,double debut, double recouv,double rapport):
@@ -1176,7 +1176,7 @@ cpdef Check_line(int coordX, int coordY, int az,int ncols,int nrows, double Llin
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef Check_line2(int coordX, int coordY, int az,int ncols,int nrows, double Lline,
+cdef Check_line2(int coordX, int coordY, int az,int ncols,int nrows, double Lline,
                  np.ndarray[dtype16_t,ndim=2] Row_ext,np.ndarray[dtype16_t,ndim=2] Col_ext,
                  np.ndarray[dtypef_t,ndim=2] D_ext, np.ndarray[dtypef_t,ndim=2] D_lat,
                  np.ndarray[dtype8_t,ndim=2] Rast_couv, double recouv,double rapport):
@@ -1219,7 +1219,7 @@ cpdef Check_line2(int coordX, int coordY, int az,int ncols,int nrows, double Lli
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cpdef get_prop(int coordX, int coordY, int az,int ncols,int nrows, double Lline,
+cdef get_prop(int coordX, int coordY, int az,int ncols,int nrows, double Lline,
                  np.ndarray[dtype16_t,ndim=2] Row_ext,np.ndarray[dtype16_t,ndim=2] Col_ext,
                  np.ndarray[dtypef_t,ndim=2] D_ext, np.ndarray[dtypef_t,ndim=2] D_lat,
                  np.ndarray[dtype8_t,ndim=2] Rast_couv):
@@ -1250,7 +1250,7 @@ cpdef get_prop(int coordX, int coordY, int az,int ncols,int nrows, double Lline,
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef Check_line3(int coordX, int coordY, int az,int ncols,int nrows, double Lline,
+cdef Check_line3(int coordX, int coordY, int az,int ncols,int nrows, double Lline,
                  np.ndarray[dtype16_t,ndim=2] Row_ext,np.ndarray[dtype16_t,ndim=2] Col_ext,
                  np.ndarray[dtypef_t,ndim=2] D_ext, np.ndarray[dtypef_t,ndim=2] D_lat,
                  np.ndarray[dtype8_t,ndim=2] Rast_couv, double rapport):
@@ -1323,15 +1323,15 @@ cdef double dg_dTh(double Tv,double Th,double Lo,double W,double s1,double F,
 
 # Equation F(Th,Tv)
 @cython.cdivision(True) 
-cpdef double f_x(double Th,double Tv,double Lo,double EAo,double W,double F,double s1,double D):
-    cpdef double x = Th*Lo/EAo -D
+cdef double f_x(double Th,double Tv,double Lo,double EAo,double W,double F,double s1,double D):
+    cdef double x = Th*Lo/EAo -D
     x += Th*Lo/W*(asinh(Tv/Th)-asinh((Tv-F-W)/Th)+asinh((Tv-F-W*s1/Lo)/Th)-asinh((Tv-W*s1/Lo)/Th))
     return x
 
 # Equation G(Th,Tv)
 @cython.cdivision(True)     
-cpdef double f_z(double Th,double Tv,double Lo,double EAo,double W,double F,double s1,double H):
-    cpdef double z = W*Lo/EAo*(Tv/W-0.5)-H
+cdef double f_z(double Th,double Tv,double Lo,double EAo,double W,double F,double s1,double H):
+    cdef double z = W*Lo/EAo*(Tv/W-0.5)-H
     cdef double Temp= sqrt(1+(Tv/Th)*(Tv/Th))-sqrt(1+((Tv-F-W)/Th)*((Tv-F-W)/Th))+F*W/(Th*EAo)*(s1/Lo-1)
     Temp += sqrt(1+((Tv-F-W*s1/Lo)/Th)*((Tv-F-W*s1/Lo)/Th))-sqrt(1+((Tv-W*s1/Lo)/Th)*((Tv-W*s1/Lo)/Th))
     z += Th*Lo/W*Temp
@@ -1339,7 +1339,7 @@ cpdef double f_z(double Th,double Tv,double Lo,double EAo,double W,double F,doub
 
 # Fonction donnant X en fonction de s, l'abscisse curviligne
 @cython.cdivision(True)
-cpdef double calcul_xs(double Th,double Tv,double Lo,double EAo,double W,double F,double s1,double s):
+cdef double calcul_xs(double Th,double Tv,double Lo,double EAo,double W,double F,double s1,double s):
     """    
     Renvoie la position horizontale du cable en s quand la charge se trouve a l'abscisse curviligne s1
     ---
@@ -1353,13 +1353,13 @@ cpdef double calcul_xs(double Th,double Tv,double Lo,double EAo,double W,double 
         s1    m       Abscisse curviligne correspondant a la position de la charge
         s    m        Abscisse curviligne correspondant a la position du cable testee
     """    
-    cpdef double x = Th*s/EAo
+    cdef double x = Th*s/EAo
     x += Th*Lo/W*(asinh(Tv/Th)-asinh((Tv-F-W*s/Lo)/Th)+asinh((Tv-F-W*s1/Lo)/Th)-asinh((Tv-W*s1/Lo)/Th))
     return x
     
 # Fonction donnant Z en fonction de s, l'abscisse curviligne    
 @cython.cdivision(True)
-cpdef double calcul_zs(double Th,double Tv,double Lo,double EAo,double W,double F,double s1,double s):
+cdef double calcul_zs(double Th,double Tv,double Lo,double EAo,double W,double F,double s1,double s):
     """    
     Renvoie la position verticale du cable en s quand la charge se trouve a l'abscisse curviligne s1
     ---
@@ -1373,18 +1373,18 @@ cpdef double calcul_zs(double Th,double Tv,double Lo,double EAo,double W,double 
         s1    m       Abscisse curviligne correspondant a la position de la charge
         s    m        Abscisse curviligne correspondant a la position du cable testee
     """   
-    cpdef double z = W*s/EAo*(Tv/W-s/(2*Lo))
+    cdef double z = W*s/EAo*(Tv/W-s/(2*Lo))
     cdef double Temp = sqrt(1+square(Tv/Th))-sqrt(1+square((Tv-F-W*s/Lo)/Th))+F*W/(Th*EAo)*(s1/Lo-s/Lo)
     Temp += sqrt(1+square((Tv-F-W*s1/Lo)/Th))-sqrt(1+square((Tv-W*s1/Lo)/Th))
     z += Th*Lo/W*Temp
     return z
    
 # FindThTv according to Tmax
-cpdef tuple find_ThTvTmax(double Tmax,double W,double EAo,double F,double pas,double D,double H,double Lo,unsigned int step=50):
+cdef tuple find_ThTvTmax(double Tmax,double W,double EAo,double F,double pas,double D,double H,double Lo,unsigned int step=50):
     cdef double Fx,Gz,Fx_min=0.05,Gz_min=0.05,sum_min=10.
-    cpdef double Th=-1.,Tv=-1.
+    cdef double Th=-1.,Tv=-1.
     cdef Py_ssize_t i, j,test=0
-    cpdef unsigned int T=1
+    cdef unsigned int T=1
     for i from 0 <= i < int(Tmax) by step:
         for j from 0 <= j < int(Tmax) by step:
             Fx = f_x(float(i),float(j),Lo,EAo,W,F,pas,D)            
@@ -1404,7 +1404,7 @@ cpdef tuple find_ThTvTmax(double Tmax,double W,double EAo,double F,double pas,do
 
 # Trouve le couple Th,Tv solution des equations fx = 0 et fz=0
 @cython.cdivision(True)
-cpdef tuple newton_ThTv(double Th,double Tv,double H,double D,double Lo,double W,double s1,double F,double EAo,double Tmax,double err=1.0):
+cdef tuple newton_ThTv(double Th,double Tv,double H,double D,double Lo,double W,double s1,double F,double EAo,double Tmax,double err=1.0):
     """
     Cherche Th et Tv pour resoudre les equations de la position de la charge selon l'abscisse curviligne
     Renvoie le couple Th,Tv solution des equations FX(Th,Tv)=0 et GZ(Th,Tv)=0
@@ -1467,7 +1467,7 @@ cpdef tuple newton_ThTv(double Th,double Tv,double H,double D,double Lo,double W
 @cython.cdivision(True) 
 @cython.boundscheck(False)
 @cython.wraparound(False)    
-cpdef Tabmesh(double d,double E,double Tmax,double Lmax,double Fo,double q1,double q2,double q3,double Csize):
+cdef Tabmesh(double d,double E,double Tmax,double Lmax,double Fo,double q1,double q2,double q3,double Csize):
     """
     Creer les rasters pour converger plus vite vers les solutions Th,Tv,Lomin
     """
@@ -1475,14 +1475,14 @@ cpdef Tabmesh(double d,double E,double Tmax,double Lmax,double Fo,double q1,doub
     cdef int pas = 1
     cdef Py_ssize_t  ncol = ceil((Lmax+Csize)/pas-1)
     cdef Py_ssize_t  nline = ncol+1
-    cpdef np.ndarray[dtypef_t,ndim=2] rastLosup = np.zeros((nline,ncol),dtype=np.float)
+    cdef np.ndarray[dtypef_t,ndim=2] rastLosup = np.zeros((nline,ncol),dtype=np.float)
     cdef Py_ssize_t  i,j
     cdef double NaN = np.nan
     for i from 0<=i<nline:
         for j from 0<=j<ncol:
             rastLosup[i,j]=NaN
-    cpdef np.ndarray[dtypef_t,ndim=2] rastTh = np.copy(rastLosup)
-    cpdef np.ndarray[dtypef_t,ndim=2] rastTv = np.copy(rastLosup)
+    cdef np.ndarray[dtypef_t,ndim=2] rastTh = np.copy(rastLosup)
+    cdef np.ndarray[dtypef_t,ndim=2] rastTv = np.copy(rastLosup)
     cdef Py_ssize_t col=0,lig=0,Hmax  
     cdef double Tvo = 0.1*Tmax,Tho = 0.9*Tmax, Lsupo = 0.
     cdef double D,H,Tvprec,Thprec,Lsup_prec,diag,Lo,W,F,Th,Tv,Tcalc,incr,signe
@@ -1628,7 +1628,7 @@ cdef double frottement_ap(double Tension,double coeff_frot,double tan_haut,doubl
 @cython.cdivision(True)
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef int check_droite(double fact,double H,double D,double Xup,double Zup,
+cdef int check_droite(double fact,double H,double D,double Xup,double Zup,
                        np.ndarray[dtypef_t,ndim=2] Line,double Hline_min,
                        double Hline_max,double Tmax,double q1, double q2,double q3,
                        double Fo,int pg,int pd,double Dsupdep=0.,double Dsupend=0.):
@@ -1650,7 +1650,7 @@ cpdef int check_droite(double fact,double H,double D,double Xup,double Zup,
 @cython.cdivision(True)
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef double H_mid(double Lo,double F,double Th,double Tv,double Xup,double Zup,double fact,np.ndarray[dtypef_t,ndim=1] Alts,
+cdef double H_mid(double Lo,double F,double Th,double Tv,double Xup,double Zup,double fact,np.ndarray[dtypef_t,ndim=1] Alts,
                   double Hline_min,double q1,double EAo):
     cdef double W = q1*g*Lo
     cdef double s1 = Lo*0.5
@@ -1662,7 +1662,7 @@ cpdef double H_mid(double Lo,double F,double Th,double Tv,double Xup,double Zup,
 @cython.cdivision(True)
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef double slope_H_mid(double Lo,double F,double Th,double Tv,double Xup,double Zup,double fact,np.ndarray[dtypef_t,ndim=1] Alts,
+cdef double slope_H_mid(double Lo,double F,double Th,double Tv,double Xup,double Zup,double fact,np.ndarray[dtypef_t,ndim=1] Alts,
                   double q1,double EAo):
     cdef double W = q1*g*Lo
     cdef double s1 = Lo*0.5
@@ -1673,7 +1673,7 @@ cpdef double slope_H_mid(double Lo,double F,double Th,double Tv,double Xup,doubl
 @cython.cdivision(True)
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef double check_Hlinemin(np.ndarray[dtypef_t,ndim=1] Alts,double H,double D,double Lo,double fact,double Tho,double Tvo,
+cdef double check_Hlinemin(np.ndarray[dtypef_t,ndim=1] Alts,double H,double D,double Lo,double fact,double Tho,double Tvo,
                      double Xup,double Zup,double Fo,double Tmax,double Hline_min,double Hline_max,double q1,double q2,
                      double q3,double Csize,double EAo,double Dsupdep=0.,double Dsupend=0.):                  
     cdef double end= Lo-10.
@@ -1773,7 +1773,7 @@ cpdef double check_Hlinemin(np.ndarray[dtypef_t,ndim=1] Alts,double H,double D,d
 @cython.cdivision(True) 
 @cython.boundscheck(False)
 @cython.wraparound(False)   
-cpdef Find_Lomin(double D,double H,double Xup,double Zup,double fact,
+cdef Find_Lomin(double D,double H,double Xup,double Zup,double fact,
 		    np.ndarray[dtypef_t,ndim=1] Alts,double Fo,double Tmax,
 	            double q1,double q2,double q3,double EAo,np.ndarray[dtypef_t,ndim=2] rastLosup,
                     np.ndarray[dtypef_t,ndim=2] rastTh,np.ndarray[dtypef_t,ndim=2] rastTv,
@@ -1900,7 +1900,7 @@ cpdef Find_Lomin(double D,double H,double Xup,double Zup,double fact,
 @cython.cdivision(True) 
 @cython.boundscheck(False)
 @cython.wraparound(False)  
-cpdef test_Span(np.ndarray[dtypef_t,ndim=2] Line,int pg,int posi,double Hg, double Hd,
+cdef test_Span(np.ndarray[dtypef_t,ndim=2] Line,int pg,int posi,double Hg, double Hd,
                 double Hline_min, double Hline_max,double slope_min,double slope_max,
                 np.ndarray[dtypef_t,ndim=1] Alts,double Fo,double Tmax,double q1,
                 double q2, double q3, double EAo,np.ndarray[dtypef_t,ndim=2] rastLosup,
@@ -1978,7 +1978,7 @@ cdef np.ndarray[dtypef_t,ndim=2] get_Tabis2(np.ndarray[dtypef_t,ndim=2] Tab, int
 @cython.cdivision(True)  
 @cython.boundscheck(False)
 @cython.wraparound(False)  
-cpdef np.ndarray[dtypef_t,ndim=2] OptPyl_Up(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,double Htower,
+cdef np.ndarray[dtypef_t,ndim=2] OptPyl_Up(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,double Htower,
                                             double Hintsup,double Hend,double q1,double q2,double q3,double Fo,double Hline_min,double Hline_max,double Csize,
                                             double angle_intsup,double EAo,double E,double d,unsigned int sup_max,np.ndarray[dtypef_t,ndim=2] rastLosup,
                                             np.ndarray[dtypef_t,ndim=2] rastTh,np.ndarray[dtypef_t,ndim=2] rastTv,double Tmax,double LminSpan,double slope_min,
@@ -2195,7 +2195,7 @@ cpdef np.ndarray[dtypef_t,ndim=2] OptPyl_Up(np.ndarray[dtypef_t,ndim=2] Line,np.
 @cython.cdivision(True)  
 @cython.boundscheck(False)
 @cython.wraparound(False)  
-cpdef np.ndarray[dtypef_t,ndim=2] OptPyl_Up_NoH(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,double Htower,
+cdef np.ndarray[dtypef_t,ndim=2] OptPyl_Up_NoH(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,double Htower,
                                             double Hintsup,double Hend,double q1,double q2,double q3,double Fo,double Hline_min,double Hline_max,double Csize,
                                             double angle_intsup,double EAo,double E,double d,unsigned int sup_max,np.ndarray[dtypef_t,ndim=2] rastLosup,
                                             np.ndarray[dtypef_t,ndim=2] rastTh,np.ndarray[dtypef_t,ndim=2] rastTv,double Tmax,double LminSpan,double slope_min,
@@ -2390,7 +2390,7 @@ cpdef np.ndarray[dtypef_t,ndim=2] OptPyl_Up_NoH(np.ndarray[dtypef_t,ndim=2] Line
 @cython.cdivision(True)  
 @cython.boundscheck(False)
 @cython.wraparound(False)  
-cpdef np.ndarray[dtypef_t,ndim=2] OptPyl_Down_init(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,double Htower,
+cdef np.ndarray[dtypef_t,ndim=2] OptPyl_Down_init(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,double Htower,
                                             double Hintsup,double Hend,double q1,double q2,double q3,double Fo,double Hline_min,double Hline_max,double Csize,
                                             double angle_intsup,double EAo,double E,double d,unsigned int sup_max,np.ndarray[dtypef_t,ndim=2] rastLosup,
                                             np.ndarray[dtypef_t,ndim=2] rastTh,np.ndarray[dtypef_t,ndim=2] rastTv,double Tmax,double LminSpan,double slope_min,
@@ -2603,7 +2603,7 @@ cpdef np.ndarray[dtypef_t,ndim=2] OptPyl_Down_init(np.ndarray[dtypef_t,ndim=2] L
 @cython.cdivision(True)  
 @cython.boundscheck(False)
 @cython.wraparound(False)  
-cpdef np.ndarray[dtypef_t,ndim=2] OptPyl_Down_init_NoH(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,double Htower,
+cdef np.ndarray[dtypef_t,ndim=2] OptPyl_Down_init_NoH(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,double Htower,
                                             double Hintsup,double Hend,double q1,double q2,double q3,double Fo,double Hline_min,double Hline_max,double Csize,
                                             double angle_intsup,double EAo,double E,double d,unsigned int sup_max,np.ndarray[dtypef_t,ndim=2] rastLosup,
                                             np.ndarray[dtypef_t,ndim=2] rastTh,np.ndarray[dtypef_t,ndim=2] rastTv,double Tmax,double LminSpan,double slope_min,
@@ -2794,7 +2794,7 @@ cpdef np.ndarray[dtypef_t,ndim=2] OptPyl_Down_init_NoH(np.ndarray[dtypef_t,ndim=
 @cython.cdivision(True)  
 @cython.boundscheck(False)
 @cython.wraparound(False)  
-cpdef np.ndarray[dtypef_t,ndim=2] OptPyl_Up2(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,double Htower,
+cdef np.ndarray[dtypef_t,ndim=2] OptPyl_Up2(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,double Htower,
                                             double Hintsup,double Hend,double q1,double q2,double q3,double Fo,double Hline_min,double Hline_max,double Csize,
                                             double angle_intsup,double EAo,double E,double d,unsigned int sup_max,np.ndarray[dtypef_t,ndim=2] rastLosup,
                                             np.ndarray[dtypef_t,ndim=2] rastTh,np.ndarray[dtypef_t,ndim=2] rastTv,double Tmax,double LminSpan,double slope_min,
@@ -3003,7 +3003,7 @@ cpdef np.ndarray[dtypef_t,ndim=2] OptPyl_Up2(np.ndarray[dtypef_t,ndim=2] Line,np
 @cython.cdivision(True)  
 @cython.boundscheck(False)
 @cython.wraparound(False)  
-cpdef np.ndarray[dtypef_t,ndim=2] OptPyl_Up2_NoH(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,double Htower,
+cdef np.ndarray[dtypef_t,ndim=2] OptPyl_Up2_NoH(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,double Htower,
                                             double Hintsup,double Hend,double q1,double q2,double q3,double Fo,double Hline_min,double Hline_max,double Csize,
                                             double angle_intsup,double EAo,double E,double d,unsigned int sup_max,np.ndarray[dtypef_t,ndim=2] rastLosup,
                                             np.ndarray[dtypef_t,ndim=2] rastTh,np.ndarray[dtypef_t,ndim=2] rastTv,double Tmax,double LminSpan,double slope_min,
@@ -3192,7 +3192,7 @@ cpdef np.ndarray[dtypef_t,ndim=2] OptPyl_Up2_NoH(np.ndarray[dtypef_t,ndim=2] Lin
 @cython.cdivision(True)  
 @cython.boundscheck(False)
 @cython.wraparound(False)  
-cpdef OptPyl_Down(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,
+cdef OptPyl_Down(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,
                   double Htower,double Hintsup,double Hend,double q1,double q2,double q3,double Fo,double Hline_min,
                   double Hline_max,double Csize,double angle_intsup,double EAo,double E,double d,
                   unsigned int sup_max,np.ndarray[dtypef_t,ndim=2] rastLosup,np.ndarray[dtypef_t,ndim=2] rastTh,
@@ -3236,7 +3236,7 @@ cpdef OptPyl_Down(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] A
 @cython.cdivision(True)  
 @cython.boundscheck(False)
 @cython.wraparound(False)  
-cpdef OptPyl_Down_NoH(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,
+cdef OptPyl_Down_NoH(np.ndarray[dtypef_t,ndim=2] Line,np.ndarray[dtypef_t,ndim=1] Alts,np.ndarray[dtypef_t,ndim=2] Span,
                   double Htower,double Hintsup,double Hend,double q1,double q2,double q3,double Fo,double Hline_min,
                   double Hline_max,double Csize,double angle_intsup,double EAo,double E,double d,
                   unsigned int sup_max,np.ndarray[dtypef_t,ndim=2] rastLosup,np.ndarray[dtypef_t,ndim=2] rastTh,
@@ -3306,7 +3306,7 @@ def mask_3(np.ndarray[dtype_t,ndim=2] matrice,int nbpixel_bis):
 # Renvoie l'emprise reelle du cable
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[dtype_t,ndim=2] Line_emprise(np.ndarray[dtype_t,ndim=2] zone,int direction,unsigned int Buffer_cote,
+cdef np.ndarray[dtype_t,ndim=2] Line_emprise(np.ndarray[dtype_t,ndim=2] zone,int direction,unsigned int Buffer_cote,
                  np.ndarray[dtypeu8_t,ndim=2] Ligne_perpendic):
     cdef np.ndarray[dtype_t,ndim=2] zone_ok = zone.copy()
     cdef unsigned int h3 = direction*(1+2*Buffer_cote)
@@ -3342,7 +3342,7 @@ cpdef np.ndarray[dtype_t,ndim=2] Line_emprise(np.ndarray[dtype_t,ndim=2] zone,in
 # Sauvegarde les resultats dans un raster entier
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[dtype_t,ndim=2] concatenate_int(np.ndarray[dtype_t,ndim=2] zone,unsigned int h,unsigned int b,
+cdef np.ndarray[dtype_t,ndim=2] concatenate_int(np.ndarray[dtype_t,ndim=2] zone,unsigned int h,unsigned int b,
                  unsigned int l,unsigned int r,np.ndarray[dtype_t,ndim=2] Mask):
     cdef unsigned int y = h
     cdef unsigned int x = l
@@ -3359,7 +3359,7 @@ cpdef np.ndarray[dtype_t,ndim=2] concatenate_int(np.ndarray[dtype_t,ndim=2] zone
 # Sauvegarde les resultats dans un raster de nombre flottant
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[dtypef_t,ndim=2] concatenate_float(np.ndarray[dtypef_t,ndim=2] zone,unsigned int h,unsigned int b,
+cdef np.ndarray[dtypef_t,ndim=2] concatenate_float(np.ndarray[dtypef_t,ndim=2] zone,unsigned int h,unsigned int b,
                  unsigned int l,unsigned int r,np.ndarray[dtypef_t,ndim=2] Mask):
     cdef unsigned int y = h
     cdef unsigned int x = l
@@ -3379,7 +3379,7 @@ cpdef np.ndarray[dtypef_t,ndim=2] concatenate_float(np.ndarray[dtypef_t,ndim=2] 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cpdef skid_debusq_RF(np.ndarray[dtype_t,ndim=2] Lien_RF,np.ndarray[dtypef32_t,ndim=2] MNT,
+cdef skid_debusq_RF(np.ndarray[dtype_t,ndim=2] Lien_RF,np.ndarray[dtypef32_t,ndim=2] MNT,
                      np.ndarray[dtype16_t,ndim=2] Row_line,np.ndarray[dtype16_t,ndim=2] Col_line,
                      np.ndarray[dtypef_t,ndim=2] D_line,np.ndarray[dtype16_t,ndim=1] Nbpix_line,
                      double coeff, double orig, double Pmax_up, double Pmax_down,int damont,
@@ -3443,7 +3443,7 @@ cpdef skid_debusq_RF(np.ndarray[dtype_t,ndim=2] Lien_RF,np.ndarray[dtypef32_t,nd
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cpdef skid_debusq_Piste(np.ndarray[dtype_t,ndim=2] Lien_RF,np.ndarray[dtypef32_t,ndim=2] MNT,
+cdef skid_debusq_Piste(np.ndarray[dtype_t,ndim=2] Lien_RF,np.ndarray[dtypef32_t,ndim=2] MNT,
                         np.ndarray[dtype16_t,ndim=2] Row_line,np.ndarray[dtype16_t,ndim=2] Col_line,
                         np.ndarray[dtypef_t,ndim=2] D_line,np.ndarray[dtype16_t,ndim=1] Nbpix_line,
                         double coeff, double orig, double Pmax_up, double Pmax_down,unsigned int damont,
@@ -3512,7 +3512,7 @@ cpdef skid_debusq_Piste(np.ndarray[dtype_t,ndim=2] Lien_RF,np.ndarray[dtypef32_t
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cpdef skid_debusq_contour(np.ndarray[dtype_t,ndim=2] Lien_RF,np.ndarray[dtypef32_t,ndim=2] MNT,
+cdef skid_debusq_contour(np.ndarray[dtype_t,ndim=2] Lien_RF,np.ndarray[dtypef32_t,ndim=2] MNT,
                           np.ndarray[dtype16_t,ndim=2] Row_line,np.ndarray[dtype16_t,ndim=2] Col_line,
                           np.ndarray[dtypef_t,ndim=2] D_line,np.ndarray[dtype16_t,ndim=1] Nbpix_line,
                           double coeff, double orig, double Pmax_up, double Pmax_down,unsigned int damont,
@@ -3619,7 +3619,7 @@ cdef unsigned int seek_ind_i(np.ndarray[dtype32_t,ndim=2] Tab, unsigned int x, u
 # Link between forest road and public network
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[dtype_t,ndim=2] Link_RF_res_pub(np.ndarray[dtype32_t,ndim=2] Tab_res_pub,
+cdef np.ndarray[dtype_t,ndim=2] Link_RF_res_pub(np.ndarray[dtype32_t,ndim=2] Tab_res_pub,
                                                  np.ndarray[dtypef32_t,ndim=2] cost_rast,
                                                  np.ndarray[dtype8_t,ndim=2] RF, 
                                                  np.ndarray[dtype8_t,ndim=2] Res_pub, 
@@ -3716,7 +3716,7 @@ cpdef np.ndarray[dtype_t,ndim=2] Link_RF_res_pub(np.ndarray[dtype32_t,ndim=2] Ta
 # Link between forest tracks and RF and public network
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[dtype_t,ndim=2] Link_tracks_res_pub(np.ndarray[dtype32_t,ndim=2] Tab_res_pub,
+cdef np.ndarray[dtype_t,ndim=2] Link_tracks_res_pub(np.ndarray[dtype32_t,ndim=2] Tab_res_pub,
                                                      np.ndarray[dtype32_t,ndim=2] Link_RF,
                                                      np.ndarray[dtypef32_t,ndim=2] cost_rast,
                                                      np.ndarray[dtype8_t,ndim=2] Piste,
@@ -3847,7 +3847,7 @@ cpdef np.ndarray[dtype_t,ndim=2] Link_tracks_res_pub(np.ndarray[dtype32_t,ndim=2
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cpdef Dfwd_flat_forest_road(np.ndarray[dtype_t,ndim=2] Link_RF, np.ndarray[dtypef32_t,ndim=2] cost_rast,
+cdef Dfwd_flat_forest_road(np.ndarray[dtype_t,ndim=2] Link_RF, np.ndarray[dtypef32_t,ndim=2] cost_rast,
                             np.ndarray[dtype8_t,ndim=2] zone_rast, double Csize, unsigned int Max_distance = 100000):    
     """
     Calcule la distance de trainage  de plus faible faible coût depuis le peuplement jusqu'a la desserte
@@ -3917,7 +3917,7 @@ cpdef Dfwd_flat_forest_road(np.ndarray[dtype_t,ndim=2] Link_RF, np.ndarray[dtype
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cpdef Dfwd_flat_forest_tracks(np.ndarray[dtype_t,ndim=2] Link_Piste, np.ndarray[dtypef32_t,ndim=2] cost_rast,
+cdef Dfwd_flat_forest_tracks(np.ndarray[dtype_t,ndim=2] Link_Piste, np.ndarray[dtypef32_t,ndim=2] cost_rast,
                               np.ndarray[dtype8_t,ndim=2] zone_rast, double Csize, unsigned int Max_distance = 100000):    
     """
     Calcule la distance de trainage  de plus faible faible coût depuis le peuplement jusqu'a la desserte
@@ -3994,7 +3994,7 @@ cpdef Dfwd_flat_forest_tracks(np.ndarray[dtype_t,ndim=2] Link_Piste, np.ndarray[
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cpdef fwd_azimuts_contour(np.ndarray[dtype_t,ndim=2] Lien_RF,np.ndarray[dtypef32_t,ndim=2] MNT,
+cdef fwd_azimuts_contour(np.ndarray[dtype_t,ndim=2] Lien_RF,np.ndarray[dtypef32_t,ndim=2] MNT,
                           np.ndarray[dtype16_t,ndim=2] Aspect,np.ndarray[dtypef32_t,ndim=2] Pente,
                           np.ndarray[dtype16_t,ndim=2] Row_line,np.ndarray[dtype16_t,ndim=2] Col_line,
                           np.ndarray[dtypef_t,ndim=2] D_line,np.ndarray[dtype16_t,ndim=1] Nbpix_line,
@@ -4080,7 +4080,7 @@ cpdef fwd_azimuts_contour(np.ndarray[dtype_t,ndim=2] Lien_RF,np.ndarray[dtypef32
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cpdef Fwd_add_contour(np.ndarray[dtype_t,ndim=2] Lien_contour, np.ndarray[dtypef32_t,ndim=2] cost_rast,np.ndarray[dtype8_t,ndim=2] zone_rast,
+cdef Fwd_add_contour(np.ndarray[dtype_t,ndim=2] Lien_contour, np.ndarray[dtypef32_t,ndim=2] cost_rast,np.ndarray[dtype8_t,ndim=2] zone_rast,
                       double Forw_portee, double Csize):    
     """
     Calcule la distance de debusquage de plus faible cout depuis les contours de la zone accessible
@@ -4183,7 +4183,7 @@ cpdef Fwd_add_contour(np.ndarray[dtype_t,ndim=2] Lien_contour, np.ndarray[dtypef
     
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef fill_Link(np.ndarray[dtype32_t,ndim=2] Lien_foret_piste, np.ndarray[dtype_t,ndim=2] Lien_piste,np.ndarray[dtype_t,ndim=2] Lien_RF,
+cdef fill_Link(np.ndarray[dtype32_t,ndim=2] Lien_foret_piste, np.ndarray[dtype_t,ndim=2] Lien_piste,np.ndarray[dtype_t,ndim=2] Lien_RF,
                 np.ndarray[dtype32_t,ndim=2] Lien_foret_RF, unsigned int nrows,unsigned int ncols):
     cdef unsigned int y=0,x=0
     cdef int pixel,pixel2
