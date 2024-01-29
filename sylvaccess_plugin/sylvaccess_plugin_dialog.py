@@ -2019,89 +2019,86 @@ def get_cable_configs(slope_Wliner_up,slope_Wliner_down,slope_grav,Skid_directio
     _,Rspace,_,_,_,_,_,_,_,_,_,_,_ = Sylvaccess_pluginDialog.get_spatial(0,1,0,0,0,0,0,0,0,0,0,0,0)
     dirs = [d for d in os.listdir(Rspace) if os.path.isdir(os.path.join(Rspace, d))]
     list_dir = []
+    
     for dire in dirs:
         if dire[:5]=='Cable':
             list_dir.append(dire)
+            
     optnum = len(list_dir)+1
     Rspace_c=Rspace+'Cable_'+str(optnum)        
     filename = Rspace_c+"/"
     Cable_type,_,_,_,_ = Sylvaccess_pluginDialog.get_type_cable(1,0,0,0,0)
+    filename += str(Cable_type)
     Carriage_type,_,_,_,_ = Sylvaccess_pluginDialog.get_type_chariot(1,0,0,0,0)
-    ### Define carriage type
-
+    filename += "_"+str(Carriage_type)
+    
     if Skid_direction ==0:
         filename += "_amont&aval"
         slope_min_up = -atan(slope_Wliner_up*0.01)
         slope_max_up = 0.1
         slope_max_down = atan(slope_Wliner_down*0.01) 
         slope_min_down = -0.1        
+    
     elif Skid_direction ==1:
         filename += "_amont"
         slope_min_up = -atan(slope_Wliner_up*0.01)
         slope_max_up = 0.1
         slope_max_down = 0
         slope_min_down = 0
+    
     else:
         filename += "_aval"
         slope_min_up = 0
         slope_max_up = 0
         slope_max_down = atan(slope_Wliner_down*0.01) 
         slope_min_down = -0.1 
-    if Cable_type<3:
+    
+    if Cable_type == "Câble long":
         if Skid_direction ==0:
             filename += "_amont&aval"
             slope_min_up = -1.4
-            slope_max_up = 0.1
-            slope_min_down = -0.1
-            slope_max_down = 1.4   
-        elif Skid_direction ==1:
-            if language == 'FR':
-                filename += "_amont"
-            else:
-                filename += "_uphill"
-            slope_min_up = -1.4
-            slope_max_up = -atan(slope_grav*0.01)
-            slope_min_down = 0
-            slope_max_down = 0  
-        else:
-            if language == 'FR':
-                filename += "_aval"
-            else:
-                filename += "_downhill"
-            slope_min_up = 0
-            slope_max_up = 0
-            slope_min_down = -0.1
-            slope_max_down = 1.4 
-    else:
-        # Long (conventional) cable 
-        if Skid_direction ==0:
-            if language == 'FR':
-                filename+= "_amont_aval"
-            else:
-                filename += "_uphill&downhill"
-            slope_min_up = -1.4
             slope_max_up = -atan(slope_grav*0.01)
             slope_max_down = 1.4
-            slope_min_down = atan(slope_grav*0.01)  
+            slope_min_down = atan(slope_grav*0.01) 
+   
         elif Skid_direction ==1:
-            if language == 'FR':
-                filename += "_amont"
-            else:
-                filename += "_uphill"
+            filename += "_amont"
             slope_min_up = -1.4
             slope_max_up = -atan(slope_grav*0.01)
             slope_min_down = 0
             slope_max_down = 0
+ 
         else:
-            if language == 'FR':
-                filename += "_aval"
-            else:
-                filename += "_downhill"
+            filename += "_aval"
             slope_min_up = 0
             slope_max_up = 0
             slope_max_down = 1.4
-            slope_min_down = atan(slope_grav*0.01) 
+            slope_min_down = atan(slope_grav*0.01)             
+    else: 
+        
+        if Skid_direction ==0:
+            filename+= "_amont_aval"
+            slope_min_up = -1.4
+            slope_max_up = 0.1
+            slope_min_down = -0.1
+            slope_max_down = 1.4
+        
+        elif Skid_direction ==1:
+            filename += "_amont"
+            slope_min_up = -1.4
+            slope_max_up = -atan(slope_grav*0.01)
+            slope_min_down = 0
+            slope_max_down = 0 
+        
+        else:
+            filename += "_aval"
+            slope_min_up = 0
+            slope_max_up = 0
+            slope_min_down = -0.1
+            slope_max_down = 1.4             
+    
     filename+=".txt"
+    
     return Rspace_c,filename,slope_min_up,slope_max_up,slope_min_down,slope_max_down
 
 
