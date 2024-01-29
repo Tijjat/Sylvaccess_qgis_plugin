@@ -512,6 +512,15 @@ def console_info(message):
     message = str(message)
     QgsMessageLog.logMessage(message,'Sylvaccess',Qgis.Info)
 
+###########################################################################
+#  _______  _______ .__   __.  _______ .______          ___       __      #
+# /  _____||   ____||  \ |  | |   ____||   _  \        /   \     |  |     #
+#|  |  __  |  |__   |   \|  | |  |__   |  |_)  |      /  ^  \    |  |     #
+#|  | |_ | |   __|  |  . `  | |   __|  |      /      /  /_\  \   |  |     #
+#|  |__| | |  |____ |  |\   | |  |____ |  |\  \----./  _____  \  |  `----.#
+# \______| |_______||__| \__| |_______|| _| `._____/__/     \__\ |_______|#
+###########################################################################
+    
 
 def heures(Hdebut):
     Hfin = datetime.datetime.now()
@@ -590,6 +599,16 @@ def raster_get_info(in_file_name):
     values = [src_ncols,src_nrows,xmin,ymin,Csize_x,nodata]
     Extent = [xmin,xmin+src_ncols*Csize_x,ymin,ymax]
     return names,values,src_proj,Extent
+
+
+##############################
+#  _______  __       _______.#
+# /  _____||  |     /       |#
+#|  |  __  |  |    |   (----`#
+#|  | |_ | |  |     \   \    #
+#|  |__| | |  | .----)   |   #
+# \______| |__| |_______/    #
+##############################                            
 
 
 def check_field(filename,fieldname):
@@ -1169,6 +1188,16 @@ def focal_stat(in_file_name,out_file_name,methode='MEAN',nbcell=3):
     target_ds.GetRasterBand(1).SetNoDataValue(nodata)
     target_ds.GetRasterBand(1).GetStatistics(0,1)
     target_ds.FlushCache() # Flush
+
+
+####################################################
+#  ______     ___      .______    __       _______ #
+# /      |   /   \     |   _  \  |  |     |   ____|#
+#|  ,----'  /  ^  \    |  |_)  | |  |     |  |__   #
+#|  |      /  /_\  \   |   _  <  |  |     |   __|  #
+#|  `----./  _____  \  |  |_)  | |  `----.|  |____ #
+# \______/__/     \__\ |______/  |_______||_______|#
+####################################################                                                  
 
 
 def prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize):
@@ -2023,7 +2052,7 @@ def get_cable_configs(slope_Wliner_up,slope_Wliner_down,slope_grav,Skid_directio
     for dire in dirs:
         if dire[:5]=='Cable':
             list_dir.append(dire)
-            
+
     optnum = len(list_dir)+1
     Rspace_c=Rspace+'Cable_'+str(optnum)        
     filename = Rspace_c+"/"
@@ -2100,6 +2129,441 @@ def get_cable_configs(slope_Wliner_up,slope_Wliner_down,slope_grav,Skid_directio
     filename+=".txt"
     
     return Rspace_c,filename,slope_min_up,slope_max_up,slope_min_down,slope_max_down
+
+
+def gen_sel_table(w_list,lim_list,sup_max):
+    col =     np.array([13       ,17     ,12         ,11    ,15    ,18+5*sup_max,16          ,14          ,18+5*sup_max+1])
+    sens =    np.array([1        ,-1     ,0          ,1     ,1     ,1           ,1           ,-1          ,-1])
+    #sens : 1:maximize,-1 minimize,0 NA
+    report =  np.array([10000.   ,1.     ,1.         ,1.    ,1.    ,100.        ,10.         ,1.          ,1.])
+    name = np.array(['Surface','NBsup','SensDeb'  ,'Long','Vtot','IPC'       ,'VAM'       ,'Dchar'     ,'Cout'])
+    #quant =   np.array[[99,      , 100   , 100       ,99    ,99    ,99          ,99          ,100          ,100]]
+    Tab_crit=np.zeros((9,4))
+    Tab_crit[:,0]=w_list
+    Tab_crit[:,1]=lim_list*report    
+    Tab_crit[:,2]=col
+    Tab_crit[:,3]=sens
+    Name = ""  
+    for i,crit in enumerate(Tab_crit):
+        if crit[0]>0:
+            Name+= '_'+str(name[i])+'('+str(round(crit[0],1))+')'
+        
+    return Tab_crit[Tab_crit[:,0]>0],Name
+
+
+def create_best_table(Tab2,w_list,lim_list,sup_max): 
+    Tab_crit,name=gen_sel_table(w_list,lim_list,sup_max)
+    #Trie en fonction des critere avec un poids et de la limite
+    for crit in Tab_crit:
+        if crit[3]>0:
+            tp = (Tab2[:,int(crit[2])]-crit[1])>=0
+        elif crit[3]<0:
+            tp = (Tab2[:,int(crit[2])]-crit[1])<=0
+        else:
+            continue
+        Tab2 = Tab2[tp]
+        
+    #identifier si le sens de debardage a ete choisi dans les criteres   
+    liste =range(Tab_crit.shape[0])
+    idsensdeb=np.argwhere(Tab_crit[:,2]==12)
+    if idsensdeb.shape[0]>0:
+        idsensdeb=idsensdeb[0,0]
+        liste = [x for x in liste if x != idsensdeb]
+    else:
+        idsensdeb=-1
+    #Transform variable to stick in the range [0-1+]
+    nbcol = len(liste)+2    
+    Tab = np.zeros((Tab2.shape[0],nbcol))    
+    col=1   
+    for crit in Tab_crit[liste]:
+        if crit[3] < 1 : #all values contribute to transformation
+            Tab[:,col]= (1-1.0*Tab2[:,int(crit[2])]/np.max(Tab2[:,int(crit[2])]))*crit[0]
+        else:
+            Tab[:,col]= (1.0*Tab2[:,int(crit[2])]/np.percentile(Tab2[:,int(crit[2])],98))*crit[0]
+        col+=1
+    
+    for i in range(Tab2.shape[0]):
+        Tab[i,0]=i                      #first col is idline of Tab2
+        Tab[i,col]=np.sum(Tab[i,1:col]) #last col is the total weight
+    #classify
+    ordre = np.zeros((Tab2.shape[0],),dtype=np.int)   
+    if idsensdeb>0:
+        #first the best direction
+        tp = Tab2[:,12]==Tab_crit[idsensdeb,1]        
+        inds = np.lexsort((Tab[tp,0],-Tab[tp,col]))
+        for i,ind in enumerate(inds):
+            ordre[i]=int(Tab[tp][ind][0])
+        ligne=i+1
+        #then the othe direction
+        tp = Tab2[:,12]==-Tab_crit[idsensdeb,1]        
+        inds = np.lexsort((Tab[tp,0],-Tab[tp,col]))
+        for i,ind in enumerate(inds):
+            ordre[i+ligne]=int(Tab[tp][ind][0])
+    else:
+        inds = np.lexsort((Tab[:,0],-Tab[:,col]))
+        for i,ind in enumerate(inds):
+            ordre[i]=int(Tab[ind,0])
+    return Tab2[ordre],name
+
+
+def select_best_lines(w_list,lim_list,Tab2,nrows,ncols,Csize,Row_ext,Col_ext,D_ext,D_lat,Lhor_max,sup_max):        
+    # Reorder Tab to fit with criteria
+    Tabbis,name=create_best_table(Tab2,w_list,lim_list,sup_max)
+    nb_line,nb_cols = Tabbis.shape
+    Rast_couv=np.zeros((nrows,ncols),dtype=np.int8)
+    vals = range(0,nb_line)
+    ### Parameter to validate a line
+    recouv = min(0.6*Lhor_max,Lhor_max-Csize) #distance from the axis of the line where crossing is not allowed
+    # Select best lines
+    vals2 = []
+    for id_tab in vals:
+        coordX,coordY = Tabbis[id_tab,-2],Tabbis[id_tab,-1]
+        az,Lline=Tabbis[id_tab,1],sqrt((Tabbis[id_tab,2]-Tabbis[id_tab,6])**2+(Tabbis[id_tab,3]-Tabbis[id_tab,7])**2)  
+        test_free,Rast_couv=fc.Check_line2(coordX,coordY,az,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,D_lat,Rast_couv,recouv,0)
+        if test_free:
+            vals2.append(id_tab)
+    # Check taht line contribute to total impacted surface
+    Tab_result = np.zeros((len(vals2),2),dtype=np.int)
+    id_line = 0    
+    for id_tab in vals2:
+        coordX,coordY = Tabbis[id_tab,-2],Tabbis[id_tab,-1]
+        az,Lline=Tabbis[id_tab,1],sqrt((Tabbis[id_tab,2]-Tabbis[id_tab,6])**2+(Tabbis[id_tab,3]-Tabbis[id_tab,7])**2)  
+        prop = fc.get_prop(coordX,coordY,az,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,D_lat,Rast_couv)  
+        Tab_result[id_line]=id_tab,prop*1000
+        id_line+=1
+    Tab_result=Tab_result[np.lexsort((Tab_result[:,0],Tab_result[:,1]))]  
+    # Remove lines that does not contribute significantly to impacted surface
+    nb_line = Tab_result.shape[0]
+    Tab_result2 = np.zeros((nb_line,nb_cols-2),dtype=np.int)
+    id_line = 0    
+    for id_tab in Tab_result[:,0]:
+        coordX,coordY = Tabbis[id_tab,-2],Tabbis[id_tab,-1]
+        az,Lline=Tabbis[id_tab,1],sqrt((Tabbis[id_tab,2]-Tabbis[id_tab,6])**2+(Tabbis[id_tab,3]-Tabbis[id_tab,7])**2) 
+        test_free,Rast_couv=fc.Check_line3(coordX,coordY,az,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,D_lat,Rast_couv,0.6)         
+        if test_free:
+            Tab_result2[id_line]=Tabbis[id_tab,0:-2]
+            id_line+=1    
+    Tab_result2=Tab_result2[Tab_result2[:,11]>0]
+    return Rast_couv,Tab_result2,name
+
+
+def return_crit_text(w_list,lim_list,):    
+    name =["Surface de forêt impactée [ha] (maximiser)                  Minimum : ", 
+              "Nombre de support intermédiaires (minimiser)                Maximum : ",
+              "Privilégier le débardage vers ",
+              "Longueur de ligne [m] (maximiser)                           Minimum : ", 
+              "Volume total par ligne [m3] (maximiser)                     Minimum : ",
+              "Indice de prélèvement câble [m3/ml] (maximiser)             Minimum : ",
+              "Volume de l\'arbre moyen [m3] (maximiser)                   Minimum : ",
+              "Longueur moyenne parcourue par le charriot [m] (minimiser)  Maximum : ",
+              "Coût du débardage [€/m3] (minimiser)                        Maximum : "]                    
+    units = ["ha","","","m","m3","m3/ml","m3","m","€/m3"]
+    namelist=name
+    pname = "(Poids: "              
+    Tab = np.empty((np.sum(np.array(w_list)>0),2),dtype='|U73')
+    j=-1
+    for i,w in enumerate(w_list):
+        if w!=0:
+            j+=1
+            if i!=2:
+                if round(lim_list[i],0)==lim_list[i]:
+                    lim=int(lim_list[i])
+                else:
+                    lim=round(lim_list[i],1)
+                Tab[j]=namelist[i],str(lim)+" "+units[i]+" "+pname+str(w)+')' 
+            else:
+                if lim_list[i]==-1:
+                    Tab[j]= name[i]+"l\'aval",pname+str(w)+')' 
+                elif lim_list[i]==1:
+                    Tab[j]= name[i]+"l\'amont",pname+str(w)+')'  
+                else:
+                    continue                    
+    return Tab
+
+
+def generate_info_ligne(Dir_result,w_list,lim_list,Tab,Rast_couv,Vol_ha,Vol_AM,Csize,prelevement,Lhor_max):
+    filename = Dir_result+"Bilan_selection.txt"
+    pix_area = Csize*Csize/10000.
+    Proj = np.copy(Rast_couv)
+    Proj[Rast_couv==2]=0
+    Rast_couv[Rast_couv==2]=1
+    Surface = round(np.sum(Rast_couv)*pix_area,1)
+    Surface_proj = round(np.sum(Proj)*pix_area,1)
+    if Surface_proj>0:
+        testProj=1
+    else:
+        testProj=0
+    nb_ligne = Tab.shape[0]
+    nb_ligne_amont = int(np.sum(Tab[:,12]>0))
+    try:
+        nb_moy_pyl = round(np.sum(Tab[:,17])/nb_ligne,1)
+        long_moy_ligne = int(np.sum(Tab[:,11])/nb_ligne)
+    except:
+        print("Aucune ligne n'a ete selectionnee")
+    Vol_ha[np.isnan(Vol_ha)]=0
+    Vol_AM[np.isnan(Vol_AM)]=0
+    tp =   Vol_ha>0
+    if np.sum(tp)>0:      
+        vtot = np.sum(Rast_couv[tp]*Vol_ha[tp])*pix_area*prelevement
+    else:
+        vtot=0
+    tp =   Vol_AM>0 
+    if np.sum(tp)>0:
+        vam = round(np.mean(Rast_couv[tp]*Vol_AM[tp]),1)
+    else:
+        vam=0
+    if np.sum(Tab[:,11])!=0:
+        ipc_moy = round(float(vtot)/np.sum(Tab[:,11]),2)
+    else:
+        print("Aucune ligne n'a ete selectionnee")
+    vtot = int(vtot)
+    lim_list[4]=lim_list[4]*prelevement
+    
+    Table = np.empty((19+np.sum(np.array(w_list)>0),2+testProj),dtype='|U73')
+    
+    Table[1,0]= "BILAN DE LA SELECTION DE LIGNE"
+    Table[3,1]= "\t\t\t\t\t\t\tDepuis tous les départs\t\t"
+    if testProj:
+        Table[3,2]="Seulement depuis les projets"
+    Table[4,0]= "Surface totale de forêt traitée [ha]:\t\t\t"
+    Table[5,0]= "Nombre total de ligne:\t\t\t\t\t"
+    Table[6,0]= "     + Dont ligne avec débardage vers l'amont:\t\t"
+    Table[7,0]= "     + Dont ligne avec débardage vers l'aval:\t\t"
+    Table[8,0]= "Nombre moyen de pylône intermédiaire par ligne:\t\t"
+    Table[9,0]= "Longueur moyenne des lignes [m]:\t\t\t"
+    Table[10,0]="Volume total prélevé (estimation) [m3]:\t\t\t"
+    Table[11,0]="Indice de prélevement câble moyen (estimation) [m3/m]:\t"        
+    Table[12,0]="Volume de l'arbre moyen (estimation) [m3]:\t\t"
+    Table[15,0]="Critère(s) pris en compte dans la sélection des lignes:"
+    Table[17,0]="Distance laterale de pechage des bois:                      "
+    Table[18,0]="Taux de prelevement du volume sur pied:                     "
+        
+    Table[4,1]= str(Surface)
+    Table[5,1]= str(nb_ligne)
+    Table[6,1]= str(nb_ligne_amont)
+    Table[7,1]= str(nb_ligne-nb_ligne_amont)
+    Table[8,1]= str(nb_moy_pyl)
+    Table[9,1]= str(long_moy_ligne)
+    Table[10,1]=str(vtot)
+    Table[11,1]=str(ipc_moy)
+    Table[12,1]=str(vam)
+    Table[17,1]=str(int(Lhor_max))+" m"
+    Table[18,1]=str(int(prelevement*100))+" %"
+    
+    Tabcrit = return_crit_text(w_list,lim_list)
+    
+    for i,crit in enumerate(Tabcrit):
+        Table[19+i,0]=crit[0]
+        Table[19+i,1]=crit[1]
+        
+    
+    if testProj:
+        Tab= Tab[Tab[:,10]==1]
+        Rast_couv = Proj
+        nb_ligne = Tab.shape[0]
+        nb_ligne_amont = int(np.sum(Tab[:,12]>0))
+        try:
+            nb_moy_pyl = round(np.sum(Tab[:,17])/nb_ligne,1)
+            long_moy_ligne = int(np.sum(Tab[:,11])/nb_ligne)
+        except:
+            print("Aucune ligne n'a ete selectionnee")
+        tp =   Vol_ha>0
+        if np.sum(tp)>0:      
+            vtot = np.sum(Rast_couv[tp]*Vol_ha[tp])*pix_area*prelevement
+        else:
+            vtot=0
+        tp =   Vol_AM>0 
+        if np.sum(tp)>0:
+            vam = round(np.mean(Rast_couv[tp]*Vol_AM[tp]),1)
+        else:
+            vam=0
+        if np.sum(Tab[:,11])!=0:
+            ipc_moy = round(float(vtot)/np.sum(Tab[:,11]),2)
+        else:
+            print("Aucune ligne n'a ete selectionnee")
+        vtot = int(vtot)
+        
+        Table[4,2]= "\t\t\t\t"+str(Surface_proj)
+        Table[5,2]= "\t\t\t\t"+str(nb_ligne)
+        Table[6,2]= "\t\t\t\t"+str(nb_ligne_amont)
+        Table[7,2]= "\t\t\t\t"+str(nb_ligne-nb_ligne_amont)
+        Table[8,2]= "\t\t\t\t"+str(nb_moy_pyl)
+        Table[9,2]= "\t\t\t\t"+str(long_moy_ligne)
+        Table[10,2]="\t\t\t\t"+str(vtot)
+        Table[11,2]="\t\t\t\t"+str(ipc_moy)
+        Table[12,2]="\t\t\t\t"+str(vam)
+           
+    np.savetxt(filename, Table,fmt='%s', delimiter='')
+
+
+def generate_info_cable_simu(Dir_result,Tab,Rast_couv,Vol_ha,Csize,Forest,Pente,Pente_max_bucheron):
+    filename = Dir_result+"Resume_resultat_sylvaccess_cable.txt"
+    Pente_max = fc.focal_stat_max(np.float_(Pente),-9999,1)
+    Pente_ok_buch = np.int8((Pente_max<=Pente_max_bucheron))
+    del Pente_max
+    gc.collect()    
+    pix_area = Csize*Csize/10000.
+    Rast_couv[Forest==0]=0
+    Surface_exis = round(np.sum(Rast_couv==2)*pix_area,1)
+    Surface_proj = round(np.sum(Rast_couv==1)*pix_area,1)
+    Surface_foret = round(np.sum(Forest==1)*pix_area,1)    
+    Surface_nonbuch = round(np.sum((Forest==1)*(Pente_ok_buch==0))*pix_area,1)
+        
+    Vol_ha[np.isnan(Vol_ha)]=0
+    Vol_ha[Forest==0]=0
+    tp =  Vol_ha>0
+    if np.sum(tp)>0:   
+        tp2 = (tp*(Rast_couv==2))>0
+        vtot_exis = int(np.sum(Vol_ha[tp2])*pix_area+0.5)
+        tp2 = (tp*(Rast_couv==1))>0
+        vtot_proj = int(np.sum(Vol_ha[tp2])*pix_area+0.5)     
+        tp2 = (tp*(Forest==1))>0
+        vtot_forest = int(np.sum(Vol_ha[tp2])*pix_area+0.5)   
+        tp2 = (tp*(Forest==1)*(Pente>Pente_max_bucheron))>0
+        vtot_nonbuch = int(np.sum(Vol_ha[tp2])*pix_area+0.5)   
+    else:
+        vtot_exis = 0  
+        vtot_proj = 0
+        vtot_forest = 0
+        vtot_nonbuch = 0
+        
+    nb_ligne = Tab.shape[0]
+    nb_ligne_amont = int(np.sum(Tab[:,12]>0))
+    nb_moy_pyl = round(np.sum(Tab[:,17])/nb_ligne,1)
+    long_moy_ligne = int(np.sum(Tab[:,11])/nb_ligne)    
+                
+    Table = np.empty((17,5),dtype='|U39')
+    Table[0] = np.array(["","Surface (ha)","Surface (%)","Volume sur pied (m3)","Volume (%)"])
+    Table[1,0] = "Depuis les departs de cable existant"
+    Table[2,0] = "Depuis les departs de cable en projet"
+    Table[4,0] = "Total foret accessible"
+    Table[5,0] = "Total foret inaccessible"
+    Table[6,0] = "    dont non bucheronnable"
+    Table[8,0] = "Superficie totale de la foret"
+    Table[11,0] = "Nombre total de ligne"
+    Table[12,0] = "    + Dont debardage vers l'amont"
+    Table[13,0] = "    + Dont debardage vers l'aval"
+    Table[15,0] = "Longueur moyenne des lignes (m)"
+    Table[16,0] = "Nombre moyen de pylone intermediaire"
+        
+    #Create recap per distance class 
+    if vtot_forest>0:
+        Table[1,1:] = np.array([str(Surface_exis),str(int(Surface_exis/Surface_foret*100+0.5)),
+                                str(vtot_exis),str(int(vtot_exis/vtot_forest*100+0.5))])
+        Table[2,1:] = np.array([str(Surface_proj),str(int(Surface_proj/Surface_foret*100+0.5)),
+                                str(vtot_proj),str(int(vtot_proj/vtot_forest*100+0.5))])
+        
+        Table[4,1:] = np.array([str(Surface_exis+Surface_proj),str(int((Surface_proj+Surface_exis)/Surface_foret*100+0.5)),
+                                str(vtot_proj+vtot_exis),str(int((vtot_exis+vtot_proj)/vtot_forest*100+0.5))])
+        Table[5,1:] = np.array([str(round(Surface_foret-(Surface_exis+Surface_proj),1)),str(int((Surface_foret-(Surface_proj+Surface_exis))/Surface_foret*100+0.5)),
+                                str(vtot_forest-(vtot_proj+vtot_exis)),str(int((vtot_forest-(vtot_exis+vtot_proj))/vtot_forest*100+0.5))])
+        Table[6,1:] = np.array([str(Surface_nonbuch),str(int(Surface_nonbuch/Surface_foret*100+0.5)),
+                                str(vtot_nonbuch),str(int(vtot_nonbuch/vtot_forest*100+0.5))])
+    else:
+        Table[1,1:] = np.array([str(Surface_exis),str(int(Surface_exis/Surface_foret*100+0.5)),'0','0'])
+        Table[2,1:] = np.array([str(Surface_proj),str(int(Surface_proj/Surface_foret*100+0.5)),'0','0'])
+                            
+        
+        Table[4,1:] = np.array([str(Surface_exis+Surface_proj),str(int((Surface_proj+Surface_exis)/Surface_foret*100+0.5)),'0','0'])
+        Table[5,1:] = np.array([str(round(Surface_foret-(Surface_exis+Surface_proj),1)),str(int((Surface_foret-(Surface_proj+Surface_exis))/Surface_foret*100+0.5)),'0','0'])
+        Table[6,1:] = np.array([str(Surface_nonbuch),str(int(Surface_nonbuch/Surface_foret*100+0.5)),'0','0'])
+    
+    Table[8,1:] = np.array([str(Surface_foret),"",str(vtot_forest),""])
+    
+    Table[11,1] = str(nb_ligne)
+    Table[12,1] = str(nb_ligne_amont)
+    Table[13,1] = str(nb_ligne-nb_ligne_amont)
+    Table[15,1] = str(long_moy_ligne)
+    Table[16,1] = str(nb_moy_pyl)
+    
+    np.savetxt(filename, Table,fmt='%s', delimiter=';')
+
+
+def calculate_azimut(x1,y1,x2,y2):
+    DX = x2-x1
+    DY = y2-y1
+    Deuc = math.sqrt(DX**2+DY**2)
+    if x2>x1:Fact=1
+    else:Fact=-1
+    Angle = math.degrees(math.acos(DY/Deuc))
+    Angle *=Fact
+    return Angle%360   
+
+
+def create_rast_couv(Tab_result,Dir_result,source_src,Extent,Csize,Lhor_max):
+    drv = ogr.GetDriverByName("ESRI Shapefile")    
+    layer_name = "Extent"
+    dst_ds = drv.CreateDataSource( Dir_result+layer_name+".shp" )
+    dst_layer = dst_ds.CreateLayer(layer_name, source_src , ogr.wkbPolygon)
+    raster_field = ogr.FieldDefn('EXIST', ogr.OFTInteger)
+    dst_layer.CreateField(raster_field)
+    layerDefinition = dst_layer.GetLayerDefn()  
+    for idi,line in enumerate(Tab_result):
+        Xstart,Ystart,Xend,Yend = line[2],line[3],line[6],line[7]
+        az = calculate_azimut(Xstart,Ystart,Xend,Yend)
+        conv = radians(90)
+        ring = ogr.Geometry(ogr.wkbLinearRing)
+        ring.AddPoint(Xstart+Lhor_max*cos(az-conv), Ystart+Lhor_max*sin(az-conv))
+        ring.AddPoint(Xend+Lhor_max*cos(az-conv), Yend+Lhor_max*sin(az-conv))
+        ring.AddPoint(Xend+Lhor_max*cos(az+conv), Yend+Lhor_max*sin(az+conv))
+        ring.AddPoint(Xstart+Lhor_max*cos(az+conv), Ystart+Lhor_max*sin(az+conv))
+        ring.AddPoint(Xstart+Lhor_max*cos(az-conv), Ystart+Lhor_max*sin(az-conv))
+        poly = ogr.Geometry(ogr.wkbPolygon)
+        poly.AddGeometry(ring)
+        feature = ogr.Feature(layerDefinition)
+        feature.SetGeometry(poly)
+        feature.SetFID(idi)        
+        feature.SetField('EXIST',int(line[10]))
+        dst_layer.CreateFeature(feature)
+        ring.Destroy()
+        poly.Destroy()
+        feature.Destroy()
+    dst_ds.Destroy()
+    Rast_couv = np.int8(shapefile_to_np_array(Dir_result+layer_name+".shp",Extent,Csize,"EXIST","EXIST",'ASC') )
+    for extension in [".shp",".prj",".shx",".dbf"]:
+        os.remove(Dir_result+layer_name+extension)
+    return Rast_couv
+
+
+#######################################################################
+#    _______. __  ___  __   _______   _______   _______ .______       #
+#    /       ||  |/  / |  | |       \ |       \ |   ____||   _  \     #
+#   |   (----`|  '  /  |  | |  .--.  ||  .--.  ||  |__   |  |_)  |    #
+##   \   \    |    <   |  | |  |  |  ||  |  |  ||   __|  |      /     #
+#.----)   |   |  .  \  |  | |  '--'  ||  '--'  ||  |____ |  |\  \----.#
+#|_______/    |__|\__\ |__| |_______/ |_______/ |_______|| _| `._____|#
+#######################################################################
+
+
+def create_new_road_network(file_shp_Desserte,Wspace):
+    Dir_temp = Wspace+"Temp/"    
+    try:os.mkdir(Dir_temp)
+    except:pass 
+    File_fin = Dir_temp+"Existing_roads.shp"    
+    source_ds = ogr.Open(file_shp_Desserte)
+    source_layer = source_ds.GetLayer()
+    source_src = source_layer.GetSpatialRef()
+    driver = ogr.GetDriverByName('ESRI Shapefile')
+    target_ds = driver.CreateDataSource(File_fin)
+    layerName = os.path.splitext(os.path.split(File_fin)[1])[0]
+    layer = target_ds.CreateLayer(layerName, source_src, ogr.wkbLineString)
+    layerDefinition = layer.GetLayerDefn()  
+    new_field = ogr.FieldDefn("CL_SVAC", ogr.OFTInteger)
+    layer.CreateField(new_field)
+    for feat in source_layer:
+        geometry = feat.GetGeometryRef()
+        label = feat.GetField('EXIST')
+        if label == 2:
+            feature = ogr.Feature(layerDefinition)
+            feature.SetGeometry(geometry)
+            feature.SetField("CL_SVAC",feat.GetField("CL_SVAC"))
+            layer.CreateFeature(feature)
+            feature.Destroy()
+    source_ds.Destroy()
+    target_ds.Destroy()
+    return File_fin
+
+
 
 
 
