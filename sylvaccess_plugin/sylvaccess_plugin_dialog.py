@@ -26,7 +26,6 @@ from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
 import os
 from qgis.core import *
-from PyQt5.QtWidgets import QMessageBox
 from scipy import spatial
 import numpy as np
 from osgeo import gdal, osr, ogr
@@ -34,9 +33,10 @@ import math
 #from cython import pyximport
 #pyximport.install()
 #import sylvaccess_cython3 as fc
-from math import sqrt
-from fontTools.misc.etree import tostring
-
+from math import sqrt,degrees,atan,cos,sin,radians
+import shutil
+import gc
+import datetime
 
 
 # Chargement de l'interface utilisateur depuis le fichier .ui
@@ -140,6 +140,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             if checkbox_number == 4:
                 self.skidder.setEnabled(False)
 
+
     def spinBox_40_changed(self):
         value = self.spinBox_40.value()
         self.spinBox_49.setValue(value)
@@ -190,7 +191,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         #Check MNT
         if test_Skidder+test_Porteur+test_Cable>0:
             try:
-                a,values,b,Extent = raster_get_info(file_MNT)   
+                _,values,_,Extent = raster_get_info(file_MNT)   
                 if values[5]==None:
                     verif=False
                     msg+=" -   Raster MNT: Aucune valeur de NoData definie\n" 
@@ -244,7 +245,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         for i,f in enumerate([file_vol_BP,file_vol_AM,file_HA]):
             if f!="":
                 try:
-                    a,values2,b,Extent2 = raster_get_info(f)    
+                    _,values2,_,Extent2 = raster_get_info(f)    
                     if values2[5]==None:
                         verif=False
                         msg+=" -   "+FR_name[i]+": Aucune valeur de NoData definie\n" 
@@ -264,6 +265,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             console_warning(msg)
         return verif
 
+
     def get_general(self,ski,por,cab,opti,pente):
         if ski:
             ski = getattr(self, f"checkBox_4").isChecked()
@@ -275,6 +277,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             opti = getattr(self, f"checkBox_1").isChecked()
         if pente:
             pente = self.spinBox_1.value()
+
 
     def get_spatial(self,Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP):
         if Wspace: 
@@ -306,7 +309,8 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
         return Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP
 
-    def get_skidder(self,pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes):
+
+    def get_skidder(self,pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes_s):
         if pente_max:
             pente_max = self.spinBox_3.value()
         if distance_max_amont:
@@ -324,14 +328,15 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 limite = True
             else:
                 limite = False
-        if bornes:
-            bornes = self.plainTextEdit_1.toPlainText()
-            if not bornes:
+        if bornes_s:
+            bornes_s = self.plainTextEdit_1.toPlainText()
+            if not bornes_s:
                 console_warning("Veuillez remplir les bornes minimales des classes de débardages pour le skidder")
                 return
-        return pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes   
+        return pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes_s   
 
-    def get_porteur(self,pente_max,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes):
+
+    def get_porteur(self,pente_max,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes_p):
         if pente_max:
             pente_max = self.spinBox_8.value()
         if pente_max_remonant:
@@ -344,12 +349,13 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             distance_max_hors_frt = self.spinBox_11.value()
         if taille_grue:
             taille_grue = self.doublespinBox_1.value()
-        if bornes:
-            bornes = self.plainTextEdit_2.toPlainText()
-            if not bornes:
+        if bornes_p:
+            bornes_p = self.plainTextEdit_2.toPlainText()
+            if not bornes_p:
                 console_warning("Veuillez remplir les bornes minimales des classes de débardages pour le porteur")
                 return
-        return pente_max,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes
+        return pente_max,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes_p
+
 
     def get_type_cable(self, type_machine,supports_inter,hauteur,longueure_max,longueure_min):
         if type_machine:
@@ -364,6 +370,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             longueure_min = self.spinBox_17.value()
         return type_machine,supports_inter,hauteur,longueure_max,longueure_min
 
+
     def get_type_chariot(self, type_chariot,masse,pente_min,pente_max_amont,pente_max_aval):
         if type_chariot:
             type_chariot = self.comboBox_2.currentText()
@@ -377,6 +384,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             pente_max_aval = self.spinBox_25.value()
         return type_chariot,masse,pente_min,pente_max_amont,pente_max_aval      
 
+
     def get_proprietes_cable(self,diamètre,masse_li,tension_rupt,elasticité):
         if diamètre:
             diamètre = self.doublespinBox_3.value()
@@ -387,6 +395,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         if elasticité:
             elasticité = self.spinBox_27.value()
         return diamètre,masse_li,tension_rupt,elasticité
+
 
     def get_param_modelisation(self,hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,masse_max,securite):
         if hauteur_sup:
@@ -405,6 +414,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             securite = self.doublespinBox_10.value()
         return hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,masse_max,securite
 
+
     def get_options(self,opti,precision):
         if opti:
             opti = self.checkBox_5.isChecked()
@@ -412,22 +422,24 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             precision = self.spinBox_41.value()
         return opti,precision
 
-    def get_opti_cable(self,prelevement,recalculer,Rspace,foret,VBP,VAM,pechage):
+
+    def get_opti_cable(self,prelevement,recalculer,Rspace_c,foret_c,VBP_c,VAM_c,pechage_c):
         if prelevement:
             prelevement = self.spinBox_48.value()
         if recalculer:
             recalculer = self.checkBox_6.isChecked()
-        if Rspace:
-            Rspace = getattr(self, f"lineEdit_17").text()
-        if foret:
-            foret = getattr(self, f"lineEdit_14").text()
-        if VBP:
-            VBP = getattr(self, f"lineEdit_15").text()
-        if VAM:
-            VAM = getattr(self, f"lineEdit_16").text()
-        if pechage:
-            pechage = self.spinBox_49.value()
-        return prelevement,recalculer,Rspace,foret,VBP,VAM,pechage
+        if Rspace_c:
+            Rspace_c = getattr(self, f"lineEdit_17").text()
+        if foret_c:
+            foret_c = getattr(self, f"lineEdit_14").text()
+        if VBP_c:
+            VBP_c = getattr(self, f"lineEdit_15").text()
+        if VAM_c:
+            VAM_c = getattr(self, f"lineEdit_16").text()
+        if pechage_c:
+            pechage_c = self.spinBox_49.value()
+        return prelevement,recalculer,Rspace_c,foret_c,VBP_c,VAM_c,pechage_c
+
 
     def get_crit_opti(self,surface,nbr_sup_int,sens_debardage,longueure_ligne,vol_ligne,indice_prelev,VAM,dist_chariot):
         surface_poids,nbr_sup_int_poids,sens_debardage_poids,longueure_ligne_poids,vol_ligne_poids,indice_prelev_poids,VAM_poids,dist_chariot_poids = 0,0,0,0,0,0,0,0   
@@ -474,21 +486,20 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         return surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM,VAM_poids,dist_chariot,dist_chariot_poids
 
 
-
 # Fonctions qui fait tout les calculs liés au skidder
-def Skidder(self):
+def Skidder():
     console_info("Skidder")
 
 # Fonctions qui fait tout les calculs liés au porteur
-def Porteur(self):
+def Porteur():
     console_info("Porteur")
 
 # Fonctions qui fait tout les calculs liés au cable
-def Cable(self):
+def Cable():
     console_info("Cable")
 
 # Fonctions qui fait tout les calculs liés à l'optimisation des emplacement des lignes de cable
-def Cable_opti(self):
+def Cable_opti():
     console_info("Cable_opti")
 
 # Fonctions qui affiche un message d'erreur dans la console
@@ -566,6 +577,7 @@ def read_info(info_file):
     values = np.genfromtxt(info_file, dtype=None,usecols=(1),encoding ='latin1')  
     return list(names),list(values)
 
+
 def raster_get_info(in_file_name):
     source_ds = gdal.Open(in_file_name)    
     src_proj = osr.SpatialReference(wkt=source_ds.GetProjection())
@@ -579,6 +591,7 @@ def raster_get_info(in_file_name):
     Extent = [xmin,xmin+src_ncols*Csize_x,ymin,ymax]
     return names,values,src_proj,Extent
 
+
 def check_field(filename,fieldname):
     verif=False    
     source_ds = ogr.Open(filename)
@@ -591,6 +604,7 @@ def check_field(filename,fieldname):
             break    
     source_ds.Destroy() 
     return verif
+
 
 def check_field_EXIST(filename,fieldname):    
     verif=False
@@ -614,14 +628,17 @@ def check_field_EXIST(filename,fieldname):
     source_ds.Destroy() 
     return verif
 
+
 def generate_HeadText(names,values):    
     head_text=""
     for i,item in enumerate(names):
         head_text = head_text+item+(14-len(item))*" "+str(values[i])+"\n"
     return head_text
 
+
 def save_raster_info(values,Rspace_c):   
     np.savetxt(Rspace_c+"Area_extent.txt", values, fmt='%f', delimiter=';')
+
 
 def loadrasterinfo_from_file(Rspace_c):
     values = list(np.loadtxt(Rspace_c+"Area_extent.txt"))
@@ -633,6 +650,7 @@ def loadrasterinfo_from_file(Rspace_c):
     Csize = values[4] 
     Extent = [xmin,xmin+ncols*Csize,ymin,ymin+nrows*Csize]
     return names,values,Extent
+
 
 def load_float_raster(raster_file,Dir_temp):
     dataset = gdal.Open(raster_file,gdal.GA_ReadOnly)
@@ -661,6 +679,7 @@ def load_float_raster(raster_file,Dir_temp):
     dataset.FlushCache()
     return np.float_(Array),Extent,Csize,proj 
 
+
 def load_float_raster_simple(raster_file):
     dataset = gdal.Open(raster_file,gdal.GA_ReadOnly)    
     dataset_val = dataset.GetRasterBand(1)
@@ -670,10 +689,12 @@ def load_float_raster_simple(raster_file):
     dataset.FlushCache()
     return np.float_(Array)
 
+
 def get_source_src(file_name):
     source_ds = ogr.Open(file_name)
     source_layer = source_ds.GetLayer()
     return source_layer.GetSpatialRef()
+
 
 def shapefile_to_np_array(file_name,Extent,Csize,attribute_name,order_field=None,order=None):
     #Recupere les dimensions du raster ascii
@@ -709,6 +730,7 @@ def shapefile_to_np_array(file_name,Extent,Csize,attribute_name,order_field=None
         mask_arr = target_ds.GetRasterBand(1).ReadAsArray()
         return mask_arr
 
+
 def select_in_shapefile(source_shapefile,out_Shape_Path,expression):
     #Recupere le driver
     driver = ogr.GetDriverByName('ESRI Shapefile')
@@ -743,6 +765,7 @@ def select_in_shapefile(source_shapefile,out_Shape_Path,expression):
     # Cleanup
     target_ds.Destroy()
     source_ds.Destroy()
+
 
 def linestring_to_point(Line_shapefile,Point_Shape_Path):
     #Get driver
@@ -798,6 +821,7 @@ def linestring_to_point(Line_shapefile,Point_Shape_Path):
     target_ds.Destroy()
     return geoLocations,source_srs
 
+
 def fin_ligne(point_coords):
     fin_ligne = []
     for i in range(point_coords.shape[0]-1):
@@ -809,6 +833,7 @@ def fin_ligne(point_coords):
             elif i==0 and point_coords[i+1,2]==point_coords[i,2]:fin_ligne.append(i)
             elif i==point_coords.shape[0]-1 and point_coords[i-1,2]==point_coords[i,2]:fin_ligne.append(i)
     return fin_ligne  
+
 
 def points_to_lineshape(point_coords,Line_Shape_Path,projection):
     #Recupere le driver
@@ -844,6 +869,7 @@ def points_to_lineshape(point_coords,Line_Shape_Path,projection):
             ind +=1
     target_ds.Destroy()
 
+
 def calculate_direction(x1,y1,x2,y2):
     DX = x2-x1
     DY = y2-y1
@@ -854,11 +880,13 @@ def calculate_direction(x1,y1,x2,y2):
     Angle *=Fact
     return int(Angle+0.5)
 
+
 def get_head_text(ASCII_file):
     names = np.genfromtxt(ASCII_file, dtype=None,usecols=(0))[0:6]
     values = np.genfromtxt(ASCII_file, dtype=np.float,usecols=(1))[0:6]
     Extent = [values[2],values[2]+values[4]*values[0],values[3],values[3]+values[4]*values[1]]
     return names,values,Extent
+
 
 def generate_head_text(names,values,Csize):
     rap = int(Csize/values[4])
@@ -867,6 +895,7 @@ def generate_head_text(names,values,Csize):
     for i,item in enumerate(names):
         head_text = head_text+item+(14-len(item))*" "+str(values[i])+"\n"
     return head_text
+
 
 def buffer_shp(infile,outfile,buffdist):
     try:
@@ -891,6 +920,7 @@ def buffer_shp(infile,outfile,buffdist):
     except:
         return False
     return True
+
 
 def shapefile_obs_to_np_array(file_list,Extent,Csize):
     #Get raster dimension
@@ -950,6 +980,7 @@ def shapefile_obs_to_np_array(file_list,Extent,Csize):
     Obstacle = np.int8(Obstacle>0)
     return Obstacle
 
+
 def shapefile_to_int8array(file_name,Extent,Csize):
     #Get raster dimension
     xmin,xmax,ymin,ymax = Extent[0],Extent[1],Extent[2],Extent[3]
@@ -1004,6 +1035,7 @@ def shapefile_to_int8array(file_name,Extent,Csize):
     source_ds.Destroy()
     return Array
 
+
 def raster_to_ASCII_int(raster_name,ascii_name):
     source_ds = gdal.Open(raster_name)
     content = source_ds.GetRasterBand(1).ReadAsArray()
@@ -1016,6 +1048,7 @@ def raster_to_ASCII_int(raster_name,ascii_name):
     head_text=generate_head_text(names,values,Csize_x)
     save_integer_ascii(ascii_name,head_text,np.int_(content+0.5))
 
+
 def raster_to_ASCII(raster_name,ascii_name):
     source_ds = gdal.Open(raster_name)
     content = source_ds.GetRasterBand(1).ReadAsArray()
@@ -1027,6 +1060,7 @@ def raster_to_ASCII(raster_name,ascii_name):
     content[content==nodata]=-9999    
     head_text=generate_head_text(names,values,Csize_x)
     save_float_ascii(ascii_name,head_text,content)
+
 
 def resample_raster(in_file_name,out_file_name,newCsize,methode=gdal.GRA_Bilinear):
     # Get info from source
@@ -1059,11 +1093,13 @@ def resample_raster(in_file_name,out_file_name,newCsize,methode=gdal.GRA_Bilinea
     target_ds.GetRasterBand(1).GetStatistics(0,1)
     target_ds.FlushCache() # Flush 
 
+
 def get_proj_from_road_network(road_network_file):
     source_ds = ogr.Open(road_network_file)
     source_layer = source_ds.GetLayer()    
     source_srs = source_layer.GetSpatialRef()
     return source_srs.ExportToWkt()
+
 
 def ArrayToGtiff(Array,file_name,Extent,nrows,ncols,road_network_proj,nodata_value,raster_type='INT32'):
     xmin,xmax,ymin,ymax=Extent[0],Extent[1],Extent[2],Extent[3]
@@ -1096,7 +1132,7 @@ def ArrayToGtiff(Array,file_name,Extent,nrows,ncols,road_network_proj,nodata_val
     target_ds.GetRasterBand(1).GetStatistics(0,1)
     target_ds.FlushCache()
 
-# Calculate local statistics from a raster
+
 def focal_stat(in_file_name,out_file_name,methode='MEAN',nbcell=3):    
     # Get info of the input raster
     source_ds = gdal.Open(in_file_name)
@@ -1134,6 +1170,7 @@ def focal_stat(in_file_name,out_file_name,methode='MEAN',nbcell=3):
     target_ds.GetRasterBand(1).GetStatistics(0,1)
     target_ds.FlushCache() # Flush
 
+
 def prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize):
     rastLosup,rastTh,rastTv = fc.Tabmesh(d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize)
     np.save(Dir_temp+"rastLosup.npy",rastLosup)
@@ -1153,6 +1190,7 @@ def prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize):
     f.close()
     return rastLosup,rastTh,rastTv
 
+
 def check_tabconv(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize):
     try:
         a,v1=read_info(Dir_temp+"info_config.txt")
@@ -1165,6 +1203,7 @@ def check_tabconv(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize):
     except:
         rastLosup,rastTh,rastTv = prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize)        
     return rastLosup,rastTh,rastTv
+
 
 def check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret):
     indmax = 0
@@ -1194,12 +1233,13 @@ def check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret):
         test=0
     return test,indmax+1,Lline
 
+
 def get_ligne3(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,Pente,Hfor,test_hfor,Lmax,Lmin,Csize,
               Row_line,Col_line,D_line,Nbpix_line,angle_transv,slope_trans,ncols,nrows,Lsans_foret,
               Fo,Tmax,q1,q2,q3,Htower,Hend,Hline_max,Hintsup,Lslope,PropSlope):
                   
     npix = Nbpix_line[az]
-    #npix = fc.get_npix(az,npix,coordY,coordX,ncols,nrows,Row_line,Col_line)   
+    npix = fc.get_npix(az,npix,coordY,coordX,ncols,nrows,Row_line,Col_line)   
     if D_line[az,npix-1]>Lmin:  
         Line=np.zeros((npix,11),dtype=np.float)
         inds = (Row_line[az,0:npix]+coordY,Col_line[az,0:npix]+coordX)        
@@ -1236,28 +1276,833 @@ def get_ligne3(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,P
             if test:
                 break
         Line=Line[0:i+1]
-        #test,indmax,Lline=fc.check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret,Lslope,PropSlope)
+        test,indmax,Lline=fc.check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret,Lslope,PropSlope)
         Lline = 2 # A modifier    
         return test,Lline,Line[0:indmax, [0, 1, 2, 3, 4, 5, 6,10,9]]
     else:
         return 0,0,0 
 
 
+def return_profile(Line):
+    Line2 = np.zeros_like(Line)
+    indmax = Line.shape[0]-1
+    Dmax =Line[indmax,0]
+    for i,j in enumerate(range(indmax,-1,-1)):
+        Line2[i]=Line[j]
+        Line2[i,0]=Dmax-Line[j,0]
+    return Line2
 
 
+def write_file():
+    Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    ski,por,cab,opti,pente = Sylvaccess_pluginDialog.get_general(1,1,1,1,1)
+    pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes=Sylvaccess_pluginDialog.get_skidder(1,1,1,1,1,1,1,1)
+    pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2=Sylvaccess_pluginDialog.get_porteur(1,1,1,1,1,1,1)
+    type_machine,supports_inter,hauteur,longueure_max,longueure_min=Sylvaccess_pluginDialog.get_type_cable(1,1,1,1,1)
+    type_chariot,masse,pente_min,pente_max_amont,pente_max_aval = Sylvaccess_pluginDialog.get_type_chariot(1,1,1,1,1,1)
+    diamètre,masse_li,tension_rupt,elasticité = Sylvaccess_pluginDialog.get_proprietes_cable(1,1,1,1)
+    hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,masse_max,securite = Sylvaccess_pluginDialog.get_param_modelisation(1,1,1,1,1,1,1)
+    opti2,precision = Sylvaccess_pluginDialog.get_options(1,1)
+    prelevement,recalculer,Rspace2,foret2,VBP2,VAM2,pechage2 = Sylvaccess_pluginDialog.get_opti_cable(1,1,1,1,1,1,1)
+    surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1)
+    var_list= [Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP,ski,por,cab,opti,pente,pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,
+               pente_amont_max,pente_aval_max,limite,bornes,pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2,type_machine,supports_inter,hauteur,
+               longueure_max,longueure_min,type_chariot,masse,pente_min,pente_max_amont,pente_max_aval,diamètre,masse_li,tension_rupt,elasticité,hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,
+               masse_max,securite,opti2,precision,prelevement,recalculer,Rspace2,foret2,VBP2,VAM2,pechage2,surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,
+               longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids]
+    file_name = Rspace2+"all_param.txt"
+    text=var_list[0]
+    for var in var_list[1:]:
+        text+="\n"
+        text+= str(var)
+    fichier = open(file_name, "w")
+    fichier.write(text)
+    fichier.close()
 
 
+def azimuth(X0,Y0,X1,Y1):
+    dX=abs(X0-X1)
+    dY=abs(Y0-Y1)
+    #cas 1:cadran en haut a droite
+    if (X1>X0) and (Y1>Y0):
+        az=degrees(atan(dX*1.0/dY))
+    #cas 2:cadran en bas a droite
+    elif (X1>X0) and (Y1<Y0):
+        az=180-degrees(atan(dX*1.0/dY))
+    #cas 3:cadran en haut a gauche
+    elif (X1<X0) and (Y1>Y0):
+        az=360-degrees(atan(dX*1.0/dY)) 
+    #cas 4:cadran en bas a gauche
+    elif (X1<X0) and (Y1<Y0):
+        az=180+degrees(atan(dX*1.0/dY)) 
+    #cas 5:horizontal gauche
+    elif (dY==0) and (X1>X0):
+        az=90
+    #cas 6:horizontal droite
+    elif (dY==0) and (X1<X0):
+        az=90*3
+    #cas 7:vertical haut
+    elif (Y1>=Y0) and (dX==0):
+        az=0
+    #cas 8:vertical bas
+    elif (Y1<Y0) and (dX==0):
+        az=180
+    return az
 
 
+def from_az_to_arr(xmin,xmax,ymin,ymax,Csize,Lmax,az):    
+    X1 = sin(radians(az))*Lmax
+    Y1 = cos(radians(az))*Lmax
+    #Initialize raster info
+    nrows,ncols = int((ymax-ymin)/float(Csize)+0.5),int((xmax-xmin)/float(Csize)+0.5)    
+    #create polygon object:
+    driver = ogr.GetDriverByName('Memory')
+    datasource = driver.CreateDataSource('')
+    source_srs=osr.SpatialReference()
+    source_srs.ImportFromEPSG(2154)
+    layer = datasource.CreateLayer('layerName',source_srs,geom_type=ogr.wkbLineString)
+    layerDefinition = layer.GetLayerDefn()
+    new_field = ogr.FieldDefn('ID', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    line = ogr.Geometry(ogr.wkbLineString)
+    line.AddPoint(0,0)
+    line.AddPoint(X1,Y1)
+    feature = ogr.Feature(layerDefinition)
+    feature.SetGeometry(line)
+    feature.SetFID(az)
+    feature.SetField('ID',1)
+    layer.CreateFeature(feature)    
+    feature.Destroy()     
+    # Initialize the new memory raster      
+    maskvalue = 1    
+    xres=float(Csize)
+    yres=float(Csize)
+    geotransform=(xmin,xres,0,ymax,0, -yres)    
+    target_ds = gdal.GetDriverByName('MEM').Create('', int(ncols), int(nrows), 1, gdal.GDT_Int16)
+    target_ds.SetGeoTransform(geotransform)
+    if source_srs:
+        # Make the target raster have the same projection as the source
+        target_ds.SetProjection(source_srs.ExportToWkt())
+    else:
+        # Source has no projection (needs GDAL >= 1.7.0 to work)
+        target_ds.SetProjection('LOCAL_CS["arbitrary"]')
+    # Rasterize
+    err = gdal.RasterizeLayer(target_ds, [maskvalue], layer,options=["ATTRIBUTE=ID","ALL_TOUCHED=TRUE"])
+    if err != 0:
+        raise Exception("error rasterizing layer: %s" % err)
+    else:
+        target_ds.FlushCache()
+        mask_arr = target_ds.GetRasterBand(1).ReadAsArray()
+    datasource.Destroy()
+    return X1,Y1,mask_arr
 
 
+def check_common_line(item,Row_line,Col_line,D_line,nb_pix):
+    i=0
+    while (Row_line[item-1,i]==Row_line[item,i]) and (Col_line[item-1,i]==Col_line[item,i]) and i<nb_pix:
+        i+=1
+    return D_line[item,i-1]
 
 
+def pt_emprise(X0,Y0,X1,Y1,Lhor_max):
+    az=azimuth(X0,Y0,X1,Y1)
+    #deb + 90
+    X = [X0+sin(radians(az+90))*Lhor_max]
+    Y = [Y0+cos(radians(az+90))*Lhor_max]
+    #deb - 90
+    X.append(X0+sin(radians(az-90))*Lhor_max)
+    Y.append(Y0+cos(radians(az-90))*Lhor_max)
+    #fin - 90
+    X.append(X1+sin(radians(az-90))*Lhor_max)
+    Y.append(Y1+cos(radians(az-90))*Lhor_max)
+    #fin + 90
+    X.append(X1+sin(radians(az+90))*Lhor_max)
+    Y.append(Y1+cos(radians(az+90))*Lhor_max)
+    return [X,Y] 
 
 
+def point_line_to_line_ext(X0,Y0,X1,Y1,Lhor_max,xmin,xmax,ymin,ymax,Csize):
+    ### Create mask_array
+    X,Y = pt_emprise(X0,Y0,X1,Y1,Lhor_max)
+    #Initialize raster info
+    nrows,ncols = int((ymax-ymin)/float(Csize)+0.5),int((xmax-xmin)/float(Csize)+0.5)    
+    #create polygon object:
+    driver = ogr.GetDriverByName('Memory')
+    datasource = driver.CreateDataSource('')
+    source_srs=osr.SpatialReference()
+    source_srs.ImportFromEPSG(2154)
+    layer = datasource.CreateLayer('layerName',source_srs,geom_type=ogr.wkbPolygon)
+    new_field = ogr.FieldDefn('ID', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    # create polygon object:
+    myRing = ogr.Geometry(ogr.wkbLinearRing)
+    for i in range(0,len(X)):
+        myRing.AddPoint(X[i],Y[i])
+    myRing.AddPoint(X[0],Y[0])#close ring
+    poly = ogr.Geometry(type=ogr.wkbPolygon)
+    poly.AddGeometry(myRing)
+    feature = ogr.Feature( layer.GetLayerDefn() )
+    feature.SetGeometry(poly)
+    feature.SetFID(1)
+    feature.SetField('ID',1)
+    layer.CreateFeature(feature)    
+    feature.Destroy()     
+    # Initialize the new memory raster      
+    maskvalue = 1    
+    xres=float(Csize)
+    yres=float(Csize)
+    geotransform=(xmin,xres,0,ymax,0, -yres)    
+    target_ds = gdal.GetDriverByName('MEM').Create('', int(ncols), int(nrows), 1, gdal.GDT_Int16)
+    target_ds.SetGeoTransform(geotransform)
+    if source_srs:
+        # Make the target raster have the same projection as the source
+        target_ds.SetProjection(source_srs.ExportToWkt())
+    else:
+        # Source has no projection (needs GDAL >= 1.7.0 to work)
+        target_ds.SetProjection('LOCAL_CS["arbitrary"]')
+    # Rasterize
+    err = gdal.RasterizeLayer(target_ds, [maskvalue], layer,options=["ATTRIBUTE=ID","ALL_TOUCHED=TRUE"])
+    if err != 0:
+        raise Exception("error rasterizing layer: %s" % err)
+    else:
+        target_ds.FlushCache()
+        mask_arr = target_ds.GetRasterBand(1).ReadAsArray()
+    datasource.Destroy()
+    return mask_arr
 
 
+def get_car_dist(Row_line,Col_line,D_line,Nbpix_line,item,mat):
+    A = np.zeros((Nbpix_line[item],2))
+    A[:,0] = Row_line[item,0:Nbpix_line[item]]
+    A[:,1] = Col_line[item,0:Nbpix_line[item]]
+    Tree=spatial.cKDTree(A)
+    for i,pixel in enumerate(mat):
+        pt = [pixel[0],pixel[1]]
+        _ ,index = Tree.query(pt)
+        mat[i,2]=D_line[item,index]
+    return mat
 
+
+def get_car_dist2(Row_line,Col_line,D_line,Nbpix_line,item,mat):
+    A = np.zeros((Nbpix_line[item],2))
+    A[:,0] = Row_line[item,0:Nbpix_line[item]]
+    A[:,1] = Col_line[item,0:Nbpix_line[item]]
+    Tree=spatial.cKDTree(A)
+    for i,pixel in enumerate(mat):
+        pt = [pixel[0],pixel[1]]
+        distance,index = Tree.query(pt)
+        mat[i,2]=D_line[item,index]
+        mat[i,3]=distance
+    return mat
+
+
+def ligh_line(mat,Dmin):
+    mat[0,3]=1
+    for i in range(1,mat.shape[0]):
+        if (mat[i,2]-mat[i-1,2])>Dmin:
+            mat[i,3]=1
+    return mat[mat[:,3]>0]
+
+
+def create_buffer(Csize,Lmax,Lhor_max):
+    Lcote = Lmax+Lhor_max+1.5*Csize
+    xmin,xmax,ymin,ymax = -Lcote,Lcote,-Lcote,Lcote
+    Buffer_cote = int((Lmax+Lhor_max)/Csize+1.5)
+    Dir_list = range(0,360,1)
+    Row_line = np.zeros((len(Dir_list),3*Buffer_cote),dtype=np.int16)
+    Col_line = np.zeros((len(Dir_list),3*Buffer_cote),dtype=np.int16)
+    D_line = np.ones((len(Dir_list),3*Buffer_cote),dtype=np.float)*-1
+    Nbpix_line = np.zeros((len(Dir_list),),dtype=np.int16)
+    Row_ext = np.zeros((len(Dir_list),50*Buffer_cote),dtype=np.int16)
+    Col_ext = np.zeros((len(Dir_list),50*Buffer_cote),dtype=np.int16)
+    D_ext = np.ones((len(Dir_list),50*Buffer_cote),dtype=np.float)*(Lmax+Lhor_max)
+    Nbpix_ext = 0
+    Dmin = sqrt(2)*Csize*0.5
+    for az in Dir_list:
+        #Fill line info
+        X1,Y1,mask_arr=from_az_to_arr(xmin,xmax,ymin,ymax,Csize,Lmax,az)        
+        inds=np.argwhere(mask_arr==1)-Buffer_cote
+        mat = np.zeros((inds.shape[0],4))
+        mat[:,:2] = inds
+        mat[:,2] = Csize*np.sqrt(mat[:,0]**2+mat[:,1]**2)
+        ind = np.lexsort((mat[:,1],mat[:,2]))
+        mat = mat[ind]
+        mat = ligh_line(mat,Dmin)
+        nb_pix=mat.shape[0]
+        Row_line[az,0:nb_pix]=mat[:,0]
+        Col_line[az,0:nb_pix]=mat[:,1]
+        D_line[az,0:nb_pix]=mat[:,2]
+        Nbpix_line[az] = nb_pix
+        #Fill extent info
+        mask_arr=point_line_to_line_ext(0,0,X1,Y1,Lhor_max,xmin,xmax,ymin,ymax,Csize)        
+        inds=np.argwhere(mask_arr==1)-Buffer_cote
+        mat = np.zeros((inds.shape[0],inds.shape[1]+1))
+        mat[:,:-1] = inds
+        mat = get_car_dist(Row_line,Col_line,D_line,Nbpix_line,az,mat)
+        ind = np.lexsort((mat[:,1],mat[:,2]))
+        nb_pix=inds.shape[0]
+        Row_ext[az,0:nb_pix]=mat[ind,0]
+        Col_ext[az,0:nb_pix]=mat[ind,1]
+        D_ext[az,0:nb_pix]=mat[ind,2]
+        Nbpix_ext = max(nb_pix,Nbpix_ext)
+    NbpixmaxL = np.max(Nbpix_line)
+    return Row_line[:,0:NbpixmaxL],Col_line[:,0:NbpixmaxL],D_line[:,0:NbpixmaxL],Nbpix_line, Row_ext[:,0:Nbpix_ext],Col_ext[:,0:Nbpix_ext],D_ext[:,0:Nbpix_ext],Dir_list
+
+
+def create_buffer2(Csize,Lmax,Lhor_max):
+    Lcote = Lmax+Lhor_max+1.5*Csize
+    xmin,xmax,ymin,ymax = -Lcote,Lcote,-Lcote,Lcote
+    Buffer_cote = int((Lmax+Lhor_max)/Csize+1.5)
+    Dir_list = range(0,360,1)
+    Row_line = np.zeros((len(Dir_list),3*Buffer_cote),dtype=np.int16)
+    Col_line = np.zeros((len(Dir_list),3*Buffer_cote),dtype=np.int16)
+    D_line = np.ones((len(Dir_list),3*Buffer_cote),dtype=np.float)*-1
+    Nbpix_line = np.zeros((len(Dir_list),),dtype=np.int16)
+    Row_ext = np.zeros((len(Dir_list),50*Buffer_cote),dtype=np.int16)
+    Col_ext = np.zeros((len(Dir_list),50*Buffer_cote),dtype=np.int16)
+    D_ext = np.ones((len(Dir_list),50*Buffer_cote),dtype=np.float)*-1
+    D_lat = np.ones((len(Dir_list),50*Buffer_cote),dtype=np.float)*(Lmax+Lhor_max)
+    Nbpix_ext = 0
+    Dmin = sqrt(2)*Csize*0.5
+    for az in Dir_list:
+        #Fill line info
+        X1,Y1,mask_arr=from_az_to_arr(xmin,xmax,ymin,ymax,Csize,Lmax,az)        
+        inds=np.argwhere(mask_arr==1)-Buffer_cote
+        mat = np.zeros((inds.shape[0],4))
+        mat[:,:2] = inds
+        mat[:,2] = Csize*np.sqrt(mat[:,0]**2+mat[:,1]**2)
+        ind = np.lexsort((mat[:,1],mat[:,2]))
+        mat = mat[ind]
+        mat = ligh_line(mat,Dmin)
+        nb_pix=mat.shape[0]
+        Row_line[az,0:nb_pix]=mat[:,0]
+        Col_line[az,0:nb_pix]=mat[:,1]
+        D_line[az,0:nb_pix]=mat[:,2]
+        Nbpix_line[az] = nb_pix
+        #Fill extent info
+        mask_arr=point_line_to_line_ext(0,0,X1,Y1,Lhor_max,xmin,xmax,ymin,ymax,Csize)        
+        inds=np.argwhere(mask_arr==1)-Buffer_cote
+        mat = np.zeros((inds.shape[0],inds.shape[1]+2))
+        mat[:,:-2] = inds
+        mat= get_car_dist2(Row_line,Col_line,D_line,Nbpix_line,az,mat)
+        ind = np.lexsort((mat[:,1],mat[:,2]))               
+        nb_pix=inds.shape[0]
+        Row_ext[az,0:nb_pix]=mat[ind,0]
+        Col_ext[az,0:nb_pix]=mat[ind,1]
+        D_ext[az,0:nb_pix]=mat[ind,2]
+        D_lat[az,0:nb_pix]=mat[ind,3]*Csize
+        Nbpix_ext = max(nb_pix,Nbpix_ext)
+    NbpixmaxL = np.max(Nbpix_line)
+    return Row_line[:,0:NbpixmaxL],Col_line[:,0:NbpixmaxL],D_line[:,0:NbpixmaxL],Nbpix_line, Row_ext[:,0:Nbpix_ext],Col_ext[:,0:Nbpix_ext],D_ext[:,0:Nbpix_ext],D_lat[:,0:Nbpix_ext],Dir_list
+
+
+def get_ligne(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,Pente,Lmax,Lmin,Csize,
+              Row_line,Col_line,D_line,Nbpix_line,angle_transv,slope_trans,ncols,nrows,Lsans_foret):
+    npix = Nbpix_line[az]
+    npix = fc.get_npix(az,npix,coordY,coordX,ncols,nrows,Row_line,Col_line)   
+    if D_line[az,npix-1]>Lmin:  
+        Line=np.zeros((npix,10),dtype=np.float)
+        inds = (Row_line[az,0:npix]+coordY,Col_line[az,0:npix]+coordX)        
+        Line[:,0],Line[:,1],Line[:,2]=D_line[az,0:npix],MNT[inds],Forest[inds]
+        Line[:,3],Line[:,4]=Csize*Col_line[az,0:npix]+posiX,-Csize*Row_line[az,0:npix]+posiY
+        Line[:,5],Line[:,6]=Col_line[az,0:npix]+coordX,Row_line[az,0:npix]+coordY 
+        Line[:,7],Line[:,8],Line[:,9]=Fin_ligne_forcee[inds],np.abs(((az-np.int_(Aspect[inds]))+180)%360-180),(np.int_(Pente[inds])<slope_trans)*1
+        Line[:,8] = (Line[:,8]>(90+angle_transv))*1+(Line[:,8]<(90-angle_transv))*1
+        test,indmax,Lline=fc.check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret)    
+        return test,Lline,Line[0:indmax,0:7]
+    else:
+        return 0,0,0
+
+def create_az_rules(angle_transv):
+    matrice = np.zeros((360,360),dtype=np.int8)
+    b1 = 90-angle_transv
+    b2 = 90+angle_transv
+    b3 = 270-angle_transv
+    b4 = 270+angle_transv
+    matrice[0,0:b1]=1
+    matrice[0,b2:b3]=1
+    matrice[0,b4:360]=1
+    for expo in range(1,360,1):
+        matrice[expo,0]=matrice[expo-1,359]
+        for azi in range(1,360,1):
+            matrice[expo,azi]=matrice[expo-1,azi-1]
+    return matrice 
+
+
+def Line_to_shapefile(Tab,Cable_line_Path,source_src,prelevement,language):
+    # Get driver
+    driver = ogr.GetDriverByName('ESRI Shapefile')
+    fieldvol = 'Volume_'+str(int(100*prelevement))
+    # Create output shapefile
+    if os.path.exists(Cable_line_Path):driver.DeleteDataSource(Cable_line_Path)
+    target_ds = driver.CreateDataSource(Cable_line_Path)
+    layerName = os.path.splitext(os.path.split(Cable_line_Path)[1])[0]
+    layer = target_ds.CreateLayer(layerName, source_src, ogr.wkbLineString)
+    layerDefinition = layer.GetLayerDefn()  
+    new_field = ogr.FieldDefn('IdLine', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Xstart', ogr.OFTReal)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Ystart', ogr.OFTReal)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Xend', ogr.OFTReal)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Yend', ogr.OFTReal)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Id_route', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    if language=='FR':
+        new_field = ogr.FieldDefn('Desserte', ogr.OFTString) 
+        
+    else:
+        new_field = ogr.FieldDefn('Road', ogr.OFTString)                              
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('AzimuthDeg', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Long', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Config', ogr.OFTString)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('NbIntSup', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Surface', ogr.OFTReal)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn(fieldvol, ogr.OFTInteger)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('IPC', ogr.OFTReal)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Dmoy', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    cneg = "Debardage vers l'aval"
+    cpos = "Debardage vers l'amont"
+    proj = "En projet"
+    exis = "Existant"
+
+    
+    for ind,S in enumerate(Tab):
+        line = ogr.Geometry(ogr.wkbLineString)
+        line.AddPoint(float(S[2]),float(S[3]))
+        line.AddPoint(float(S[6]),float(S[7]))
+        feature = ogr.Feature(layerDefinition)
+        feature.SetGeometry(line)
+        feature.SetFID(ind)
+        feature.SetField('IdLine',ind+1)
+        feature.SetField('Xstart',float(S[2]))
+        feature.SetField('Ystart',float(S[3]))
+        feature.SetField('Xend',float(S[6]))
+        feature.SetField('Yend',float(S[7]))
+        if int(S[10])==2: 
+            feature.SetField('Desserte',exis)
+        else:
+            feature.SetField('Desserte',proj)
+        feature.SetField('Id_route',int(S[0]))
+        feature.SetField('AzimuthDeg',int(S[1]))
+        feature.SetField('Long',int(S[11]))
+        if int(S[12])>0:
+            feature.SetField('Config',cpos)
+        else:
+            feature.SetField('Config',cneg)
+        feature.SetField('NbIntSup',int(S[17]))
+        feature.SetField('Surface',S[13]/10000.)
+        feature.SetField('Dmoy',int(S[14]))
+        feature.SetField(fieldvol,int(S[15]*prelevement))
+        feature.SetField('IPC',S[15]*prelevement/float(S[11]))
+        layer.CreateFeature(feature)
+        line.Destroy()
+        feature.Destroy()
+    target_ds.Destroy()
+
+
+def Pylone_in_shapefile(Tab,Cable_line_Path,source_src):
+    # Get driver
+    driver = ogr.GetDriverByName('ESRI Shapefile')
+    # Create output shapefile
+    if os.path.exists(Cable_line_Path):driver.DeleteDataSource(Cable_line_Path)
+    target_ds = driver.CreateDataSource(Cable_line_Path)
+    layerName = os.path.splitext(os.path.split(Cable_line_Path)[1])[0]    
+    layer = target_ds.CreateLayer(layerName, source_src, ogr.wkbPoint)
+    layerDefinition = layer.GetLayerDefn()  
+    new_field = ogr.FieldDefn('IdLine', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Xpyl', ogr.OFTReal)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Ypyl', ogr.OFTReal)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Altitude', ogr.OFTReal)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Hcable', ogr.OFTReal)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Pression', ogr.OFTReal)
+    layer.CreateField(new_field)
+    new_field = ogr.FieldDefn('Pyl_pos', ogr.OFTInteger)
+    layer.CreateField(new_field)
+    idi = 0
+    for ind,S in enumerate(Tab):
+        nb=1
+        for pyl in range(int(S[17])):  
+            point = ogr.Geometry(ogr.wkbPoint)
+            point.SetPoint(0, float(S[18+5*pyl]),float(S[19+5*pyl]))         
+            feature = ogr.Feature(layerDefinition)
+            feature.SetGeometry(point)
+            feature.SetFID(idi)
+            feature.SetField('IdLine',ind+1)
+            feature.SetField('Xpyl',float(S[18+5*pyl]))
+            feature.SetField('Ypyl',float(S[19+5*pyl]))
+            feature.SetField('Altitude',float(S[20+5*pyl]))
+            feature.SetField('Hcable',float(S[21+5*pyl]))
+            feature.SetField('Pression',float(S[22+5*pyl]))
+            feature.SetField('Pyl_pos',int(nb)             )    
+            layer.CreateFeature(feature)
+            point.Destroy()
+            feature.Destroy()
+            idi+=1
+            nb+=1
+    target_ds.Destroy()
+
+
+def create_coord_pixel_center_raster(values,nline,ncol,Csize,Dir_temp):
+    Xcoord = np.zeros((ncol),dtype=np.float)
+    Ycoord = np.zeros((nline),dtype=np.float)
+    y= values[3]+Csize*0.5
+    for i in range(nline-1,-1,-1):
+        Ycoord[i] = y
+        y+= Csize
+    x= values[2]+Csize*0.5
+    for j in range(0,ncol,1):
+        Xcoord[j]=x
+        x+= Csize
+    np.save(Dir_temp+'TableX.npy',Xcoord)
+    np.save(Dir_temp+'TableY.npy',Ycoord)
+    return Xcoord,Ycoord
+
+
+def create_coord_pixel_center_raster2(values,nline,ncol,Csize):
+    Xcoord = np.zeros((ncol),dtype=np.float)
+    Ycoord = np.zeros((nline),dtype=np.float)
+    y= values[3]+Csize*0.5
+    for i in range(nline-1,-1,-1):
+        Ycoord[i] = y
+        y+= Csize
+    x= values[2]+Csize*0.5
+    for j in range(0,ncol,1):
+        Xcoord[j]=x
+        x+= Csize
+    return Xcoord,Ycoord
+    
+
+def prepa_desserte_cable(Desserte_shapefile_name,MNT_file_name,Dir_temp,Pond_pente):
+    ### Get info on the area
+    _,values,_,Extent = raster_get_info(MNT_file_name)
+    Csize,ncols,nrows = values[4],int(values[0]),int(values[1])  
+    ### Get id of pixel of road and distance to public network
+    Desserte_temp = shapefile_to_np_array(Desserte_shapefile_name,Extent,Csize,"CL_SVAC","CL_SVAC",'ASC')
+    # Public network
+    Res_pub = (Desserte_temp==3)*1
+    # Forest road
+    Route = (Desserte_temp==2)*1
+    ID_RF = -9999*np.ones((nrows,ncols),dtype=np.int)
+    ID_res_pub = -9999*np.ones((nrows,ncols),dtype=np.int)
+    indice_forest_road = 0
+    indice_public_road = 0
+    pixels = np.argwhere(Desserte_temp>1)
+    for pixel in pixels:
+        if Res_pub[pixel[0],pixel[1]]==1:
+            ID_res_pub[pixel[0],pixel[1]] = indice_public_road
+            indice_public_road +=1
+        elif Route[pixel[0],pixel[1]]==1:
+            ID_RF[pixel[0],pixel[1]] = indice_forest_road
+            indice_forest_road +=1
+    np.save(Dir_temp+"ID_RF.npy",ID_RF)  
+    np.save(Dir_temp+"ID_res_pub.npy",ID_res_pub)
+    Dtransp_route, Lien_RF_respub = fc.calcul_distance_de_cout(ID_res_pub,Pond_pente,Route,Csize) 
+    ### Get only forest roads
+    Dir_temp2 = Dir_temp+"Temp/"
+    try:os.mkdir(Dir_temp2)
+    except:pass 
+    Route_shp = Dir_temp2 + "Route.shp"
+    select_in_shapefile(Desserte_shapefile_name,Route_shp,'WHERE CL_SVAC=2')
+    ### Calculate azimuth and identify lines extremities
+    Points_shp = Dir_temp2 + "Route_points.shp"    
+    geoLocations,projection = linestring_to_point(Route_shp,Points_shp)
+    # lines extremities
+    Fin_ligne = np.int8(shapefile_to_np_array(Points_shp,Extent,Csize,'FIN_LIGNE','FIN_LIGNE','DESC'))
+    # Azimuth 
+    Az_route_shp = Dir_temp2 + "Az_Route.shp"
+    points_to_lineshape(geoLocations,Az_route_shp,projection)
+    Az_route = shapefile_to_np_array(Az_route_shp,Extent,Csize,'DIRECTION','DIRECTION','DESC')
+    ID_routefor = np.unique(ID_RF)[1:]
+    Link_RF_Res_pub = np.zeros((ID_routefor.shape[0],7),dtype=np.int)    
+    for ind in ID_routefor:
+        Temp = np.argwhere(ID_RF==ind)
+        Link_RF_Res_pub[ind,0]=ind
+        Link_RF_Res_pub[ind,1]=Temp[0,0]
+        Link_RF_Res_pub[ind,2]=Temp[0,1]
+        Link_RF_Res_pub[ind,3]=Dtransp_route[Temp[0,0],Temp[0,1]]
+        Link_RF_Res_pub[ind,4]=Lien_RF_respub[Temp[0,0],Temp[0,1]]  
+        Link_RF_Res_pub[ind,5]=Fin_ligne[Temp[0,0],Temp[0,1]]  
+        Link_RF_Res_pub[ind,6]=Az_route[Temp[0,0],Temp[0,1]]
+    shutil.rmtree(Dir_temp2)
+    np.save(Dir_temp+"Link_RF_Res_pub",Link_RF_Res_pub)
+    return Link_RF_Res_pub
+
+
+def read_raster(file_name):
+    source_ds = gdal.Open(file_name)
+    source_ds.FlushCache() # Flush 
+    Array = source_ds.GetRasterBand(1).ReadAsArray()
+    Array[Array==0]=-9999
+    return Array
+
+
+# Create raster of obstacles from directory containing shapefiles 
+def prepa_obstacle_cable(Obstacles_directory,file_MNT,Dir_temp):
+    ### Creation d'un repertoire temporaire       
+    _,values,_,Extent = raster_get_info(file_MNT)
+    Csize= values[4]
+    MNT = read_raster(file_MNT)
+    MNT[MNT==values[5]]=-9999
+    Pente = fc.pente(np.float_(MNT),Csize,-9999)     
+    if Obstacles_directory!="":
+        liste_file = os.listdir(Obstacles_directory)
+        liste_obs = [] 
+        for files in liste_file:
+            if files[-4:len(files)]=='.shp':liste_obs.append(Obstacles_directory+files)
+        if len(liste_obs)>0:
+            Obstacles_cable = shapefile_obs_to_np_array(liste_obs,Extent,Csize)
+        else: Obstacles_cable = np.zeros_like(MNT,dtype=np.int8)
+    else: Obstacles_cable = np.zeros_like(MNT,dtype=np.int8)    
+    Obstacles_cable[MNT==-9999]=1
+    values[5]=-9999
+    np.save(Dir_temp+'Obstacles_cables.npy',np.int8(Obstacles_cable))
+    gc.collect()  
+    return Pente
+
+
+def prepa_pond_pente_cable(MNT,Csize,Direct,head_text):
+    Pente = fc.pente(MNT,Csize,-9999)
+    Pond_pente = np.sqrt((Pente*0.01*Csize)**2+Csize**2)/float(Csize)
+    Pond_pente[Pente==-9999] = 10000
+    save_float_ascii(Direct+'/pond_pente.asc',head_text,Pond_pente)
+    return Pond_pente
+    
+# Create a pair matrix
+def create_pair_matrice(matrice):
+    indices = np.indices(matrice.shape)
+    pair_l = np.fmod(indices[0],2)
+    pair_c = np.fmod(indices[1],2)
+    pair = pair_c + pair_l
+    pair = np.equal(pair,1)
+    return pair
+
+# Make buffer around a pixel
+def buffer_emprise(Csize,ct_Lhor_max):
+    temp = int(ct_Lhor_max/Csize)
+    Ligne_perpendic = np.zeros((360*(1+2*temp),(1+2*temp)),dtype=np.uint8)
+    Ind_mask = np.indices(((1+2*temp),(1+2*temp)),dtype=np.int16)
+    center_inv = np.ones(((1+2*temp),(1+2*temp)),dtype=np.int16)
+    center_inv[temp,temp]=0
+    center = np.equal(center_inv,0)*1
+    DX = Ind_mask[1]- temp
+    DY = temp - Ind_mask[0]
+    Dhor_ok = np.less_equal(Csize*np.sqrt(DX**2+DY**2),ct_Lhor_max)
+    dmax1,dmin1,dmax2,dmin2 = direction_to_center(DX,DY,Csize,center_inv,center)
+    z3_2 = np.less_equal((dmax2-dmin2),120)*1
+    z3_1 = np.less_equal((dmax1-dmin1),120)*1
+    Direction_list = range(0,360,1)
+    for item in Direction_list:
+        Dir_value = item+90
+        if Dir_value > 359:Dir_value = item-90
+        Mask1 = get_dir_area(Dir_value,dmax1,dmin1,dmax2,dmin2,center,z3_2,z3_1)
+        Dir_value1 = Dir_value+180
+        if Dir_value1 > 359:Dir_value1 = Dir_value-180
+        Mask2 = get_dir_area(Dir_value1,dmax1,dmin1,dmax2,dmin2,center,z3_2,z3_1)
+        Mask = np.greater((Mask1+Mask2),0)*Dhor_ok*1
+        h = item*(1+2*temp)
+        b = h+(1+2*temp)
+        r = (1+2*temp)
+        Ligne_perpendic[h:b,0:r]=Mask
+    return Ligne_perpendic
+
+
+def direction_to_center(DX,DY,Csize,center_inv,center):
+    corner=[[0.5,0.5],[0.5,-0.5],[-0.5,0.5],[-0.5,0.5]]
+    dmax1 = -400*np.ones_like(DX, dtype = np.int16)
+    dmax2 = -400*np.ones_like(DX, dtype = np.int16)
+    dmin1 = 400*np.ones_like(DX, dtype = np.int16)
+    dmin2 = 400*np.ones_like(DX, dtype = np.int16)
+    ind_center = np.nonzero(center==1)
+    for item in corner:
+        X = DX*Csize+item[1]*Csize
+        Y = DY*Csize+item[0]*Csize
+        D = np.sqrt(X**2+Y**2)
+        Temp = np.equal(X,np.abs(X))*1
+        Fact = Temp - np.less(Temp, 1)*1        
+        D[ind_center] = Csize
+        Angle = np.degrees(np.arccos(Y/D))
+        Angle[ind_center]=0
+        Temp = Angle*Fact
+        del (X,Y,D,Fact,Angle)
+        direction = 360*np.less(Temp, 0)+np.less(Temp, 0)*Temp+np.greater_equal(Temp, 0)*Temp
+        dmax1=np.maximum(direction,dmax1)
+        dmin1=np.minimum(direction,dmin1)
+        dmax2=np.maximum(Temp,dmax2)
+        dmin2=np.minimum(Temp,dmin2)
+        del (Temp,direction)
+    dmax1=np.float_(dmax1*center_inv+np.equal(center_inv,0)*9999)
+    dmax2=np.float_(dmax2*center_inv+np.equal(center_inv,0)*9999)
+    dmin1=np.float_(dmin1*center_inv+np.equal(center_inv,0)*9999)
+    dmin2=np.float_(dmin2*center_inv+np.equal(center_inv,0)*9999)
+    return dmax1,dmin1,dmax2,dmin2
+
+
+#Get area corresponding to an azimuth
+def get_dir_area(dir_value,dmax1,dmin1,dmax2,dmin2,center,z3_2,z3_1):
+    if dir_value < 90:
+        z1 = np.greater_equal(dir_value,dmin2)
+        z2 = np.less_equal(dir_value,dmax2)
+        zone = np.equal((z1*1+z2*1+z3_2*1),3)*1+center
+    elif dir_value > 270:
+        new_value = dir_value-360
+        z1 = np.greater_equal(new_value,dmin2)
+        z2 = np.less_equal(new_value,dmax2)
+        zone = np.equal((z1*1+z2*1+z3_2*1),3)*1+center
+    else:
+        z1 = np.greater_equal(dir_value,dmin1)
+        z2 = np.less_equal(dir_value,dmax1)
+        zone = np.equal((z1*1+z2*1+z3_1*1),3)*1+center
+    return zone
+
+
+# Create useful buffers
+def mask_buffers(test_coordY,test_coordX,ind_buffer_center,Buffer_cote,ncol,nline):
+    if test_coordX < ind_buffer_center[1][0]: mask_l,buf_l = 0,ind_buffer_center[1][0] - test_coordX
+    else: mask_l,buf_l = test_coordX - Buffer_cote,0
+    if test_coordX + Buffer_cote + 1 > ncol: mask_r,buf_r = ncol,ncol-test_coordX+ind_buffer_center[1][0]
+    else: mask_r,buf_r = test_coordX + Buffer_cote + 1,ind_buffer_center[1][0] + Buffer_cote + 1
+    if test_coordY < ind_buffer_center[0][0]: mask_h,buf_h = 0,ind_buffer_center[0][0] - test_coordY
+    else: mask_h,buf_h = test_coordY - Buffer_cote,0
+    if test_coordY + Buffer_cote + 1 > nline: mask_b,buf_b = nline,nline - test_coordY + ind_buffer_center[0][0]
+    else: mask_b,buf_b = test_coordY+Buffer_cote+1,ind_buffer_center[0][0]+Buffer_cote+1
+    return mask_h,mask_b,mask_l,mask_r,buf_h,buf_b,buf_l,buf_r
+
+
+def directions_a_tester(Dir_route,Dir_list,angle_sup,id_fin_ligne):
+    # Pixel tout seul
+    Dir_list_bis = list(Dir_list)
+    # Pixel de route en fin de troncon
+    if id_fin_ligne==1:
+        D_plus_a = (Dir_route+angle_sup)%360
+        D_moins_a = (Dir_route-angle_sup)%360
+        if D_moins_a > D_plus_a:valeur_a_suppr = range(D_moins_a,360,1)+range(0,D_plus_a+1,1)
+        else:valeur_a_suppr = range(D_moins_a,D_plus_a+1,1)
+        for item in valeur_a_suppr:
+            try:Dir_list_bis.remove(item)
+            except:continue
+    # Pixel de route au milieu d'un troncon
+    else:
+        D_plus_a = (Dir_route+angle_sup)%360
+        D_moins_a = (Dir_route-angle_sup)%360
+        if D_moins_a > D_plus_a:valeur_a_suppr = range(D_moins_a,360,1)+range(0,D_plus_a+1,1)
+        else:valeur_a_suppr = range(D_moins_a,D_plus_a+1,1)
+        D_plus_180_moins_a = (Dir_route+180-angle_sup)%360
+        D_plus_180_plus_a = (Dir_route+180+angle_sup)%360
+        if D_plus_180_plus_a < D_plus_180_moins_a: valeur_a_suppr = valeur_a_suppr + range(D_plus_180_moins_a,360,1)+range(0,D_plus_180_plus_a+1,1)
+        else:valeur_a_suppr = valeur_a_suppr + range(D_plus_180_moins_a,D_plus_180_plus_a+1,1)
+        for item in valeur_a_suppr:
+            try:Dir_list_bis.remove(item)
+            except:continue    
+    return Dir_list_bis
+
+
+def get_cable_configs(slope_Wliner_up,slope_Wliner_down,slope_grav,Skid_direction):
+    #Get folder
+    _,Rspace,_,_,_,_,_,_,_,_,_,_,_ = Sylvaccess_pluginDialog.get_spatial(0,1,0,0,0,0,0,0,0,0,0,0,0)
+    dirs = [d for d in os.listdir(Rspace) if os.path.isdir(os.path.join(Rspace, d))]
+    list_dir = []
+    for dire in dirs:
+        if dire[:5]=='Cable':
+            list_dir.append(dire)
+    optnum = len(list_dir)+1
+    Rspace_c=Rspace+'Cable_'+str(optnum)        
+    filename = Rspace_c+"/"
+    Cable_type,_,_,_,_ = Sylvaccess_pluginDialog.get_type_cable(1,0,0,0,0)
+    Carriage_type,_,_,_,_ = Sylvaccess_pluginDialog.get_type_chariot(1,0,0,0,0)
+    ### Define carriage type
+
+    if Skid_direction ==0:
+        filename += "_amont&aval"
+        slope_min_up = -atan(slope_Wliner_up*0.01)
+        slope_max_up = 0.1
+        slope_max_down = atan(slope_Wliner_down*0.01) 
+        slope_min_down = -0.1        
+    elif Skid_direction ==1:
+        filename += "_amont"
+        slope_min_up = -atan(slope_Wliner_up*0.01)
+        slope_max_up = 0.1
+        slope_max_down = 0
+        slope_min_down = 0
+    else:
+        filename += "_aval"
+        slope_min_up = 0
+        slope_max_up = 0
+        slope_max_down = atan(slope_Wliner_down*0.01) 
+        slope_min_down = -0.1 
+    if Cable_type<3:
+        if Skid_direction ==0:
+            filename += "_amont&aval"
+            slope_min_up = -1.4
+            slope_max_up = 0.1
+            slope_min_down = -0.1
+            slope_max_down = 1.4   
+        elif Skid_direction ==1:
+            if language == 'FR':
+                filename += "_amont"
+            else:
+                filename += "_uphill"
+            slope_min_up = -1.4
+            slope_max_up = -atan(slope_grav*0.01)
+            slope_min_down = 0
+            slope_max_down = 0  
+        else:
+            if language == 'FR':
+                filename += "_aval"
+            else:
+                filename += "_downhill"
+            slope_min_up = 0
+            slope_max_up = 0
+            slope_min_down = -0.1
+            slope_max_down = 1.4 
+    else:
+        # Long (conventional) cable 
+        if Skid_direction ==0:
+            if language == 'FR':
+                filename+= "_amont_aval"
+            else:
+                filename += "_uphill&downhill"
+            slope_min_up = -1.4
+            slope_max_up = -atan(slope_grav*0.01)
+            slope_max_down = 1.4
+            slope_min_down = atan(slope_grav*0.01)  
+        elif Skid_direction ==1:
+            if language == 'FR':
+                filename += "_amont"
+            else:
+                filename += "_uphill"
+            slope_min_up = -1.4
+            slope_max_up = -atan(slope_grav*0.01)
+            slope_min_down = 0
+            slope_max_down = 0
+        else:
+            if language == 'FR':
+                filename += "_aval"
+            else:
+                filename += "_downhill"
+            slope_min_up = 0
+            slope_max_up = 0
+            slope_max_down = 1.4
+            slope_min_down = atan(slope_grav*0.01) 
+    filename+=".txt"
+    return Rspace_c,filename,slope_min_up,slope_max_up,slope_min_down,slope_max_down
 
 
 
