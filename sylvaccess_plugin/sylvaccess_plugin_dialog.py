@@ -166,26 +166,102 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 ###############################################################################################                                                                                             
     # Fonction appelée lorsqu'on clique sur le bouton OK
     def launch(self):
+        Wspace,Rspace,_,_,file_shp_Desserte,_,_,_,_,_,_,_,_ = Sylvaccess_pluginDialog.get_spatial(1,1,1,0,0,1,0,0,0,0,0,0,0,0,0)
+        test_Skidder,test_Porteur,test_Cable,test_cable_optimise,pente = Sylvaccess_pluginDialog.get_general(1,1,1,1,1,1)
+        prelevement,recalculer,_,foret2,VBP2,VAM2,pechage2 = Sylvaccess_pluginDialog.get_opti_cable(1,1,1,0,1,1,1,1)
+        surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1,1)
+        w_list = [surface, nbr_sup_int, sens_debardage, longueure_ligne, vol_ligne, indice_prelev, VAM3, dist_chariot]
+        lim_list = [surface_poids, nbr_sup_int_poids, sens_debardage_poids, longueure_ligne_poids, vol_ligne_poids, indice_prelev_poids, VAM_poids, dist_chariot_poids]  
+        try:os.mkdir(Rspace)
+        except:pass
         for i in range (1,5):
             if not getattr(self, f"lineEdit_{i}").text():
-                console_warning("Veuillez remplir tous les champs")
+                console_warning("Veuillez remplir tous les champs obligatoires")
                 return
-        Sylvaccess_pluginDialog.check_files()    
-        if self.checkBox_4.isChecked():
-            Skidder()
-        if self.checkBox_3.isChecked():
-            Porteur()
-        if self.checkBox_2.isChecked() or self.checkBox_1.isChecked():
-            if not getattr(self, f"lineEdit_6".text()):
-                console_warning("Veuillez remplir les Départs potentiels de câble")
-                return
-                if self.checkBox_2.isChecked():
-                    Cable()
-                if self.checkBox_1.isChecked():
-                    Cable_opti()
-        else:
-            console_warning("Veuillez choisir au moins un type de machine")
-            return
+        Sylvaccess_pluginDialog.check_files()
+        write_file()
+        if (test_Skidder + test_Porteur) > 0:
+            # Verifie si une partie de la desserte correspond a un projet
+            testExist = check_field_EXIST(file_shp_Desserte,"EXIST") 
+                    
+                    ###################################################################################################################
+                    ### Si pas de projet desserte
+                    ###################################################################################################################
+            if not testExist: 
+                if test_Skidder:  
+                    Skidder()                    
+                    gc.collect()
+                
+                if test_Porteur:
+                    Porteur()
+                    gc.collect()
+            
+            ###################################################################################################################
+            ### Si projet desserte
+            ###################################################################################################################
+            else:                        
+                file_shp_Desserte_Exist = create_new_road_network(file_shp_Desserte,Wspace)
+                
+                #Premiere simu sans projet
+    
+                print("\nSIMULATION DEPUIS LA DESSERTE EXISTANTE")
+                if test_Skidder:   
+                    try:os.mkdir(Rspace+"Skidder/")
+                    except:pass
+                    Skidder(file_shp_Desserte_Exist)                    
+                    gc.collect()
+                    projdir = Rspace+"Skidder/1_Existant/"
+
+                    
+                    os.rename(Rspace+"Skidder/Skidder/",projdir)
+                
+                if test_Porteur:
+                    Rspace_f = Rspace+"Porteur/"
+                    old=Rspace+"Porteur/Porteur/"
+                    new= Rspace+"Porteur/1_Existant/"  
+                    try:os.mkdir(Rspace_f)
+                    except:pass
+                    Porteur(file_shp_Desserte_Exist)
+                    gc.collect()
+                    os.rename(old,new)  
+                    
+                os.remove(Wspace+"Temp/Lien_piste.npy")
+                os.remove(Wspace+"Temp/Lien_RF.npy")
+                os.remove(Wspace+"Temp/Tab_res_pub.npy")
+                os.remove(Wspace+"Temp/Route_for.npy")
+                os.remove(Wspace+"Temp/Piste.npy")
+                
+                #Deuxieme simu avec projet
+                print("\nSIMULATION INCLUANT LE PROJET DE DESSERTE")
+                if test_Skidder: 
+                    Skidder()                    
+                    gc.collect()
+                    projdir = Rspace+"Skidder/2_Projet/"
+                    
+                    os.rename(Rspace+"Skidder/Skidder/",projdir)
+                    make_dif_files(Rspace,0)     
+                    
+                if test_Porteur:
+                    Rspace_f = Rspace+"Porteur/"
+                    old=Rspace+"Porteur/Porteur/"
+                    new= Rspace+"Porteur/2_Projet/"                                
+                    Porteur()
+                    gc.collect()         
+                    os.rename(old,new)   
+                    make_dif_files(Rspace,1)                       
+        
+        if test_Cable:
+            Cable()
+            test_cable_optimise=0
+            gc.collect()
+        if test_cable_optimise:
+            line_selection(Wspace,w_list,lim_list,recalculer,foret2,VBP2,VAM2,pechage2,prelevement,pente) 
+            gc.collect()  
+        try:
+            shutil.rmtree(Wspace+"Temp")
+        except:
+            pass
+
 
     # Fonction qui vérifie que tous les fichiers nécessaires sont bien présents
     def check_files(self):
@@ -633,6 +709,43 @@ def raster_get_info(in_file_name):
     values = [src_ncols,src_nrows,xmin,ymin,Csize_x,nodata]
     Extent = [xmin,xmin+src_ncols*Csize_x,ymin,ymax]
     return names,values,src_proj,Extent
+
+
+def write_file():
+    Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    ski,por,cab,opti,pente = Sylvaccess_pluginDialog.get_general(1,1,1,1,1,1)
+    pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes=Sylvaccess_pluginDialog.get_skidder(1,1,1,1,1,1,1,1,1)
+    pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2=Sylvaccess_pluginDialog.get_porteur(1,1,1,1,1,1,1,1)
+    type_machine,supports_inter,hauteur,longueure_max,longueure_min=Sylvaccess_pluginDialog.get_type_cable(1,1,1,1,1,1)
+    type_chariot,masse,pente_min,pente_max_amont,pente_max_aval = Sylvaccess_pluginDialog.get_type_chariot(1,1,1,1,1,1,1)
+    diamètre,masse_li,tension_rupt,elasticité = Sylvaccess_pluginDialog.get_proprietes_cable(1,1,1,1,1)
+    hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,masse_max,securite = Sylvaccess_pluginDialog.get_param_modelisation(1,1,1,1,1,1,1,1)
+    opti2,precision = Sylvaccess_pluginDialog.get_options(1,1,1)
+    prelevement,recalculer,Rspace2,foret2,VBP2,VAM2,pechage2 = Sylvaccess_pluginDialog.get_opti_cable(1,1,1,1,1,1,1,1)
+    surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1,1)
+    var_list= [Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP,ski,por,cab,opti,pente,pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,
+               pente_amont_max,pente_aval_max,limite,bornes,pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2,type_machine,supports_inter,hauteur,
+               longueure_max,longueure_min,type_chariot,masse,pente_min,pente_max_amont,pente_max_aval,diamètre,masse_li,tension_rupt,elasticité,hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,
+               masse_max,securite,opti2,precision,prelevement,recalculer,Rspace2,foret2,VBP2,VAM2,pechage2,surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,
+               longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids]
+    file_name = Rspace2+"all_param.txt"
+    text=var_list[0]
+    for var in var_list[1:]:
+        text+="\n"
+        text+= str(var)
+    fichier = open(file_name, "w")
+    fichier.write(text)
+    fichier.close()
+
+
+def read_raster(file_name):
+    source_ds = gdal.Open(file_name)
+    source_ds.FlushCache() # Flush 
+    Array = source_ds.GetRasterBand(1).ReadAsArray()
+    Array[Array==0]=-9999
+    return Array
+
+
 
 
 ##############################
@@ -1237,15 +1350,15 @@ def focal_stat(in_file_name,out_file_name,methode='MEAN',nbcell=3):
 # Fonctions qui gère les calculs liés au cable
 def Cable():
     console_info("Cable")
-    Wspace,Rspace,file_MNT,file_shp_Foret,_,file_shp_Cable_dep,_,_,_,Dir_Obs_cable,file_Htree,file_Vol_AM,file_Vol_ha = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,0,1,0,0,0,1,1,1,1,1)
-    _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general(0,0,0,0,1)
-    Cable_type,sup_max,Htower,Lmax,Lmin=Sylvaccess_pluginDialog.get_type_cable(1,1,1,1,1)
-    Carriage_type,Pchar,slope_grav,slope_Wliner_up,slope_Wliner_down = Sylvaccess_pluginDialog.get_type_chariot(1,1,1,1,1,1)
-    d,masse_li,rupt_res,E = Sylvaccess_pluginDialog.get_proprietes_cable(1,1,1,1)
-    Hintsup,Hend,Hline_min,Hline_max,Lhor_max,Load_max,safe_fact = Sylvaccess_pluginDialog.get_param_modelisation(1,1,1,1,1,1,1)
-    test_cable_optimise,precision = Sylvaccess_pluginDialog.get_options(1,1)
-    prelevement, _, _, _, _, _, _ = Sylvaccess_pluginDialog.get_opti_cable(1, 0, 0, 0, 0, 0, 0)
-    surface, surface_poids, nbr_sup_int, nbr_sup_int_poids, sens_debardage, sens_debardage_poids, longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1)
+    Wspace,Rspace,file_MNT,file_shp_Foret,_,file_shp_Cable_dep,_,_,_,Dir_Obs_cable,file_Htree,file_Vol_AM,file_Vol_ha = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,1,0,1,0,0,0,1,1,1,1)
+    _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general(1,0,0,0,0,1)
+    Cable_type,sup_max,Htower,Lmax,Lmin=Sylvaccess_pluginDialog.get_type_cable(1,1,1,1,1,1)
+    Carriage_type,Pchar,slope_grav,slope_Wliner_up,slope_Wliner_down = Sylvaccess_pluginDialog.get_type_chariot(1,1,1,1,1,1,1)
+    d,masse_li,rupt_res,E = Sylvaccess_pluginDialog.get_proprietes_cable(1,1,1,1,1)
+    Hintsup,Hend,Hline_min,Hline_max,Lhor_max,Load_max,safe_fact = Sylvaccess_pluginDialog.get_param_modelisation(1,1,1,1,1,1,1,1)
+    test_cable_optimise,precision = Sylvaccess_pluginDialog.get_options(1,1,1)
+    prelevement, _, _, _, _, _, _ = Sylvaccess_pluginDialog.get_opti_cable(1,1, 0, 0, 0, 0, 0, 0)
+    surface, surface_poids, nbr_sup_int, nbr_sup_int_poids, sens_debardage, sens_debardage_poids, longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1,1)
 
     masse_li2 = 0.5
     masse_li3 = 0.5
@@ -1809,33 +1922,6 @@ def return_profile(Line):
     return Line2
 
 
-def write_file():
-    Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,1,1,1,1,1,1,1,1,1,1)
-    ski,por,cab,opti,pente = Sylvaccess_pluginDialog.get_general(1,1,1,1,1)
-    pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes=Sylvaccess_pluginDialog.get_skidder(1,1,1,1,1,1,1,1)
-    pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2=Sylvaccess_pluginDialog.get_porteur(1,1,1,1,1,1,1)
-    type_machine,supports_inter,hauteur,longueure_max,longueure_min=Sylvaccess_pluginDialog.get_type_cable(1,1,1,1,1)
-    type_chariot,masse,pente_min,pente_max_amont,pente_max_aval = Sylvaccess_pluginDialog.get_type_chariot(1,1,1,1,1,1)
-    diamètre,masse_li,tension_rupt,elasticité = Sylvaccess_pluginDialog.get_proprietes_cable(1,1,1,1)
-    hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,masse_max,securite = Sylvaccess_pluginDialog.get_param_modelisation(1,1,1,1,1,1,1)
-    opti2,precision = Sylvaccess_pluginDialog.get_options(1,1)
-    prelevement,recalculer,Rspace2,foret2,VBP2,VAM2,pechage2 = Sylvaccess_pluginDialog.get_opti_cable(1,1,1,1,1,1,1)
-    surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1)
-    var_list= [Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP,ski,por,cab,opti,pente,pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,
-               pente_amont_max,pente_aval_max,limite,bornes,pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2,type_machine,supports_inter,hauteur,
-               longueure_max,longueure_min,type_chariot,masse,pente_min,pente_max_amont,pente_max_aval,diamètre,masse_li,tension_rupt,elasticité,hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,
-               masse_max,securite,opti2,precision,prelevement,recalculer,Rspace2,foret2,VBP2,VAM2,pechage2,surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,
-               longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids]
-    file_name = Rspace2+"all_param.txt"
-    text=var_list[0]
-    for var in var_list[1:]:
-        text+="\n"
-        text+= str(var)
-    fichier = open(file_name, "w")
-    fichier.write(text)
-    fichier.close()
-
-
 def azimuth(X0,Y0,X1,Y1):
     dX=abs(X0-X1)
     dY=abs(Y0-Y1)
@@ -2363,14 +2449,6 @@ def prepa_desserte_cable(Desserte_shapefile_name,MNT_file_name,Dir_temp,Pond_pen
     return Link_RF_Res_pub
 
 
-def read_raster(file_name):
-    source_ds = gdal.Open(file_name)
-    source_ds.FlushCache() # Flush 
-    Array = source_ds.GetRasterBand(1).ReadAsArray()
-    Array[Array==0]=-9999
-    return Array
-
-
 # Create raster of obstacles from directory containing shapefiles 
 def prepa_obstacle_cable(Obstacles_directory,file_MNT,Dir_temp):
     ### Creation d'un repertoire temporaire       
@@ -2402,6 +2480,7 @@ def prepa_pond_pente_cable(MNT,Csize,Direct,head_text):
     save_float_ascii(Direct+'/pond_pente.asc',head_text,Pond_pente)
     return Pond_pente
     
+
 # Create a pair matrix
 def create_pair_matrice(matrice):
     indices = np.indices(matrice.shape)
@@ -2410,6 +2489,7 @@ def create_pair_matrice(matrice):
     pair = pair_c + pair_l
     pair = np.equal(pair,1)
     return pair
+
 
 # Make buffer around a pixel
 def buffer_emprise(Csize,ct_Lhor_max):
@@ -2533,7 +2613,7 @@ def directions_a_tester(Dir_route,Dir_list,angle_sup,id_fin_ligne):
 
 def get_cable_configs(slope_Wliner_up,slope_Wliner_down,slope_grav,Skid_direction):
     #Get folder
-    _,Rspace,_,_,_,_,_,_,_,_,_,_,_ = Sylvaccess_pluginDialog.get_spatial(0,1,0,0,0,0,0,0,0,0,0,0,0)
+    _,Rspace,_,_,_,_,_,_,_,_,_,_,_ = Sylvaccess_pluginDialog.get_spatial(1,0,1,0,0,0,0,0,0,0,0,0,0,0)
     dirs = [d for d in os.listdir(Rspace) if os.path.isdir(os.path.join(Rspace, d))]
     list_dir = []
     
@@ -2544,9 +2624,9 @@ def get_cable_configs(slope_Wliner_up,slope_Wliner_down,slope_grav,Skid_directio
     optnum = len(list_dir)+1
     Rspace_c=Rspace+'Cable_'+str(optnum)        
     filename = Rspace_c+"/"
-    Cable_type,_,_,_,_ = Sylvaccess_pluginDialog.get_type_cable(1,0,0,0,0)
+    Cable_type,_,_,_,_ = Sylvaccess_pluginDialog.get_type_cable(1,1,0,0,0,0)
     filename += str(Cable_type)
-    Carriage_type,_,_,_,_ = Sylvaccess_pluginDialog.get_type_chariot(1,0,0,0,0)
+    Carriage_type,_,_,_,_ = Sylvaccess_pluginDialog.get_type_chariot(1,1,0,0,0,0)
     filename += "_"+str(Carriage_type)
     
     if Skid_direction ==0:
@@ -3273,7 +3353,6 @@ def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,
     print("Selection des meilleures lignes de cable terminee.")
  
 
-def process_cable():
 
 
 
@@ -3286,12 +3365,455 @@ def process_cable():
 #|_______/    |__|\__\ |__| |_______/ |_______/ |_______|| _| `.___|#
 #####################################################################
 
-
 # Fonctions qui gère les calculs liés au skidder
 
-    def Skidder():
-        console_info("Skidder")
+def Skidder():
+    Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,_,Dir_Full_Obs_skidder,Dir_Partial_Obs_skidder,_,_,file_Vol_ha,_,_ = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,1,1,0,1,1,0,0,1,0,0)
+    _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general(1,0,0,0,0,1)
+    Pente_max_skidder,Dtreuil_max_up,Dtreuil_max_down,Dmax_train_near_for,Pmax_amont,Pmax_aval,Option_Skidder,Skid_Debclass=Sylvaccess_pluginDialog.get_skidder(1,1,1,1,1,1,1,1,1)
+    print("Debut du modele skidder")
+    
+    Hdebut = datetime.datetime.now()
+    
+    # Create a folder for process results
+    Rspace_s = Rspace+"Skidder/"
+    try:os.mkdir(Rspace_s)
+    except:pass
+    Dir_temp = Wspace+"Temp/"
+    
+    # Check if temporary files have been generated and have the same extent
+    try:
+        _,values,_,Extent = raster_get_info(file_MNT)
+    except:
+        return "Erreur: veuillez definir une projection pour le raster MNT"
+    try: 
+        _,v1=read_info(Dir_temp+'info_extent.txt')
+        for i,item in enumerate(values):
+            if v1[i]!=round(item,2):
+                prep_data_skidder(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Full_Obs_skidder,Dir_Partial_Obs_skidder)
+            if i+1>4:break
+    except:
+        prep_data_skidder(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Full_Obs_skidder,Dir_Partial_Obs_skidder)
+    
+    # Inputs
+    try:
+        Foret = np.int8(np.load(Dir_temp+"Foret.npy"))
+        Piste = np.int8(np.load(Dir_temp+"Piste.npy"))
+        Route_for = np.int8(np.load(Dir_temp+"Route_for.npy"))    
+        Res_pub = np.int8(np.load(Dir_temp+"Res_pub.npy"))    
+        Lien_piste = np.load(Dir_temp+"Lien_piste.npy")
+        Lien_RF = np.load(Dir_temp+"Lien_RF.npy")
+        Pente = np.load(Dir_temp+"Pente.npy")
+        Pond_pente = np.load(Dir_temp+"Pond_pente.npy")
+        MNT = np.load(Dir_temp+"MNT.npy")
+        Full_Obstacles_skidder = np.int8(np.load(Dir_temp+"Full_Obstacles_skidder.npy"))
+        Partial_Obstacles_skidder = np.int8(np.load(Dir_temp+"Partial_Obstacles_skidder.npy"))
+    except: 
+        prep_data_skidder(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Full_Obs_skidder,Dir_Partial_Obs_skidder)
+        Foret = np.int8(np.load(Dir_temp+"Foret.npy"))
+        Piste = np.int8(np.load(Dir_temp+"Piste.npy"))
+        Route_for = np.int8(np.load(Dir_temp+"Route_for.npy"))   
+        Res_pub = np.int8(np.load(Dir_temp+"Res_pub.npy")) 
+        Lien_piste = np.load(Dir_temp+"Lien_piste.npy")
+        Lien_RF = np.load(Dir_temp+"Lien_RF.npy")
+        Pente = np.load(Dir_temp+"Pente.npy")
+        Pond_pente = np.load(Dir_temp+"Pond_pente.npy")
+        MNT = np.load(Dir_temp+"MNT.npy")
+        Full_Obstacles_skidder = np.int8(np.load(Dir_temp+"Full_Obstacles_skidder.npy"))
+        Partial_Obstacles_skidder = np.int8(np.load(Dir_temp+"Partial_Obstacles_skidder.npy"))
+    
+    nrows,ncols = MNT.shape[0],MNT.shape[1]
+    road_network_proj=get_proj_from_road_network(file_shp_Desserte)
+    
+    # Calculation of useful variable for the model process
+    Pmax_up = float(abs(Pmax_amont))/100.0
+    Pmax_down = -float(abs(Pmax_aval))/100.0
+    deniv_up = math.sqrt(float(Dtreuil_max_up*Dtreuil_max_up)/float(1+1.0/float(Pmax_up*Pmax_up)))
+    deniv_down = -math.sqrt(float(Dtreuil_max_down*Dtreuil_max_down)/float(1+1.0/float(Pmax_down*Pmax_down)))
+    coeff = float(Dtreuil_max_up-Dtreuil_max_down)/float(deniv_up-deniv_down)
+    orig = Dtreuil_max_up - coeff*deniv_up
+    Csize = values[4]
+    Pond_pente[Full_Obstacles_skidder==1] = 1000
+    Pente_max = fc.focal_stat_max(np.float_(Pente),-9999,1)
+    Pente_ok_buch = np.int8((Pente_max<=Pente_max_bucheron))
+    del Pente_max
+    gc.collect()
+    Pente_ok_skid = np.int8((Pente <= Pente_max_skidder)*(Pente > -9999))
+    MNT_OK = np.int8((MNT!=values[5]))
+    Zone_OK = np.int8(MNT_OK*(Foret==1)*(Full_Obstacles_skidder==0)*Pente_ok_buch==1)
+    
+    Surf_foret = np.sum((Foret==1)*MNT_OK)*Csize*Csize*0.0001
+    Surf_foret_non_access = int(np.sum((Pente_ok_buch==0)*(Foret==1)*MNT_OK*Csize*Csize*0.0001)+0.5)
+    
+    Row_line,Col_line,D_line,Nbpix_line=create_buffer_skidder(Csize,Dtreuil_max_up,Dtreuil_max_down)
+            
+    if file_Vol_ha != "":
+        Vol_ha = load_float_raster_simple(file_Vol_ha)
+        Vol_ha[np.isnan(Vol_ha)]=0
+        Temp = ((Vol_ha>0)*(Foret==1)*MNT_OK)>0
+        Vtot = np.mean(Vol_ha[Temp])*np.sum(Temp)*Csize*Csize*0.0001
+        Temp = ((Vol_ha>0)*(Pente_ok_buch==0)*(Foret==1)*MNT_OK)>0
+        Vtot_non_buch = np.mean(Vol_ha[Temp])*np.sum(Temp)*Csize*Csize*0.0001
+        del Vol_ha,Temp
+    else:
+        Vtot=0    
+        Vtot_non_buch =0
+       
+    ArrayToGtiff(Pente_ok_buch,Rspace_s+'Pente_ok_buch',Extent,nrows,ncols,road_network_proj,0,'UINT8')   
+    print("    - Initialisation terminee")  
+    del Pente,Pente_ok_buch
+    gc.collect()     
+    
+    ###############################################################################################################################################    
+    ### Calculation of skidding distance inside the forest stands
+    ###############################################################################################################################################                  
+    # Identify the forest area that may be run through by the skidder
+    zone_rast = Pente_ok_skid*(Foret==1)
+    zone_rast[Full_Obstacles_skidder==1]=0
+    zone_rast[Partial_Obstacles_skidder==1]=0
+    zone_rast[Res_pub==1]=0   
+    zone_rast[MNT_OK==0]=0   
+    from_rast = np.int8(((Piste==1)+(Route_for==1))>0)
+    from_rast[Res_pub==1]=0
+    Zone_for,_ = fc.calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize) 
+    Zone_for[Zone_for>=0]=1
+    Zone_for[from_rast==1]=1
+    Zone_for=np.int8(Zone_for)
+    
+    # Create a buffer of Dmax_out_forest around these area taking into account slope and obstacles
+    from_rast = fc.focal_stat_nb(np.float_(Zone_for==1),0,1)
+    from_rast = np.int8((from_rast<9)*(from_rast>0))
+    zone_rast = np.copy(Pente_ok_skid)
+    zone_rast[Full_Obstacles_skidder==1]=0
+    zone_rast[Partial_Obstacles_skidder==1]=0
+    zone_rast[Res_pub==1]=0   
+    zone_rast[MNT_OK==0]=0 
+    Zone_for2,Out_alloc = fc.calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize,Dmax_train_near_for) 
+    Pente_ok_skidder = np.int8(Zone_for2>0)
+    Pente_ok_skidder[Zone_for==1]=1 
+    
+    del Zone_for,Zone_for2,Out_alloc
+    gc.collect()
+    
+    #Stick all forest with pente_ok_skidder to the area
+    from_rast = fc.focal_stat_nb(np.float_(Pente_ok_skidder==1),0,1)
+    from_rast = np.int8((from_rast<9)*(from_rast>0))
+    zone_rast = np.int8(1*Pente_ok_skid*(Foret==1))
+    zone_rast[Full_Obstacles_skidder==1]=0
+    zone_rast[Partial_Obstacles_skidder==1]=0
+    zone_rast[Res_pub==1]=0   
+    zone_rast[MNT_OK==0]=0   
+    Zone_for,Out_alloc = fc.calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize) 
+    Pente_ok_skidder[Zone_for>=0]=1    
+           
+    del Zone_for,from_rast,zone_rast,Out_alloc,Pente_ok_skid
+    gc.collect()     
+    
+    
+    D_foret_piste,L_Piste,D_piste=fc.Dfwd_flat_forest_tracks(Lien_piste, Pond_pente, Pente_ok_skidder*(Route_for==0)*1, Csize)    
+    D_foret_RF,L_RF = fc.Dfwd_flat_forest_road(Lien_RF,Pond_pente,Pente_ok_skidder*1*(Piste==0),Csize)
+    
+    del Pente_ok_skidder,Pond_pente
+    gc.collect()          
+    print("    - Distance de trainage depuis la desserte forestieres calculee")  
+    
+    ###############################################################################################################################################
+    ### Calculation of winching distance from forest roads
+    ###############################################################################################################################################
+    
+    DebRF_D,DebRF_LRF=fc.skid_debusq_RF(Lien_RF,MNT,Row_line,Col_line,D_line,Nbpix_line,coeff,orig,Pmax_up,Pmax_down,
+                                        Dtreuil_max_up,Dtreuil_max_down,Csize,nrows,ncols,Zone_OK*(Route_for==0)*1*(Piste==0))
+    
 
+    print("    - Distance de debusquage depuis les routes forestieres calculee")  
+
+    
+    ###############################################################################################################################################
+    #### Calculation of winching distance from forest tracks
+    ###############################################################################################################################################                 
+    
+    Debp_D,Debp_LP,Debp_Dtrpiste=fc.skid_debusq_Piste(Lien_piste,MNT,Row_line,Col_line,D_line,Nbpix_line,coeff,orig,Pmax_up,Pmax_down,
+                                                      Dtreuil_max_up,Dtreuil_max_down,Csize,nrows,ncols,Zone_OK*(Piste==0)*1*(Route_for==0))
+
+
+    print("    - Distance de debusquage depuis les pistes forestieres calculee")  
+    gc.collect()
+    
+    ###############################################################################################################################################    
+    ### Concatenation of the resultats (1)
+    ###############################################################################################################################################
+    DTrain_piste = np.ones((nrows,ncols),dtype=np.int32)*-9999
+    DTrain_foret = np.ones((nrows,ncols),dtype=np.int32)*-9999
+    Ddebusquage = np.ones((nrows,ncols),dtype=np.int32)*-9999
+    Lien_foret_piste = np.ones((nrows,ncols),dtype=np.int32)*-9999
+    Lien_foret_RF = np.ones((nrows,ncols),dtype=np.int32)*-9999
+             
+    if Option_Skidder==1:
+        # Option 1 : Skidder is forced to stay as much possible as possible on forest road networks
+        # Get value of winching distance from forest roads
+        Temp = (DebRF_D>=0)
+        DTrain_piste[Temp] = 0
+        DTrain_foret[Temp] = 0
+        Ddebusquage[Temp] = DebRF_D[Temp]
+        Lien_foret_RF[Temp] = DebRF_LRF[Temp]
+            
+        # Get value of winching distance from forest tracks  
+        Temp = Debp_D>=0
+        Temp[(Debp_D+0.1*Debp_Dtrpiste)>Ddebusquage]=0
+        DTrain_piste[Temp] = Debp_Dtrpiste[Temp]
+        DTrain_foret[Temp] = 0
+        Ddebusquage[Temp] = Debp_D[Temp]
+        Lien_foret_piste[Temp] = Debp_LP[Temp]
+        Lien_foret_RF[Temp] = -9999
+        Temp = ((Ddebusquage<0)*(Debp_D>=0))>0
+        DTrain_piste[Temp] = Debp_Dtrpiste[Temp]
+        DTrain_foret[Temp] = 0
+        Ddebusquage[Temp] = Debp_D[Temp]
+        Lien_foret_piste[Temp] = Debp_LP[Temp]
+        Lien_foret_RF[Temp] = -9999
+        
+        # Get value of skidding distance within forest stand from forest tracks
+        Temp = (Ddebusquage<0)*(D_foret_piste>=0)
+        DTrain_piste[Temp] = D_piste[Temp]
+        DTrain_foret[Temp] = D_foret_piste[Temp]
+        Ddebusquage[Temp] = 0
+        Lien_foret_piste[Temp] = L_Piste[Temp]
+        
+        # Get value of skidding distance within forest stand from forest roads
+        Temp = (Ddebusquage==0)*(D_foret_RF>=0)
+        Temp[(DTrain_foret+0.1*DTrain_piste)<D_foret_RF]=0
+        DTrain_piste[Temp] = 0
+        DTrain_foret[Temp] = D_foret_RF[Temp]
+        Ddebusquage[Temp] = 0
+        Lien_foret_RF[Temp] = L_RF[Temp]  
+        Temp = (Ddebusquage<0)*(D_foret_RF>=0)
+        DTrain_piste[Temp] = 0
+        DTrain_foret[Temp] = D_foret_RF[Temp]
+        Ddebusquage[Temp] = 0
+        Lien_foret_RF[Temp] = L_RF[Temp]   
+         
+        
+    else:
+        # Option 2 : Limit the skidding : skidder goes as close as possible to the timber before using winching possibility
+
+        # Get value of skidding distance within forest stand from forest tracks
+        Temp = (D_foret_piste>=0)
+        DTrain_piste[Temp] = D_piste[Temp]
+        DTrain_foret[Temp] = D_foret_piste[Temp]
+        Ddebusquage[Temp] = 0
+        Lien_foret_piste[Temp] = L_Piste[Temp]   
+        
+        # Get value of skidding distance within forest stand from forest roads       
+        Temp = (Ddebusquage==0)*(D_foret_RF>=0)
+        Temp[(DTrain_foret+0.1*DTrain_piste)<D_foret_RF]=0
+        DTrain_piste[Temp] = 0
+        DTrain_foret[Temp] = D_foret_RF[Temp]
+        Ddebusquage[Temp] = 0
+        Lien_foret_RF[Temp] = L_RF[Temp]     
+        Temp = (D_foret_RF>=0)*(DTrain_foret<0)
+        DTrain_piste[Temp] = 0
+        DTrain_foret[Temp] = D_foret_RF[Temp]
+        Ddebusquage[Temp] = 0
+        Lien_foret_RF[Temp] = L_RF[Temp]                  
+        
+        # Get value of winching distance from forest roads
+        Temp = (DebRF_D>=0)*(DTrain_foret<0)
+        DTrain_piste[Temp] = 0
+        DTrain_foret[Temp] = 0
+        Ddebusquage[Temp] = DebRF_D[Temp]
+        Lien_foret_RF[Temp] = DebRF_LRF[Temp]   
+        
+        # Get value of winching distance from forest tracks
+        Temp = Debp_D>=0
+        Temp[(Debp_D+0.1*Debp_Dtrpiste)>Ddebusquage]=0
+        DTrain_piste[Temp] = Debp_Dtrpiste[Temp]
+        DTrain_foret[Temp] = 0
+        Ddebusquage[Temp] = Debp_D[Temp]
+        Lien_foret_piste[Temp] = Debp_LP[Temp] 
+        Lien_foret_RF[Temp] = -9999        
+        Temp = ((DTrain_foret<0)*(Debp_D>=0))>0
+        DTrain_piste[Temp] = Debp_Dtrpiste[Temp]
+        DTrain_foret[Temp] = 0
+        Ddebusquage[Temp] = Debp_D[Temp]
+        Lien_foret_piste[Temp] = Debp_LP[Temp] 
+        Lien_foret_RF[Temp] = -9999
+        
+        
+    # Calculation of the forest area accessible with a skidder
+    zone_tracteur = np.zeros_like(MNT,dtype=np.int8)
+    zone_tracteur[((D_foret_piste>=0)*(Foret==1))>0]=1
+    zone_tracteur[((D_foret_RF>=0)*(Foret==1))>0]=1    
+    
+    ArrayToGtiff(zone_tracteur,Rspace_s+'Zone_parcourable_par_skidder',Extent,nrows,ncols,road_network_proj,0,'UINT8')
+    print("    - Concatenation 1 terminee")  
+    del DebRF_D,DebRF_LRF,Debp_D,Debp_LP,Debp_Dtrpiste
+    gc.collect() 
+    
+    ################################################################################################################################################  
+    ### Calculation of winching distance from contours
+    ################################################################################################################################################
+    contour = fc.focal_stat_nb(np.float_((zone_tracteur==1)*1),0,1)
+    contour = ((contour<9)*(contour>0)>0)*1
+    contour[Full_Obstacles_skidder==1]=0
+    contour[Partial_Obstacles_skidder==1]=0
+    contour[Res_pub==1]=0   
+    contour[MNT_OK==0]=0  
+    
+    pixels=np.argwhere(contour>0)
+    del zone_tracteur,Full_Obstacles_skidder,Partial_Obstacles_skidder,Res_pub,MNT_OK,contour
+    gc.collect()
+    
+    #line=ID_contour, Y, X,L_RF,L_piste,Dtrain,Dpis
+    
+    Lien_contour = np.zeros((pixels.shape[0]+1,6),dtype=np.int)    
+    ID = 1
+    for pixel in pixels:
+        Lien_contour[ID,0],Lien_contour[ID,1]=pixel[0],pixel[1]
+        testpiste=0
+        if D_foret_RF[pixel[0],pixel[1]]<0:
+            testpiste=1
+        elif D_piste[pixel[0],pixel[1]]>=0:
+            if (D_foret_piste[pixel[0],pixel[1]]+0.1*D_piste[pixel[0],pixel[1]])<D_foret_RF[pixel[0],pixel[1]]:
+                testpiste=1
+        if testpiste:
+            Lien_contour[ID,2],Lien_contour[ID,3]=-9999,L_Piste[pixel[0],pixel[1]]
+            Lien_contour[ID,4],Lien_contour[ID,5]=D_foret_piste[pixel[0],pixel[1]],D_piste[pixel[0],pixel[1]]
+        else:
+            Lien_contour[ID,2],Lien_contour[ID,3]=L_RF[pixel[0],pixel[1]],-9999
+            Lien_contour[ID,4],Lien_contour[ID,5]=D_foret_RF[pixel[0],pixel[1]],0     
+        ID += 1
+    del D_foret_piste,L_Piste,D_piste,D_foret_RF,L_RF
+    gc.collect()    
+    
+    # Get the contour of traversable area
+    Ddebus,L_RF,L_Piste,Dpis,Dfor=fc.skid_debusq_contour(Lien_contour,MNT,Row_line,Col_line,D_line,Nbpix_line,coeff,orig,Pmax_up,Pmax_down,
+                                                         Dtreuil_max_up,Dtreuil_max_down,Csize,nrows,ncols,Zone_OK*1*(Ddebusquage<=0))
+                                                      
+    del Lien_contour,pixels,MNT
+    gc.collect()
+    print("    - Distance de debusquage depuis le contour de la zone parcourable calculee")      
+    
+    ################################################################################################################################################  
+    ### Concatenation (2)
+    ################################################################################################################################################    
+    
+    Temp = (Ddebusquage<0)*(Ddebus>=0)
+    DTrain_piste[Temp] = Dpis[Temp]
+    DTrain_foret[Temp] = Dfor[Temp]
+    Ddebusquage[Temp] = Ddebus[Temp]
+    Lien_foret_RF[Temp] = L_RF[Temp]
+    Lien_foret_piste[Temp] = L_Piste[Temp]
+        
+    del Ddebus,L_RF,L_Piste,Dpis,Dfor
+    gc.collect()
+    
+    Temp = (Foret==0)
+    DTrain_piste[Temp] = -9999
+    DTrain_foret[Temp] = -9999
+    Ddebusquage[Temp] = -9999
+    Lien_foret_RF[Temp] = -9999
+    Lien_foret_piste[Temp] = -9999
+    
+    del Temp
+    gc.collect()
+    
+    # Fill Lien foret respub and Lien foret RF
+    Lien_foret_Res_pub,Lien_foret_RF,Keep=fc.fill_Link(Lien_foret_piste,Lien_piste,Lien_RF, Lien_foret_RF, nrows,ncols)
+    
+    Temp = (Keep<1)*((Piste==1)+(Route_for==1))>0
+    DTrain_piste[Temp] = -9999
+    DTrain_foret[Temp] = -9999
+    Ddebusquage[Temp] = -9999
+    Lien_foret_RF[Temp] = -9999
+    Lien_foret_piste[Temp] = -9999
+    Lien_foret_Res_pub[Temp] = -9999
+        
+    del Temp,Keep
+    gc.collect()
+    
+    # Calculation of the total skidding distance
+    Dtotal = np.ones((nrows,ncols),dtype=np.int32)*-9999
+    zone_accessible = np.zeros((nrows,ncols),dtype=np.int8)
+    Temp = (Ddebusquage>=0)
+    Dtotal[Temp]= DTrain_piste[Temp] + DTrain_foret[Temp] + Ddebusquage[Temp]
+    zone_accessible[Temp] = 1    
+   
+    del Temp
+    gc.collect()
+    print("    - Concatenation des resultats terminee. Sauvegarde en cours...")             
+        
+    
+    ### Saving all rasters
+    ##################################################################################################################################################
+    ### Create a summary table of accessible area    
+    make_summary_surface_vol(Skid_Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_access,Csize,Dtotal,Vtot,Vtot_non_buch,Rspace_s,"Skidder",language)
+     
+    ### Save output rasters
+    ArrayToGtiff(zone_accessible,Rspace_s+'Foret_accessible',Extent,nrows,ncols,road_network_proj,0,raster_type='UINT8')
+    ArrayToGtiff(Foret-zone_accessible,Rspace_s+'Foret_inaccessible',Extent,nrows,ncols,road_network_proj,0,'UINT8')
+    ArrayToGtiff(DTrain_piste,Rspace_s+'Distance_trainage_piste',Extent,nrows,ncols,road_network_proj,-9999,'INT16')
+    ArrayToGtiff(DTrain_foret,Rspace_s+'Distance_trainage_foret',Extent,nrows,ncols,road_network_proj,-9999,'INT16')
+    ArrayToGtiff(Ddebusquage,Rspace_s+'Distance_debusquage',Extent,nrows,ncols,road_network_proj,-9999,'INT16')
+    ArrayToGtiff(Dtotal,Rspace_s+'Distance_totale_foret_route_forestiere',Extent,nrows,ncols,road_network_proj,-9999,'INT32')        
+    ArrayToGtiff(Lien_foret_piste,Rspace_s+'Lien_foret_piste',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
+    ArrayToGtiff(Lien_foret_RF,Rspace_s+'Lien_foret_route_forestiere',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
+    ArrayToGtiff(Lien_foret_Res_pub,Rspace_s+'Lien_foret_Reseau_public',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
+    layer_name = 'Skidder_recap_accessibilite'
+    source_src=get_source_src(file_shp_Desserte)  
+    create_access_shapefile(Dtotal,Rspace_s,zone_accessible,Foret,Skid_Debclass.split(";"),road_network_proj,source_src,Csize, Dir_temp,Extent,nrows,ncols,layer_name)
+      
+    del zone_accessible,DTrain_piste,DTrain_foret,Ddebusquage,Dtotal
+    del Lien_foret_piste,Lien_foret_RF,Lien_foret_Res_pub
+    
+    str_duree,str_fin,str_debut=heures(Hdebut)
+    
+    ### Genere le fichier avec le resume des parametres de simulation
+    file_name = str(Rspace_s)+"Parametres_simulation.txt"
+    resume_texte = "Sylvaccess : CARTOGRAPHIE AUTOMATIQUE DES ZONES ACCESSIBLES PAR TRACTEUR FORESTIER\n\n\n"
+    resume_texte = resume_texte+"Version du programme : 3.5.1 de 12/2021\n\n"
+    resume_texte = resume_texte+"Resolution           : "+str(Csize)+" m\n\n"
+    resume_texte = resume_texte+"Date et heure de lancement du script:             "+str_debut+"\n"
+    resume_texte = resume_texte+"Date et heure a la fin de l'execution du script:  "+str_fin+"\n"
+    resume_texte = resume_texte+"Temps total d'execution du script:                "+str_duree+"\n\n"
+    resume_texte = resume_texte+"PARAMETRES UTILISES POUR LA MODELISATION:\n\n"
+    resume_texte = resume_texte+"   - Distance maximale de debusquage en amont de la desserte :       "+str(Dtreuil_max_up)+" m\n"
+    resume_texte = resume_texte+"   - Distance maximale de debusquage en aval de la desserte  :       "+str(Dtreuil_max_down)+" m\n"
+    resume_texte = resume_texte+"   - Pente au-dela de laquelle le debusquage amont = distance max :  "+str(Pmax_amont)+" %\n"
+    resume_texte = resume_texte+"   - Pente au-dela de laquelle le debusquage aval  = distance max :  "+str(Pmax_aval)+" %\n\n"
+    resume_texte = resume_texte+"   - Distance maximale parcourable hors foret et hors desserte :     "+str(Dmax_train_near_for)+" m\n"
+    resume_texte = resume_texte+"   - Pente maximale pour parcourir le terrain en skidder :           "+str(Pente_max_skidder)+" %\n"
+    resume_texte = resume_texte+"   - Pente maximale pour l'abattage manuel des arbres :              "+str(Pente_max_bucheron)+" %\n\n"
+    resume_texte = resume_texte+"   - Option de simulation :\n"    
+    if Option_Skidder==1:
+        resume_texte = resume_texte+"      * Limiter l'impact sur les sols : forcer le skidder a proceder autant que possible\n"    
+        resume_texte = resume_texte+"        depuis le reseau de desserte forestiere\n" 
+    else:
+        resume_texte = resume_texte+"      * Limiter le debusquage : forcer le skidder a se rapprocher autant que possible\n"    
+        resume_texte = resume_texte+"        des grumes de bois\n" 
+    if Dir_Full_Obs_skidder!='':
+        resume_texte = resume_texte+"      * Prise en compte de zones totalement interdites a l'exploitation par skidder\n"  
+    if Dir_Partial_Obs_skidder!='':
+        resume_texte = resume_texte+"      * Prise en compte de zones ou le trainage des bois est interdit\n"  
+        
+    if os.path.exists(Rspace_s+'Pistes_non_connectees.tif'):
+        resume_texte = resume_texte+"\n\n"
+        resume_texte = resume_texte+"      !!! Attention !!! Certaines pistes forestières ne sont pas connectée.\n"  
+        resume_texte = resume_texte+"      Elles ont été exclues de l'analyse.\n"  
+    if os.path.exists(Rspace_s+'Routes_forestieres_non_connectees.tif'):
+        resume_texte = resume_texte+"\n\n      !!! Attention !!! Certaines routes forestières ne sont pas connectée.\n"  
+    fichier = open(file_name, "w")
+    fichier.write(resume_texte)
+    fichier.close()
+    
+        
+        
+    fichier = open(file_name, "w")
+    fichier.write(resume_texte)
+    fichier.close()
+    print("Modele skidder termine")
+    clear_big_nparray()
+    gc.collect()
+    
 
 def create_new_road_network(file_shp_Desserte,Wspace):
     Dir_temp = Wspace+"Temp/"    
@@ -3757,3 +4279,159 @@ def create_arrays_from_roads(source_shapefile,Extent,Csize):
     target_ds2.FlushCache()
     source_ds.Destroy()    
     return Res_pub,Route_For,Piste
+
+
+def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Desserte, Dir_Full_Obs_skidder, Dir_Partial_Obs_skidder):
+    print("Preparation des entrees pour le modele skidder")
+    ### Make directory for temporary files
+    Dir_temp = Wspace+"Temp/"
+    try:os.mkdir(Dir_temp)
+    except:pass 
+    Rspace_s = Rspace+"Skidder/"
+    try:os.mkdir(Rspace_s)
+    except:pass
+    ##############################################################################################################################################
+    ### Initialization
+    ##############################################################################################################################################
+    _,values,_,Extent = raster_get_info(file_MNT)
+    Csize,ncols,nrows = values[4],int(values[0]),int(values[1])  
+    road_network_proj=get_proj_from_road_network(file_shp_Desserte)
+    ##############################################################################################################################################
+    ### Forest : shapefile to raster
+    ##############################################################################################################################################
+    Foret = shapefile_to_np_array(file_shp_Foret,Extent,Csize,"FORET")
+    np.save(Dir_temp+"Foret",np.int8(Foret))    
+    del Foret
+    gc.collect()
+    print("    - Raster de foret cree")
+        
+    ##############################################################################################################################################
+    ### Calculation of a slope raster and a cost raster of slope
+    ##############################################################################################################################################
+    # Slope raster
+    MNT,Extent,Csize,_ = load_float_raster(file_MNT,Dir_temp)
+    np.save(Dir_temp+"MNT",np.float32(MNT))
+    Pente = fc.pente(MNT,Csize,-9999)
+    np.save(Dir_temp+"Pente",np.float32(Pente))    
+    # Cost raster of slope
+    Pond_pente = np.sqrt((Pente*0.01*Csize)**2+Csize**2)/float(Csize)
+    Pond_pente[Pente==-9999] = 10000
+    np.save(Dir_temp+"Pond_pente",np.float32(Pond_pente))
+    # Report a success message   
+    del Pente,MNT
+    gc.collect()
+    print("    - Raster de pente cree")  
+    ##############################################################################################################################################
+    ### Road network processing
+    ##############################################################################################################################################
+    Res_pub,Route_for,Piste= create_arrays_from_roads(file_shp_Desserte,Extent,Csize)
+    np.save(Dir_temp+"Res_pub",Res_pub)  
+    ##############################################################################################################################################
+    ### Forest road network processing
+    ##############################################################################################################################################
+    pixels = np.argwhere(Res_pub==1) 
+    # Give an identifiant to each public network pixel    
+    ID = 1    
+    Tab_res_pub = np.zeros((pixels.shape[0]+1,2),dtype=np.int32) 
+    for pixel in pixels:
+        Tab_res_pub[ID,0],Tab_res_pub[ID,1]=pixel[0],pixel[1]
+        ID +=1         
+    np.save(Dir_temp+"Tab_res_pub",Tab_res_pub)
+    pixels = np.argwhere(Route_for==1)
+    #num_ligne = id_RF, Y, X, Dtransp,Lien_Respub
+    Lien_RF = np.zeros((pixels.shape[0]+1,5),dtype=np.float32)     
+    ID = 1
+    for pixel in pixels:
+        Lien_RF[ID,0],Lien_RF[ID,1]=pixel[0],pixel[1]
+        Lien_RF[ID,3]=-9999
+        if Pond_pente[pixel[0],pixel[1]]==10000:
+            Lien_RF[ID,2]=-9999
+        else:
+            Lien_RF[ID,2]=100001
+        ID +=1 
+    # Link RF with res_pub and calculate transportation distance
+    Lien_RF=fc.Link_RF_res_pub(Tab_res_pub,Pond_pente,Route_for,Res_pub, Lien_RF,Csize) 
+    Lien_RF[:,2]=np.int_(Lien_RF[:,2]+0.5)
+    Lien_RF=Lien_RF.astype('int')
+    Temp = (Lien_RF[:,3]>0)*(Lien_RF[:,2]==0)
+    Lien_RF=Lien_RF[Temp==0]    
+    np.save(Dir_temp+"Lien_RF",Lien_RF)
+    # Check if all Forest road are linked to public network    
+    if np.max(Lien_RF[:,2])==100001:
+        RF_bad = np.zeros((nrows,ncols),dtype=np.int8)
+        pixels = np.argwhere(Lien_RF[:,2]==100001)
+        for pixel in pixels:
+            ind = pixel[0]            
+            RF_bad[Lien_RF[ind,0],Lien_RF[ind,1]]=1        
+        ArrayToGtiff(RF_bad,Rspace_s+'Routes_forestieres_non_connectees',Extent,nrows,ncols,road_network_proj,0,'UINT8')
+        print("    - Certaines routes forestieres ne sont pas connectees au reseau public. Pour voir ou elles se trouvent, ouvrir le raster "+Rspace_s+"Routes_forestieres_non_connectees.tif")
+    else:
+        print("    - Routes forestieres traitees") 
+            
+    ##############################################################################################################################################
+    ### Forest tracks network processing
+    ##############################################################################################################################################
+    # Tracks
+    pixels = np.argwhere(Piste==1)
+    #num_ligne = id_piste, Y, X, Dpiste,Dtransp,Lien_RF, Lien_Respub,
+    Lien_piste = np.zeros((pixels.shape[0]+1,7),dtype=np.float32)    
+    ID = 1
+    for pixel in pixels:
+        Lien_piste[ID,0],Lien_piste[ID,1]=pixel[0],pixel[1]
+        Lien_piste[ID,4]=-9999
+        if Pond_pente[pixel[0],pixel[1]]==10000:
+            Lien_piste[ID,2]=-9999
+        else:
+            Lien_piste[ID,2]=100001
+        ID +=1
+    Lien_piste=fc.Link_tracks_res_pub(Tab_res_pub,Lien_RF,Pond_pente,Piste,Route_for,Res_pub,Lien_piste,Csize)
+    Lien_piste[:,2]=np.int_(Lien_piste[:,2]+0.5)
+    Lien_piste=Lien_piste.astype('int')
+    Temp = (Lien_piste[:,5]>0)*(Lien_piste[:,2]==0)
+    Lien_piste=Lien_piste[Temp==0]    
+    ind = np.lexsort((Lien_piste[:,1],Lien_piste[:,2]))
+    Lien_piste=Lien_piste[ind]
+    np.save(Dir_temp+"Lien_piste",Lien_piste) 
+    if np.max(Lien_piste[:,2])==100001:
+        RF_bad = np.zeros((nrows,ncols),dtype=np.int8)
+        pixels = np.argwhere(Lien_piste[:,2]==100001)
+        for pixel in pixels:
+            ind = pixel[0]            
+            RF_bad[Lien_piste[ind,0],Lien_piste[ind,1]]=1   
+            Piste[Lien_piste[ind,0],Lien_piste[ind,1]]=0
+        ArrayToGtiff(RF_bad,Rspace_s+'Pistes_non_connectees',Extent,nrows,ncols,road_network_proj,0,'UINT8')
+        print("    - Certaines pistes forestieres ne sont pas connectees a des routes ou au reseau public.")
+        print("      Pour voir ou elles se trouvent ouvrir le raster "+Rspace_s+"Pistes_non_connectees.tif")
+        print("      Ces lineaires sont exclus de l'analyse.")
+    else:
+        print("    - Pistes forestieres traitees")  
+    Route_for[Res_pub==1]=0
+    Piste[Res_pub==1]=0
+    np.save(Dir_temp+"Route_for",Route_for) 
+    np.save(Dir_temp+"Piste",np.int8(Piste))
+    del Tab_res_pub,Lien_RF,Lien_piste,Res_pub  
+    gc.collect()     
+    ##############################################################################################################################################
+    ### Create a raster of total obstacle for skidder
+    ##############################################################################################################################################
+    if Dir_Full_Obs_skidder!="":
+        Full_Obstacles_skidder = prepa_obstacle_skidder(Dir_Full_Obs_skidder,Extent,Csize,ncols,nrows,((Route_for>0)*1+(Piste>0)*1))
+    else:
+        Full_Obstacles_skidder = np.zeros((nrows,ncols),dtype=np.int8)
+    np.save(Dir_temp+"Full_Obstacles_skidder",np.int8(Full_Obstacles_skidder))  
+    print("    - Raster d'obstacles complet cree")
+    ##############################################################################################################################################
+    ### Create a raster of partial obstacle for skidder
+    ##############################################################################################################################################
+    if Dir_Partial_Obs_skidder!="":
+        Partial_Obstacles_skidder = prepa_obstacle_skidder(Dir_Partial_Obs_skidder,Extent,Csize,ncols,nrows,((Route_for>0)*1+(Piste>0)*1))        
+    else:
+        Partial_Obstacles_skidder = np.zeros((nrows,ncols),dtype=np.int8)
+    np.save(Dir_temp+"Partial_Obstacles_skidder",np.int8(Partial_Obstacles_skidder))  
+    print("    - Raster d'obstacles partiels cree")
+    print("Pre-traitement des donnees d'entree termine")
+    ##############################################################################################################################################
+    ### Close the script
+    ##############################################################################################################################################
+    clear_big_nparray()
+    gc.collect()
