@@ -204,7 +204,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 
                 #Premiere simu sans projet
     
-                print("\nSIMULATION DEPUIS LA DESSERTE EXISTANTE")
+                console_info("\nSIMULATION DEPUIS LA DESSERTE EXISTANTE")
                 if test_Skidder:   
                     try:os.mkdir(Rspace+"Skidder/")
                     except:pass
@@ -232,7 +232,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 os.remove(Wspace+"Temp/Piste.npy")
                 
                 #Deuxieme simu avec projet
-                print("\nSIMULATION INCLUANT LE PROJET DE DESSERTE")
+                console_info("\nSIMULATION INCLUANT LE PROJET DE DESSERTE")
                 if test_Skidder: 
                     Skidder()                    
                     gc.collect()
@@ -906,7 +906,7 @@ def select_in_shapefile(source_shapefile,out_Shape_Path,expression):
     source_srs = source_layer.GetSpatialRef()
     source_type = source_layer.GetGeomType()
     try: source_layer_bis = source_ds.ExecuteSQL('SELECT * FROM '+str(source_layer.GetName())+' '+expression)   
-    except: print("Erreur de syntaxe dans l'expression")
+    except: console_info("Erreur de syntaxe dans l'expression")
     # Initialize the output shapefile
     if os.path.exists(out_Shape_Path):
         driver.DeleteDataSource(out_Shape_Path)
@@ -1381,7 +1381,7 @@ def Cable():
         _,values,proj,Extent = raster_get_info(file_MNT)
         Csize,ncols,nrows = values[4],int(values[0]),int(values[1])    
     except:
-        print("Erreur: veuillez definir une projection pour le raster MNT")
+        console_info("Erreur: veuillez definir une projection pour le raster MNT")
         return ""
     try: 
         _,v1=read_info(Dir_temp+'info_extent.txt')
@@ -1497,7 +1497,7 @@ def Cable():
     
     Fin_ligne_forcee = np.int8(np.greater(Aerian_obs+(MNT<0),0))
     
-    print("    - Initialisation achevee, debut de traitement...")
+    console_info("    - Initialisation achevee, debut de traitement...")
     str_nb_pixel_route=  " / "+str(nb_pixel_route-1)+ " pixels traites"
     
     Tab = np.zeros((min(1000000,int(nb_pixel_route*(360)/step_route)),18+5*sup_max),dtype=np.int)
@@ -1520,7 +1520,7 @@ def Cable():
         Rast_couv2 = np.zeros((nrows,ncols),dtype=np.int8)
     test=0
     for idpix,pixel in enumerate(Route):  
-        # Print process
+        # console_info process
         sys.stdout.write("\r%d" % idpix + str_nb_pixel_route)
         sys.stdout.flush()
         #Get point coordinates
@@ -1543,7 +1543,7 @@ def Cable():
                     if Line[0,1]+Htower>=np.max(Line[idLinemin:,1])+Hend:   
                         if direction==2:
                             continue
-                        #print az,"up",Line[-1,0] 
+                        #console_info az,"up",Line[-1,0] 
                         if VariaH:
                             Span = fc.OptPyl_Up(Line,Alts,Span,Htower,Hintsup,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,
                                                  Csize,angle_intsup,EAo,E,d,sup_max,rastLosup,rastTh,rastTv,Tmax,
@@ -1556,7 +1556,7 @@ def Cable():
                     else:    
                         if direction==1:
                             continue
-                        #print az,"down",Line[-1,0]
+                        #console_info az,"down",Line[-1,0]
                         if VariaH:
                             Span = fc.OptPyl_Down_init(Line,Alts,Span,Htower,Hintsup, Hend,masse_li,masse_li2,masse_li3,Fo,
                                              Hline_min,Hline_max,Csize,angle_intsup,EAo, E, d,
@@ -1640,7 +1640,7 @@ def Cable():
                         Tab = np.zeros((1000000,18+5*sup_max),dtype=np.int)
 
    
-    print("\n    - Sauvegarde des resultats")
+    console_info("\n    - Sauvegarde des resultats")
    
     ### Save Forest,Vol_ha,VolAm,Pente
     np.save(Rspace_sel+"Forest.npy",Forest)
@@ -1787,7 +1787,7 @@ def Cable():
     fichier.close()
     
     
-    print("\nToutes les lignes possibles ont ete testees.\n")     
+    console_info("\nToutes les lignes possibles ont ete testees.\n")     
     ##############################################################################################################################################
     ### 4. SELECTION OF BEST LINE IF CHECKED
     ##############################################################################################################################################
@@ -2867,7 +2867,7 @@ def generate_info_ligne(Dir_result,w_list,lim_list,Tab,Rast_couv,Vol_ha,Vol_AM,C
         nb_moy_pyl = round(np.sum(Tab[:,17])/nb_ligne,1)
         long_moy_ligne = int(np.sum(Tab[:,11])/nb_ligne)
     except:
-        print("Aucune ligne n'a ete selectionnee")
+        console_info("Aucune ligne n'a ete selectionnee")
     Vol_ha[np.isnan(Vol_ha)]=0
     Vol_AM[np.isnan(Vol_AM)]=0
     tp =   Vol_ha>0
@@ -2883,7 +2883,7 @@ def generate_info_ligne(Dir_result,w_list,lim_list,Tab,Rast_couv,Vol_ha,Vol_AM,C
     if np.sum(Tab[:,11])!=0:
         ipc_moy = round(float(vtot)/np.sum(Tab[:,11]),2)
     else:
-        print("Aucune ligne n'a ete selectionnee")
+        console_info("Aucune ligne n'a ete selectionnee")
     vtot = int(vtot)
     lim_list[4]=lim_list[4]*prelevement
     
@@ -2934,7 +2934,7 @@ def generate_info_ligne(Dir_result,w_list,lim_list,Tab,Rast_couv,Vol_ha,Vol_AM,C
             nb_moy_pyl = round(np.sum(Tab[:,17])/nb_ligne,1)
             long_moy_ligne = int(np.sum(Tab[:,11])/nb_ligne)
         except:
-            print("Aucune ligne n'a ete selectionnee")
+            console_info("Aucune ligne n'a ete selectionnee")
         tp =   Vol_ha>0
         if np.sum(tp)>0:      
             vtot = np.sum(Rast_couv[tp]*Vol_ha[tp])*pix_area*prelevement
@@ -2948,7 +2948,7 @@ def generate_info_ligne(Dir_result,w_list,lim_list,Tab,Rast_couv,Vol_ha,Vol_AM,C
         if np.sum(Tab[:,11])!=0:
             ipc_moy = round(float(vtot)/np.sum(Tab[:,11]),2)
         else:
-            print("Aucune ligne n'a ete selectionnee")
+            console_info("Aucune ligne n'a ete selectionnee")
         vtot = int(vtot)
         
         Table[4,2]= "\t\t\t\t"+str(Surface_proj)
@@ -3094,7 +3094,7 @@ def create_rast_couv(Tab_result,Dir_result,source_src,Extent,Csize,Lhor_max):
 
 
 def prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_Dep,Dir_Obs_cable):
-    print("Pre-traitement des entrees pour le modele cable\n")
+    console_info("Pre-traitement des entrees pour le modele cable\n")
     ### Make directory for temporary files
     Dir_temp = Wspace+"Temp/"
     try:os.mkdir(Dir_temp)
@@ -3117,7 +3117,7 @@ def prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_Dep,Dir_Obs_c
     Foret = shapefile_to_np_array(file_shp_Foret,Extent,Csize,"FORET")
     np.save(Dir_temp+"Foret",np.int8(Foret))    
     del Foret
-    print("    - Raster de foret termine")    
+    console_info("    - Raster de foret termine")    
     ### Forest : shapefile to raster 
     Exposition = fc.exposition(MNT,Csize,-9999)
     np.save(Dir_temp+"Aspect",np.uint16(Exposition+0.5))
@@ -3127,7 +3127,7 @@ def prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_Dep,Dir_Obs_c
     Pond_pente[Pente==-9999] = 10000
     np.save(Dir_temp+"Pond_pente",Pond_pente)
     del Pente,MNT  
-    print("    - Obstacles pour le cable traites")
+    console_info("    - Obstacles pour le cable traites")
 
     #################################################################################################################################
     ###             __     __                    __               __                                                 __              
@@ -3159,7 +3159,7 @@ def prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_Dep,Dir_Obs_c
 #    Lien_RF=Lien_RF[Lien_RF[:,4]>0]
     Lien_RF=Lien_RF[Lien_RF[:,2]>-1]
     np.save(Dir_temp+"Lien_RF_c",Lien_RF)    
-    print("    - Departs de cables potentiels identifies")    
+    console_info("    - Departs de cables potentiels identifies")    
 
     ###################################################################################################################################################################################
     ###                                 __                                     __                      __                                      __                                      
@@ -3175,25 +3175,25 @@ def prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_Dep,Dir_Obs_c
         CoordRoute[i,0]=TableX[pixel[1]]
         CoordRoute[i,1]=TableY[pixel[0]] 
     np.save(Dir_temp+"CoordRoute.npy",CoordRoute)  
-    print("    - Table des coordonnees creee")  
+    console_info("    - Table des coordonnees creee")  
     ##############################################################################################################################################
     ###       __                         __   __                                __         __   
     ###.----.|  |.-----.-----.-----.    |  |_|  |--.-----.    .-----.----.----.|__|.-----.|  |_ 
     ###|  __||  ||  _  |__ --|  -__|    |   _|     |  -__|    |__ --|  __|   _||  ||  _  ||   _|
     ###|____||__||_____|_____|_____|    |____|__|__|_____|    |_____|____|__|  |__||   __||____|
     ###                                                                            |__|         
-    print("\nPre-traitement des entrees pour le cable termine\n")
+    console_info("\nPre-traitement des entrees pour le cable termine\n")
     clear_big_nparray()
 
 
 def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,file_Vol_AM,Lhor_max,prelevement,Pente_max_bucheron):
-    print("Selection des meilleures lignes en fonction des criteres de l'utilisateur.")
+    console_info("Selection des meilleures lignes en fonction des criteres de l'utilisateur.")
     ### Check if temporary files have been generated and have the same extent
     Rspace_sel = Rspace_c+"FilesForOptimisation/"
     try: 
         Tab = np.load(Rspace_sel+"Tab_all_lines.npy") 
     except:
-        print("Veuillez d'abord faire tourner le modele cable.")
+        console_info("Veuillez d'abord faire tourner le modele cable.")
         return ""
     Lmax = np.max(Tab[:,11])    
     _,values,Extent=loadrasterinfo_from_file(Rspace_sel)
@@ -3210,7 +3210,7 @@ def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,
     ### Recompute cable line stats if necessary
     ############################################
     if new_calc:
-        print("    - Recalcule les caracteristiques des lignes avec les nouvelles couches...") 
+        console_info("    - Recalcule les caracteristiques des lignes avec les nouvelles couches...") 
         #Couche foret
         if file_shp_Foret != "":
             Forest = np.int8(shapefile_to_np_array(file_shp_Foret,Extent,Csize,"FORET"))
@@ -3287,13 +3287,13 @@ def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,
     #Modify selection criteria in case of no volume or vam        
     if np.max(Tab2[:,15])==0:        
         if w_list[4]>0:
-            print("Optimisation impossible sur le volume/ipc car aucune information disponible.")   
+            console_info("Optimisation impossible sur le volume/ipc car aucune information disponible.")   
         w_list[4],lim_list[4]=0,0
         w_list[5],lim_list[5]=0,0
         
     if np.max(Tab2[:,16])==0:
         if w_list[6]>0:
-            print("Optimisation impossible sur le volume de l'arbre moyen car aucune information disponible.")
+            console_info("Optimisation impossible sur le volume de l'arbre moyen car aucune information disponible.")
         w_list[6],lim_list[6]=0,0
         
     Rast_couv,Tab_result,Tab_name=select_best_lines(w_list,lim_list,Tab2,
@@ -3350,11 +3350,8 @@ def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,
     Pylone_in_shapefile(Tab_result,pyl_name,source_src)
     ### Summary of the choice
     generate_info_ligne(Dir_result,w_list,lim_list,Tab_result,Rast_couv,Vol_ha,Vol_AM,Csize,prelevement,Lhor_max) 
-    print("Selection des meilleures lignes de cable terminee.")
+    console_info("Selection des meilleures lignes de cable terminee.")
  
-
-
-
 
 #####################################################################
 #    _______. __  ___  __   _______   _______   _______ .______     #
@@ -3371,7 +3368,7 @@ def Skidder():
     Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,_,Dir_Full_Obs_skidder,Dir_Partial_Obs_skidder,_,_,file_Vol_ha,_,_ = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,1,1,0,1,1,0,0,1,0,0)
     _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general(1,0,0,0,0,1)
     Pente_max_skidder,Dtreuil_max_up,Dtreuil_max_down,Dmax_train_near_for,Pmax_amont,Pmax_aval,Option_Skidder,Skid_Debclass=Sylvaccess_pluginDialog.get_skidder(1,1,1,1,1,1,1,1,1)
-    print("Debut du modele skidder")
+    console_info("Debut du modele skidder")
     
     Hdebut = datetime.datetime.now()
     
@@ -3460,7 +3457,7 @@ def Skidder():
         Vtot_non_buch =0
        
     ArrayToGtiff(Pente_ok_buch,Rspace_s+'Pente_ok_buch',Extent,nrows,ncols,road_network_proj,0,'UINT8')   
-    print("    - Initialisation terminee")  
+    console_info("    - Initialisation terminee")  
     del Pente,Pente_ok_buch
     gc.collect()     
     
@@ -3515,7 +3512,7 @@ def Skidder():
     
     del Pente_ok_skidder,Pond_pente
     gc.collect()          
-    print("    - Distance de trainage depuis la desserte forestieres calculee")  
+    console_info("    - Distance de trainage depuis la desserte forestieres calculee")  
     
     ###############################################################################################################################################
     ### Calculation of winching distance from forest roads
@@ -3525,7 +3522,7 @@ def Skidder():
                                         Dtreuil_max_up,Dtreuil_max_down,Csize,nrows,ncols,Zone_OK*(Route_for==0)*1*(Piste==0))
     
 
-    print("    - Distance de debusquage depuis les routes forestieres calculee")  
+    console_info("    - Distance de debusquage depuis les routes forestieres calculee")  
 
     
     ###############################################################################################################################################
@@ -3536,7 +3533,7 @@ def Skidder():
                                                       Dtreuil_max_up,Dtreuil_max_down,Csize,nrows,ncols,Zone_OK*(Piste==0)*1*(Route_for==0))
 
 
-    print("    - Distance de debusquage depuis les pistes forestieres calculee")  
+    console_info("    - Distance de debusquage depuis les pistes forestieres calculee")  
     gc.collect()
     
     ###############################################################################################################################################    
@@ -3645,7 +3642,7 @@ def Skidder():
     zone_tracteur[((D_foret_RF>=0)*(Foret==1))>0]=1    
     
     ArrayToGtiff(zone_tracteur,Rspace_s+'Zone_parcourable_par_skidder',Extent,nrows,ncols,road_network_proj,0,'UINT8')
-    print("    - Concatenation 1 terminee")  
+    console_info("    - Concatenation 1 terminee")  
     del DebRF_D,DebRF_LRF,Debp_D,Debp_LP,Debp_Dtrpiste
     gc.collect() 
     
@@ -3691,7 +3688,7 @@ def Skidder():
                                                       
     del Lien_contour,pixels,MNT
     gc.collect()
-    print("    - Distance de debusquage depuis le contour de la zone parcourable calculee")      
+    console_info("    - Distance de debusquage depuis le contour de la zone parcourable calculee")      
     
     ################################################################################################################################################  
     ### Concatenation (2)
@@ -3740,7 +3737,7 @@ def Skidder():
    
     del Temp
     gc.collect()
-    print("    - Concatenation des resultats terminee. Sauvegarde en cours...")             
+    console_info("    - Concatenation des resultats terminee. Sauvegarde en cours...")             
         
     
     ### Saving all rasters
@@ -3810,7 +3807,7 @@ def Skidder():
     fichier = open(file_name, "w")
     fichier.write(resume_texte)
     fichier.close()
-    print("Modele skidder termine")
+    console_info("Modele skidder termine")
     clear_big_nparray()
     gc.collect()
     
@@ -4282,7 +4279,7 @@ def create_arrays_from_roads(source_shapefile,Extent,Csize):
 
 
 def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Desserte, Dir_Full_Obs_skidder, Dir_Partial_Obs_skidder):
-    print("Preparation des entrees pour le modele skidder")
+    console_info("Preparation des entrees pour le modele skidder")
     ### Make directory for temporary files
     Dir_temp = Wspace+"Temp/"
     try:os.mkdir(Dir_temp)
@@ -4303,7 +4300,7 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
     np.save(Dir_temp+"Foret",np.int8(Foret))    
     del Foret
     gc.collect()
-    print("    - Raster de foret cree")
+    console_info("    - Raster de foret cree")
         
     ##############################################################################################################################################
     ### Calculation of a slope raster and a cost raster of slope
@@ -4320,7 +4317,7 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
     # Report a success message   
     del Pente,MNT
     gc.collect()
-    print("    - Raster de pente cree")  
+    console_info("    - Raster de pente cree")  
     ##############################################################################################################################################
     ### Road network processing
     ##############################################################################################################################################
@@ -4364,9 +4361,9 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
             ind = pixel[0]            
             RF_bad[Lien_RF[ind,0],Lien_RF[ind,1]]=1        
         ArrayToGtiff(RF_bad,Rspace_s+'Routes_forestieres_non_connectees',Extent,nrows,ncols,road_network_proj,0,'UINT8')
-        print("    - Certaines routes forestieres ne sont pas connectees au reseau public. Pour voir ou elles se trouvent, ouvrir le raster "+Rspace_s+"Routes_forestieres_non_connectees.tif")
+        console_info("    - Certaines routes forestieres ne sont pas connectees au reseau public. Pour voir ou elles se trouvent, ouvrir le raster "+Rspace_s+"Routes_forestieres_non_connectees.tif")
     else:
-        print("    - Routes forestieres traitees") 
+        console_info("    - Routes forestieres traitees") 
             
     ##############################################################################################################################################
     ### Forest tracks network processing
@@ -4400,11 +4397,11 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
             RF_bad[Lien_piste[ind,0],Lien_piste[ind,1]]=1   
             Piste[Lien_piste[ind,0],Lien_piste[ind,1]]=0
         ArrayToGtiff(RF_bad,Rspace_s+'Pistes_non_connectees',Extent,nrows,ncols,road_network_proj,0,'UINT8')
-        print("    - Certaines pistes forestieres ne sont pas connectees a des routes ou au reseau public.")
-        print("      Pour voir ou elles se trouvent ouvrir le raster "+Rspace_s+"Pistes_non_connectees.tif")
-        print("      Ces lineaires sont exclus de l'analyse.")
+        console_info("    - Certaines pistes forestieres ne sont pas connectees a des routes ou au reseau public.")
+        console_info("      Pour voir ou elles se trouvent ouvrir le raster "+Rspace_s+"Pistes_non_connectees.tif")
+        console_info("      Ces lineaires sont exclus de l'analyse.")
     else:
-        print("    - Pistes forestieres traitees")  
+        console_info("    - Pistes forestieres traitees")  
     Route_for[Res_pub==1]=0
     Piste[Res_pub==1]=0
     np.save(Dir_temp+"Route_for",Route_for) 
@@ -4419,7 +4416,7 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
     else:
         Full_Obstacles_skidder = np.zeros((nrows,ncols),dtype=np.int8)
     np.save(Dir_temp+"Full_Obstacles_skidder",np.int8(Full_Obstacles_skidder))  
-    print("    - Raster d'obstacles complet cree")
+    console_info("    - Raster d'obstacles complet cree")
     ##############################################################################################################################################
     ### Create a raster of partial obstacle for skidder
     ##############################################################################################################################################
@@ -4428,8 +4425,8 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
     else:
         Partial_Obstacles_skidder = np.zeros((nrows,ncols),dtype=np.int8)
     np.save(Dir_temp+"Partial_Obstacles_skidder",np.int8(Partial_Obstacles_skidder))  
-    print("    - Raster d'obstacles partiels cree")
-    print("Pre-traitement des donnees d'entree termine")
+    console_info("    - Raster d'obstacles partiels cree")
+    console_info("Pre-traitement des donnees d'entree termine")
     ##############################################################################################################################################
     ### Close the script
     ##############################################################################################################################################
@@ -4448,7 +4445,7 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
 
   
 def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Obs_forwarder):
-    print("Preparation des entrees pour le modele porteur")
+    console_info("Preparation des entrees pour le modele porteur")
     ### Make directory for temporary files
     Dir_temp = Wspace+"Temp/"
     try:os.mkdir(Dir_temp)
@@ -4468,7 +4465,7 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
     Foret = shapefile_to_np_array(file_shp_Foret,Extent,Csize,"FORET")
     np.save(Dir_temp+"Foret",np.int8(Foret))    
     del Foret
-    print("    - Raster de foret cree")
+    console_info("    - Raster de foret cree")
     ##############################################################################################################################################
     ### Calculation of a slope raster and a cost raster of slope
     ##############################################################################################################################################
@@ -4486,7 +4483,7 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
     np.save(Dir_temp+"Pond_pente",np.float32(Pond_pente))
     # Report a success message   
     del Pente,MNT,Exposition
-    print("    - Rasters de pente et d'exposition crees")  
+    console_info("    - Rasters de pente et d'exposition crees")  
     ##############################################################################################################################################
     ### Road network processing
     ##############################################################################################################################################
@@ -4530,9 +4527,9 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
             ind = pixel[0]            
             RF_bad[Lien_RF[ind,0],Lien_RF[ind,1]]=1        
         ArrayToGtiff(RF_bad,Rspace_f+'Routes_forestieres_non_connectees',Extent,nrows,ncols,road_network_proj,0,'UINT8')
-        print("    - Certaines routes forestieres ne sont pas connectees au reseau public. Pour voir ou elles se trouvent, ouvrir le raster "+Rspace_f+"Routes_forestieres_non_connectees.tif")
+        console_info("    - Certaines routes forestieres ne sont pas connectees au reseau public. Pour voir ou elles se trouvent, ouvrir le raster "+Rspace_f+"Routes_forestieres_non_connectees.tif")
     else:
-        print("    - Routes forestieres traitees") 
+        console_info("    - Routes forestieres traitees") 
              
     ##############################################################################################################################################
     ### Forest tracks network processing
@@ -4565,11 +4562,11 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
             RF_bad[Lien_piste[ind,0],Lien_piste[ind,1]]=1   
             Piste[Lien_piste[ind,0],Lien_piste[ind,1]]=0
         ArrayToGtiff(RF_bad,Rspace_f+'Pistes_non_connectees',Extent,nrows,ncols,Csize,road_network_proj,0,'UINT8')
-        print("    - Certaines pistes forestieres ne sont pas connectees a des routes ou au reseau public.")
-        print("      Pour voir ou elles se trouvent ouvrir le raster "+Rspace_f+"Pistes_non_connectees.tif")
-        print("      Ces lineaires sont exclus de l'analyse.")
+        console_info("    - Certaines pistes forestieres ne sont pas connectees a des routes ou au reseau public.")
+        console_info("      Pour voir ou elles se trouvent ouvrir le raster "+Rspace_f+"Pistes_non_connectees.tif")
+        console_info("      Ces lineaires sont exclus de l'analyse.")
     else:
-        print("    - Pistes forestieres traitees")  
+        console_info("    - Pistes forestieres traitees")  
     Route_for[Res_pub==1]=0
     Piste[Res_pub==1]=0
     np.save(Dir_temp+"Route_for",Route_for) 
@@ -4584,8 +4581,8 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
     else:
         Obstacles_forwarder = np.zeros((nrows,ncols),dtype=np.int8)
     np.save(Dir_temp+"Obstacles_forwarder",np.int8(Obstacles_forwarder))    
-    print("    - Raster d'obstacles cree")  
-    print("Pre-traitement des donnees d'entree termine")
+    console_info("    - Raster d'obstacles cree")  
+    console_info("Pre-traitement des donnees d'entree termine")
     ##############################################################################################################################################
     ### Close the script
     ##############################################################################################################################################
@@ -4597,7 +4594,7 @@ def process_forwarder():
     _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general(1,0,0,0,0,1)
     Forw_angle_incl,Forw_angle_up,Forw_angle_down,Forw_Lmax,Forw_Dmax_out_for,Forw_portee,Forw_Debclass=Sylvaccess_pluginDialog.get_porteur(1,1,1,1,1,1,1,1)
 
-    print("Debut de Sylvaccess - Porteur")
+    console_info("Debut de Sylvaccess - Porteur")
 
     ###############################################################################################################################################
     ### Initialisation
@@ -4614,7 +4611,7 @@ def process_forwarder():
     try:
         _,values,_,Extent = raster_get_info(file_MNT)
     except:
-        print("Erreur: veuillez definir une projection pour le raster MNT")
+        console_info("Erreur: veuillez definir une projection pour le raster MNT")
         return ""    
     try: 
         _,v1=read_info(Dir_temp+'info_extent.txt')
@@ -4698,7 +4695,7 @@ def process_forwarder():
         Vtot_non_buch =0
        
     ArrayToGtiff(Pente_ok_buch,Rspace_s+'Pente_ok_buch',Extent,nrows,ncols,road_network_proj,0,'UINT8')   
-    print("    - Initialisation terminee")  
+    console_info("    - Initialisation terminee")  
     del Pente
     gc.collect()     
     
@@ -4883,7 +4880,7 @@ def process_forwarder():
     del RF_D,RF_L_forRF,Temp,D_foret,L_Piste,D_piste
     gc.collect()    
     
-    print("    - Surface directement parcourable identifiee") 
+    console_info("    - Surface directement parcourable identifiee") 
     
     ###############################################################################################################################################
     ### Get contour of passable area (check forwarder inclination and terrain slope conditions)
@@ -4937,7 +4934,7 @@ def process_forwarder():
     del Dpente,Dfor,L_pis,Dpis,Temp,Lien_contour,pixels,L_RF,zone_rast
     gc.collect()    
     
-    print("    - Surface en pente accessible identifiee") 
+    console_info("    - Surface en pente accessible identifiee") 
     
     ################################################################################################################################################
     ### Calculation of area reachable with the grap
@@ -5002,7 +4999,7 @@ def process_forwarder():
     
     del Keep,Piste,Route_for
     gc.collect()    
-    print("    - Surface accessible avec la grue ajoutee") 
+    console_info("    - Surface accessible avec la grue ajoutee") 
     model_name = "Porteur"
     
     
@@ -5014,7 +5011,7 @@ def process_forwarder():
     ###############################################################################################################################################                                                                                    
     ### SAVE RASTER
     ###############################################################################################################################################    
-    print("    - Sauvegarde des fichiers de sorties") 
+    console_info("    - Sauvegarde des fichiers de sorties") 
     ArrayToGtiff(DTot,Rspace_s+'Distance_totale_foret_route_forestiere',Extent,nrows,ncols,road_network_proj,-9999,'INT16')
     ArrayToGtiff(Lien_foret_piste,Rspace_s+'Lien_foret_piste',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
     ArrayToGtiff(Lien_foret_RF,Rspace_s+'Lien_foret_route_forestiere',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
@@ -5059,7 +5056,7 @@ def process_forwarder():
     fichier = open(file_name, "w")
     fichier.write(resume_texte)
     fichier.close()
-    print("Accessibilite avec porteur terminee")
+    console_info("Accessibilite avec porteur terminee")
 
     ##############################################################################################################################################
     ### Close the script
