@@ -33,11 +33,12 @@ import math
 #from cython import pyximport
 #pyximport.install()
 #import sylvaccess_cython3 as fc
-from math import sqrt,degrees,atan,cos,sin,radians
+from math import sqrt,degrees,atan,cos,sin,radians,pi
 import shutil
 import gc
 import datetime
-from scipy.interpolate import interpolateUnivariateSpline
+from scipy.interpolate import InterpolatedUnivariateSpline
+import sys
 
 
 # Chargement de l'interface utilisateur depuis le fichier .ui
@@ -153,6 +154,8 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
     def spinBox_40_changed(self):
         value = self.spinBox_40.value()
         self.spinBox_49.setValue(value)
+
+
 ###############################################################################################
 # __          ___      .__   __.   ______  _______ .___  ___.  _______ .__   __. .___________.#
 #|  |        /   \     |  \ |  |  /      ||   ____||   \/   | |   ____||  \ |  | |           |#
@@ -279,14 +282,16 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         return verif
 
 
-########################################################################################################################
-#  _______  _______ .___________.   ____    ____  ___      .______       __       ___      .______    __       _______ #
-# /  _____||   ____||           |   \   \  /   / /   \     |   _  \     |  |     /   \     |   _  \  |  |     |   ____|#
-#|  |  __  |  |__   `---|  |----`    \   \/   / /  ^  \    |  |_)  |    |  |    /  ^  \    |  |_)  | |  |     |  |__   #
-#|  | |_ | |   __|      |  |          \      / /  /_\  \   |      /     |  |   /  /_\  \   |   _  <  |  |     |   __|  #
-#|  |__| | |  |____     |  |           \    / /  _____  \  |  |\  \----.|  |  /  _____  \  |  |_)  | |  `----.|  |____ #
-# \______| |_______|    |__|            \__/ /__/     \__\ | _| `._____||__| /__/     \__\ |______/  |_______||_______|#
-########################################################################################################################
+#####################################################################################################################
+#  _______  _______ .___________.   ____    ____  ___      .______    __       ___      .______    __       _______ #
+# /  _____||   ____||           |   \   \  /   / /   \     |   _  \  |  |     /   \     |   _  \  |  |     |   ____|#
+#|  |  __  |  |__   `---|  |----`    \   \/   / /  ^  \    |  |_)  | |  |    /  ^  \    |  |_)  | |  |     |  |__   #
+#|  | |_ | |   __|      |  |          \      / /  /_\  \   |      /  |  |   /  /_\  \   |   _  <  |  |     |   __|  #
+#|  |__| | |  |____     |  |           \    / /  _____  \  |  |\  \-.|  |  /  _____  \  |  |_)  | |  `----.|  |____ #
+# \______| |_______|    |__|            \__/ /__/     \__\ | _| `.__||__| /__/     \__\ |______/  |_______||_______|#
+#####################################################################################################################
+
+
     def get_general(self,ski,por,cab,opti,pente):
         if ski:
             ski = getattr(self, f"checkBox_4").isChecked()
@@ -510,14 +515,18 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 # Fonctions qui gère les calculs liés au porteur
 def Porteur():
     console_info("Porteur")
-#####################################################
-#.______   .______       __  .__   __. .___________.#
-#|   _  \  |   _  \     |  | |  \ |  | |           |#
-#|  |_)  | |  |_)  |    |  | |   \|  | `---|  |----`#
-#|   ___/  |      /     |  | |  . `  |     |  |     #
-#|  |      |  |\  \----.|  | |  |\   |     |  |     #
-#| _|      | _| `._____||__| |__| \__|     |__|     #
-#####################################################
+
+
+#################################################
+#.______   .______   __  .__   __. .___________.#
+#|   _  \  |   _  \ |  | |  \ |  | |           |#
+#|  |_)  | |  |_)  ||  | |   \|  | `---|  |----`#
+#|   ___/  |      / |  | |  . `  |     |  |     #
+#|  |      |  |\  \-|  | |  |\   |     |  |     #
+#| _|      | _| `.__|__| |__| \__|     |__|     #
+#################################################
+
+
 # Fonctions qui affiche un message d'erreur dans la console
 def console_warning(message):
     message = str(message)
@@ -528,14 +537,15 @@ def console_info(message):
     message = str(message)
     QgsMessageLog.logMessage(message,'Sylvaccess',Qgis.Info)
 
-###########################################################################
-#  _______  _______ .__   __.  _______ .______          ___       __      #
-# /  _____||   ____||  \ |  | |   ____||   _  \        /   \     |  |     #
-#|  |  __  |  |__   |   \|  | |  |__   |  |_)  |      /  ^  \    |  |     #
-#|  | |_ | |   __|  |  . `  | |   __|  |      /      /  /_\  \   |  |     #
-#|  |__| | |  |____ |  |\   | |  |____ |  |\  \----./  _____  \  |  `----.#
-# \______| |_______||__| \__| |_______|| _| `._____/__/     \__\ |_______|#
-###########################################################################
+
+#########################################################################
+#  _______  _______ .__   __.  _______ .______        ___       __      #
+# /  _____||   ____||  \ |  | |   ____||   _  \      /   \     |  |     #
+#|  |  __  |  |__   |   \|  | |  |__   |  |_)  |    /  ^  \    |  |     #
+#|  | |_ | |   __|  |  . `  | |   __|  |      /    /  /_\  \   |  |     #
+#|  |__| | |  |____ |  |\   | |  |____ |  |\  \--./  _____  \  |  `----.#
+# \______| |_______||__| \__| |_______|| _| `.___/__/     \__\ |_______|#
+#########################################################################
     
 
 def heures(Hdebut):
@@ -596,12 +606,14 @@ def replace_all(text, dic):
     for i, j in dic.iteritems(): text = text.replace(i, j)
     return text
 
+
 def clear_big_nparray():    
     """clear all globals over 100 Mo size and their associated memory space"""
     for uniquevar in [var for var in dir() if isinstance(globals()[var],np.ndarray)]:
         if globals()[uniquevar].nbytes/1000000>50:
             del globals()[uniquevar]
     gc.collect()
+
 
 def read_info(info_file):
     names = np.genfromtxt(info_file, dtype=None,usecols=(0),encoding ='latin1')
@@ -1219,38 +1231,53 @@ def focal_stat(in_file_name,out_file_name,methode='MEAN',nbcell=3):
 #|  |      /  /_\  \   |   _  <  |  |     |   __|  #
 #|  `----./  _____  \  |  |_)  | |  `----.|  |____ #
 # \______/__/     \__\ |______/  |_______||_______|#
-####################################################                                                  
+####################################################
+ 
+                                                  
 # Fonctions qui gère les calculs liés au cable
-def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable,file_Vol_ha,file_Vol_AM,file_Htree,Pente_max_bucheron,
-                  Lmax,Lmin,LminSpan,Htower,Hintsup,Hend,Lhor_max,Hline_min,Hline_max,sup_max,Carriage_type,Cable_type,slope_grav,
-                  Pchar,slope_Wliner_up,slope_Wliner_down,q1,rupt_res,safe_fact,E,d,Load_max,q2,q3,Max_angle,coeff_frot,language,
-                  precision,prelevement,slope_trans,angle_transv,test_cable_optimise,w_list,lim_list,VariaH,Lslope,PropSlope):
+def Cable():
     console_info("Cable")
-        if language=='FR':
-        print("Debut de Sylvaccess-Cable")
-    else:
-        print("Sylvaccess cable crane starts")
+    Wspace,Rspace,file_MNT,file_shp_Foret,_,file_shp_Cable_dep,_,_,_,Dir_Obs_cable,file_Htree,file_Vol_AM,file_Vol_ha = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,0,1,0,0,0,1,1,1,1,1)
+    _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general(0,0,0,0,1)
+    Cable_type,sup_max,Htower,Lmax,Lmin=Sylvaccess_pluginDialog.get_type_cable(1,1,1,1,1)
+    Carriage_type,Pchar,slope_grav,slope_Wliner_up,slope_Wliner_down = Sylvaccess_pluginDialog.get_type_chariot(1,1,1,1,1,1)
+    d,masse_li,rupt_res,E = Sylvaccess_pluginDialog.get_proprietes_cable(1,1,1,1)
+    Hintsup,Hend,Hline_min,Hline_max,Lhor_max,Load_max,safe_fact = Sylvaccess_pluginDialog.get_param_modelisation(1,1,1,1,1,1,1)
+    test_cable_optimise,precision = Sylvaccess_pluginDialog.get_options(1,1)
+    prelevement, _, _, _, _, _, _ = Sylvaccess_pluginDialog.get_opti_cable(1, 0, 0, 0, 0, 0, 0)
+    surface, surface_poids, nbr_sup_int, nbr_sup_int_poids, sens_debardage, sens_debardage_poids, longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1)
+
+    masse_li2 = 0.5
+    masse_li3 = 0.5
+    LminSpan = 50
+    Max_angle = 30
+    coeff_frot = 0.15
+    angle_transv = 60
+    slope_trans = 30
+    Lslope = 75
+    PropSlope = 0.15
+    VariaH = 0
+    lim_list = [surface, nbr_sup_int, sens_debardage, longueure_ligne, vol_ligne, indice_prelev, VAM, dist_chariot]
+    w_list = [surface_poids, nbr_sup_int_poids, sens_debardage_poids, longueure_ligne_poids, vol_ligne_poids, indice_prelev_poids, VAM_poids, dist_chariot_poids]
+
     
     Hdebut = datetime.datetime.now()
     Dir_temp = Wspace+"Temp/"  
     ### Check if temporary files have been generated and have the same extent
     try:
-        names,values,proj,Extent = raster_get_info(file_MNT)
+        _,values,proj,Extent = raster_get_info(file_MNT)
         Csize,ncols,nrows = values[4],int(values[0]),int(values[1])    
     except:
-        if language=='EN':  
-            print("Error: please define a projection for the DTM raster")
-        else:
-            print("Erreur: veuillez definir une projection pour le raster MNT")
+        print("Erreur: veuillez definir une projection pour le raster MNT")
         return ""
     try: 
-        n,v1=read_info(Dir_temp+'info_extent.txt')
+        _,v1=read_info(Dir_temp+'info_extent.txt')
         for i,item in enumerate(values):
             if v1[i]!=round(item,2):
-                prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable,Pente_max_bucheron,language)
+                prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable,Pente_max_bucheron)
             if i+1>4:break
     except:
-        prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable,Pente_max_bucheron,language)
+        prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable,Pente_max_bucheron)
     
     # Inputs
     try:
@@ -1278,7 +1305,7 @@ def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable
             Pente = np.uint16(prepa_obstacle_cable(Dir_Obs_cable,file_MNT,Dir_temp))
             Aerian_obs= np.int8(np.load(Dir_temp+"Obstacles_cables.npy"))  
     except: 
-        prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable,Pente_max_bucheron,language)
+        prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable,Pente_max_bucheron)
         Forest = np.int8(np.load(Dir_temp+"Foret.npy"))
         Aerian_obs= np.int8(np.load(Dir_temp+"Obstacles_cables.npy"))         
         MNT= np.load(Dir_temp+"MNT.npy") 
@@ -1318,25 +1345,18 @@ def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable
     Row_line,Col_line,D_line,Nbpix_line, Row_ext,Col_ext,D_ext,Dir_list=create_buffer(Csize,Lmax2,Lhor_max)    
     road_network_proj=get_proj_from_road_network(file_shp_Cable_dep)
     Skid_direction = 0
-    Rspace_c,filename,slope_min_up,slope_max_up,slope_min_down,slope_max_down=get_cable_configs(Rspace,slope_Wliner_up,
+    Rspace_c,_,slope_min_up,slope_max_up,slope_min_down,slope_max_down=get_cable_configs(Rspace,slope_Wliner_up,
                                                                                        slope_Wliner_down,slope_grav,
                                                                                        Cable_type,Carriage_type,
-                                                                                       Skid_direction,language) 
+                                                                                       Skid_direction) 
     try:os.mkdir(Rspace_c)
     except:pass
     Rspace_c+="/"
-#    f = open(filename, 'w')
-#    f.close()
     Rspace_sel = Rspace_c+"FilesForOptimisation"
     try:os.mkdir(Rspace_sel)
     except:pass
     Rspace_sel+="/"
     save_raster_info(values,Rspace_sel)
-#    write_file(Rspace_c,Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable,file_Vol_ha,
-#               file_Vol_AM,Pente_max_bucheron,Lmax,Lmin,LminSpan,Htower,Hintsup,Hend,Lhor_max,Hline_min,
-#               Hline_max,sup_max,Carriage_type,Cable_type,slope_grav,Pchar,slope_Wliner_up,slope_Wliner_down,
-#               q1,rupt_res,safe_fact,E,d,Load_max,q2,q3,Max_angle,coeff_frot,language,Skid_direction,precision,
-#               prelevement,slope_trans,angle_transv)
     ### Calculation of useful variables
     g = 9.80665     # m.s-2
     angle_intsup = radians(Max_angle) 
@@ -1350,7 +1370,7 @@ def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable
     # D H diag slope fact indmin indmax LoL ThL TvL TupL TdownL LoUg ThUg TvUg ind_fin_span free xmidL zmidL 
     # 0 1 2    3     4    5      6      7   8   9   10   11     12   13   14   15           16   17    18  
     Span = np.zeros((sup_max+1,16),dtype=np.float)
-    rastLosup,rastTh,rastTv= check_tabconv(Dir_temp,d,E,Tmax,Lmax2,Fo,q1,q2,q3,Csize)    
+    rastLosup,rastTh,rastTv= check_tabconv(Dir_temp,d,E,Tmax,Lmax2,Fo,masse_li,masse_li2,masse_li3,Csize)    
     
     ### Preparation of forest roads
     nbconfig = 5       
@@ -1364,12 +1384,8 @@ def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable
     
     Fin_ligne_forcee = np.int8(np.greater(Aerian_obs+(MNT<0),0))
     
-    if language=='FR':
-        print("    - Initialisation achevee, debut de traitement...")
-        str_nb_pixel_route=  " / "+str(nb_pixel_route-1)+ " pixels traites"
-    else:
-        print("    - Initialization achieved, processing...")
-        str_nb_pixel_route=  " / "+str(nb_pixel_route-1)+ " pixels processed"
+    print("    - Initialisation achevee, debut de traitement...")
+    str_nb_pixel_route=  " / "+str(nb_pixel_route-1)+ " pixels traites"
     
     Tab = np.zeros((min(1000000,int(nb_pixel_route*(360)/step_route)),18+5*sup_max),dtype=np.int)
     File_Tab = []
@@ -1405,7 +1421,7 @@ def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable
             for az in Dir_list:                                          
                 test,Lline,Line = get_ligne3(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,Pente,Hfor,test_hfor,Lmax2,Lmin,Csize,
                                              Row_line,Col_line,D_line,Nbpix_line,angle_transv,slope_trans,ncols,nrows,Lsans_foret,
-                                             Fo,Tmax,q1,q2,q3,Htower,Hend,Hline_max,Hintsup,Lslope,PropSlope)   
+                                             Fo,Tmax,masse_li,masse_li2,masse_li3,Htower,Hend,Hline_max,Hintsup,Lslope,PropSlope)   
                 if test==1:           
                     Span*=0    
                     Falt = InterpolatedUnivariateSpline(Line[:,0],Line[:,1])
@@ -1416,11 +1432,11 @@ def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable
                             continue
                         #print az,"up",Line[-1,0] 
                         if VariaH:
-                            Span = fc.OptPyl_Up(Line,Alts,Span,Htower,Hintsup,Hend,q1,q2,q3,Fo,Hline_min,Hline_max,
+                            Span = fc.OptPyl_Up(Line,Alts,Span,Htower,Hintsup,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,
                                                  Csize,angle_intsup,EAo,E,d,sup_max,rastLosup,rastTh,rastTv,Tmax,
                                                  LminSpan,slope_min_up,slope_max_up,Lmax2,test_hfor,nbconfig)
                         else:
-                            Span = fc.OptPyl_Up_NoH(Line,Alts,Span,Htower,Hintsup,Hend,q1,q2,q3,Fo,Hline_min,Hline_max,
+                            Span = fc.OptPyl_Up_NoH(Line,Alts,Span,Htower,Hintsup,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,
                                                      Csize,angle_intsup,EAo,E,d,sup_max,rastLosup,rastTh,rastTv,Tmax,
                                                      LminSpan,slope_min_up,slope_max_up,Lmax2,test_hfor,nbconfig)
                         config = 1
@@ -1429,7 +1445,7 @@ def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable
                             continue
                         #print az,"down",Line[-1,0]
                         if VariaH:
-                            Span = fc.OptPyl_Down_init(Line,Alts,Span,Htower,Hintsup, Hend,q1,q2,q3,Fo,
+                            Span = fc.OptPyl_Down_init(Line,Alts,Span,Htower,Hintsup, Hend,masse_li,masse_li2,masse_li3,Fo,
                                              Hline_min,Hline_max,Csize,angle_intsup,EAo, E, d,
                                              sup_max,rastLosup,rastTh,rastTv,Tmax,LminSpan,
                                              slope_min_down, slope_max_down,Lmax2,test_hfor)
@@ -1440,12 +1456,12 @@ def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable
                             Line2=return_profile(Line[:indmax+1])
                             Falt = InterpolatedUnivariateSpline(Line2[:,0],Line2[:,1])
                             Alts = Falt(np.arange(0.,Lline,0.5))    
-                            Span = fc.OptPyl_Down(Line2,Alts,Span*0,Htower,Hintsup,Hend,q1,q2,q3,Fo,Hline_min,Hline_max,Csize,angle_intsup,
+                            Span = fc.OptPyl_Down(Line2,Alts,Span*0,Htower,Hintsup,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,Csize,angle_intsup,
                                                    EAo,E,d,sup_max,rastLosup,rastTh,rastTv,Tmax,LminSpan, min(-slope_min_down,-slope_max_down),
                                                    max(-slope_min_down,-slope_max_down),Lmax2,test_hfor,nbconfig)
                             config=-1
                         else:
-                            Span = fc.OptPyl_Down_init_NoH(Line,Alts,Span,Htower,Hintsup, Hend,q1,q2,q3,Fo,
+                            Span = fc.OptPyl_Down_init_NoH(Line,Alts,Span,Htower,Hintsup, Hend,masse_li,masse_li2,masse_li3,Fo,
                                              Hline_min,Hline_max,Csize,angle_intsup,EAo, E, d,
                                              sup_max,rastLosup,rastTh,rastTv,Tmax,LminSpan,
                                              slope_min_down, slope_max_down,Lmax2,test_hfor,nbconfig)
@@ -1456,7 +1472,7 @@ def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable
                             Line2=return_profile(Line[:indmax+1])
                             Falt = InterpolatedUnivariateSpline(Line2[:,0],Line2[:,1])
                             Alts = Falt(np.arange(0.,Lline,0.5))    
-                            Span = fc.OptPyl_Down_NoH(Line2,Alts,Span*0,Htower,Hintsup,Hend,q1,q2,q3,Fo,Hline_min,Hline_max,Csize,
+                            Span = fc.OptPyl_Down_NoH(Line2,Alts,Span*0,Htower,Hintsup,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,Csize,
                                                        angle_intsup,EAo,E,d,sup_max,rastLosup,rastTh,rastTv,Tmax,LminSpan,min(-slope_min_down,-slope_max_down),
                                                        max(-slope_min_down,-slope_max_down),Lmax2,test_hfor,nbconfig)
                             config=-1
@@ -1511,10 +1527,7 @@ def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable
                         Tab = np.zeros((1000000,18+5*sup_max),dtype=np.int)
 
    
-    if language=='FR':
-        print("\n    - Sauvegarde des resultats")
-    else:
-        print("\n    - Saving the results")
+    print("\n    - Sauvegarde des resultats")
    
     ### Save Forest,Vol_ha,VolAm,Pente
     np.save(Rspace_sel+"Forest.npy",Forest)
@@ -1549,7 +1562,7 @@ def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable
         Vol_ha=np.zeros_like(MNT)    
     else:
         Vol_ha = load_float_raster_simple(file_Vol_ha) 
-    generate_info_cable_simu(Rspace_c,Tab,language,Rast_couv,Vol_ha,Csize,Forest,Pente,Pente_max_bucheron)
+    generate_info_cable_simu(Rspace_c,Tab,Rast_couv,Vol_ha,Csize,Forest,Pente,Pente_max_bucheron)
     
     ### Del useless   
     del Forest,Pente,Line,Alts,Span,MNT,Fin_ligne_forcee,Aspect,Falt
@@ -1559,179 +1572,97 @@ def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable
         pass
     
     #Save Global res        
-    if language=='FR':
-        header = 'ID_pixel Azimuth X_debut Y_debut Alt_debut Hcable_debut X_fin Y_fin Alt_fin Hcable_fin '
-        header +='Etat_RouteFor Longueur_reelle Configuration '
-        header +='Surface_foret Distance_moy_chariot Volume_total VAM NB_int_sup'
-        for num in range(1,sup_max+1):
-            header +=' '+'Xcoord_intsup'+str(num)+' Ycoord_intsup'+str(num)+' Alt_intsup'+str(num)
-            header +=' '+'Hcable_intsup'+str(num)+' Pression_intsup'+str(num)
-        filename=Rspace_c+"Database_toutes_lignes.gzip"
-        shape_name = Rspace_c+"Toutes_les_lignes.shp"
-        rast_name = Rspace_c+'Zone_accessible'
-        
-    else:
-        header = 'ID_pixel Azimuth X_Start Y_Start Elevation_Start Hcable_Start X_End Y_End Elevation_End Hcable_End '
-        header +='Existing_road Cable_length Configuration '
-        header +='Forest_area Carriage_average_distance Volume_total ATV NB_int_sup'
-        for num in range(1,sup_max+1):
-            header +=' '+'Xcoord_intsup'+str(num)+' Ycoord_intsup'+str(num)+' Elevation_intsup'+str(num)
-            header +=' '+'Hcable_intsup'+str(num)+' Pression_intsup'+str(num)
-        filename=Rspace_c+"Database_All_lines.gzip"
-        shape_name = Rspace_c+"All_lines.shp"
-        rast_name = Rspace_c+'Accessible_area'
+    header = 'ID_pixel Azimuth X_debut Y_debut Alt_debut Hcable_debut X_fin Y_fin Alt_fin Hcable_fin '
+    header += 'Etat_RouteFor Longueur_reelle Configuration '
+    header +='Surface_foret Distance_moy_chariot Volume_total VAM NB_int_sup'
+    for num in range(1, sup_max + 1):
+        header +=' '+'Xcoord_intsup'+str(num)+' Ycoord_intsup'+str(num)+' Alt_intsup'+str(num)
+        header +=' '+'Hcable_intsup'+str(num)+' Pression_intsup'+str(num)
+    filename=Rspace_c+"Database_toutes_lignes.gzip"
+    shape_name = Rspace_c+"Toutes_les_lignes.shp"
+    rast_name = Rspace_c+'Zone_accessible'
             
     
     ArrayToGtiff(Rast_couv,rast_name,Extent,nrows,ncols,road_network_proj,0,'UINT8')
     header+='\n'
     save_integer_ascii(filename,header,Tab)
     source_src=get_source_src(file_shp_Cable_dep) 
-    Line_to_shapefile(Tab[0:2],Rspace_sel+"info_proj.shp",source_src,0,language)
+    Line_to_shapefile(Tab[0:2],Rspace_sel+"info_proj.shp",source_src,0)
     if Tab.shape[0]<1000000:         
-        Line_to_shapefile(Tab,shape_name,source_src,prelevement,language)
+        Line_to_shapefile(Tab,shape_name,source_src,prelevement)
     
     ##############################################################################################################################################
     ### 3. CREATE SIMULATION PARAMETER FILE
     ##############################################################################################################################################
-    str_duree,str_fin,str_debut=heures(Hdebut,language)
+    str_duree,str_fin,str_debut=heures(Hdebut)
     
-    if language == 'FR':
-        if Carriage_type==1:
-            carriage_name = 'Automoteur'
-        else:
-            carriage_name = 'Classique'
-        if Cable_type <3:
-            cable_name= 'Cable mat'
-        else:
-            cable_name= 'Cable long/conventionnel'
+    if Carriage_type==1:
+        carriage_name = 'Automoteur'
+    else:
+        carriage_name = 'Classique'
+    if Cable_type < 3:
+        cable_name= 'Cable mat'
+    else:
+        cable_name= 'Cable long/conventionnel'
         
-        file_name = str(Rspace_c)+"Parametre_simulation.txt"
-        resume_texte = "SYLVACCESS - CABLE\n\n\n"
-        resume_texte = resume_texte+"Version du programme: 3.5.1 de 12/2021\n"
-        resume_texte = resume_texte+"Auteur: Sylvain DUPIRE. Irstea\n\n"
-        resume_texte = resume_texte+"Date et heure de lancement du script:                                      "+str_debut+"\n"
-        resume_texte = resume_texte+"Date et heure a la fin de l'execution du script:                           "+str_fin+"\n"
-        resume_texte = resume_texte+"Temps total d'execution du script:                                         "+str_duree+"\n\n"
-        resume_texte = resume_texte+"PROPRIETES DU MATERIEL MODELISE:\n"
-        resume_texte = resume_texte+"   - Type de machine:                                                      "+str(cable_name)+"\n"
-        resume_texte = resume_texte+"   - Hauteur du mat ou du cable porteur au niveau de la place de depot:    "+str(Htower)+" m\n"
-        resume_texte = resume_texte+"   - Nombre maximum de support(s) intermediaire(s):                        "+str(sup_max)+"\n"
-        resume_texte = resume_texte+"   - Longueur maximale du cable porteur:                                   "+str(Lmax)+" m\n"
-        resume_texte = resume_texte+"   - Longueur minimale d'une ligne:                                        "+str(Lmin)+" m\n"
-        resume_texte = resume_texte+"   - Longueur minimale entre deux supports:                                "+str(LminSpan)+" m\n"
-        resume_texte = resume_texte+"   - Type de chariot:                                                      "+str(carriage_name)+"\n"
-        resume_texte = resume_texte+"   - Masse a vide du chariot:                                              "+str(Pchar)+" kg\n"
-        resume_texte = resume_texte+"   - Masse maximale de la charge:                                          "+str(Load_max)+" kg\n"
-        if Carriage_type==1:   
-            resume_texte = resume_texte+"   - Pente max du cable porteur pour un debardage vers l'amont:            "+str(slope_Wliner_up)+" %\n"    
-            resume_texte = resume_texte+"   - Pente max du cable porteur pour un debardage vers l'aval:             "+str(slope_Wliner_down)+" %\n"   
-        else: 
-            resume_texte = resume_texte+"   - Pente min du cable porteur pour que le chariot descende par gravite:  "+str(slope_grav)+" %\n"  
-        resume_texte = resume_texte+"\n"
-        resume_texte = resume_texte+"PROPRIETES DU CABLE PORTEUR:\n"    
-        resume_texte = resume_texte+"   - Diametre du cable porteur:                                            "+str(d)+" mm\n"
-        resume_texte = resume_texte+"   - Masse lineique du cable porteur:                                      "+str(q1)+" kg.m-1\n"
-        resume_texte = resume_texte+"   - Module de Young (Elasticite):                                         "+str(E)+" N.mm-2\n"
-        resume_texte = resume_texte+"   - Tension de rupture du cable porteur                                   "+str(rupt_res)+" kgF\n\n"
-        if Carriage_type!=1:
-            resume_texte = resume_texte+"PROPRIETES DES CABLES TRACTEUR ET RETOUR:\n"  
-            resume_texte = resume_texte+"   - Masse lineique du cable tracteur:                                     "+str(q2)+" kg.m-1\n"
-            resume_texte = resume_texte+"   - Masse lineique du cable retour:                                       "+str(q3)+" kg.m-1\n"
-            resume_texte = resume_texte+"\n"        
-        resume_texte = resume_texte+"PARAMETRES DE MODELISATION:\n"
-        resume_texte = resume_texte+"   - Distance laterale de pechage des bois:                                "+str(Lhor_max)+" m\n"
-        resume_texte = resume_texte+"   - Hauteur du cable porteur au niveau des pylone intermediaire:          "+str(Hintsup)+" m\n"
-        resume_texte = resume_texte+"   - Hauteur du cable porteur en fin de ligne:                             "+str(Hend)+" m\n"
-        resume_texte = resume_texte+"   - Hauteur minimale du cable en tout point (en charge):                  "+str(Hline_min)+" m\n"
-        resume_texte = resume_texte+"   - Hauteur maximale du cable en tout point:                              "+str(Hline_max)+" m\n"
-        resume_texte = resume_texte+"   - Angle maximum du cable porteur au niveau d'un pylone intermediaire:   "+str(Max_angle)+" degres\n"
-        resume_texte = resume_texte+"   - Facteur de securite:                                                  "+str(safe_fact)+"\n"
-        resume_texte = resume_texte+"   - Valeur de l'angle de frottement:                                      "+str(coeff_frot)+" rad\n\n"
-        resume_texte = resume_texte+"   - Resolution du MNT utilise:                                            "+str(Csize)+" m\n"
-        resume_texte = resume_texte+"   - Prelevement du volume sur pied applique:                              "+str(prelevement*100)+" %\n"
-        try:
-            resume_texte = resume_texte+"   - Projection:                                                           "+str(proj.GetAttrValue("PROJCS", 0))+"\n"
-        except:
-            resume_texte = resume_texte+"   - Projection:                                                           inconnue\n"
-        if Dir_Obs_cable=="":
-            reponse = "Non"
-        else:
-            reponse = "Oui"
-        resume_texte = resume_texte+"   - Prise en compte d'obstacle pour le cable:                             "+str(reponse)+"\n"
-        if file_Vol_ha=="":
-            reponse = "Non"
-        else:
-            reponse = "Oui"
-        resume_texte = resume_texte+"   - Information sur le volume de bois fournie en entree:                  "+str(reponse)+"\n"
-    
-    elif language == 'EN':
-        if Carriage_type==1:
-            carriage_name = 'Self-motorized'
-        else:
-            carriage_name = 'Classical'
-        if Cable_type <3:
-            cable_name= 'Cable tower'
-        else:
-            cable_name= 'Long/conventional cable'
-        
-        file_name = str(Rspace_c)+"Parameter_of_simulation.txt"
-        resume_texte = "SYLVACCESS - CABLE\n\n\n"
-        resume_texte = resume_texte+"Program version: 3.5.1 - 2021/12\n"
-        resume_texte = resume_texte+"Author: Sylvain DUPIRE. Irstea\n\n"
-        resume_texte = resume_texte+"Date and time when launching the script:                          "+str_debut+"\n"
-        resume_texte = resume_texte+"Date and time at the end of execution of the script:              "+str_fin+"\n"
-        resume_texte = resume_texte+"Total execution time of the script:                               "+str_duree+"\n\n"
-        resume_texte = resume_texte+"TYPE OF MATERIAL MODELED:\n"
-        resume_texte = resume_texte+"   - Type of machine:                                             "+str(cable_name)+"\n"
-        resume_texte = resume_texte+"   - Height of the skyline at landing place:                      "+str(Htower)+" m\n"
-        resume_texte = resume_texte+"   - Maximum number of intermediate support(s):                   "+str(sup_max)+"\n"
-        resume_texte = resume_texte+"   - Maximum length of the skyline:                               "+str(Lmax)+" m\n"
-        resume_texte = resume_texte+"   - Minimum length of a line:                                    "+str(Lmin)+" m\n"
-        resume_texte = resume_texte+"   - Minimal length between two supports:                         "+str(LminSpan)+" m\n"
-        resume_texte = resume_texte+"   - Carriage type:                                               "+str(carriage_name)+"\n"
-        resume_texte = resume_texte+"   - Carriage weight when empty:                                  "+str(Pchar)+" kg\n"
-        resume_texte = resume_texte+"   - Maximum weight of the load:                                  "+str(Load_max)+" kg\n"
-        if Carriage_type==1:   
-            resume_texte = resume_texte+"   - Maximum slope of the skyline for an uphill yarding:          "+str(slope_Wliner_up)+" %\n"    
-            resume_texte = resume_texte+"   - Maximum slope of the skyline for an downhill yarding:        "+str(slope_Wliner_down)+" %\n"   
-        else:
-            resume_texte = resume_texte+"   - Minimum slope for a gravity descent of the carriage:         "+str(slope_grav)+" %\n"  
-        resume_texte = resume_texte+"\n"
-        resume_texte = resume_texte+"SKYLINE PROPERTIES:\n"    
-        resume_texte = resume_texte+"   - Skyline diameter:                                            "+str(d)+" mm\n"
-        resume_texte = resume_texte+"   - Skyline self-weight:                                         "+str(q1)+" kg.m-1\n"
-        resume_texte = resume_texte+"   - Young Modulus (Elasticity):                                  "+str(E)+" N.mm-2\n"
-        resume_texte = resume_texte+"   - Skyline maximum tensile force                                "+str(rupt_res)+" kgF\n\n"
-        if Carriage_type!=1:
-            resume_texte = resume_texte+"MAINLINE AND HAULBACK LINE PROPERTIES:\n"  
-            resume_texte = resume_texte+"   - Mainline self-weight:                                        "+str(q2)+" kg.m-1\n"
-            resume_texte = resume_texte+"   - Haulback line self-weight:                                   "+str(q3)+" kg.m-1\n"
-            resume_texte = resume_texte+"\n"        
-        resume_texte = resume_texte+"MODELING PARAMETERS:\n"
-        resume_texte = resume_texte+"   - Lateral skidding distance:                                   "+str(Lhor_max)+" m\n"
-        resume_texte = resume_texte+"   - Skyline height at intermediaite support(s):                  "+str(Hintsup)+" m\n"
-        resume_texte = resume_texte+"   - Skyline height at tailspar:                                  "+str(Hend)+" m\n"
-        resume_texte = resume_texte+"   - Minimun height of the load along the profile:                "+str(Hline_min)+" m\n"
-        resume_texte = resume_texte+"   - Maximun height of the skyline along the profile:             "+str(Hline_max)+" m\n"
-        resume_texte = resume_texte+"   - Maximum angle of the skyline at intermediate support level:  "+str(Max_angle)+" degrees\n"
-        resume_texte = resume_texte+"   - Safety coefficient:                                          "+str(safe_fact)+"\n"
-        resume_texte = resume_texte+"   - Friction angle value:                                        "+str(coeff_frot)+" rad\n\n"
-        resume_texte = resume_texte+"   - DTM resolution:                                              "+str(Csize)+" m\n"
-        resume_texte = resume_texte+"   - Proportion of wood volume removed:                           "+str(prelevement*100)+" %\n"
-        try:
-            resume_texte = resume_texte+"   - Projection:                                                  "+str(proj.GetAttrValue("PROJCS", 0))+"\n"
-        except:
-            resume_texte = resume_texte+"   - Projection:                                                  Unknown\n"
-        if Dir_Obs_cable=="":
-            reponse = "No"
-        else:
-            reponse = "Yes"
-        resume_texte = resume_texte+"   - Modeling done taking into account cable obstacles:           "+str(reponse)+"\n"
-        if file_Vol_ha=="":
-            reponse = "No"
-        else:
-            reponse = "Yes"
-        resume_texte = resume_texte+"   - Wood volume information given as input:                      "+str(reponse)+"\n"
+    file_name = str(Rspace_c)+"Parametre_simulation.txt"
+    resume_texte = "SYLVACCESS - CABLE\n\n\n"
+    resume_texte = resume_texte+"Version du programme: 3.5.1 de 12/2021\n"
+    resume_texte = resume_texte+"Auteur: Sylvain DUPIRE. Irstea\n\n"
+    resume_texte = resume_texte+"Date et heure de lancement du script:                                      "+str_debut+"\n"
+    resume_texte = resume_texte+"Date et heure a la fin de l'execution du script:                           "+str_fin+"\n"
+    resume_texte = resume_texte+"Temps total d'execution du script:                                         "+str_duree+"\n\n"
+    resume_texte = resume_texte+"PROPRIETES DU MATERIEL MODELISE:\n"
+    resume_texte = resume_texte+"   - Type de machine:                                                      "+str(cable_name)+"\n"
+    resume_texte = resume_texte+"   - Hauteur du mat ou du cable porteur au niveau de la place de depot:    "+str(Htower)+" m\n"
+    resume_texte = resume_texte+"   - Nombre maximum de support(s) intermediaire(s):                        "+str(sup_max)+"\n"
+    resume_texte = resume_texte+"   - Longueur maximale du cable porteur:                                   "+str(Lmax)+" m\n"
+    resume_texte = resume_texte+"   - Longueur minimale d'une ligne:                                        "+str(Lmin)+" m\n"
+    resume_texte = resume_texte+"   - Longueur minimale entre deux supports:                                "+str(LminSpan)+" m\n"
+    resume_texte = resume_texte+"   - Type de chariot:                                                      "+str(carriage_name)+"\n"
+    resume_texte = resume_texte+"   - Masse a vide du chariot:                                              "+str(Pchar)+" kg\n"
+    resume_texte = resume_texte+"   - Masse maximale de la charge:                                          "+str(Load_max)+" kg\n"
+    if Carriage_type==1:   
+        resume_texte = resume_texte+"   - Pente max du cable porteur pour un debardage vers l'amont:            "+str(slope_Wliner_up)+" %\n"    
+        resume_texte = resume_texte+"   - Pente max du cable porteur pour un debardage vers l'aval:             "+str(slope_Wliner_down)+" %\n"   
+    else: 
+        resume_texte = resume_texte+"   - Pente min du cable porteur pour que le chariot descende par gravite:  "+str(slope_grav)+" %\n"  
+    resume_texte = resume_texte+"\n"
+    resume_texte = resume_texte+"PROPRIETES DU CABLE PORTEUR:\n"    
+    resume_texte = resume_texte+"   - Diametre du cable porteur:                                            "+str(d)+" mm\n"
+    resume_texte = resume_texte+"   - Masse lineique du cable porteur:                                      "+str(masse_li)+" kg.m-1\n"
+    resume_texte = resume_texte+"   - Module de Young (Elasticite):                                         "+str(E)+" N.mm-2\n"
+    resume_texte = resume_texte+"   - Tension de rupture du cable porteur                                   "+str(rupt_res)+" kgF\n\n"
+    if Carriage_type!=1:
+        resume_texte = resume_texte+"PROPRIETES DES CABLES TRACTEUR ET RETOUR:\n"  
+        resume_texte = resume_texte+"   - Masse lineique du cable tracteur:                                     "+str(masse_li2)+" kg.m-1\n"
+        resume_texte = resume_texte+"   - Masse lineique du cable retour:                                       "+str(masse_li3)+" kg.m-1\n"
+        resume_texte = resume_texte+"\n"        
+    resume_texte = resume_texte+"PARAMETRES DE MODELISATION:\n"
+    resume_texte = resume_texte+"   - Distance laterale de pechage des bois:                                "+str(Lhor_max)+" m\n"
+    resume_texte = resume_texte+"   - Hauteur du cable porteur au niveau des pylone intermediaire:          "+str(Hintsup)+" m\n"
+    resume_texte = resume_texte+"   - Hauteur du cable porteur en fin de ligne:                             "+str(Hend)+" m\n"
+    resume_texte = resume_texte+"   - Hauteur minimale du cable en tout point (en charge):                  "+str(Hline_min)+" m\n"
+    resume_texte = resume_texte+"   - Hauteur maximale du cable en tout point:                              "+str(Hline_max)+" m\n"
+    resume_texte = resume_texte+"   - Angle maximum du cable porteur au niveau d'un pylone intermediaire:   "+str(Max_angle)+" degres\n"
+    resume_texte = resume_texte+"   - Facteur de securite:                                                  "+str(safe_fact)+"\n"
+    resume_texte = resume_texte+"   - Valeur de l'angle de frottement:                                      "+str(coeff_frot)+" rad\n\n"
+    resume_texte = resume_texte+"   - Resolution du MNT utilise:                                            "+str(Csize)+" m\n"
+    resume_texte = resume_texte+"   - Prelevement du volume sur pied applique:                              "+str(prelevement*100)+" %\n"
+    try:
+        resume_texte = resume_texte+"   - Projection:                                                           "+str(proj.GetAttrValue("PROJCS", 0))+"\n"
+    except:
+        resume_texte = resume_texte+"   - Projection:                                                           inconnue\n"
+    if Dir_Obs_cable=="":
+        reponse = "Non"
+    else:
+        reponse = "Oui"
+    resume_texte = resume_texte+"   - Prise en compte d'obstacle pour le cable:                             "+str(reponse)+"\n"
+    if file_Vol_ha=="":
+        reponse = "Non"
+    else:
+        reponse = "Oui"
+    resume_texte = resume_texte+"   - Information sur le volume de bois fournie en entree:                  "+str(reponse)+"\n"
     
     fichier = open(file_name, "w")
     fichier.write(resume_texte)
@@ -1743,10 +1674,7 @@ def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable
     fichier.close()
     
     
-    if language=='FR':
-        print("\nToutes les lignes possibles ont ete testees.\n")     
-    else:
-        print("\nAll the possible cable line have been processed.\n")
+    print("\nToutes les lignes possibles ont ete testees.\n")     
     ##############################################################################################################################################
     ### 4. SELECTION OF BEST LINE IF CHECKED
     ##############################################################################################################################################
@@ -1754,14 +1682,13 @@ def Cable(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable
         line_selection(Rspace_c,w_list,lim_list,0,file_shp_Foret,file_Vol_ha,file_Vol_AM,Lhor_max,prelevement,Pente_max_bucheron)
 
 
-
 # Fonctions qui gère les calculs liés à l'optimisation des emplacements de cable
 def Cable_opti():
     console_info("Cable_opti")
 
 
-def prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize):
-    rastLosup,rastTh,rastTv = fc.Tabmesh(d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize)
+def prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,masse_li,masse_li2,masse_li3,Csize):
+    rastLosup,rastTh,rastTv = fc.Tabmesh(d,E,Tmax,Lmax,Fo,masse_li,masse_li2,masse_li3,Csize)
     np.save(Dir_temp+"rastLosup.npy",rastLosup)
     np.save(Dir_temp+"rastTh.npy",rastTh)
     np.save(Dir_temp+"rastTv.npy",rastTv)
@@ -1771,26 +1698,26 @@ def prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize):
     text += "Lmax "+" "+str(round(Lmax,2))+"\n"
     text += "Fo   "+" "+str(round(Fo,2))+"\n"
     text += "Csize"+" "+str(round(Csize,2))+"\n"
-    text += "q1   "+" "+str(round(q1,2))+"\n"
-    text += "q2   "+" "+str(round(q2,2))+"\n"
-    text += "q3   "+" "+str(round(q3,2))+"\n"
+    text += "masse_li   "+" "+str(round(masse_li,2))+"\n"
+    text += "masse_li2   "+" "+str(round(masse_li2,2))+"\n"
+    text += "masse_li3   "+" "+str(round(masse_li3,2))+"\n"
     f = open(Dir_temp+'info_config.txt',"w")
     f.write(text)
     f.close()
     return rastLosup,rastTh,rastTv
 
 
-def check_tabconv(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize):
+def check_tabconv(Dir_temp,d,E,Tmax,Lmax,Fo,masse_li,masse_li2,masse_li3,Csize):
     try:
         a,v1=read_info(Dir_temp+"info_config.txt")
-        if np.all(np.array([round(d,2),round(E,2),round(Tmax,2),round(Lmax,2),round(Fo,2),round(Csize,2),round(q1,2),round(q2,2),round(q3,2)])==v1):
+        if np.all(np.array([round(d,2),round(E,2),round(Tmax,2),round(Lmax,2),round(Fo,2),round(Csize,2),round(masse_li,2),round(masse_li2,2),round(masse_li3,2)])==v1):
             rastLosup = np.load(Dir_temp+"rastLosup.npy")
             rastTh = np.load(Dir_temp+"rastTh.npy")
             rastTv = np.load(Dir_temp+"rastTv.npy")
         else:
-            rastLosup,rastTh,rastTv = prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize)
+            rastLosup,rastTh,rastTv = prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,masse_li,masse_li2,masse_li3,Csize)
     except:
-        rastLosup,rastTh,rastTv = prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,q1,q2,q3,Csize)        
+        rastLosup,rastTh,rastTv = prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,masse_li,masse_li2,masse_li3,Csize)        
     return rastLosup,rastTh,rastTv
 
 
@@ -1825,7 +1752,7 @@ def check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret):
 
 def get_ligne3(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,Pente,Hfor,test_hfor,Lmax,Lmin,Csize,
               Row_line,Col_line,D_line,Nbpix_line,angle_transv,slope_trans,ncols,nrows,Lsans_foret,
-              Fo,Tmax,q1,q2,q3,Htower,Hend,Hline_max,Hintsup,Lslope,PropSlope):
+              Fo,Tmax,masse_li,masse_li2,masse_li3,Htower,Hend,Hline_max,Hintsup,Lslope,PropSlope):
                   
     npix = Nbpix_line[az]
     npix = fc.get_npix(az,npix,coordY,coordX,ncols,nrows,Row_line,Col_line)   
@@ -1855,8 +1782,8 @@ def get_ligne3(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,P
                 Xup,Zup = Line[i,0],Line[i,1]+Hend
                 fact = -1.             
             L=sqrt(H*H+D*D)
-            F = 0.5*(0.5*L*q2+0.5*L*q3)*9.80665 + Fo  
-            fleche = 1.1*(F*L/(4*Tmax)+q1*9.80665*L*L/(8*Tmax))
+            F = 0.5*(0.5*L*masse_li2+0.5*L*masse_li3)*9.80665 + Fo  
+            fleche = 1.1*(F*L/(4*Tmax)+masse_li*9.80665*L*L/(8*Tmax))
             for j in range(1,i-1):
                 droite = -fact*H/D*(Line[j,0]-Xup)+Zup-Line[j,1]
                 if droite-fleche > Hline_max:
@@ -2201,6 +2128,7 @@ def get_ligne(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,Pe
         return test,Lline,Line[0:indmax,0:7]
     else:
         return 0,0,0
+
 
 def create_az_rules(angle_transv):
     matrice = np.zeros((360,360),dtype=np.int8)
@@ -3344,21 +3272,25 @@ def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,
     generate_info_ligne(Dir_result,w_list,lim_list,Tab_result,Rast_couv,Vol_ha,Vol_AM,Csize,prelevement,Lhor_max) 
     print("Selection des meilleures lignes de cable terminee.")
  
+
 def process_cable():
 
 
 
-#######################################################################
-#    _______. __  ___  __   _______   _______   _______ .______       #
-#    /       ||  |/  / |  | |       \ |       \ |   ____||   _  \     #
-#   |   (----`|  '  /  |  | |  .--.  ||  .--.  ||  |__   |  |_)  |    #
-##   \   \    |    <   |  | |  |  |  ||  |  |  ||   __|  |      /     #
-#.----)   |   |  .  \  |  | |  '--'  ||  '--'  ||  |____ |  |\  \----.#
-#|_______/    |__|\__\ |__| |_______/ |_______/ |_______|| _| `._____|#
-#######################################################################
+#####################################################################
+#    _______. __  ___  __   _______   _______   _______ .______     #
+#    /       ||  |/  / |  | |       \ |       \ |   ____||   _  \   #
+#   |   (----`|  '  /  |  | |  .--.  ||  .--.  ||  |__   |  |_)  |  #
+##   \   \    |    <   |  | |  |  |  ||  |  |  ||   __|  |      /   #
+#.----)   |   |  .  \  |  | |  '--'  ||  '--'  ||  |____ |  |\  \--.#
+#|_______/    |__|\__\ |__| |_______/ |_______/ |_______|| _| `.___|#
+#####################################################################
+
+
 # Fonctions qui gère les calculs liés au skidder
-def Skidder():
-    console_info("Skidder")
+
+    def Skidder():
+        console_info("Skidder")
 
 
 def create_new_road_network(file_shp_Desserte,Wspace):
