@@ -30,7 +30,7 @@ from scipy import spatial
 import numpy as np
 from osgeo import gdal, osr, ogr
 import math
-from math import sqrt,degrees,atan,cos,sin,radians,pi
+from math import sqrt,degrees,atan,cos,sin,radians,pi,atan2
 import shutil
 import gc
 import datetime
@@ -5054,3 +5054,1614 @@ def process_forwarder():
     ### Close the script
     ##############################################################################################################################################
     clear_big_nparray()
+
+####################################################################
+#  ______ ____    ____ .___________. __    __    ______   .__   __.# 
+# /      |\   \  /   / |           ||  |  |  |  /  __  \  |  \ |  |#
+#|  ,----' \   \/   /  `---|  |----`|  |__|  | |  |  |  | |   \|  |# 
+#|  |       \_    _/       |  |     |   __   | |  |  |  | |  . `  |# 
+#|  `----.    |  |         |  |     |  |  |  | |  `--'  | |  |\   |# 
+# \______|    |__|         |__|     |__|  |__|  \______/  |__| \__|# 
+####################################################################                                                                  
+
+
+def max_array(a):
+    
+    max_a = a[0]
+    for item in range(1, a.shape[0]):
+        if a[item] > max_a:
+            max_a = a[item]
+    return max_a
+
+
+def max_array_f(a):
+    max_a = a[0]
+    for item in range(1, a.shape[0]):
+        if a[item] > max_a:
+            max_a = a[item]
+    return max_a
+
+
+def sum_array_f(a):
+    summ = a[0]
+    for item in range(1, a.shape[0]):
+        summ += a[item]
+    return summ
+
+
+def copy_int8_array(arraystock, arraytocopy, nline, ncol):
+    for i in range(nline):
+        for j in range(ncol):
+            arraystock[i, j] = arraytocopy[i, j]
+    return arraystock
+
+
+def int8_array_sum(matrice):
+    somme = 0
+    for y in range(matrice.shape[0]):
+        for x in range(matrice.shape[1]):
+            somme += matrice[y, x]
+    return somme
+
+
+def int_array_sum(matrice):
+    somme = 0
+    for y in range(matrice.shape[0]):
+        for x in range(matrice.shape[1]):
+            somme += matrice[y, x]
+    return somme
+
+
+def pente(raster_mnt, Csize, nodata):
+    nline, ncol = raster_mnt.shape
+    pente = np.zeros_like(raster_mnt, dtype=np.float32)
+
+    for y in range(1, nline-1):
+        for x in range(1, ncol-1):
+            e = raster_mnt[y, x]
+            if e > nodata:
+                a, b, c, d, f, g, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
+                                          raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x-1],
+                                          raster_mnt[y+1, x], raster_mnt[y+1, x+1])
+                dz_dx = float(c + 2*f + i - (a + 2*d + g)) / float(8 * Csize)
+                dz_dy = float(g + 2*h + i - (a + 2*b + c)) / float(8 * Csize)
+                pente[y, x] = sqrt(dz_dx * dz_dx + dz_dy * dz_dy) * 100
+            else:
+                pente[y, x] = nodata
+
+    # Coins
+    pente[0, 0] = calculate_corner_pente(raster_mnt, nodata, Csize, 0, 0)
+    pente[nline-1, 0] = calculate_corner_pente(raster_mnt, nodata, Csize, nline-1, 0)
+    pente[0, ncol-1] = calculate_corner_pente(raster_mnt, nodata, Csize, 0, ncol-1)
+    pente[nline-1, ncol-1] = calculate_corner_pente(raster_mnt, nodata, Csize, nline-1, ncol-1)
+
+    # First and last rows
+    for x in range(1, ncol-1):
+        pente[0, x] = calculate_edge_pente(raster_mnt, nodata, Csize, 0, x)
+        pente[nline-1, x] = calculate_edge_pente(raster_mnt, nodata, Csize, nline-1, x)
+
+    # First and last columns
+    for y in range(1, nline-1):
+        pente[y, 0] = calculate_edge_pente(raster_mnt, nodata, Csize, y, 0)
+        pente[y, ncol-1] = calculate_edge_pente(raster_mnt, nodata, Csize, y, ncol-1)
+
+    return pente
+
+
+def calculate_corner_pente(raster_mnt, nodata, Csize, y, x):
+    e = raster_mnt[y, x]
+    if e > nodata:
+        a, b, c, d, f, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
+                               raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x],
+                               raster_mnt[y+1, x+1])
+        dz_dx = float(f + i - (e + h)) / float(2 * Csize)
+        dz_dy = float(h + i - (d + f)) / float(2 * Csize)
+        return sqrt(dz_dx * dz_dx + dz_dy * dz_dy) * 100
+    else:
+        return nodata
+
+
+def calculate_edge_pente(raster_mnt, nodata, Csize, y, x):
+    e = raster_mnt[y, x]
+    if e > nodata:
+        a, b, c, d, f, g, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
+                                  raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x-1],
+                                  raster_mnt[y+1, x], raster_mnt[y+1, x+1])
+        dz_dx = float(f + c - (b + e + h)) / float(4 * Csize)
+        dz_dy = float(h + i - (b + e + f)) / float(3 * Csize)
+        return sqrt(dz_dx * dz_dx + dz_dy * dz_dy) * 100
+    else:
+        return nodata
+
+
+def exposition(raster_mnt, Csize, nodata):
+    nline, ncol = raster_mnt.shape
+    expo = np.zeros_like(raster_mnt, dtype=np.float)
+
+    for y in range(1, nline-1):
+        for x in range(1, ncol-1):
+            e = raster_mnt[y, x]
+            if e > nodata:
+                a, b, c, d, f, g, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
+                                          raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x-1],
+                                          raster_mnt[y+1, x], raster_mnt[y+1, x+1])
+                dz_dx = float(c + 2*f + i - (a + 2*d + g)) / float(8 * Csize)
+                dz_dy = float(g + 2*h + i - (a + 2*b + c)) / float(8 * Csize)
+                expo1 = 57.29578 * atan2(dz_dy, -dz_dx)
+                if expo1 < 0.:
+                    expo[y, x] = 90.0 - expo1
+                elif expo1 > 90.:
+                    expo[y, x] = 360.0 - expo1 + 90.0
+                else:
+                    expo[y, x] = 90.0 - expo1
+            else:
+                expo[y, x] = nodata
+
+    # Coins
+    expo[0, 0] = calculate_corner_expo(raster_mnt, nodata, Csize, 0, 0)
+    expo[nline-1, 0] = calculate_corner_expo(raster_mnt, nodata, Csize, nline-1, 0)
+    expo[0, ncol-1] = calculate_corner_expo(raster_mnt, nodata, Csize, 0, ncol-1)
+    expo[nline-1, ncol-1] = calculate_corner_expo(raster_mnt, nodata, Csize, nline-1, ncol-1)
+
+    # First and last rows
+    for x in range(1, ncol-1):
+        expo[0, x] = calculate_edge_expo(raster_mnt, nodata, Csize, 0, x)
+        expo[nline-1, x] = calculate_edge_expo(raster_mnt, nodata, Csize, nline-1, x)
+
+    # First and last columns
+    for y in range(1, nline-1):
+        expo[y, 0] = calculate_edge_expo(raster_mnt, nodata, Csize, y, 0)
+        expo[y, ncol-1] = calculate_edge_expo(raster_mnt, nodata, Csize, y, ncol-1)
+
+    return expo
+
+
+def calculate_corner_expo(raster_mnt, nodata, Csize, y, x):
+    e = raster_mnt[y, x]
+    if e > nodata:
+        a, b, c, d, f, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
+                               raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x],
+                               raster_mnt[y+1, x+1])
+        dz_dx = float(f + i - (e + h)) / float(2 * Csize)
+        dz_dy = float(h + i - (d + f)) / float(2 * Csize)
+        expo1 = 57.29578 * atan2(dz_dy, -dz_dx)
+        if expo1 < 0.:
+            return 90.0 - expo1
+        elif expo1 > 90.:
+            return 360.0 - expo1 + 90.0
+        else:
+            return 90.0 - expo1
+    else:
+        return nodata
+
+
+def calculate_edge_expo(raster_mnt, nodata, Csize, y, x):
+    e = raster_mnt[y, x]
+    if e > nodata:
+        a, b, c, d, f, g, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
+                                  raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x-1],
+                                  raster_mnt[y+1, x], raster_mnt[y+1, x+1])
+        dz_dx = float(f + c - (b + e + h)) / float(4 * Csize)
+        dz_dy = float(h + i - (b + e + f)) / float(3 * Csize)
+        expo1 = 57.29578 * atan2(dz_dy, -dz_dx)
+        if expo1 < 0.:
+            return 90.0 - expo1
+        elif expo1 > 90.:
+            return 360.0 - expo1 + 90.0
+        else:
+            return 90.0 - expo1
+    else:
+        return nodata
+
+
+def mask_zone(matrice):
+    nline, ncol = matrice.shape
+    top, bottom, left, right = nline, 0, ncol, 0
+
+    for y in range(nline):
+        for x in range(ncol):
+            if matrice[y, x] > 0:
+                top = min(top, y)
+                bottom = max(bottom, y)
+                left = min(left, x)
+                right = max(right, x)
+
+    return top, bottom, left, right
+
+
+def calcul_distance_de_cout(from_rast, cost_rast, zone_rast, Csize, Max_distance=100000):
+    nline, ncol = from_rast.shape
+    diag = 1.414214 * Csize
+    direct = Csize
+    h, b, l, r = mask_zone(from_rast)
+    
+    # Création des rasters de sortie
+    Out_distance = np.ones_like(from_rast, dtype=np.int32) * Max_distance
+    Out_alloc = np.ones_like(from_rast, dtype=np.int32) * -9999
+    
+    x1, y1 = l, h
+    for y1 in range(h, b):
+        for x1 in range(l, r):
+            if from_rast[y1, x1] > 0:
+                Out_distance[y1, x1] = 0
+                Out_alloc[y1, x1] = from_rast[y1, x1]
+                for y in range(max(0, y1-1), min(nline, y1+2)):
+                    for x in range(max(0, x1-1), min(ncol, x1+2)):                        
+                        if zone_rast[y, x] == 1:
+                            if y != y1 and x != x1:
+                                Dist = cost_rast[y, x] * diag
+                            else:
+                                Dist = cost_rast[y, x] * direct
+                            if Out_distance[y, x] > Dist:
+                                Out_distance[y, x] = int(Dist + 0.5)                                
+                                Out_alloc[y, x] = from_rast[y1, x1]
+    
+    # Traitement complet
+    h, b, l, r = mask_zone(zone_rast)
+    dist_ac = Csize
+    count_sans_match = 0
+    
+    while dist_ac <= Max_distance and count_sans_match < 15 * Csize:
+        test = 0
+        y1, x1 = h, l
+        for y1 in range(h, b):
+            for x1 in range(l, r):
+                if Out_distance[y1, x1] == dist_ac:
+                    test = 1   
+                    for y in range(max(0, y1-1), min(nline, y1+2)):
+                        for x in range(max(0, x1-1), min(ncol, x1+2)):
+                            if zone_rast[y, x] == 1:
+                                if y != y1 and x != x1:
+                                    Dist = cost_rast[y, x] * diag + dist_ac
+                                else:
+                                    Dist = cost_rast[y, x] * direct + dist_ac
+                                if Out_distance[y, x] > Dist:
+                                    Out_distance[y, x] = int(Dist + 0.5)
+                                    Out_alloc[y, x] = Out_alloc[y1, x1]
+        if test == 1:
+            count_sans_match = 0
+        else:
+            count_sans_match += 1
+        dist_ac += 1
+    
+    for y in range(nline):
+        for x in range(ncol):
+            if Out_distance[y, x] == Max_distance:
+                Out_distance[y, x] = -9999
+                Out_alloc[y, x] = -9999
+    
+    return Out_distance, Out_alloc
+
+
+def calcul_distance_de_cout_2_alloc(from_rast1, from_rast2, cost_rast, zone_rast, Csize, Max_distance=100000):
+    nline, ncol = from_rast1.shape
+    diag = 1.414214 * Csize
+    direct = Csize
+    h, b, l, r = mask_zone(from_rast1)
+    
+    # Création des rasters de sortie
+    Out_distance = np.ones_like(from_rast1, dtype=np.int) * (Max_distance + 1)
+    Out_alloc1 = np.ones_like(from_rast1, dtype=np.int) * -9999
+    Out_alloc2 = np.ones_like(from_rast1, dtype=np.int) * -9999
+    
+    x1, y1 = l, h
+    for y1 in range(h, b):
+        for x1 in range(l, r):
+            if from_rast1[y1, x1] > 0:
+                Out_distance[y1, x1] = 0
+                Out_alloc1[y1, x1] = from_rast1[y1, x1]
+                Out_alloc2[y1, x1] = from_rast2[y1, x1]
+                for y in range(max(0, y1-1), min(nline, y1+2)):
+                    for x in range(max(0, x1-1), min(ncol, x1+2)):                        
+                        if zone_rast[y, x] == 1:
+                            if y != y1 and x != x1:
+                                Dist = cost_rast[y, x] * diag
+                            else:
+                                Dist = cost_rast[y, x] * direct
+                            if Out_distance[y, x] > Dist:
+                                Out_distance[y, x] = int(Dist + 0.5)
+                                Out_alloc1[y, x] = from_rast1[y1, x1]
+                                Out_alloc2[y, x] = from_rast2[y1, x1]
+    
+    # Traitement complet
+    h, b, l, r = mask_zone(zone_rast)
+    dist_ac = Csize
+    count_sans_match = 0
+    
+    while dist_ac <= Max_distance and count_sans_match < 15 * Csize:
+        test = 0
+        y1, x1 = h, l
+        for y1 in range(h, b):
+            for x1 in range(l, r):
+                if Out_distance[y1, x1] == dist_ac:
+                    test = 1   
+                    for y in range(max(0, y1-1), min(nline, y1+2)):
+                        for x in range(max(0, x1-1), min(ncol, x1+2)):
+                            if zone_rast[y, x] == 1:
+                                if y != y1 and x != x1:
+                                    Dist = cost_rast[y, x] * diag + dist_ac
+                                else:
+                                    Dist = cost_rast[y, x] * direct + dist_ac
+                                if Out_distance[y, x] > Dist:
+                                    Out_distance[y, x] = int(Dist + 0.5)
+                                    Out_alloc1[y, x] = Out_alloc1[y1, x1]
+                                    Out_alloc2[y, x] = Out_alloc2[y1, x1]
+        if test == 1:
+            count_sans_match = 0
+        else:
+            count_sans_match += 1
+        dist_ac += 1
+    
+    for y in range(nline):
+        for x in range(ncol):
+            if Out_distance[y, x] > Max_distance:
+                Out_distance[y, x] = -9999
+                Out_alloc1[y, x] = -9999
+                Out_alloc2[y, x] = -9999
+    
+    return Out_distance, Out_alloc1, Out_alloc2
+
+
+def focal_stat_mean(raster, nodata, cote):
+    nline, ncol = raster.shape
+    mean = np.ones_like(raster, dtype=np.float) * nodata
+    
+    for y1 in range(nline):
+        for x1 in range(ncol):
+            if raster[y1, x1] != nodata:
+                nb, somme, y, x = 0.0, 0.0, max(0, y1 - cote), max(0, x1 - cote)
+                
+                # Grille sans les bordures
+                for y in range(max(0, y1 - cote), min(nline, y1 + cote + 1)):
+                    for x in range(max(0, x1 - cote), min(ncol, x1 + cote + 1)):
+                        if raster[y, x] != nodata:
+                            somme += raster[y, x]
+                            nb += 1.0
+                
+                mean[y1, x1] = somme / nb if nb != 0 else nodata
+    
+    return mean
+
+
+def focal_stat_sum(raster, nodata, cote):
+    nline, ncol = raster.shape
+    rsomme = np.ones_like(raster, dtype=np.float) * nodata
+    
+    for y1 in range(nline):
+        for x1 in range(ncol):
+            if raster[y1, x1] != nodata:
+                somme, y, x = 0.0, max(0, y1 - cote), max(0, x1 - cote)
+                
+                # Grille sans les bordures
+                for y in range(max(0, y1 - cote), min(nline, y1 + cote + 1)):
+                    for x in range(max(0, x1 - cote), min(ncol, x1 + cote + 1)):
+                        if raster[y, x] != nodata:
+                            somme += raster[y, x]
+                
+                rsomme[y1, x1] = somme
+    
+    return rsomme
+
+
+def focal_stat_nb(raster, nodata, cote):
+    nline, ncol = raster.shape
+    rnb = np.ones_like(raster, dtype=np.float) * nodata
+    
+    for y1 in range(nline):
+        for x1 in range(ncol):
+            if raster[y1, x1] != nodata:
+                nb, y, x = 0.0, max(0, y1 - cote), max(0, x1 - cote)
+                
+                # Grille sans les bordures
+                for y in range(max(0, y1 - cote), min(nline, y1 + cote + 1)):
+                    for x in range(max(0, x1 - cote), min(ncol, x1 + cote + 1)):
+                        if raster[y, x] != nodata:
+                            nb += 1.0
+                
+                rnb[y1, x1] = nb
+    
+    return rnb
+
+
+def focal_stat_min(raster, nodata, cote):
+    nline, ncol = raster.shape
+    rmin = np.ones_like(raster, dtype=np.float) * nodata
+    max_value = np.max(raster[raster != nodata])
+    
+    for y1 in range(nline):
+        for x1 in range(ncol):
+            if raster[y1, x1] != nodata:
+                local_min, y, x = max_value, max(0, y1 - cote), max(0, x1 - cote)
+                
+                # Grille sans les bordures
+                for y in range(max(0, y1 - cote), min(nline, y1 + cote + 1)):
+                    for x in range(max(0, x1 - cote), min(ncol, x1 + cote + 1)):
+                        if raster[y, x] != nodata:
+                            local_min = min(local_min, raster[y, x])
+                
+                rmin[y1, x1] = local_min
+    
+    return rmin
+
+
+def focal_stat_max(raster, nodata, cote):
+    nline, ncol = raster.shape
+    rmax = np.ones_like(raster, dtype=np.float) * nodata
+    min_value = np.min(raster[raster != nodata])
+    
+    for y1 in range(nline):
+        for x1 in range(ncol):
+            if raster[y1, x1] != nodata:
+                local_max, y, x = min_value, max(0, y1 - cote), max(0, x1 - cote)
+                
+                # Grille sans les bordures
+                for y in range(max(0, y1 - cote), min(nline, y1 + cote + 1)):
+                    for x in range(max(0, x1 - cote), min(ncol, x1 + cote + 1)):
+                        if raster[y, x] != nodata:
+                            local_max = max(local_max, raster[y, x])
+                
+                rmax[y1, x1] = local_max
+    
+    return rmax
+
+
+def get_zone(direction, Matrice, Buffer_cote):
+    h3 = direction * (Buffer_cote + 1)
+    b3 = h3 + Buffer_cote + 1
+    return Matrice[h3:b3, :]
+
+
+def get_cadran(direction, Buffer_cote):
+    if direction <= 90:
+        h = 0
+        l = Buffer_cote
+    elif direction <= 180:
+        h = Buffer_cote
+        l = Buffer_cote
+    elif direction <= 270:
+        h = Buffer_cote
+        l = 0
+    else:
+        h = 0
+        l = 0
+    return h, h + Buffer_cote + 1, l, l + Buffer_cote + 1
+
+
+def get_npix(az, npix, coordY, coordX, ncols, nrows, Row_line, Col_line):
+    for i in range(npix):
+        x = Col_line[az, i] + coordX
+        if x < 0 or x >= ncols:
+            break
+        y = Row_line[az, i] + coordY
+        if y < 0 or y >= nrows:
+            break
+    return i
+
+
+def Check_line1(Line, Lmax, Lmin, nrows, ncols, Lsans_foret, Lslope, PropSlope):
+    indmax = 0
+    indmax2 = 0
+    npix = Line.shape[0]
+    test = 1
+    i = 0
+    testdist = 0
+    Lline = Lmin - 1
+    Dsansforet = 0.0
+    Dcum = 0.0
+    D = 0.0
+    
+    for i in range(npix):
+        if Line[i, 5] < 0:
+            break
+        if Line[i, 5] >= ncols:
+            break
+        if Line[i, 6] < 0:
+            break
+        if Line[i, 6] >= nrows:
+            break
+        if Line[i, 7] == 1:
+            break
+        if np.sqrt(Line[i, 0] * Line[i, 0] + (Line[i, 1] - Line[0, 1]) * (Line[i, 1] - Line[0, 1])) > Lmax:
+            break
+
+        # Devers
+        if i > 0:
+            if Line[i, 8] + Line[i, 9] == 0:
+                Dcum += Line[i, 0] - Line[i - 1, 0]
+            if Dcum > Lslope:
+                break
+            if Dcum / Line[i, 0] < PropSlope:
+                indmax2 = i
+                Line[i, 9] = 1
+            else:
+                Line[i, 9] = 0
+        else:
+            Line[i, 9] = 1
+        Line[i, 8] = Dcum
+
+        # Longueur sans foret
+        if Line[i, 2] == 1:
+            indmax = i
+            Dsansforet = 0
+        else:
+            if i > 0:
+                Dsansforet += Line[i, 0] - Line[i - 1, 0]
+            if Dsansforet >= Lsans_foret:
+                break
+
+    indmax = min(indmax, indmax2)
+    Lline = Line[indmax, 0]
+
+    if Lline <= Lmin:
+        test = 0
+
+    return test, indmax + 1, Lline
+
+
+def get_line_carac_simple(coordX, coordY, az, Csize, ncols, nrows, Lline, Row_ext, Col_ext, D_ext, Forest, Rast_couv):
+    i = 0
+    nfor = 0
+    Dmoy_car = 0
+    Forest_area = 0
+
+    while D_ext[az, i] <= Lline:
+        x = Col_ext[az, i] + coordX
+        if x < 0:
+            i += 1
+            continue
+        if x >= ncols:
+            i += 1
+            continue
+        y = Row_ext[az, i] + coordY
+        if y < 0:
+            i += 1
+            continue
+        if y >= nrows:
+            i += 1
+            continue
+        if Forest[y, x] == 1:
+            nfor += 1
+            Dmoy_car += D_ext[az, i]
+            Rast_couv[y, x] = 1
+        i += 1
+
+    if nfor > 0:
+        Forest_area = nfor * Csize * Csize
+        Dmoy_car = Dmoy_car / nfor
+    else:
+        Dmoy_car = D_ext[az, i]
+
+    return int(Dmoy_car), int(Forest_area), Rast_couv
+
+
+def Check_line(coordX, coordY, az, ncols, nrows, Lline, Row_ext, Col_ext, D_ext, D_lat, Rast_couv, debut, recouv, rapport):
+    i = 0
+    test = 1
+    nb1 = 0
+    nb2 = 0
+    Rast_couv_bis = np.zeros((nrows, ncols), dtype=np.int8)
+
+    while D_ext[az, i] <= Lline:
+        x = Col_ext[az, i] + coordX
+        if x < 0:
+            i += 1
+            continue
+        if x >= ncols:
+            i += 1
+            continue
+        y = Row_ext[az, i] + coordY
+        if y < 0:
+            i += 1
+            continue
+        if y >= nrows:
+            i += 1
+            continue
+        if Rast_couv[y, x] == 0:
+            if D_ext[az, i] < debut:
+                Rast_couv_bis[y, x] = 2
+                nb2 += 1
+            else:
+                if float(D_lat[az, i]) < float(recouv):  # Ensure consistent types
+                    Rast_couv_bis[y, x] = 1
+                    nb1 += 1
+                else:
+                    Rast_couv_bis[y, x] = 2
+                    nb2 += 1
+        elif Rast_couv[y, x] == 1:
+            test = 0
+            break
+        else:
+            nb2 += 1
+        i += 1
+
+    # Check if the line is really important
+    if test and nb1 >= (nb1 + nb2) * rapport:
+        Rast_couv = Rast_couv + Rast_couv_bis
+    else:
+        test = 0
+
+    return test, Rast_couv
+
+
+def check_line2(coordX, coordY, az, ncols, nrows, Lline, Row_ext, Col_ext, D_ext, D_lat, Rast_couv, recouv, rapport):
+    i = 0
+    test = 1
+    nb1 = 0
+    nb2 = 0
+    Rast_couv_bis = np.zeros((nrows, ncols), dtype=np.int8)
+    debut = min(100, Lline * 0.4)
+
+    while D_ext[az, i] <= Lline:
+        x = Col_ext[az, i] + coordX
+        if 0 <= x < ncols:
+            y = Row_ext[az, i] + coordY
+            if 0 <= y < nrows:
+                Rast_couv_bis[y, x] = 1
+                if Rast_couv[y, x] == 0:
+                    nb1 += 1
+                elif Rast_couv[y, x] > 1 and D_ext[az, i] > debut and D_lat[az, i] < recouv:
+                    test = 0
+                    break
+                else:
+                    nb2 += 1
+        i += 1
+
+    if test and nb1 >= (nb1 + nb2) * rapport:
+        Rast_couv += Rast_couv_bis
+    else:
+        test = 0
+
+    return test, Rast_couv
+
+
+def Check_line3(coordX, coordY, az, ncols, nrows, Lline, Row_ext, Col_ext, D_ext, D_lat, Rast_couv, rapport):
+    i = 0
+    test = 1
+    nb1 = 0
+    nb2 = 0
+    Rast_couv_bis = np.copy(Rast_couv)
+    debut = min(100, Lline * 0.4)
+
+    while D_ext[az, i] <= Lline:
+        x = Col_ext[az, i] + coordX
+        if 0 <= x < ncols:
+            y = Row_ext[az, i] + coordY
+            if 0 <= y < nrows:
+                if Rast_couv[y, x] > 0:
+                    Rast_couv_bis[y, x] -= 1
+                if Rast_couv[y, x] == 1:
+                    nb1 += 1
+                elif Rast_couv[y, x] > 1:
+                    if D_ext[az, i] > debut:
+                        nb2 += 1
+                    else:
+                        nb1 += 1
+        i += 1
+
+    # Check if the line is really important
+    if nb1 < (nb1 + nb2) * rapport:
+        test = 0
+        Rast_couv = Rast_couv_bis
+
+    return test, Rast_couv
+
+
+def Fcariage(Lo, F, q2, q3, s1, Dsupdep=0.0, Dsupend=0.0):
+    g = 9.81  # gravitational acceleration, you may adjust this value
+    return (0.5 * ((s1 + Dsupdep) * q2 + ((Lo - s1) + Dsupend) * q3)) * g + F
+
+
+def df_dTh(Th, Tv, F, W, s1, Lo, EAo, rac1, rac2, rac3, rac4):
+    a = (1.0 / Th) * (-Tv / rac1 + (Tv - F - W) / rac2 - (Tv - F - W * s1 / Lo) / rac3 + (Tv - W * s1 / Lo) / rac4)
+    a += math.asinh(Tv / Th) - math.asinh((Tv - F - W) / Th) + math.asinh((Tv - F - W * s1 / Lo) / Th) - math.asinh((Tv - W * s1 / Lo) / Th)
+    a *= Lo / W
+    a += Lo / EAo
+    return a
+
+
+def f_x(Th, Tv, Lo, EAo, W, F, s1, D):
+    x = Th * Lo / EAo - D
+    x += Th * Lo / W * (
+        math.asinh(Tv / Th)
+        - math.asinh((Tv - F - W) / Th)
+        + math.asinh((Tv - F - W * s1 / Lo) / Th)
+        - math.asinh((Tv - W * s1 / Lo) / Th)
+    )
+    return x
+
+
+def f_z(Th, Tv, Lo, EAo, W, F, s1, H):
+    z = (W * Lo / EAo) * (Tv / W - 0.5) - H
+    Temp = (
+        math.sqrt(1 + (Tv / Th) ** 2)
+        - math.sqrt(1 + ((Tv - F - W) / Th) ** 2)
+        + (F * W / (Th * EAo)) * (s1 / Lo - 1)
+    )
+    Temp += math.sqrt(1 + ((Tv - F - W * s1 / Lo) / Th) ** 2) - math.sqrt(1 + ((Tv - W * s1 / Lo) / Th) ** 2)
+    z += Th * Lo / W * Temp
+    return z
+
+
+def calcul_xs(Th, Tv, Lo, EAo, W, F, s1, s):
+    x = Th * s / EAo
+    x += Th * Lo / W * (
+        math.asinh(Tv / Th)
+        - math.asinh((Tv - F - W * s / Lo) / Th)
+        + math.asinh((Tv - F - W * s1 / Lo) / Th)
+        - math.asinh((Tv - W * s1 / Lo) / Th)
+    )
+    return x
+
+
+def calcul_zs(Th, Tv, Lo, EAo, W, F, s1, s):
+    z = W * s / EAo * (Tv / W - s / (2 * Lo))
+    Temp = (
+        math.sqrt(1 + (Tv / Th))
+        - math.sqrt(1 + ((Tv - F - W * s / Lo) / Th))
+        + F * W / (Th * EAo) * (s1 / Lo - s / Lo)
+    )
+    Temp += math.sqrt(1 + ((Tv - F - W * s1 / Lo) / Th)) - math.sqrt(1 + ((Tv - W * s1 / Lo) / Th))
+    z += Th * Lo / W * Temp
+    return z
+
+
+def find_ThTvTmax(Tmax, W, EAo, F, pas, D, H, Lo, step=50):
+    Fx_min = 0.05
+    Gz_min = 0.05
+    sum_min = 10.0
+    Th = -1.0
+    Tv = -1.0
+    T = 1
+    test = 0
+
+    for i in range(0, int(Tmax), step):
+        for j in range(0, int(Tmax), step):
+            Fx = f_x(float(i), float(j), Lo, EAo, W, F, pas, D)
+            if abs(Fx) < Fx_min:
+                Gz = f_z(float(i), float(j), Lo, EAo, W, F, pas, H)
+                if abs(Gz) < Gz_min:
+                    if abs(Fx) + abs(Gz) < sum_min:
+                        sum_min = min(abs(Fx) + abs(Gz), sum_min)
+                        Th = float(i)
+                        Tv = float(j)
+                        if sum_min < 0.03:
+                            test = 1
+                            break
+        if test == 1:
+            break
+
+    if math.sqrt(Th * Th + Tv * Tv) > Tmax:
+        T = 0
+
+    return Th, Tv, T
+
+
+def newton_ThTv(Th, Tv, H, D, Lo, W, s1, F, EAo, Tmax, err=1.0):
+    h = 100.0
+    k = 100.0
+    it = 0
+    step = 100
+    fo = 0
+    go = 0
+    rac1 = 0
+    rac2 = 0
+    rac3 = 0
+    rac4 = 0
+    dfTv = 0
+    dfTh = 0
+    dgTv = 0
+    dgTh = 0
+    coeff = 0
+    Fx = 0
+    Gz = 0
+    Fx_min = 0.05
+    Gz_min = 0.05
+    sum_min = 10.0
+    i = 0
+    j = 0
+    test = 0
+
+    while abs(h) > err and abs(k) > err:
+        fo = f_x(Th, Tv, Lo, EAo, W, F, s1, D)  # fo
+        go = f_z(Th, Tv, Lo, EAo, W, F, s1, H)  # go
+        rac1 = math.sqrt((Tv / Th) ** 2 + 1)
+        rac2 = math.sqrt(((Tv - F - W) / Th) ** 2 + 1)
+        rac3 = math.sqrt(((Tv - F - W * s1 / Lo) / Th) ** 2 + 1)
+        rac4 = math.sqrt(((Tv - W * s1 / Lo) / Th) ** 2 + 1)
+        dfTv = Lo / W * (1.0 / rac1 - 1.0 / rac2 + 1.0 / rac3 - 1.0 / rac4)
+        dfTh = df_dTh(Th, Tv, F, W, s1, Lo, EAo, rac1, rac2, rac3, rac4)
+        dgTv = Lo / EAo + Lo / (W * Th) * (Tv / rac1 - (Tv - F - W) / rac2 + (Tv - F - W * s1 / Lo) / rac3 - (Tv - W * s1 / Lo) / rac4)
+        dgTh = dg_dTh(Tv, Th, Lo, W, s1, F, rac1, rac2, rac3, rac4)
+        coeff = 1.0 / (dfTh * dgTv - dfTv * dgTh)
+        h = coeff * (-dgTv * fo + dfTv * go)
+        k = coeff * (dgTh * fo - dfTh * go)
+        Th = Th + h
+        Tv = Tv + k
+        it += 1
+
+        if min(Th, Tv) < 0:
+            it = 0
+            for i in range(0, math.ceil(Tmax), step):
+                for j in range(0, math.ceil(Tmax), step):
+                    Fx = f_x(float(i), float(j), Lo, EAo, W, F, s1, D)
+                    if abs(Fx) < Fx_min:
+                        Gz = f_z(float(i), float(j), Lo, EAo, W, F, s1, H)
+                        if abs(Gz) < Gz_min:
+                            if abs(Fx) + abs(Gz) < sum_min:
+                                sum_min = min(abs(Fx) + abs(Gz), sum_min)
+                                Th = float(i)
+                                Tv = float(j)
+                                if sum_min < 0.03:
+                                    test = 1
+                                    break
+                if test:
+                    break
+
+        if it > 20:
+            break
+
+    return Th, Tv
+
+
+def Tabmesh(d, E, Tmax, Lmax, Fo, q1, q2, q3, Csize):
+    pas = 1
+    ncol = int(np.ceil((Lmax + Csize) / pas - 1))
+    nline = ncol + 1
+    rastLosup = np.full((nline, ncol), np.nan, dtype=np.float)
+    rastTh = np.copy(rastLosup)
+    rastTv = np.copy(rastLosup)
+    NaN = np.nan
+    col = 0
+    lig = 0
+    Hmax = 0
+    Tvo = 0.1 * Tmax
+    Tho = 0.9 * Tmax
+    Lsupo = 0.0
+    D = 0.0
+    H = 0.0
+    Tvprec = Tvo
+    Thprec = Tho
+    Lsup_prec = Lsupo
+    diag = 0.0
+    Lo = 0.0
+    W = 0.0
+    F = 0.0
+    Th = 0.0
+    Tv = 0.0
+    Tcalc = 0.0
+    incr = 0.0
+    signe = 0.0
+
+    EAo = 0.25 * math.pi * (d * d) * E
+
+    for D in range(5, int(Lmax + Csize), pas):
+        lig = 0
+        Hmax = int(math.ceil(math.sqrt(Lmax * Lmax - D * D) + Csize))
+        Tvprec = Tvo
+        Thprec = Tho
+        Lsup_prec = Lsupo
+
+        for H in range(0, Hmax, pas):
+            diag = math.sqrt(H ** 2 + D ** 2)
+            Lo = diag + Lsup_prec
+            W = q1 * 9.81 * Lo
+            F = 0.5 * ((q2 + (Lo - D) * q3) + Fo) * 9.81
+
+            Th, Tv = newton_ThTv(Thprec, Tvprec, H, D, Lo, W, Lo * 0.5, F, EAo, Tmax * 2, 0.1)
+
+            # Check if Th, Tv are OK
+            if abs(f_x(Th, Tv, Lo, EAo, W, F, Lo * 0.5, D)) + abs(f_z(Th, Tv, Lo, EAo, W, F, Lo * 0.5, H)) > 0.01:
+                Th, Tv = newton_ThTv(D / diag * Tmax, Tmax * (H / diag + 0.01), H, D, Lo, W, Lo * 0.5, F, EAo, Tmax * 2)
+                if abs(f_x(Th, Tv, Lo, EAo, W, F, Lo * 0.5, D)) + abs(f_z(Th, Tv, Lo, EAo, W, F, Lo * 0.5, H)) > 0.01:
+                    Th, Tv, T = find_ThTvTmax(Tmax, W, EAo, F, Lo * 0.5, D, H, Lo, 20)
+                    Th, Tv = newton_ThTv(Th, Tv, H, D, Lo, W, Lo * 0.5, F, EAo, Tmax * 2)
+                    if abs(f_x(Th, Tv, Lo, EAo, W, F, Lo * 0.5, D)) + abs(f_z(Th, Tv, Lo, EAo, W, F, Lo * 0.5, H)) > 0.01:
+                        continue
+
+            # Find Lo so that Tcalc does not exceed Tmax
+            Tcalc = math.sqrt(Th ** 2 + Tv ** 2)
+
+            if math.ceil(Lsup_prec * 0.1) >= 1:
+                incr = 1.0
+            elif math.ceil(Lsup_prec) >= 1:
+                incr = 0.1
+            elif math.ceil(Lsup_prec * 10.0) >= 1:
+                incr = 0.01
+            else:
+                incr = 0.001
+
+            signe = (Tcalc - Tmax) / abs(Tcalc - Tmax)
+
+            # Incrementation
+            while abs(Tcalc - Tmax) > 10.0:
+                Lo += signe * incr
+                F = 0.5 * ((q2 + (Lo - D) * q3) + Fo) * 9.81
+                W = q1 * 9.81 * Lo
+                Th, Tv = newton_ThTv(Th, Tv, H, D, Lo, W, Lo * 0.5, F, EAo, Tmax * 2)
+                Tcalc = math.sqrt(Th ** 2 + Tv ** 2)
+
+                if signe * (Tcalc - Tmax) < 0:
+                    incr *= 0.1
+                    signe *= -1.0
+
+                if Lo > math.sqrt(H ** 2 + D ** 2) + 1000.0:
+                    break
+
+            if abs(f_x(Th, Tv, Lo, EAo, W, F, Lo * 0.5, D)) + abs(f_z(Th, Tv, Lo, EAo, W, F, Lo * 0.5, H)) > 0.01:
+                continue
+
+            Tvprec = Tv
+            Thprec = Th
+            Lsup_prec = Lo - diag
+            rastLosup[lig, col] = Lsup_prec
+            rastTh[lig, col] = Th
+            rastTv[lig, col] = Tv
+
+            if H == 0:
+                Tvo = Tv
+                Tho = Th
+                Lsupo = Lsup_prec
+
+            lig += 1
+
+        col += 1
+
+    return rastLosup, rastTh, rastTv
+
+
+def frottement(Tension, coeff_frot, tan_avant, tan_apres):
+    alpha = math.atan(tan_avant)
+    beta = math.atan(tan_apres)
+    gama = (beta + alpha) * 0.5
+    num = math.tan(coeff_frot) * math.sin(gama - beta) + math.cos(beta - gama)
+    denum = math.tan(coeff_frot) * math.sin(gama - alpha) + math.cos(alpha - gama)
+    return Tension * num / denum
+
+
+def frottement_inv(Tension, coeff_frot, tan_avant, tan_apres):
+    alpha = math.atan(tan_avant)
+    beta = math.atan(tan_apres)
+    gama = (beta + alpha) * 0.5
+    num = math.tan(coeff_frot) * math.sin(gama - beta) + math.cos(beta - gama)
+    denum = math.tan(coeff_frot) * math.sin(gama - alpha) + math.cos(alpha - gama)
+    return Tension * denum / num
+
+
+def mainline(F, tan_mainline, tan_avant, tan_apres, sens=1):
+    alpha = math.atan(abs(tan_avant))
+    beta = math.atan(abs(tan_apres))
+    lambdas = math.atan(abs(tan_mainline))
+    
+    Tchar = F * math.cos(lambdas) / (math.sin(alpha - lambdas) + math.sin(lambdas + sens * beta))
+    
+    return abs(Tchar)
+
+
+def mainline2(F, tan_mainline, tan_avant, tan_apres, sens=1):
+    alpha = math.atan(abs(tan_avant))
+    beta = math.atan(abs(tan_apres))
+    lambdas = math.atan(abs(tan_mainline))
+    
+    Tmain = F * (math.cos(beta) - math.cos(alpha)) / math.sin(alpha + sens * beta)
+    Tchar = F * math.cos(lambdas) / (math.sin(alpha - lambdas) + math.sin(lambdas + sens * beta))
+    
+    return abs(Tchar), abs(Tmain)
+
+
+def frottement_av(Tension, coeff_frot, tan_haut, tan_bas):
+    a = math.atan(tan_haut)
+    T = Tension
+    b = math.atan(tan_bas)
+    
+    if b > a and coeff_frot != 0:
+        g = (a + b) * 0.5
+        tanphi = math.tan(coeff_frot)
+        num = tanphi * math.sin(g) * math.cos(b) + math.cos(g) * math.cos(b) - math.sin(b) * tanphi * math.cos(g) + math.sin(b) * math.sin(g)
+        denum = -tanphi * math.cos(g) * math.sin(a) + math.sin(g) * math.sin(a) + math.cos(a) * tanphi * math.sin(g) + math.cos(a) * math.cos(g)
+        T = Tension * num / denum
+    
+    return T
+
+
+def frottement_ap(Tension, coeff_frot, tan_haut, tan_bas, charge_posi):
+    if coeff_frot == 0:
+        T = Tension
+    else:
+        a = math.atan(tan_bas)
+        b = math.atan(tan_haut)
+        if charge_posi >= 0:
+            if a < b:
+                T = Tension
+            else:
+                g = (a + b) * 0.5
+                tanphi = math.tan(coeff_frot)
+                num = tanphi * math.sin(b - g) + math.cos(b - g)
+                denum = tanphi * math.sin(a - g) + math.cos(a - g)
+                T = Tension * num / denum
+        else:
+            g = (a + b) * 0.5
+            tanphi = math.tan(coeff_frot)
+            if a < b:
+                num = tanphi * math.sin(g - b) + math.cos(b - g)
+                denum = tanphi * math.sin(a + g) + math.cos(a + g)
+                T = Tension * num / denum
+            else:
+                num = tanphi * math.sin(g - b) - math.cos(b + g)
+                denum = tanphi * math.sin(a - g) + math.cos(a - g)
+                T = Tension * num / denum
+    return T
+
+
+def check_droite(fact, H, D, Xup, Zup, Line, Hline_min, Hline_max, Tmax, q1, q2, q3, Fo, pg, pd, Dsupdep=0., Dsupend=0.):
+    test = 1
+    L = np.sqrt(H**2 + D**2)
+    F = (0.5 * ((0.5 * L + Dsupdep) * q2 + (0.5 * L + Dsupend) * q3)) * 9.80665 + Fo
+    fleche = 1.1 * (F * L / (4 * Tmax) + q1 * 9.80665 * L**2 / (8 * Tmax))
+    
+    for i in range(pg + 1, pd):
+        droite = -fact * H / D * (Line[i, 0] - Xup) + Zup - Line[i, 1]
+        if droite < Hline_min:
+            test = 0
+            break
+        if droite - fleche > Hline_max:
+            test = 0
+            break
+    
+    return test
+
+
+def H_mid(Lo, F, Th, Tv, Xup, Zup, fact, Alts, Hline_min, q1, EAo):
+    W = q1 * 9.80665 * Lo
+    s1 = Lo * 0.5
+    xcoord = Xup + fact * calcul_xs(Th, Tv, Lo, EAo, W, F, s1, s1)
+    zcoord = Zup - calcul_zs(Th, Tv, Lo, EAo, W, F, s1, s1)
+    ind = int(xcoord * 2)
+    return zcoord - (Alts[ind] + Hline_min)
+
+
+def slope_H_mid(Lo, F, Th, Tv, Xup, Zup, fact, Alts, q1, EAo):
+    W = q1 * 9.80665 * Lo
+    s1 = Lo * 0.5
+    xcoord = Xup + fact * calcul_xs(Th, Tv, Lo, EAo, W, F, s1, s1)
+    zcoord = Zup - calcul_zs(Th, Tv, Lo, EAo, W, F, s1, s1)
+    return np.arctan((Zup - zcoord) / abs(Xup - xcoord))
+
+
+def check_Hlinemin(Alts, H, D, Lo, fact, Tho, Tvo, Xup, Zup, Fo, Tmax, Hline_min, Hline_max, q1, q2, q3, Csize, EAo, Dsupdep=0., Dsupend=0.):
+    end = Lo - 10.
+    test = 1
+    Th, Tv = Tho, Tvo
+    W = g * q1 * Lo
+    s1 = Lo * 0.5
+    h, k = 100.0, 100.0
+    it = 0
+    step = 100
+    err = 1.0
+    
+    while s1 > 10.:
+        F = (0.5 * ((s1 + Dsupdep) * q2 + ((Lo - s1) + Dsupend) * q3)) * g + Fo
+
+        # Newton Th Tv
+        it = 0
+        while abs(h) > err and abs(k) > err:
+            fo = f_x(Th, Tv, Lo, EAo, W, F, s1, D)  # fo
+            go = f_z(Th, Tv, Lo, EAo, W, F, s1, H)  # go
+            rac1 = np.sqrt((Tv / Th) ** 2 + 1)
+            rac2 = np.sqrt(((Tv - F - W) / Th) ** 2 + 1)
+            rac3 = np.sqrt(((Tv - F - W * s1 / Lo) / Th) ** 2 + 1)
+            rac4 = np.sqrt(((Tv - W * s1 / Lo) / Th) ** 2 + 1)
+            dfTv = Lo / W * (1.0 / rac1 - 1.0 / rac2 + 1.0 / rac3 - 1.0 / rac4)
+            dfTh = df_dTh(Th, Tv, F, W, s1, Lo, EAo, rac1, rac2, rac3, rac4)
+            dgTv = Lo / EAo + Lo / (W * Th) * (Tv / rac1 - (Tv - F - W) / rac2 + (Tv - F - W * s1 / Lo) / rac3 - (Tv - W * s1 / Lo) / rac4)
+            dgTh = dg_dTh(Tv, Th, Lo, W, s1, F, rac1, rac2, rac3, rac4)
+            coeff = 1.0 / (dfTh * dgTv - dfTv * dgTh)
+            h = coeff * (-dgTv * fo + dfTv * go)
+            k = coeff * (dgTh * fo - dfTh * go)
+            Th += h
+            Tv += k
+            it += 1
+            if it > 20:
+                break
+
+        if abs(f_x(Th, Tv, Lo, EAo, W, F, s1, D)) + abs(f_z(Th, Tv, Lo, EAo, W, F, s1, H)) > 0.03:
+            test = 0
+            break
+
+        xcoord = Xup + fact * calcul_xs(Th, Tv, Lo, EAo, W, F, s1, s1)
+        zcoord = Zup - calcul_zs(Th, Tv, Lo, EAo, W, F, s1, s1)
+        ind = int(xcoord * 2 + 0.5)
+        Hmin = zcoord - (Alts[ind] + Hline_min)
+
+        if Hmin < 0 or Hmin + Hline_min > Hline_max or np.sqrt(Th ** 2 + Tv ** 2) > (Tmax + 1000):
+            test = 0
+            break
+        else:
+            Hmin_ok = min(Hmin_ok, Hmin)
+
+        s1 -= Csize
+
+    if test:
+        Th, Tv = Tho, Tvo
+        middle = min(int(Lo * 0.5 + Csize), end)
+        s1 = middle
+        while s1 < end:
+            F = (0.5 * ((s1 + Dsupdep) * q2 + ((Lo - s1) + Dsupend) * q3)) * g + Fo
+
+            # Newton Th Tv
+            h, k = 100.0, 100.0
+            it = 0
+            while abs(h) > err and abs(k) > err:
+                fo = f_x(Th, Tv, Lo, EAo, W, F, s1, D)  # fo
+                go = f_z(Th, Tv, Lo, EAo, W, F, s1, H)  # go
+                rac1 = np.sqrt((Tv / Th) ** 2 + 1)
+
+
+def Find_Lomin(D, H, Xup, Zup, fact, Alts, Fo, Tmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Hline_min, Hline_max, Csize, Dsupdep=0., Dsupend=0.):
+    h = 100.0
+    err = 1.0
+    error = 50.
+    k = 100.0
+    it = 0
+    test = 1
+    diag = np.sqrt(D * D + H * H)
+    col = int_max(np.ceil(D - 5) - 1, 0)
+    line = np.ceil(H)
+    Lsup = rastLosup[line, col]
+    Th = rastTh[line, col]
+    Tv = rastTv[line, col]
+    Lo = Lsup + diag
+    W = q1 * g * Lo
+    s1 = 0.5 * Lo
+    F = (0.5 * ((s1 + Dsupdep) * q2 + ((Lo - s1) + Dsupend) * q3)) * g + Fo
+    Tcalc = np.sqrt(Th ** 2 + Tv ** 2)
+    xcoord, zcoord, Hmin = 0., 0., 0.
+
+    if npy_isnan(Th) or npy_isnan(Tv):
+        test = 0
+
+    if test:
+        # Newton Th Tv
+        while abs(h) > err and abs(k) > err:
+            fo = f_x(Th, Tv, Lo, EAo, W, F, s1, D)  # fo
+            go = f_z(Th, Tv, Lo, EAo, W, F, s1, H)  # go
+            rac1 = np.sqrt((Tv / Th) ** 2 + 1)
+            rac2 = np.sqrt(((Tv - F - W) / Th) ** 2 + 1)
+            rac3 = np.sqrt(((Tv - F - W * s1 / Lo) / Th) ** 2 + 1)
+            rac4 = np.sqrt(((Tv - W * s1 / Lo) / Th) ** 2 + 1)
+            dfTv = Lo / W * (1.0 / rac1 - 1.0 / rac2 + 1.0 / rac3 - 1.0 / rac4)
+            dfTh = df_dTh(Th, Tv, F, W, s1, Lo, EAo, rac1, rac2, rac3, rac4)
+            dgTv = Lo / EAo + Lo / (W * Th) * (Tv / rac1 - (Tv - F - W) / rac2 + (Tv - F - W * s1 / Lo) / rac3 - (Tv - W * s1 / Lo) / rac4)
+            dgTh = dg_dTh(Tv, Th, Lo, W, s1, F, rac1, rac2, rac3, rac4)
+            coeff = 1.0 / (dfTh * dgTv - dfTv * dgTh)
+            h = coeff * (-dgTv * fo + dfTv * go)
+            k = coeff * (dgTh * fo - dfTh * go)
+            Th += h
+            Tv += k
+            it += 1
+            if double_min(Th, Tv) < 0:
+                test = 0
+                break
+            if it > 20:
+                test = 0
+                break
+
+        if test:
+            # Find Lo so that Tcalc does not exceed Tmax
+            Tcalc = np.sqrt(Th ** 2 + Tv ** 2)
+            incr = 0.01
+            signe = (Tcalc - Tmax) / abs(Tcalc - Tmax)
+
+            # Incrementation
+            while abs(Tcalc - Tmax) > error and test:
+                Lo += signe * incr
+                W = q1 * g * Lo
+                s1 = Lo * 0.5
+                F = (0.5 * ((s1 + Dsupdep) * q2 + ((Lo - s1) + Dsupend) * q3)) * g + Fo
+                h = 100.0
+                k = 100.0
+                it = 0
+
+                # Newton Th Tv
+                while abs(h) > err and abs(k) > err:
+                    fo = f_x(Th, Tv, Lo, EAo, W, F, s1, D)  # fo
+                    go = f_z(Th, Tv, Lo, EAo, W, F, s1, H)  # go
+                    rac1 = np.sqrt((Tv / Th) ** 2 + 1)
+                    rac2 = np.sqrt(((Tv - F - W) / Th) ** 2 + 1)
+                    rac3 = np.sqrt(((Tv - F - W * s1 / Lo) / Th) ** 2 + 1)
+                    rac4 = np.sqrt(((Tv - W * s1 / Lo) / Th) ** 2 + 1)
+                    dfTv = Lo / W * (1.0 / rac1 - 1.0 / rac2 + 1.0 / rac3 - 1.0 / rac4)
+                    dfTh = df_dTh(Th, Tv, F, W, s1, Lo, EAo, rac1, rac2, rac3, rac4)
+                    dgTv = Lo / EAo + Lo / (W * Th) * (Tv / rac1 - (Tv - F - W) / rac2 + (Tv - F - W * s1 / Lo) / rac3 - (Tv - W * s1 / Lo) / rac4)
+                    dgTh = dg_dTh(Tv, Th, Lo, W, s1, F, rac1, rac2, rac3, rac4)
+                    coeff = 1.0 / (dfTh * dgTv - dfTv * dgTh)
+                    h = coeff * (-dgTv * fo + dfTv * go)
+                    k = coeff * (dgTh * fo - dfTh * go)
+                    Th += h
+                    Tv += k
+                    it += 1
+
+                    if double_min(Th, Tv) < 0:
+                        test = 0
+                        break
+                    if it > 20:
+                        test = 0
+                        break
+
+                Tcalc = np.sqrt(Th ** 2 + Tv ** 2)
+                if signe * (Tcalc - Tmax) < 0:
+                    incr *= 0.1
+                    signe *= -1.
+
+                if abs(Lo - np.sqrt(H * H + D * D)) > 100.:
+                    test = 0
+                    break
+
+    if test:
+        F = (0.5 * ((s1 + Dsupdep) * q2 + ((Lo - s1) + Dsupend) * q3)) * g + Fo
+        xcoord = Xup + fact * calcul_xs(Th, Tv, Lo, EAo, W, F, Lo * 0.5, Lo * 0.5)
+        zcoord = Zup - calcul_zs(Th, Tv, Lo, EAo, W, F, Lo * 0.5, Lo * 0.5)
+        ind = int(floor(xcoord * 2 + 0.5))
+        Hmin = zcoord - (Alts[ind] + Hline_min)
+        if Hmin >= 0:
+            Hmin = check_Hlinemin(Alts, H, D, Lo, fact, Th, Tv, Xup, Zup, Fo, Tmax, Hline_min, Hline_max, q1, q2, q3, Csize, EAo, Dsupdep, Dsupend)
+            if Hmin < 0:
+                test = 0
+    else:
+        test = 0
+
+    return test, Lo, Th, Tv, Tcalc, F
+
+
+def test_Span(Line, pg, posi, Hg, Hd, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, Tmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, Dsupdep=0., slope_prev=-9999.):
+    test = 0
+    D = Line[posi, 0] - Line[pg, 0]
+    H = np.abs(Line[pg, 1] + Hg - (Line[posi, 1] + Hd))
+    Xup, Zup = 0, 0
+    fact = 0
+    diag, slope, Lo, Th, Tv, F, Tcalc = 0, 0, 0, 0, 0, 0, 0
+
+    if Line[pg, 1] + Hg >= Line[posi, 1] + Hd:
+        Xup, Zup = Line[pg, 0], Line[pg, 1] + Hg
+        fact = 1.
+    else:
+        Xup, Zup = Line[posi, 0], Line[posi, 1] + Hd
+        fact = -1.
+
+    if check_droite(fact, H, D, Xup, Zup, Line, Hline_min, Hline_max, Tmax, q1, q2, q3, Fo, pg, posi, Dsupdep):
+        diag = np.sqrt(H * H + D * D)
+        slope = -1 * fact * np.arctan(H / D)
+
+        if slope < slope_min or slope > slope_max:
+            test = 0
+        else:
+            # Check slopes around intermediate support
+            if slope_prev > -9999 and (np.abs(slope - slope_prev) >= angle_intsup or (slope * slope_prev < 0 and np.abs(slope - slope_prev) >= 0.1)):
+                test = 0
+            else:
+                test, Lo, Th, Tv, Tcalc, F = Find_Lomin(D, H, Xup, Zup, fact, Alts, Fo, Tmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Hline_min, Hline_max, Csize, Dsupdep)
+
+    return test, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F
+
+
+def get_Tabis(Tab, lineTab, nbconfig, intsup, indmax):
+    i, j = 0, 0
+    col = (intsup - 1) * 14 + 13
+    colH = (intsup - 1) * 14 + 12
+    idmax = 0
+    idmax2 = indmax + 1
+    idline = 0
+    linemax = min(lineTab, nbconfig)
+    Tabis = np.zeros((linemax, Tab.shape[1]), dtype=np.float)
+
+    Hmin = 100
+
+    while i < linemax:
+        for j in range(0, lineTab):
+            if idmax <= Tab[j, col] < idmax2:
+                idmax = np.ceil(Tab[j, col])
+                if Tab[j, colH] < Hmin:
+                    Hmin = Tab[j, colH]
+                    idline = j
+
+        Tabis[i] = Tab[idline]
+        i += 1
+        idmax2 = idmax
+        idmax = 0
+        Hmin = 100
+
+    return Tabis
+
+
+def get_Tabis2(Tab, lineTab, nbconfig, intsup, indmax):
+    i, j = 0, 0
+    col = (intsup - 1) * 15 + 13
+    colH = (intsup - 1) * 15 + 12
+    idmax = 0
+    idmax2 = indmax + 1
+    idline = 0
+    linemax = min(lineTab, nbconfig)
+    Tabis = np.zeros((linemax, Tab.shape[1]), dtype=np.float)
+
+    Hmin = 100
+
+    while i < linemax:
+        for j in range(0, lineTab):
+            if idmax <= Tab[j, col] < idmax2:
+                idmax = np.ceil(Tab[j, col])
+                if Tab[j, colH] < Hmin:
+                    Hmin = Tab[j, colH]
+                    idline = j
+
+        Tabis[i] = Tab[idline]
+        i += 1
+        idmax2 = idmax
+        idmax = 0
+        Hmin = 100
+
+    return Tabis
+
+
+def optpyl_up(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
+              angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
+              slope_max, Lmax, test_hfor, nbconfig=10):
+    indmax = Line.shape[0] - 1
+    test = 0
+    D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+    # Begin without intermediate support
+    Hd = Line[indmax, 7] if test_hfor else Hend
+    while Hd > 1:
+        test, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_span(Line, 0, indmax, Htower, Hd,
+                                                                                 Hline_min, Hline_max,
+                                                                                 slope_min, slope_max, Alts, Fo, Tmax, q1,
+                                                                                 q2, q3, EAo, rastLosup, rastTh, rastTv,
+                                                                                 Csize, angle_intsup, 0, slope_prev=-9999)
+        if test:
+            Span[0, 0], Span[0, 1], Span[0, 2], Span[0, 3] = D, H, diag, slope
+            Span[0, 4], Span[0, 5], Span[0, 6], Span[0, 7] = fact, Xup, Zup, Lo
+            Span[0, 8], Span[0, 9], Span[0, 10], Span[0, 11] = Th, Tv, np.sqrt(Th * Th + Tv * Tv), np.sqrt(
+                Th * Th + (Tv - F - Lo * g * q1) ** 2)
+            Span[0, 14], Span[0, 15] = Hd, indmax
+            test = 1
+        else:
+            break
+        Hd -= 1
+
+    # Cut the line if no intermediate support allowed
+    if not test and sup_max == 0:
+        indminmulti = 0
+        diff = 0.
+        while diff < double_max(Csize, LminSpan):
+            indminmulti += 1
+            diff = Line[indminmulti, 0] - Line[0, 0]
+        for posi in range(indmax - 1, indminmulti - 1, -1):
+            Hd = Line[posi, 7] if test_hfor else Hend
+            while Hd > 1:
+                test, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_span(Line, 0, posi, Htower, Hd,
+                                                                                         Hline_min, Hline_max,
+                                                                                         slope_min, slope_max, Alts, Fo,
+                                                                                         Tmax, q1, q2, q3, EAo, rastLosup,
+                                                                                         rastTh, rastTv, Csize,
+                                                                                         angle_intsup, 0, slope_prev=-9999)
+                if test:
+                    Span[0, 0], Span[0, 1], Span[0, 2], Span[0, 3] = D, H, diag, slope
+                    Span[0, 4], Span[0, 5], Span[0, 6], Span[0, 7] = fact, Xup, Zup, Lo
+                    Span[0, 8], Span[0, 9], Span[0, 10], Span[0, 11] = Th, Tv, np.sqrt(Th * Th + Tv * Tv), np.sqrt(
+                        Th * Th + (Tv - F - Lo * g * q1) ** 2)
+                    Span[0, 14], Span[0, 15] = Hd, posi
+                    test = 1
+                else:
+                    break
+                Hd -= 1
+            if test:
+                break
+
+    # Start intermediate support position optimization
+    if not test and sup_max > 0:
+        indmaxmulti = indmax
+        diff = 0.
+        while diff < double_max(Csize, LminSpan) and indmaxmulti > 0:
+            indmaxmulti -= 1
+            diff = Line[indmax, 0] - Line[indmaxmulti, 0]
+        if indmaxmulti == 0:
+            test = 1
+
+    if not test and sup_max > 0:
+        indminmulti = 1
+        Tab = -9999 * np.ones((indmaxmulti * nbconfig * 100, 14 * (sup_max + 1)), dtype=np.float)
+        lineTab = 0
+        Tabis = -9999 * np.ones((1, 14 * (sup_max + 1)), dtype=np.float)
+        lineTabis = 0
+        posi1, Tdown1, Dsupdep1, slope1 = 0, 0, 0, 0
+        while intsup <= sup_max and not best:
+            for p in range(0, nblineTabis):
+                if intsup > 1:
+                    lineTabis = p
+                    col = (intsup - 2) * 14
+                    indmin = np.ceil(Tabis[p, 13 + col])
+                    pg = indmin
+                    newTmax = Tabis[p, 10 + col]
+                    Dsupdep = 0
+                    Hg = Tabis[p, 12 + col]
+                    for c in range(col + 2, 1, -14):
+                        Dsupdep += Tabis[p, c]
+                    slope_prev = Tabis[p, 3 + col]
+                for posi in range(indmaxmulti, indmin, -1):
+                    if test_hfor:
+                        Hdmax = Line[indmax, 7]
+                    else:
+                        Hdmax = Hend
+                    Hd = 1
+                    while Hd <= Hdmax:
+                        test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_span(
+                            Line, pg, posi, Hg, Hd, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo,
+                            newTmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, Dsupdep, slope_prev)
+                        if test1:
+                            Tdown = np.sqrt(Th * Th + (Tv - q1 * g * Lo) * (Tv - q1 * g * Lo))
+                            Tab[lineTab, 0:(intsup - 1) * 14] = Tabis[lineTabis, 0:(intsup - 1) * 14]
+                            Tab[lineTab, (intsup - 1) * 14:((intsup - 1) * 14 + 14)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, np.sqrt(
+                                Th * Th + (Tv - F - Lo * g * q1) ** 2), Hd, posi
+                            lineTab += 1
+                            if test_hfor:
+                                Hdmax2 = Line[indmax, 7]
+                            else:
+                                Hdmax2 = Hend
+                            Hd2 = 1
+                            while Hd2 <= Hdmax2:
+                                test2, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_span(
+                                    Line, posi, indmax, Hd, Hd2, Hline_min, Hline_max, slope_min, slope_max,
+                                    Alts, Fo, Tdown, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize,
+                                    angle_intsup, diag + Dsupdep, slope)
+                                if test2:
+                                    best = 1
+                                    Tab[lineTab, 0:intsup * 14] = Tab[lineTab - 1, 0:intsup * 14]
+                                    Tab[lineTab, intsup * 14:(intsup * 14 + 14)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, np.sqrt(
+                                        Th * Th + (Tv - F - Lo * g * q1) ** 2), Hd2, indmax
+                                    break
+                                Hd2 += 1
+                            if best:
+                                break
+                        Hd += 1
+                    if best:
+                        break
+                if best:
+                    break
+            if not best:
+                if lineTab == 0:
+                    test = 0
+                    intsup -= 2
+                    if Tabis[0, 0] > 0:
+                        Tab[lineTab] = Tabis[0]
+                    else:
+                        Tab[lineTab] *= 0
+                    break
+                Tabis = get_Tabis(Tab, lineTab, nbconfig, intsup, indmax)
+                nblineTabis = Tabis.shape[0]
+                if nblineTabis > 0:
+                    Tab = -9999 * np.ones((indmaxmulti * Tabis.shape[0] * nbconfig * 100, 14 * (sup_max + 1)),
+                                         dtype=np.float)
+                    intsup += 1
+                    lineTab = 0
+                else:
+                    test = 0
+                    intsup = -2
+                    break
+    # Cut the line at the farthest position if sup_max > 0
+    if not best and test:
+        lineTab = 0
+        for p in range(0, nblineTabis):
+            lineTabis = p
+            col = (intsup - 2) * 14
+            pg = np.ceil(Tabis[p, 13 + col])
+            Hg = Tabis[p, 12 + col]
+            indminmulti = pg
+            diff = 0.
+            while diff < double_max(Csize, LminSpan):
+                indminmulti += 1
+                diff = Line[indminmulti, 0] - Line[pg, 0]
+            newTmax = Tabis[p, 10 + col]
+            Dsupdep = 0
+            for c in range(col + 2, 1, -14):
+                Dsupdep += Tabis[p, c]
+            slope_prev = Tabis[p, 3 + col]
+            for posi in range(indmax - 1, indminmulti - 1, -1):
+                if test_hfor:
+                    Hdmax = Line[indmax, 7]
+                else:
+                    Hdmax = Hend
+                Hd = 1
+                while Hd <= Hdmax:
+                    test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_span(
+                        Line, pg, posi, Hg, Hd, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, newTmax, q1,
+                        q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, Dsupdep, slope_prev)
+                    if test1:
+                        Tdown = np.sqrt(Th * Th + (Tv - q1 * g * Lo) * (Tv - q1 * g * Lo))
+                        Tab[lineTab, 0:(intsup - 1) * 14] = Tabis[lineTabis, 0:(intsup - 1) * 14]
+                        Tab[lineTab, (intsup - 1) * 14:((intsup - 1) * 14 + 14)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, np.sqrt(
+                            Th * Th + (Tv - F - Lo * g * q1) ** 2), Hd, posi
+                        lineTab += 1
+                        break
+                    Hd += 1
+        if lineTab == 0:
+            intsup -= 2
+            lineTab = 0
+            Tab[lineTab] = Tabis[0]
+        else:
+            Tab = get_Tabis(Tab, lineTab, 1, intsup, indmax)
+            lineTab = 0
+            intsup = sup_max
+
+    # Save Span characteristics
+    for i in range(0, intsup + 1):
+        col = i * 14
+        Span[i, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15]] = Tab[lineTab, col:col + 14]
+
+    return Span
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

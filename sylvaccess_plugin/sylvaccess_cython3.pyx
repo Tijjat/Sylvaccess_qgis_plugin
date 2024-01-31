@@ -1471,7 +1471,7 @@ cpdef Tabmesh(double d,double E,double Tmax,double Lmax,double Fo,double q1,doub
     """
     Creer les rasters pour converger plus vite vers les solutions Th,Tv,Lomin
     """
-#    cdef unsigned int pas = int_max(ceil(Csize),5)
+    #    cdef unsigned int pas = int_max(ceil(Csize),5)
     cdef int pas = 1
     cdef Py_ssize_t  ncol = ceil((Lmax+Csize)/pas-1)
     cdef Py_ssize_t  nline = ncol+1
