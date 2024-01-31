@@ -25,20 +25,18 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
 import os
-from qgis.core import *
+from qgis.core import QgsMessageLog, Qgis
 from scipy import spatial
 import numpy as np
 from osgeo import gdal, osr, ogr
 import math
-#from cython import pyximport
-#pyximport.install()
-#import sylvaccess_cython3 as fc
 from math import sqrt,degrees,atan,cos,sin,radians,pi
 import shutil
 import gc
 import datetime
 from scipy.interpolate import InterpolatedUnivariateSpline
 import sys
+import sylvaccess_cython3 as fc
 
 
 # Chargement de l'interface utilisateur depuis le fichier .ui
@@ -702,7 +700,7 @@ def raster_get_info(in_file_name):
     src_proj = osr.SpatialReference(wkt=source_ds.GetProjection())
     src_ncols = source_ds.RasterXSize
     src_nrows = source_ds.RasterYSize
-    xmin,Csize_x,a,ymax,b,Csize_y = source_ds.GetGeoTransform()
+    xmin,Csize_x,_,ymax,_,Csize_y = source_ds.GetGeoTransform()
     ymin = ymax+src_nrows*Csize_y
     nodata = source_ds.GetRasterBand(1).GetNoDataValue()
     names = ['ncols', 'nrows', 'xllcorner', 'yllcorner', 'cellsize','NODATA_value']
@@ -748,14 +746,14 @@ def read_raster(file_name):
 
 
 
-##############################
-#  _______  __       _______.#
-# /  _____||  |     /       |#
-#|  |  __  |  |    |   (----`#
-#|  | |_ | |  |     \   \    #
-#|  |__| | |  | .----)   |   #
-# \______| |__| |_______/    #
-##############################                            
+#############################
+#  _______  __      _______.#
+# /  _____||  |    /       |#
+#|  |  __  |  |   |   (----`#
+#|  | |_ | |  |    \   \    #
+#|  |__| | |  | .---)   |   #
+# \______| |__| |______/    #
+#############################                            
 
 
 def check_field(filename,fieldname):
@@ -946,7 +944,7 @@ def linestring_to_point(Line_shapefile,Point_Shape_Path):
         geom = feat.GetGeometryRef()
         points = geom.GetPointCount()          
         for p in range(points):
-            lon, lat,a = geom.GetPoint(p)
+            lon, lat,_ = geom.GetPoint(p)
             geoLocations.append([lon,lat,ind])
         ind +=1
     geoLocations = np.array(geoLocations)
@@ -1205,7 +1203,7 @@ def shapefile_to_int8array(file_name,Extent,Csize):
 def raster_to_ASCII_int(raster_name,ascii_name):
     source_ds = gdal.Open(raster_name)
     content = source_ds.GetRasterBand(1).ReadAsArray()
-    xmin,Csize_x,a,ymax,b,Csize_y = source_ds.GetGeoTransform() 
+    xmin,Csize_x,_,ymax,_,Csize_y = source_ds.GetGeoTransform() 
     ymin = ymax + Csize_y*source_ds.RasterYSize
     names = ['ncols','nrows','xllcorner','yllcorner','cellsize','NODATA_value']
     values = [source_ds.RasterXSize,source_ds.RasterYSize,xmin,ymin,Csize_x,-9999]
@@ -1218,7 +1216,7 @@ def raster_to_ASCII_int(raster_name,ascii_name):
 def raster_to_ASCII(raster_name,ascii_name):
     source_ds = gdal.Open(raster_name)
     content = source_ds.GetRasterBand(1).ReadAsArray()
-    xmin,Csize_x,a,ymax,b,Csize_y = source_ds.GetGeoTransform()   
+    xmin,Csize_x,_,ymax,_,Csize_y = source_ds.GetGeoTransform()   
     ymin = ymax + Csize_y*source_ds.RasterYSize
     names = ['ncols','nrows','xllcorner','yllcorner','cellsize','NODATA_value']
     values = [source_ds.RasterXSize,source_ds.RasterYSize,xmin,ymin,Csize_x,-9999]
@@ -1235,7 +1233,7 @@ def resample_raster(in_file_name,out_file_name,newCsize,methode=gdal.GRA_Bilinea
     src_proj = source_ds.GetProjection()
     src_ncols = source_ds.RasterXSize
     src_nrows = source_ds.RasterYSize
-    xmin,Csize_x,a,ymax,b,Csize_y = source_ds.GetGeoTransform()
+    xmin,Csize_x,_,ymax,_,Csize_y = source_ds.GetGeoTransform()
     xmin,ymax = int(xmin+0.5),int(ymax+0.5)    
     Bandnb = source_ds.RasterCount    
     # Create ouptut raster
@@ -1795,11 +1793,6 @@ def Cable():
         line_selection(Rspace_c,w_list,lim_list,0,file_shp_Foret,file_Vol_ha,file_Vol_AM,Lhor_max,prelevement,Pente_max_bucheron)
 
 
-# Fonctions qui gère les calculs liés à l'optimisation des emplacements de cable
-def Cable_opti():
-    console_info("Cable_opti")
-
-
 def prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,masse_li,masse_li2,masse_li3,Csize):
     rastLosup,rastTh,rastTv = fc.Tabmesh(d,E,Tmax,Lmax,Fo,masse_li,masse_li2,masse_li3,Csize)
     np.save(Dir_temp+"rastLosup.npy",rastLosup)
@@ -1822,7 +1815,7 @@ def prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,masse_li,masse_li2,masse_li3,Csize):
 
 def check_tabconv(Dir_temp,d,E,Tmax,Lmax,Fo,masse_li,masse_li2,masse_li3,Csize):
     try:
-        a,v1=read_info(Dir_temp+"info_config.txt")
+        _,v1=read_info(Dir_temp+"info_config.txt")
         if np.all(np.array([round(d,2),round(E,2),round(Tmax,2),round(Lmax,2),round(Fo,2),round(Csize,2),round(masse_li,2),round(masse_li2,2),round(masse_li3,2)])==v1):
             rastLosup = np.load(Dir_temp+"rastLosup.npy")
             rastTh = np.load(Dir_temp+"rastTh.npy")
@@ -1839,7 +1832,6 @@ def check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret):
     npix = Line.shape[0]
     test = 1
     i=0
-    Lline=Lmin-1
     Dsansforet=0.
     for i in range(0,npix): 
         if Line[i,5]<0:break
@@ -3105,7 +3097,7 @@ def prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_Dep,Dir_Obs_c
     ###|  ||     ||  |   _|  ||  _  ||  |  ||__ --|  _  ||   _|  ||  _  |     |
     ###|__||__|__||__|____|__||___._||__|__||_____|___._||____|__||_____|__|__|
                                                                         
-    MNT,Extent,Csize,proj = load_float_raster(file_MNT,Dir_temp)
+    MNT,Extent,Csize,_ = load_float_raster(file_MNT,Dir_temp)
     np.save(Dir_temp+"MNT",MNT)
     
     #############################################################################################################
@@ -3743,7 +3735,7 @@ def Skidder():
     ### Saving all rasters
     ##################################################################################################################################################
     ### Create a summary table of accessible area    
-    make_summary_surface_vol(Skid_Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_access,Csize,Dtotal,Vtot,Vtot_non_buch,Rspace_s,"Skidder",language)
+    make_summary_surface_vol(Skid_Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_access,Csize,Dtotal,Vtot,Vtot_non_buch,Rspace_s,"Skidder")
      
     ### Save output rasters
     ArrayToGtiff(zone_accessible,Rspace_s+'Foret_accessible',Extent,nrows,ncols,road_network_proj,0,raster_type='UINT8')
@@ -3954,8 +3946,8 @@ def make_dif_files(Rspace,idmod):#idmod 0 : Skidder, 1 : Porteur
     Diff[((Diff2>1000)*(Diff2<1500))>0] = 4
     Diff[Diff2>1500] = 5
     Surf_impact = round(np.sum(Diff>0)*Csize*Csize/10000,1)
-    road_network_proj=get_proj_from_road_network(foldExist+ModeleFr[idmod]+"_recap_accessibilite.shp")
-    source_src=get_source_src(foldExist+ModeleFr[idmod]+"_recap_accessibilite.shp") 
+    road_network_proj=get_proj_from_road_network(foldExist+Modele[idmod]+"_recap_accessibilite.shp")
+    source_src=get_source_src(foldExist+Modele[idmod]+"_recap_accessibilite.shp") 
 
        
     ArrayToGtiff(Diff,Rspace_s+"Recap",Extent,nrows,ncols,road_network_proj,0,raster_type='UINT8')
@@ -4470,7 +4462,7 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
     ### Calculation of a slope raster and a cost raster of slope
     ##############################################################################################################################################
     # Slope raster
-    MNT,Extent,Csize,proj = load_float_raster(file_MNT,Dir_temp)
+    MNT,Extent,Csize,_ = load_float_raster(file_MNT,Dir_temp)
     np.save(Dir_temp+"MNT",np.float32(MNT))      
     Pente = fc.pente(MNT,Csize,-9999)
     np.save(Dir_temp+"Pente",np.float32(Pente))    
@@ -4617,10 +4609,10 @@ def process_forwarder():
         _,v1=read_info(Dir_temp+'info_extent.txt')
         for i,item in enumerate(values):
             if v1[i]!=round(item,2):
-                prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Obs_forwarder,language)
+                prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Obs_forwarder)
             if i+1>4:break
     except:
-        prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Obs_forwarder,language)
+        prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Obs_forwarder)
     
     Csize = values[4]
     # Inputs
@@ -4650,7 +4642,7 @@ def process_forwarder():
                 Obstacles_forwarder = np.zeros((nrows,ncols),dtype=np.int8)
                 np.save(Dir_temp+"Obstacles_forwarder",np.int8(Obstacles_forwarder)) 
     except: 
-        prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Obs_forwarder,language)
+        prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Obs_forwarder)
         Foret = np.int8(np.load(Dir_temp+"Foret.npy"))
         Piste = np.int8(np.load(Dir_temp+"Piste.npy"))
         Res_pub = np.int8(np.load(Dir_temp+"Res_pub.npy"))
@@ -5006,7 +4998,7 @@ def process_forwarder():
     ###############################################################################################################################################                                                                                    
     ### CREATE SUMMARY TABLE
     ###############################################################################################################################################
-    make_summary_surface_vol(Forw_Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_access,Csize,DTot,Vtot,Vtot_non_buch,Rspace_s,model_name,language)
+    make_summary_surface_vol(Forw_Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_access,Csize,DTot,Vtot,Vtot_non_buch,Rspace_s,model_name)
             
     ###############################################################################################################################################                                                                                    
     ### SAVE RASTER
@@ -5022,13 +5014,13 @@ def process_forwarder():
     
     layer_name = 'Porteur_recap_accessibilite'
     source_src=get_source_src(file_shp_Desserte)  
-    create_access_shapefile(DTot,Rspace_s,Zone_accessible,Foret,Forw_Debclass.split(";"),language,road_network_proj,source_src,Csize, Dir_temp,Extent,nrows,ncols,layer_name)
+    create_access_shapefile(DTot,Rspace_s,Zone_accessible,Foret,Forw_Debclass.split(";"),road_network_proj,source_src,Csize, Dir_temp,Extent,nrows,ncols,layer_name)
        
     ###############################################################################################################################################                                                                                    
     ### SAVE PARAMETERS
     ###############################################################################################################################################    
     
-    str_duree,str_fin,str_debut=heures(Hdebut,language)
+    str_duree,str_fin,str_debut=heures(Hdebut)
     ### Genere le fichier avec le resume des parametres de simulation
     file_name = str(Rspace_s)+"Parametres_simulation.txt"
     resume_texte = "Sylvaccess : CARTOGRAPHIE AUTOMATIQUE DES ZONES ACCESSIBLES PAR PORTEUR FORESTIER\n\n\n"
