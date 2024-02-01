@@ -30,7 +30,8 @@ from scipy import spatial
 import numpy as np
 from osgeo import gdal, osr, ogr
 import math
-from math import sqrt,degrees,atan,cos,sin,radians,pi,atan2,ceil
+
+from math import sqrt,degrees,atan,cos,sin,radians,pi,atan2,ceil,floor,fabs
 import shutil
 import gc
 import datetime
@@ -1543,23 +1544,23 @@ def Cable():
                             continue
                         #console_info az,"up",Line[-1,0] 
                         if VariaH:
-                            Span = fc.OptPyl_Up(Line,Alts,Span,Htower,Hintsup,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,
-                                                 Csize,angle_intsup,EAo,E,d,sup_max,rastLosup,rastTh,rastTv,Tmax,
-                                                 LminSpan,slope_min_up,slope_max_up,Lmax2,test_hfor,nbconfig)
+                            Span = fc.OptPyl_Up(Line,Alts,Span,Htower,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,
+                                                 Csize,angle_intsup,EAo,sup_max,rastLosup,rastTh,rastTv,Tmax,
+                                                 LminSpan,slope_min_up,slope_max_up,test_hfor,nbconfig)
                         else:
-                            Span = fc.OptPyl_Up_NoH(Line,Alts,Span,Htower,Hintsup,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,
-                                                     Csize,angle_intsup,EAo,E,d,sup_max,rastLosup,rastTh,rastTv,Tmax,
-                                                     LminSpan,slope_min_up,slope_max_up,Lmax2,test_hfor,nbconfig)
+                            Span = fc.OptPyl_Up_NoH(Line,Alts,Span,Htower,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,
+                                                     Csize,angle_intsup,EAo,sup_max,rastLosup,rastTh,rastTv,Tmax,
+                                                     LminSpan,slope_min_up,slope_max_up,test_hfor,nbconfig)
                         config = 1
                     else:    
                         if direction==1:
                             continue
                         #console_info az,"down",Line[-1,0]
                         if VariaH:
-                            Span = fc.OptPyl_Down_init(Line,Alts,Span,Htower,Hintsup, Hend,masse_li,masse_li2,masse_li3,Fo,
-                                             Hline_min,Hline_max,Csize,angle_intsup,EAo, E, d,
+                            Span = fc.OptPyl_Down_init(Line,Alts,Span,Htower, Hend,masse_li,masse_li2,masse_li3,Fo,
+                                             Hline_min,Hline_max,Csize,angle_intsup,EAo, 
                                              sup_max,rastLosup,rastTh,rastTv,Tmax,LminSpan,
-                                             slope_min_down, slope_max_down,Lmax2,test_hfor)
+                                             slope_min_down, slope_max_down,test_hfor)
                             if Span[0,0]==0 or np.sum(Span[:,2])<Lmin:
                                 test=0
                                 continue
@@ -1572,10 +1573,10 @@ def Cable():
                                                    max(-slope_min_down,-slope_max_down),Lmax2,test_hfor,nbconfig)
                             config=-1
                         else:
-                            Span = fc.OptPyl_Down_init_NoH(Line,Alts,Span,Htower,Hintsup, Hend,masse_li,masse_li2,masse_li3,Fo,
-                                             Hline_min,Hline_max,Csize,angle_intsup,EAo, E, d,
+                            Span = fc.OptPyl_Down_init_NoH(Line,Alts,Span,Htower, Hend,masse_li,masse_li2,masse_li3,Fo,
+                                             Hline_min,Hline_max,Csize,angle_intsup,EAo,
                                              sup_max,rastLosup,rastTh,rastTv,Tmax,LminSpan,
-                                             slope_min_down, slope_max_down,Lmax2,test_hfor,nbconfig)
+                                             slope_min_down, slope_max_down,test_hfor,nbconfig)
                             if Span[0,0]==0 or np.sum(Span[:,2])<Lmin:
                                 test=0
                                 continue
@@ -2799,7 +2800,7 @@ def select_best_lines(w_list,lim_list,Tab2,nrows,ncols,Csize,Row_ext,Col_ext,D_e
     for id_tab in Tab_result[:,0]:
         coordX,coordY = Tabbis[id_tab,-2],Tabbis[id_tab,-1]
         az,Lline=Tabbis[id_tab,1],sqrt((Tabbis[id_tab,2]-Tabbis[id_tab,6])**2+(Tabbis[id_tab,3]-Tabbis[id_tab,7])**2) 
-        test_free,Rast_couv=fc.Check_line3(coordX,coordY,az,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,D_lat,Rast_couv,0.6)         
+        test_free,Rast_couv=fc.Check_line3(coordX,coordY,az,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Rast_couv,0.6)         
         if test_free:
             Tab_result2[id_line]=Tabbis[id_tab,0:-2]
             id_line+=1    
@@ -3511,7 +3512,7 @@ def Skidder():
     ###############################################################################################################################################
     
     DebRF_D,DebRF_LRF=fc.skid_debusq_RF(Lien_RF,MNT,Row_line,Col_line,D_line,Nbpix_line,coeff,orig,Pmax_up,Pmax_down,
-                                        Dtreuil_max_up,Dtreuil_max_down,Csize,nrows,ncols,Zone_OK*(Route_for==0)*1*(Piste==0))
+                                        Dtreuil_max_up,Dtreuil_max_down,nrows,ncols,Zone_OK*(Route_for==0)*1*(Piste==0))
     
 
     console_info("    - Distance de debusquage depuis les routes forestieres calculee")  
@@ -3522,7 +3523,7 @@ def Skidder():
     ###############################################################################################################################################                 
     
     Debp_D,Debp_LP,Debp_Dtrpiste=fc.skid_debusq_Piste(Lien_piste,MNT,Row_line,Col_line,D_line,Nbpix_line,coeff,orig,Pmax_up,Pmax_down,
-                                                      Dtreuil_max_up,Dtreuil_max_down,Csize,nrows,ncols,Zone_OK*(Piste==0)*1*(Route_for==0))
+                                                      Dtreuil_max_up,Dtreuil_max_down,nrows,ncols,Zone_OK*(Piste==0)*1*(Route_for==0))
 
 
     console_info("    - Distance de debusquage depuis les pistes forestieres calculee")  
@@ -3676,7 +3677,7 @@ def Skidder():
     
     # Get the contour of traversable area
     Ddebus,L_RF,L_Piste,Dpis,Dfor=fc.skid_debusq_contour(Lien_contour,MNT,Row_line,Col_line,D_line,Nbpix_line,coeff,orig,Pmax_up,Pmax_down,
-                                                         Dtreuil_max_up,Dtreuil_max_down,Csize,nrows,ncols,Zone_OK*1*(Ddebusquage<=0))
+                                                         Dtreuil_max_up,Dtreuil_max_down,nrows,ncols,Zone_OK*1*(Ddebusquage<=0))
                                                       
     del Lien_contour,pixels,MNT
     gc.collect()
@@ -4817,7 +4818,7 @@ def process_forwarder():
     zone_rast = np.int8(Zone_OK*(Pente_deg<=max(Fwd_max_inc,Fwd_max_up,Fwd_max_down)))
         
     Dpente,L_RF,L_pis,Dpis,Dfor=fc.fwd_azimuts_contour(Lien_contour,MNT,Aspect,Pente_deg,Row_line,Col_line,D_line,Nbpix_line,
-                                                       Fwd_max_up, Fwd_max_down,Fwd_max_inc, Forw_Lmax,Csize, nrows,ncols,zone_rast)    
+                                                       Fwd_max_up, Fwd_max_down,Fwd_max_inc, Forw_Lmax, nrows,ncols,zone_rast)    
         
     del Dfor
     gc.collect()
@@ -4900,7 +4901,7 @@ def process_forwarder():
     zone_rast = np.int8(Zone_OK*(Pente_deg<=max(Fwd_max_inc,Fwd_max_up,Fwd_max_down))*(Temp==0))
         
     Dpente,L_RF,L_pis,Dpis,Dfor=fc.fwd_azimuts_contour(Lien_contour,MNT,Aspect,Pente_deg,Row_line,Col_line,D_line,Nbpix_line,
-                                                       Fwd_max_up, Fwd_max_down,Fwd_max_inc, Forw_Lmax,Csize, nrows,ncols,zone_rast)
+                                                       Fwd_max_up, Fwd_max_down,Fwd_max_inc, Forw_Lmax, nrows,ncols,zone_rast)
     
     del MNT,Aspect,Pente_deg
     gc.collect()   
@@ -5064,6 +5065,41 @@ def process_forwarder():
 # \______|    |__|         |__|     |__|  |__|  \______/  |__| \__|# 
 ####################################################################                                                                  
 
+global g,intsup,best,nblineTabis,h,b,l,r  
+g = 9.80665
+intsup = 0 
+best = 0
+nblineTabis = 1
+h = 0
+b = 0
+l = 0
+r = 0
+
+
+def dg_dTh(Tv, Th, Lo, W, s1, F, rac1, rac2, rac3, rac4):
+    a = 1. / (Th * Th) * (
+            -Tv * Tv / rac1 + (Tv - F - W) * (Tv - F - W) / rac2 -
+            (Tv - F - W * s1 / Lo) * (Tv - F - W * s1 / Lo) / rac3 +
+            (Tv - W * s1 / Lo) * (Tv - W * s1 / Lo) / rac4
+    )
+    a += math.sqrt(1 + (Tv / Th) * (Tv / Th)) - math.sqrt(1 + ((Tv - F - W) / Th) * ((Tv - F - W) / Th)) + \
+         math.sqrt(1 + ((Tv - F - W * s1 / Lo) / Th) * ((Tv - F - W * s1 / Lo) / Th)) - \
+         math.sqrt(1 + ((Tv - W * s1 / Lo) / Th) * ((Tv - W * s1 / Lo) / Th))
+    a *= Lo / W
+    return a
+
+
+def double_max(a, b):
+    return a if a >= b else b
+
+
+def int_max(a, b):
+    return a if a >= b else b
+
+
+def double_min(a, b):
+    return a if a <= b else b
+
 
 def max_array(a):
     
@@ -5151,7 +5187,7 @@ def pente(raster_mnt, Csize, nodata):
 def calculate_corner_pente(raster_mnt, nodata, Csize, y, x):
     e = raster_mnt[y, x]
     if e > nodata:
-        a, b, c, d, f, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
+        _, _, _, d, f, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
                                raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x],
                                raster_mnt[y+1, x+1])
         dz_dx = float(f + i - (e + h)) / float(2 * Csize)
@@ -5164,7 +5200,7 @@ def calculate_corner_pente(raster_mnt, nodata, Csize, y, x):
 def calculate_edge_pente(raster_mnt, nodata, Csize, y, x):
     e = raster_mnt[y, x]
     if e > nodata:
-        a, b, c, d, f, g, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
+        _, b, c, _, f, _, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
                                   raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x-1],
                                   raster_mnt[y+1, x], raster_mnt[y+1, x+1])
         dz_dx = float(f + c - (b + e + h)) / float(4 * Csize)
@@ -5219,7 +5255,7 @@ def exposition(raster_mnt, Csize, nodata):
 def calculate_corner_expo(raster_mnt, nodata, Csize, y, x):
     e = raster_mnt[y, x]
     if e > nodata:
-        a, b, c, d, f, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
+        _, _, _, d, f, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
                                raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x],
                                raster_mnt[y+1, x+1])
         dz_dx = float(f + i - (e + h)) / float(2 * Csize)
@@ -5238,7 +5274,7 @@ def calculate_corner_expo(raster_mnt, nodata, Csize, y, x):
 def calculate_edge_expo(raster_mnt, nodata, Csize, y, x):
     e = raster_mnt[y, x]
     if e > nodata:
-        a, b, c, d, f, g, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
+        _, b, c, _, f, _, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
                                   raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x-1],
                                   raster_mnt[y+1, x], raster_mnt[y+1, x+1])
         dz_dx = float(f + c - (b + e + h)) / float(4 * Csize)
@@ -5543,12 +5579,8 @@ def Check_line1(Line, Lmax, Lmin, nrows, ncols, Lsans_foret, Lslope, PropSlope):
     indmax2 = 0
     npix = Line.shape[0]
     test = 1
-    i = 0
-    testdist = 0
-    Lline = Lmin - 1
     Dsansforet = 0.0
     Dcum = 0.0
-    D = 0.0
     
     for i in range(npix):
         if Line[i, 5] < 0:
@@ -5714,7 +5746,7 @@ def check_line2(coordX, coordY, az, ncols, nrows, Lline, Row_ext, Col_ext, D_ext
     return test, Rast_couv
 
 
-def Check_line3(coordX, coordY, az, ncols, nrows, Lline, Row_ext, Col_ext, D_ext, D_lat, Rast_couv, rapport):
+def Check_line3(coordX, coordY, az, ncols, nrows, Lline, Row_ext, Col_ext, D_ext, Rast_couv, rapport):
     i = 0
     test = 1
     nb1 = 0
@@ -5747,7 +5779,6 @@ def Check_line3(coordX, coordY, az, ncols, nrows, Lline, Row_ext, Col_ext, D_ext
 
 
 def Fcariage(Lo, F, q2, q3, s1, Dsupdep=0.0, Dsupend=0.0):
-    g = 9.81  # gravitational acceleration, you may adjust this value
     return (0.5 * ((s1 + Dsupdep) * q2 + ((Lo - s1) + Dsupend) * q3)) * g + F
 
 
@@ -5910,7 +5941,6 @@ def Tabmesh(d, E, Tmax, Lmax, Fo, q1, q2, q3, Csize):
     rastLosup = np.full((nline, ncol), np.nan, dtype=np.float)
     rastTh = np.copy(rastLosup)
     rastTv = np.copy(rastLosup)
-    NaN = np.nan
     col = 0
     lig = 0
     Hmax = 0
@@ -5953,7 +5983,7 @@ def Tabmesh(d, E, Tmax, Lmax, Fo, q1, q2, q3, Csize):
             if abs(f_x(Th, Tv, Lo, EAo, W, F, Lo * 0.5, D)) + abs(f_z(Th, Tv, Lo, EAo, W, F, Lo * 0.5, H)) > 0.01:
                 Th, Tv = newton_ThTv(D / diag * Tmax, Tmax * (H / diag + 0.01), H, D, Lo, W, Lo * 0.5, F, EAo, Tmax * 2)
                 if abs(f_x(Th, Tv, Lo, EAo, W, F, Lo * 0.5, D)) + abs(f_z(Th, Tv, Lo, EAo, W, F, Lo * 0.5, H)) > 0.01:
-                    Th, Tv, T = find_ThTvTmax(Tmax, W, EAo, F, Lo * 0.5, D, H, Lo, 20)
+                    Th, Tv, _ = find_ThTvTmax(Tmax, W, EAo, F, Lo * 0.5, D, H, Lo, 20)
                     Th, Tv = newton_ThTv(Th, Tv, H, D, Lo, W, Lo * 0.5, F, EAo, Tmax * 2)
                     if abs(f_x(Th, Tv, Lo, EAo, W, F, Lo * 0.5, D)) + abs(f_z(Th, Tv, Lo, EAo, W, F, Lo * 0.5, H)) > 0.01:
                         continue
@@ -6119,7 +6149,7 @@ def H_mid(Lo, F, Th, Tv, Xup, Zup, fact, Alts, Hline_min, q1, EAo):
     return zcoord - (Alts[ind] + Hline_min)
 
 
-def slope_H_mid(Lo, F, Th, Tv, Xup, Zup, fact, Alts, q1, EAo):
+def slope_H_mid(Lo, F, Th, Tv, Xup, Zup, fact, q1, EAo):
     W = q1 * 9.80665 * Lo
     s1 = Lo * 0.5
     xcoord = Xup + fact * calcul_xs(Th, Tv, Lo, EAo, W, F, s1, s1)
@@ -6135,7 +6165,6 @@ def check_Hlinemin(Alts, H, D, Lo, fact, Tho, Tvo, Xup, Zup, Fo, Tmax, Hline_min
     s1 = Lo * 0.5
     h, k = 100.0, 100.0
     it = 0
-    step = 100
     err = 1.0
     
     while s1 > 10.:
@@ -6175,9 +6204,6 @@ def check_Hlinemin(Alts, H, D, Lo, fact, Tho, Tvo, Xup, Zup, Fo, Tmax, Hline_min
         if Hmin < 0 or Hmin + Hline_min > Hline_max or np.sqrt(Th ** 2 + Tv ** 2) > (Tmax + 1000):
             test = 0
             break
-        else:
-            Hmin_ok = min(Hmin_ok, Hmin)
-
         s1 -= Csize
 
     if test:
@@ -6216,7 +6242,7 @@ def Find_Lomin(D, H, Xup, Zup, fact, Alts, Fo, Tmax, q1, q2, q3, EAo, rastLosup,
     Tcalc = np.sqrt(Th ** 2 + Tv ** 2)
     xcoord, zcoord, Hmin = 0., 0., 0.
 
-    if npy_isnan(Th) or npy_isnan(Tv):
+    if np.isnan(Th) or np.isnan(Tv):
         test = 0
 
     if test:
@@ -6401,9 +6427,9 @@ def get_Tabis2(Tab, lineTab, nbconfig, intsup, indmax):
     return Tabis
 
 
-def optpyl_up(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
-              angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
-              slope_max, Lmax, test_hfor, nbconfig=10):
+def optpyl_up(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
+              angle_intsup, EAo, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
+              slope_max, test_hfor, nbconfig=10):
     indmax = Line.shape[0] - 1
     test = 0
     D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -6411,7 +6437,7 @@ def optpyl_up(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min
     # Begin without intermediate support
     Hd = Line[indmax, 7] if test_hfor else Hend
     while Hd > 1:
-        test, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_span(Line, 0, indmax, Htower, Hd,
+        test, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, 0, indmax, Htower, Hd,
                                                                                  Hline_min, Hline_max,
                                                                                  slope_min, slope_max, Alts, Fo, Tmax, q1,
                                                                                  q2, q3, EAo, rastLosup, rastTh, rastTv,
@@ -6437,7 +6463,7 @@ def optpyl_up(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min
         for posi in range(indmax - 1, indminmulti - 1, -1):
             Hd = Line[posi, 7] if test_hfor else Hend
             while Hd > 1:
-                test, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_span(Line, 0, posi, Htower, Hd,
+                test, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, 0, posi, Htower, Hd,
                                                                                          Hline_min, Hline_max,
                                                                                          slope_min, slope_max, Alts, Fo,
                                                                                          Tmax, q1, q2, q3, EAo, rastLosup,
@@ -6472,7 +6498,6 @@ def optpyl_up(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min
         lineTab = 0
         Tabis = -9999 * np.ones((1, 14 * (sup_max + 1)), dtype=np.float)
         lineTabis = 0
-        posi1, Tdown1, Dsupdep1, slope1 = 0, 0, 0, 0
         while intsup <= sup_max and not best:
             for p in range(0, nblineTabis):
                 if intsup > 1:
@@ -6493,7 +6518,7 @@ def optpyl_up(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min
                         Hdmax = Hend
                     Hd = 1
                     while Hd <= Hdmax:
-                        test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_span(
+                        test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(
                             Line, pg, posi, Hg, Hd, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo,
                             newTmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, Dsupdep, slope_prev)
                         if test1:
@@ -6508,7 +6533,7 @@ def optpyl_up(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min
                                 Hdmax2 = Hend
                             Hd2 = 1
                             while Hd2 <= Hdmax2:
-                                test2, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_span(
+                                test2, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(
                                     Line, posi, indmax, Hd, Hd2, Hline_min, Hline_max, slope_min, slope_max,
                                     Alts, Fo, Tdown, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize,
                                     angle_intsup, diag + Dsupdep, slope)
@@ -6571,7 +6596,7 @@ def optpyl_up(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min
                     Hdmax = Hend
                 Hd = 1
                 while Hd <= Hdmax:
-                    test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_span(
+                    test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(
                         Line, pg, posi, Hg, Hd, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, newTmax, q1,
                         q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, Dsupdep, slope_prev)
                     if test1:
@@ -6599,9 +6624,9 @@ def optpyl_up(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min
     return Span
 
 
-def OptPyl_Up_NoH(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
-                  angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
-                  slope_max, Lmax, test_hfor, nbconfig=10):
+def OptPyl_Up_NoH(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
+                  angle_intsup, EAo, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
+                  slope_max, test_hfor, nbconfig=10):
     """
     Cable machine en haut
     Optimise le placement des pylones intermediaire sans bouger la hauteur de fixation du cable porteur pour chaque pylone sur un profil
@@ -6804,9 +6829,9 @@ def OptPyl_Up_NoH(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline
     return Span
 
 
-def OptPyl_Down_init(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
-                     angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
-                     slope_max, Lmax, test_hfor, nbconfig=5):
+def OptPyl_Down_init(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
+                     angle_intsup, EAo, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
+                     slope_max, test_hfor, nbconfig=5):
     """
     Cable machine en bas
     Permet de recuperer la partie de profil ou il est possible de tendre un cable (avec hauteur de cable porteur variable)
@@ -6997,7 +7022,6 @@ def OptPyl_Down_init(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hl
                                                                                               angle_intsup, Dsupdep,
                                                                                               slope_prev)
                     if test1:
-                        Tdown = sqrt(Th * Th + (Tv - q1 * g * Lo) * (Tv - q1 * g * Lo))
                         Tab[lineTab, 0:(intsup - 1) * 14] = Tabis[lineTabis, 0:(intsup - 1) * 14]
                         Tab[lineTab, (intsup - 1) * 14:((intsup - 1) * 14 + 14)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(
                             Th * Th + (Tv - F - Lo * g * q1) ** 2), Hd, posi
@@ -7021,9 +7045,9 @@ def OptPyl_Down_init(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hl
     return Span
 
 
-def OptPyl_Down_init_NoH(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
-                         angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
-                         slope_max, Lmax, test_hfor, nbconfig=5):
+def OptPyl_Down_init_NoH(Line, Alts, Span, Htower , Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
+                         angle_intsup, EAo,  sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
+                         slope_max, test_hfor, nbconfig=5):
     """
     Cable machine en bas
     Permet de recuperer la partie de profil ou il est possible de tendre un cable (avec hauteur de cable porteur fixe)
@@ -7219,7 +7243,6 @@ def OptPyl_Down_init_NoH(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo
                                                                                               angle_intsup, Dsupdep,
                                                                                               slope_prev)
                     if test1:
-                        Tdown = sqrt(Th * Th + (Tv - q1 * g * Lo) * (Tv - q1 * g * Lo))
                         Tab[lineTab, 0:(intsup - 1) * 14] = Tabis[lineTabis, 0:(intsup - 1) * 14]
                         Tab[lineTab, (intsup - 1) * 14:((intsup - 1) * 14 + 14)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(
                             Th * Th + (Tv - F - Lo * g * q1) ** 2), Hd, posi
@@ -7243,9 +7266,9 @@ def OptPyl_Down_init_NoH(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo
     return Span
 
 
-def OptPyl_Up2(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
-               angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
-               slope_max, Lmax, test_hfor, nbconfig=10):
+def OptPyl_Up2(Line, Alts, Span, Htower,  Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
+               angle_intsup, EAo,  sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
+               slope_max, test_hfor, nbconfig=10):
     """
     Cable machine en bas
     Optimise le placement des pylones intermediaire et la hauteur de fixation du cable porteur pour chaque pylone sur un profil
@@ -7434,7 +7457,9 @@ def OptPyl_Up2(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_mi
     return Span
 
 
-def OptPyl_Up2_NoH(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize, angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min, slope_max, Lmax, test_hfor, nbconfig=10):
+def OptPyl_Up2_NoH(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
+                    angle_intsup, EAo, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
+                      slope_max, test_hfor, nbconfig=10):
     indmax = Line.shape[0] - 1
     test = 0
     test0, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, 0, indmax, Htower, Htower, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, Tmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, 0, slope_prev=-9999)
@@ -7779,7 +7804,7 @@ def concatenate_float(zone, h, b, l, r, Mask):
 
 
 def skid_debusq_RF(Lien_RF, MNT, Row_line, Col_line, D_line, Nbpix_line,
-                   coeff, orig, Pmax_up, Pmax_down, damont, daval, Csize,
+                   coeff, orig, Pmax_up, Pmax_down, damont, daval,
                    nrows, ncols, Zone_ok):
     Max_distance = 100000
     dmin = min(damont, daval)
@@ -7848,7 +7873,7 @@ def skid_debusq_RF(Lien_RF, MNT, Row_line, Col_line, D_line, Nbpix_line,
 
 
 def skid_debusq_Piste(Lien_RF, MNT, Row_line, Col_line, D_line, Nbpix_line,
-                      coeff, orig, Pmax_up, Pmax_down, damont, daval, Csize,
+                      coeff, orig, Pmax_up, Pmax_down, damont, daval,
                       nrows, ncols, Zone_ok):
     Max_distance = 100000
     dmin = min(damont, daval)
@@ -7922,7 +7947,7 @@ def skid_debusq_Piste(Lien_RF, MNT, Row_line, Col_line, D_line, Nbpix_line,
 
 
 def skid_debusq_contour(Lien_RF, MNT, Row_line, Col_line, D_line, Nbpix_line,
-                        coeff, orig, Pmax_up, Pmax_down, damont, daval, Csize,
+                        coeff, orig, Pmax_up, Pmax_down, damont, daval,
                         nrows, ncols, Zone_ok):
     Max_distance = 100000
     dmin = min(damont, daval)
@@ -8273,9 +8298,6 @@ def Dfwd_flat_forest_road(Link_RF, cost_rast, zone_rast, Csize, Max_distance=100
     diag = 1.414214 * Csize
     direct = Csize
     nb_pixel_RF = Link_RF.shape[0]
-    pixel = 1
-    ind = 0
-    nb_pixel = 0
 
     # Creation des rasters de sorties
     Out_distance = np.ones_like(zone_rast, dtype=np.int32) * (Max_distance + 1)
@@ -8349,9 +8371,7 @@ def Dfwd_flat_forest_tracks(Link_Piste, cost_rast, zone_rast, Csize, Max_distanc
     diag = 1.414214 * Csize
     direct = Csize
     nb_pixel_Piste = Link_Piste.shape[0]
-    pixel = 1
-    ind = 0
-    nb_pixel = 0
+
 
     # Creation des rasters de sorties
     Out_distance = np.ones_like(zone_rast, dtype=np.int32) * (Max_distance + 1)
@@ -8431,7 +8451,7 @@ def Dfwd_flat_forest_tracks(Link_Piste, cost_rast, zone_rast, Csize, Max_distanc
 
 
 def fwd_azimuts_contour(Lien_RF, MNT, Aspect, Pente, Row_line, Col_line, D_line, Nbpix_line,
-                        Fwd_max_up, Fwd_max_down, Fwd_max_inc, Forw_Lmax, Csize, nrows, ncols, Zone_ok):
+                        Fwd_max_up, Fwd_max_down, Fwd_max_inc, Forw_Lmax, nrows, ncols, Zone_ok):
     Max_distance = 100000
     Out_distance = np.ones((nrows, ncols), dtype=np.int32) * (Max_distance + 1)
     Dfor = np.ones((nrows, ncols), dtype=np.int32) * (Max_distance + 1)
@@ -8448,7 +8468,6 @@ def fwd_azimuts_contour(Lien_RF, MNT, Aspect, Pente, Row_line, Col_line, D_line,
         lienPiste = Lien_RF[pixel, 5]
         dpist = Lien_RF[pixel, 2]
         dfor = Lien_RF[pixel, 3]
-        dist_init = dpist + dfor
 
         for az in range(360):
             nbpix = Nbpix_line[az]
