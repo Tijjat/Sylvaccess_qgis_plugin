@@ -66,10 +66,16 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             checkbox = getattr(self, f"checkBox_{i}")
             checkbox.stateChanged.connect(lambda _, num=i: self.checkbox_state_changed(num))
 
+        for i in range(101,109):
+            checkbox = getattr(self, f"checkBox_{i}")
+            checkbox.stateChanged.connect(lambda _, num=i: self.checkbox_state_changed_opti(num))
+
         # Connexion des signaux des boutons OK et Annuler
         self.button_box.accepted.connect(self.launch)
         self.button_box.rejected.connect(self.reject)
         self.spinBox_40.valueChanged.connect(self.spinBox_40_changed)
+        self.comboBox_1.currentIndexChanged.connect(self.comboBox_1_changed)
+        self.comboBox_2.currentIndexChanged.connect(self.comboBox_2_changed)
 
     # Connexion des signaux des boutons d'ouverture de fichier à la fonction open_folder
     def open_folder(self, button_number):
@@ -153,6 +159,118 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
     def spinBox_40_changed(self):
         value = self.spinBox_40.value()
         self.spinBox_49.setValue(value)
+
+
+    def comboBox_1_changed(self):
+        value = self.comboBox_1.currentText()
+        if value == "Câble-mât sur tracteur agricole":
+            self.spinBox_14.setValue(2)
+            self.doublespinBox_2.setValue(8.5)
+            self.spinBox_16.setValue(500)
+            self.spinBox_17.setValue(125)
+            self.doubleSpinBox_3.setValue(16.0)
+            self.doubleSpinBox_4.setValue(1.4)
+            self.spinBox_26.setValue(25000)
+            self.spinBox_40.setValue(35)
+        elif value == "Câble-mât sur remorque":
+            self.spinBox_14.setValue(3)
+            self.doublespinBox_2.setValue(10.5)
+            self.spinBox_16.setValue(780)
+            self.spinBox_17.setValue(150)
+            self.doubleSpinBox_3.setValue(18.0)
+            self.doubleSpinBox_4.setValue(1.9)
+            self.spinBox_26.setValue(35000)
+            self.spinBox_40.setValue(35)
+        elif value == "Câble-mât sur camion":
+            self.spinBox_14.setValue(3)
+            self.doublespinBox_2.setValue(14)
+            self.spinBox_16.setValue(1200)
+            self.spinBox_17.setValue(200)
+            self.doubleSpinBox_3.setValue(22.0)
+            self.doubleSpinBox_4.setValue(2.6)
+            self.spinBox_26.setValue(48000)
+            self.spinBox_40.setValue(40)
+        elif value == "Câble long":
+            self.spinBox_14.setValue(3)
+            self.doublespinBox_2.setValue(8.0)
+            self.spinBox_16.setValue(1500)
+            self.spinBox_17.setValue(300)
+            self.doubleSpinBox_3.setValue(22.0)
+            self.doubleSpinBox_4.setValue(2.6)
+            self.spinBox_26.setValue(48000)
+            self.spinBox_40.setValue(40)    
+
+
+    def comboBox_2_changed(self):
+        value = self.comboBox_2.currentText()
+        if value == "Chariot classique":
+            self.spinBox_22.setValue(500)
+            self.spinBox_23.setValue(15)
+            self.spinBox_24.setValue(15)
+            self.spinBox_25.setValue(100)
+            self.spinBox_39.setValue(2500)
+            self.spinBox_23.setEnabled(True)
+            self.spinBox_24.setEnabled(False)
+            self.spinBox_25.setEnabled(False)
+        elif value == "Chariot automoteur":
+            self.spinBox_22.setValue(1200)
+            self.spinBox_23.setValue(15)
+            self.spinBox_24.setValue(15)
+            self.spinBox_25.setValue(100)
+            self.spinBox_39.setValue(1800)
+            self.spinBox_23.setEnabled(False)
+            self.spinBox_24.setEnabled(True)
+            self.spinBox_25.setEnabled(True)
+
+  
+    def checkbox_state_changed_opti(self, checkbox_number):
+        # Récupère l'état de la checkbox
+        checkbox = getattr(self, f"checkBox_{checkbox_number}")
+        checkbox_state = checkbox.isChecked()
+
+        if checkbox_state:
+            if checkbox_number == 101:
+                self.spinBox_101.setMinimum(1)
+            if checkbox_number == 102:
+                self.spinBox_102.setMinimum(1)
+            if checkbox_number == 103:
+                self.spinBox_103.setMinimum(1)
+            if checkbox_number == 104:
+                self.spinBox_104.setMinimum(1)
+            if checkbox_number == 105:
+                self.spinBox_105.setMinimum(1)
+            if checkbox_number == 106:
+                self.spinBox_106.setMinimum(1)
+            if checkbox_number == 107:
+                self.spinBox_107.setMinimum(1)
+            if checkbox_number == 108:
+                self.spinBox_108.setMinimum(1)
+        elif not checkbox_state:
+            if checkbox_number == 101:
+                self.spinBox_101.setMinimum(0)
+                self.spinBox_101.setValue(0)
+            if checkbox_number == 102:
+                self.spinBox_102.setMinimum(0)
+                self.spinBox_102.setValue(0)
+            if checkbox_number == 103:
+                self.spinBox_103.setMinimum(0)
+                self.spinBox_103.setValue(0)
+            if checkbox_number == 104:
+                self.spinBox_104.setMinimum(0)
+                self.spinBox_104.setValue(0)
+            if checkbox_number == 105:
+                self.spinBox_105.setMinimum(0)
+                self.spinBox_105.setValue(0)
+            if checkbox_number == 106:
+                self.spinBox_106.setMinimum(0)
+                self.spinBox_106.setValue(0)
+            if checkbox_number == 107:
+                self.spinBox_107.setMinimum(0)
+                self.spinBox_107.setValue(0)
+            if checkbox_number == 108:
+                self.spinBox_108.setMinimum(0)
+                self.spinBox_108.setValue(0)
+
 
 
 ###############################################################################################
@@ -426,9 +544,9 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             pente_aval_max = self.spinBox_1.value()
         if limite:
             if self.radioButton_1.isChecked():
-                limite = True
+                limite = 1
             else:
-                limite = False
+                limite = 2
         if bornes_s:
             bornes_s = self.plainTextEdit_1.toPlainText()
             if not bornes_s:

@@ -2439,6 +2439,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="editable">
+           <bool>false</bool>
+          </property>
           <item>
            <property name="text">
             <string>Câble-mât sur tracteur agricole</string>
@@ -3854,21 +3857,21 @@
          </widget>
         </item>
         <item row="3" column="0">
-         <widget class="QCheckBox" name="checkBox_9">
+         <widget class="QCheckBox" name="checkBox_103">
           <property name="text">
            <string>Sens de débardage à privilégier</string>
           </property>
          </widget>
         </item>
         <item row="5" column="4">
-         <widget class="QSpinBox" name="spinBox_31">
+         <widget class="QSpinBox" name="spinBox_105">
           <property name="font">
            <font>
             <pointsize>9</pointsize>
            </font>
           </property>
           <property name="maximum">
-           <number>7</number>
+           <number>10</number>
           </property>
           <property name="value">
            <number>4</number>
@@ -3876,19 +3879,19 @@
          </widget>
         </item>
         <item row="7" column="4">
-         <widget class="QSpinBox" name="spinBox_33">
+         <widget class="QSpinBox" name="spinBox_107">
           <property name="font">
            <font>
             <pointsize>9</pointsize>
            </font>
           </property>
           <property name="maximum">
-           <number>7</number>
+           <number>10</number>
           </property>
          </widget>
         </item>
         <item row="6" column="0">
-         <widget class="QCheckBox" name="checkBox_12">
+         <widget class="QCheckBox" name="checkBox_106">
           <property name="text">
            <string>Indice de prélèvement câble</string>
           </property>
@@ -3915,14 +3918,14 @@
          </widget>
         </item>
         <item row="7" column="0">
-         <widget class="QCheckBox" name="checkBox_13">
+         <widget class="QCheckBox" name="checkBox_107">
           <property name="text">
            <string>Volume de l'arbre moyen</string>
           </property>
          </widget>
         </item>
         <item row="5" column="0">
-         <widget class="QCheckBox" name="checkBox_11">
+         <widget class="QCheckBox" name="checkBox_105">
           <property name="text">
            <string>Volume total de la ligne</string>
           </property>
@@ -4000,14 +4003,14 @@
          </widget>
         </item>
         <item row="6" column="4">
-         <widget class="QSpinBox" name="spinBox_32">
+         <widget class="QSpinBox" name="spinBox_106">
           <property name="font">
            <font>
             <pointsize>9</pointsize>
            </font>
           </property>
           <property name="maximum">
-           <number>7</number>
+           <number>10</number>
           </property>
           <property name="value">
            <number>3</number>
@@ -4030,14 +4033,14 @@
          </widget>
         </item>
         <item row="4" column="4">
-         <widget class="QSpinBox" name="spinBox_21">
+         <widget class="QSpinBox" name="spinBox_104">
           <property name="font">
            <font>
             <pointsize>9</pointsize>
            </font>
           </property>
           <property name="maximum">
-           <number>7</number>
+           <number>10</number>
           </property>
          </widget>
         </item>
@@ -4067,28 +4070,28 @@
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QCheckBox" name="checkBox_8">
+         <widget class="QCheckBox" name="checkBox_102">
           <property name="text">
            <string>Nombre de support(s) intermédiaire(s)</string>
           </property>
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QCheckBox" name="checkBox_7">
+         <widget class="QCheckBox" name="checkBox_101">
           <property name="text">
            <string>Surface de forêt impactée</string>
           </property>
          </widget>
         </item>
         <item row="2" column="4">
-         <widget class="QSpinBox" name="spinBox_19">
+         <widget class="QSpinBox" name="spinBox_102">
           <property name="font">
            <font>
             <pointsize>9</pointsize>
            </font>
           </property>
           <property name="maximum">
-           <number>7</number>
+           <number>10</number>
           </property>
           <property name="value">
            <number>2</number>
@@ -4106,19 +4109,22 @@
          </widget>
         </item>
         <item row="1" column="4">
-         <widget class="QSpinBox" name="spinBox_18">
+         <widget class="QSpinBox" name="spinBox_101">
           <property name="font">
            <font>
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="minimum">
+           <number>0</number>
+          </property>
           <property name="maximum">
-           <number>7</number>
+           <number>10</number>
           </property>
          </widget>
         </item>
         <item row="4" column="0">
-         <widget class="QCheckBox" name="checkBox_10">
+         <widget class="QCheckBox" name="checkBox_104">
           <property name="text">
            <string>Longueur total de la ligne</string>
           </property>
@@ -4197,14 +4203,14 @@
          </widget>
         </item>
         <item row="3" column="4">
-         <widget class="QSpinBox" name="spinBox_20">
+         <widget class="QSpinBox" name="spinBox_103">
           <property name="font">
            <font>
             <pointsize>9</pointsize>
            </font>
           </property>
           <property name="maximum">
-           <number>7</number>
+           <number>10</number>
           </property>
          </widget>
         </item>
@@ -4261,7 +4267,7 @@
          </widget>
         </item>
         <item row="8" column="0">
-         <widget class="QCheckBox" name="checkBox_14">
+         <widget class="QCheckBox" name="checkBox_108">
           <property name="text">
            <string>Distance moyenne du chariot</string>
           </property>
@@ -4293,14 +4299,14 @@
          </widget>
         </item>
         <item row="8" column="4">
-         <widget class="QSpinBox" name="spinBox_51">
+         <widget class="QSpinBox" name="spinBox_108">
           <property name="font">
            <font>
             <pointsize>9</pointsize>
            </font>
           </property>
           <property name="maximum">
-           <number>7</number>
+           <number>10</number>
           </property>
          </widget>
         </item>
