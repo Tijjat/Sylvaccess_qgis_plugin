@@ -37,7 +37,6 @@ import gc
 import datetime
 from scipy.interpolate import InterpolatedUnivariateSpline
 import sys
-import sylvaccess_cython3 as fc
 
 
 # Chargement de l'interface utilisateur depuis le fichier .ui
@@ -75,7 +74,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         self.button_box.rejected.connect(self.reject)
         self.spinBox_40.valueChanged.connect(self.spinBox_40_changed)
         self.comboBox_1.currentIndexChanged.connect(self.comboBox_1_changed)
-        self.comboBox_2.currentIndexChanged.connect(self.comboBox_2_changed)
+        self.comboBox_3.currentIndexChanged.connect(self.comboBox_3_changed)
 
     # Connexion des signaux des boutons d'ouverture de fichier à la fonction open_folder
     def open_folder(self, button_number):
@@ -201,8 +200,8 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             self.spinBox_40.setValue(40)    
 
 
-    def comboBox_2_changed(self):
-        value = self.comboBox_2.currentText()
+    def comboBox_3_changed(self):
+        value = self.comboBox_3.currentText()
         if value == "Chariot classique":
             self.spinBox_22.setValue(500)
             self.spinBox_23.setValue(15)
@@ -283,10 +282,10 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 ###############################################################################################                                                                                             
     # Fonction appelée lorsqu'on clique sur le bouton OK
     def launch(self):
-        Wspace,Rspace,_,_,file_shp_Desserte,_,_,_,_,_,_,_,_ = Sylvaccess_pluginDialog.get_spatial(1,1,1,0,0,1,0,0,0,0,0,0,0,0,0)
-        test_Skidder,test_Porteur,test_Cable,test_cable_optimise,pente = Sylvaccess_pluginDialog.get_general(1,1,1,1,1,1)
-        prelevement,recalculer,_,foret2,VBP2,VAM2,pechage2 = Sylvaccess_pluginDialog.get_opti_cable(1,1,1,0,1,1,1,1)
-        surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1,1)
+        Wspace,Rspace,_,_,file_shp_Desserte,_,_,_,_,_,_,_,_ = Sylvaccess_pluginDialog.get_spatial(1,1,0,0,1,0,0,0,0,0,0,0,0,0)
+        test_Skidder,test_Porteur,test_Cable,test_cable_optimise,pente = Sylvaccess_pluginDialog.get_general(1,1,1,1,1)
+        prelevement,recalculer,_,foret2,VBP2,VAM2,pechage2 = Sylvaccess_pluginDialog.get_opti_cable(1,1,0,1,1,1,1)
+        surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1)
         w_list = [surface, nbr_sup_int, sens_debardage, longueure_ligne, vol_ligne, indice_prelev, VAM3, dist_chariot]
         lim_list = [surface_poids, nbr_sup_int_poids, sens_debardage_poids, longueure_ligne_poids, vol_ligne_poids, indice_prelev_poids, VAM_poids, dist_chariot_poids]  
         try:os.mkdir(Rspace)
@@ -485,224 +484,309 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 #####################################################################################################################
 
 
-    def get_general(self,ski,por,cab,opti,pente):
+    def get_general(self, ski, por, cab, opti, pente):
+        _ski = None
+        _por = None
+        _cab = None
+        _opti = None
+        _pente = None
+
         if ski:
-            ski = getattr(self, f"checkBox_4").isChecked()
+            _ski = getattr(self, f"checkBox_4").isChecked()
         if por:
-            por = getattr(self, f"checkBox_3").isChecked()
+            _por = getattr(self, f"checkBox_3").isChecked()
         if cab:
-            cab = getattr(self, f"checkBox_2").isChecked()
+            _cab = getattr(self, f"checkBox_2").isChecked()
         if opti:
-            opti = getattr(self, f"checkBox_1").isChecked()
+            _opti = getattr(self, f"checkBox_1").isChecked()
         if pente:
-            pente = self.spinBox_1.value()
+            _pente = self.spinBox_1.value()
+
+        return _ski, _por, _cab, _opti, _pente
 
 
-    def get_spatial(self,Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP):
-        if Wspace: 
-            Wspace = getattr(self, f"lineEdit_1").text()
-        if Rspace:
-            Rspace = getattr(self, f"lineEdit_2").text()
-        if mnt:
-            mnt = getattr(self, f"lineEdit_3").text()
-        if foret:
-            foret = getattr(self, f"lineEdit_4").text()
-        if desserte:
-            desserte = getattr(self, f"lineEdit_5").text()
-        if dep_cable:
-            dep_cable = getattr(self, f"lineEdit_6").text()
-        if ski_no_t_d:
-            ski_no_t_d = getattr(self, f"lineEdit_7").text()
-        if ski_no_t:
-            ski_no_t = getattr(self, f"lineEdit_8").text()
-        if por_obstacle:
-            por_obstacle = getattr(self, f"lineEdit_9").text()
-        if cab_obstacle:
-            cab_obstacle = getattr(self, f"lineEdit_10").text()
-        if HA:
-            HA = getattr(self, f"lineEdit_11").text()
-        if VAM:
-            VAM = getattr(self, f"lineEdit_12").text()
-        if VBP:
-            VBP = getattr(self, f"lineEdit_13").text()
 
-        return Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP
+    def get_spatial(self, Wspace, Rspace, mnt, foret, desserte, dep_cable, ski_no_t_d, ski_no_t, por_obstacle, cab_obstacle, HA, VAM, VBP):
+        _Wspace = None
+        _Rspace = None
+        _mnt = None
+        _foret = None
+        _desserte = None
+        _dep_cable = None
+        _ski_no_t_d = None
+        _ski_no_t = None
+        _por_obstacle = None
+        _cab_obstacle = None
+        _HA = None
+        _VAM = None
+        _VBP = None
+
+        if Wspace is True:
+            _Wspace = getattr(self, f"lineEdit_1").text()
+        if Rspace is True:
+            _Rspace = getattr(self, f"lineEdit_2").text()
+        if mnt is True:
+            _mnt = getattr(self, f"lineEdit_3").text()
+        if foret is True:
+            _foret = getattr(self, f"lineEdit_4").text()
+        if desserte is True:
+            _desserte = getattr(self, f"lineEdit_5").text()
+        if dep_cable is True:
+            _dep_cable = getattr(self, f"lineEdit_6").text()
+        if ski_no_t_d is True:
+            _ski_no_t_d = getattr(self, f"lineEdit_7").text()
+        if ski_no_t is True:
+            _ski_no_t = getattr(self, f"lineEdit_8").text()
+        if por_obstacle is True:
+            _por_obstacle = getattr(self, f"lineEdit_9").text()
+        if cab_obstacle is True:
+            _cab_obstacle = getattr(self, f"lineEdit_10").text()
+        if HA is True:
+            _HA = getattr(self, f"lineEdit_11").text()
+        if VAM is True:
+            _VAM = getattr(self, f"lineEdit_12").text()
+        if VBP is True:
+            _VBP = getattr(self, f"lineEdit_13").text()
+
+        return _Wspace, _Rspace, _mnt, _foret, _desserte, _dep_cable, _ski_no_t_d, _ski_no_t, _por_obstacle, _cab_obstacle, _HA, _VAM, _VBP
 
 
-    def get_skidder(self,pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes_s):
+    def get_skidder(self, pente_max, distance_max_amont, distance_max_aval, distance_max_hors_frt_dsrt, pente_amont_max, pente_aval_max, limite, bornes_s):
+        _pente_max = None
+        _distance_max_amont = None
+        _distance_max_aval = None
+        _distance_max_hors_frt_dsrt = None
+        _pente_amont_max = None
+        _pente_aval_max = None
+        _limite = None
+        _bornes_s = None
+
         if pente_max:
-            pente_max = self.spinBox_3.value()
+            _pente_max = self.spinBox_3.value()
         if distance_max_amont:
-            distance_max_amont = self.spinBox_4.value()
+            _distance_max_amont = self.spinBox_4.value()
         if distance_max_aval:
-            distance_max_aval = self.spinBox_5.value()
+            _distance_max_aval = self.spinBox_5.value()
         if distance_max_hors_frt_dsrt:
-            distance_max_hors_frt_dsrt = self.spinBox_6.value() 
+            _distance_max_hors_frt_dsrt = self.spinBox_6.value() 
         if pente_amont_max:
-            pente_amont_max = self.spinBox_7.value()
+            _pente_amont_max = self.spinBox_7.value()
         if pente_aval_max:
-            pente_aval_max = self.spinBox_1.value()
+            _pente_aval_max = self.spinBox_1.value()
         if limite:
             if self.radioButton_1.isChecked():
-                limite = 1
+                _limite = 1
             else:
-                limite = 2
+                _limite = 2
         if bornes_s:
-            bornes_s = self.plainTextEdit_1.toPlainText()
-            if not bornes_s:
+            _bornes_s = self.plainTextEdit_1.toPlainText()
+            if not _bornes_s:
                 console_warning("Veuillez remplir les bornes minimales des classes de débardages pour le skidder")
                 return
-        return pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes_s   
 
+        return _pente_max, _distance_max_amont, _distance_max_aval, _distance_max_hors_frt_dsrt, _pente_amont_max, _pente_aval_max, _limite, _bornes_s
+  
 
-    def get_porteur(self,pente_max,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes_p):
+    def get_porteur(self, pente_max, pente_max_remonant, pente_max_descendant, distance_max_pente_sup, distance_max_hors_frt, taille_grue, bornes_p):
+        _pente_max = None
+        _pente_max_remonant = None
+        _pente_max_descendant = None
+        _distance_max_pente_sup = None
+        _distance_max_hors_frt = None
+        _taille_grue = None
+        _bornes_p = None
+
         if pente_max:
-            pente_max = self.spinBox_8.value()
+            _pente_max = self.spinBox_8.value()
         if pente_max_remonant:
-            pente_max_remonant = self.spinBox_9.value()
+            _pente_max_remonant = self.spinBox_9.value()
         if pente_max_descendant:
-            pente_max_descendant = self.spinBox_12.value()
+            _pente_max_descendant = self.spinBox_12.value()
         if distance_max_pente_sup:
-            distance_max_pente_sup = self.spinBox_10.value()
+            _distance_max_pente_sup = self.spinBox_10.value()
         if distance_max_hors_frt:
-            distance_max_hors_frt = self.spinBox_11.value()
+            _distance_max_hors_frt = self.spinBox_11.value()
         if taille_grue:
-            taille_grue = self.doublespinBox_1.value()
+            _taille_grue = self.doublespinBox_1.value()
         if bornes_p:
-            bornes_p = self.plainTextEdit_2.toPlainText()
-            if not bornes_p:
+            _bornes_p = self.plainTextEdit_2.toPlainText()
+            if not _bornes_p:
                 console_warning("Veuillez remplir les bornes minimales des classes de débardages pour le porteur")
                 return
-        return pente_max,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes_p
+
+        return _pente_max, _pente_max_remonant, _pente_max_descendant, _distance_max_pente_sup, _distance_max_hors_frt, _taille_grue, _bornes_p
 
 
-    def get_type_cable(self, type_machine,supports_inter,hauteur,longueure_max,longueure_min):
+    def get_type_cable(self, type_machine, supports_inter, hauteur, longueur_max, longueur_min):
+        _type_machine = None
+        _supports_inter = None
+        _hauteur = None
+        _longueur_max = None
+        _longueur_min = None
+
         if type_machine:
-            type_machine = self.comboBox_1.currentText()
+            _type_machine = self.comboBox_1.currentText()
         if supports_inter:
-            supports_inter = self.spinBox_14.value()
+            _supports_inter = self.spinBox_14.value()
         if hauteur:
-            hauteur = self.doublespinBox_2.value()
-        if longueure_max:
-            longueure_max = self.spinBox_16.value()
-        if longueure_min:
-            longueure_min = self.spinBox_17.value()
-        return type_machine,supports_inter,hauteur,longueure_max,longueure_min
+            _hauteur = self.doublespinBox_2.value()
+        if longueur_max:
+            _longueur_max = self.spinBox_16.value()
+        if longueur_min:
+            _longueur_min = self.spinBox_17.value()
+
+        return _type_machine, _supports_inter, _hauteur, _longueur_max, _longueur_min
 
 
-    def get_type_chariot(self, type_chariot,masse,pente_min,pente_max_amont,pente_max_aval):
+    def get_type_chariot(self, type_chariot, masse, pente_min, pente_max_amont, pente_max_aval):
+        _type_chariot = None
+        _masse = None
+        _pente_min = None
+        _pente_max_amont = None
+        _pente_max_aval = None
+
         if type_chariot:
-            type_chariot = self.comboBox_2.currentText()
+            _type_chariot = self.comboBox_2.currentText()
         if masse:
-            masse = self.spinBox_22.value()
+            _masse = self.spinBox_22.value()
         if pente_min:
-            pente_min = self.spinBox_23.value()
+            _pente_min = self.spinBox_23.value()
         if pente_max_amont:
-            pente_max_amont = self.spinBox_24.value()
+            _pente_max_amont = self.spinBox_24.value()
         if pente_max_aval:
-            pente_max_aval = self.spinBox_25.value()
-        return type_chariot,masse,pente_min,pente_max_amont,pente_max_aval      
+            _pente_max_aval = self.spinBox_25.value()
+
+        return _type_chariot, _masse, _pente_min, _pente_max_amont, _pente_max_aval
 
 
-    def get_proprietes_cable(self,diamètre,masse_li,tension_rupt,elasticité):
-        if diamètre:
-            diamètre = self.doublespinBox_3.value()
+    def get_proprietes_cable(self, diametre, masse_li, tension_rupt, elasticite):
+        _diametre = None
+        _masse_li = None
+        _tension_rupt = None
+        _elasticite = None
+
+        if diametre:
+            _diametre = self.doublespinBox_3.value()
         if masse_li:
-            masse_li = self.doublespinBox_4.value()
+            _masse_li = self.doublespinBox_4.value()
         if tension_rupt:
-            tension_rupt = self.spinBox_26.value()
-        if elasticité:
-            elasticité = self.spinBox_27.value()
-        return diamètre,masse_li,tension_rupt,elasticité
+            _tension_rupt = self.spinBox_26.value()
+        if elasticite:
+            _elasticite = self.spinBox_27.value()
+
+        return _diametre, _masse_li, _tension_rupt, _elasticite
 
 
-    def get_param_modelisation(self,hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,masse_max,securite):
+    def get_param_modelisation(self, hauteur_sup, hauteur_mat, hauteur_min_cable, hauteur_max_cable, pechage, masse_max, securite):
+        _hauteur_sup = None
+        _hauteur_mat = None
+        _hauteur_min_cable = None
+        _hauteur_max_cable = None
+        _pechage = None
+        _masse_max = None
+        _securite = None
+
         if hauteur_sup:
-            hauteur_sup = self.doublespinBox_5.value()
+            _hauteur_sup = self.doublespinBox_5.value()
         if hauteur_mat:
-            hauteur_mat = self.doublespinBox_8.value()
+            _hauteur_mat = self.doublespinBox_8.value()
         if hauteur_min_cable:
-            hauteur_min_cable = self.doublespinBox_6.value()
+            _hauteur_min_cable = self.doublespinBox_6.value()
         if hauteur_max_cable:
-            hauteur_max_cable = self.doublespinBox_9.value()
+            _hauteur_max_cable = self.doublespinBox_9.value()
         if pechage:
-            pechage = self.spinBox_40.value()
+            _pechage = self.spinBox_40.value()
         if masse_max:
-            masse_max = self.spinBox_39.value()
+            _masse_max = self.spinBox_39.value()
         if securite:
-            securite = self.doublespinBox_10.value()
-        return hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,masse_max,securite
+            _securite = self.doublespinBox_10.value()
+
+        return _hauteur_sup, _hauteur_mat, _hauteur_min_cable, _hauteur_max_cable, _pechage, _masse_max, _securite
 
 
-    def get_options(self,opti,precision):
+    def get_options(self, opti, precision):
+        _opti = None
+        _precision = None
+
         if opti:
-            opti = self.checkBox_5.isChecked()
+            _opti = self.checkBox_5.isChecked()
         if precision:
-            precision = self.spinBox_41.value()
-        return opti,precision
+            _precision = self.spinBox_41.value()
+
+        return _opti, _precision
 
 
-    def get_opti_cable(self,prelevement,recalculer,Rspace_c,foret_c,VBP_c,VAM_c,pechage_c):
+    def get_opti_cable(self, prelevement, recalculer, Rspace_c, foret_c, VBP_c, VAM_c, pechage_c):
+        _prelevement = None
+        _recalculer = None
+        _Rspace_c = None
+        _foret_c = None
+        _VBP_c = None
+        _VAM_c = None
+        _pechage_c = None
+
         if prelevement:
-            prelevement = self.spinBox_48.value()
+            _prelevement = self.spinBox_48.value()
         if recalculer:
-            recalculer = self.checkBox_6.isChecked()
+            _recalculer = self.checkBox_6.isChecked()
         if Rspace_c:
-            Rspace_c = getattr(self, f"lineEdit_17").text()
+            _Rspace_c = getattr(self, f"lineEdit_17").text()
         if foret_c:
-            foret_c = getattr(self, f"lineEdit_14").text()
+            _foret_c = getattr(self, f"lineEdit_14").text()
         if VBP_c:
-            VBP_c = getattr(self, f"lineEdit_15").text()
+            _VBP_c = getattr(self, f"lineEdit_15").text()
         if VAM_c:
-            VAM_c = getattr(self, f"lineEdit_16").text()
+            _VAM_c = getattr(self, f"lineEdit_16").text()
         if pechage_c:
-            pechage_c = self.spinBox_49.value()
-        return prelevement,recalculer,Rspace_c,foret_c,VBP_c,VAM_c,pechage_c
+            _pechage_c = self.spinBox_49.value()
+
+        return _prelevement, _recalculer, _Rspace_c, _foret_c, _VBP_c, _VAM_c, _pechage_c
 
 
     def get_crit_opti(self,surface,nbr_sup_int,sens_debardage,longueure_ligne,vol_ligne,indice_prelev,VAM,dist_chariot):
-        surface_poids,nbr_sup_int_poids,sens_debardage_poids,longueure_ligne_poids,vol_ligne_poids,indice_prelev_poids,VAM_poids,dist_chariot_poids = 0,0,0,0,0,0,0,0   
+        surface_poids,nbr_sup_int_poids,sens_debardage_poids,longueure_ligne_poids,vol_ligne_poids,indice_prelev_poids,VAM_poids,dist_chariot_poids = 0,0,0,0,0,0,0,0
+        _surface, _nbr_sup_int, _sens_debardage, _longueure_ligne, _vol_ligne, _indice_prelev, _VAM, _dist_chariot = 0, 0, 0, 0, 0, 0, 0, 0    
         if surface and self.checkBox_7.isChecked():
-            surface = self.doublespinBox_11.value()
+            _surface = self.doublespinBox_11.value()
             surface_poids = self.spinBox_18.value()
         else:
-            surface = 0
+            _surface = 0
         if nbr_sup_int and self.checkBox_8.isChecked():
-            nbr_sup_int = self.spinBox_46.value()
+            _nbr_sup_int = self.spinBox_46.value()
             nbr_sup_int_poids = self.spinBox_19.value()
         else:
-            nbr_sup_int = 0
+            _nbr_sup_int = 0
         if sens_debardage and self.checkBox_9.isChecked():
-            sens_debardage = self.spinBox_45.value()
+            _sens_debardage = self.spinBox_45.value()
             sens_debardage_poids = self.spinBox_20.value()
         else:
-            sens_debardage = 0
+            _sens_debardage = 0
         if longueure_ligne and self.checkBox_10.isChecked():
-            longueure_ligne = self.spinBox_44.value()
+            _longueure_ligne = self.spinBox_44.value()
             longueure_ligne_poids = self.spinBox_21.value()
         else:
-            longueure_ligne = 0
+            _longueure_ligne = 0
         if vol_ligne and self.checkBox_11.isChecked():
-            vol_ligne = self.spinBox_43.value()
+            _vol_ligne = self.spinBox_43.value()
             vol_ligne_poids = self.spinBox_31.value()
         else:
-            vol_ligne = 0
+            _vol_ligne = 0
         if indice_prelev and self.checkBox_12.isChecked():
-            indice_prelev = self.doublespinBox_12.value()
+            _indice_prelev = self.doublespinBox_12.value()
             indice_prelev_poids = self.spinBox_32.value()
         else:
-            indice_prelev = 0
+            _indice_prelev = 0
         if VAM and self.checkBox_13.isChecked():
-            VAM = self.doublespinBox_13.value()
+            _VAM = self.doublespinBox_13.value()
             VAM_poids = self.spinBox_33.value()
         else:
-            VAM = 0
+            _VAM = 0
         if dist_chariot and self.checkBox_14.isChecked():
-            dist_chariot = self.spinBox_50.value()
+            _dist_chariot = self.spinBox_50.value()
             dist_chariot_poids = self.spinBox_51.value()
         else:
-            dist_chariot = 0
-        return surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM,VAM_poids,dist_chariot,dist_chariot_poids
+            _dist_chariot = 0
+        return _surface,surface_poids,_nbr_sup_int,nbr_sup_int_poids,_sens_debardage,sens_debardage_poids,_longueure_ligne,longueure_ligne_poids,_vol_ligne,vol_ligne_poids,_indice_prelev,indice_prelev_poids,_VAM,VAM_poids,_dist_chariot,dist_chariot_poids
 
 
 # Fonctions qui gère les calculs liés au porteur
@@ -829,17 +913,17 @@ def raster_get_info(in_file_name):
 
 
 def write_file():
-    Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
-    ski,por,cab,opti,pente = Sylvaccess_pluginDialog.get_general(1,1,1,1,1,1)
-    pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes=Sylvaccess_pluginDialog.get_skidder(1,1,1,1,1,1,1,1,1)
-    pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2=Sylvaccess_pluginDialog.get_porteur(1,1,1,1,1,1,1,1)
-    type_machine,supports_inter,hauteur,longueure_max,longueure_min=Sylvaccess_pluginDialog.get_type_cable(1,1,1,1,1,1)
-    type_chariot,masse,pente_min,pente_max_amont,pente_max_aval = Sylvaccess_pluginDialog.get_type_chariot(1,1,1,1,1,1,1)
-    diamètre,masse_li,tension_rupt,elasticité = Sylvaccess_pluginDialog.get_proprietes_cable(1,1,1,1,1)
-    hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,masse_max,securite = Sylvaccess_pluginDialog.get_param_modelisation(1,1,1,1,1,1,1,1)
-    opti2,precision = Sylvaccess_pluginDialog.get_options(1,1,1)
-    prelevement,recalculer,Rspace2,foret2,VBP2,VAM2,pechage2 = Sylvaccess_pluginDialog.get_opti_cable(1,1,1,1,1,1,1,1)
-    surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1,1)
+    Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    ski,por,cab,opti,pente = Sylvaccess_pluginDialog.get_general(1,1,1,1,1)
+    pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes=Sylvaccess_pluginDialog.get_skidder(1,1,1,1,1,1,1,1)
+    pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2=Sylvaccess_pluginDialog.get_porteur(1,1,1,1,1,1,1)
+    type_machine,supports_inter,hauteur,longueure_max,longueure_min=Sylvaccess_pluginDialog.get_type_cable(1,1,1,1,1)
+    type_chariot,masse,pente_min,pente_max_amont,pente_max_aval = Sylvaccess_pluginDialog.get_type_chariot(1,1,1,1,1,1)
+    diamètre,masse_li,tension_rupt,elasticité = Sylvaccess_pluginDialog.get_proprites_cable(1,1,1,1)
+    hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,masse_max,securite = Sylvaccess_pluginDialog.get_param_modelisation(1,1,1,1,1,1,1)
+    opti2,precision = Sylvaccess_pluginDialog.get_options(1,1)
+    prelevement,recalculer,Rspace2,foret2,VBP2,VAM2,pechage2 = Sylvaccess_pluginDialog.get_opti_cable(1,1,1,1,1,1,1)
+    surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1)
     var_list= [Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP,ski,por,cab,opti,pente,pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,
                pente_amont_max,pente_aval_max,limite,bornes,pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2,type_machine,supports_inter,hauteur,
                longueure_max,longueure_min,type_chariot,masse,pente_min,pente_max_amont,pente_max_aval,diamètre,masse_li,tension_rupt,elasticité,hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,
@@ -1428,15 +1512,15 @@ def focal_stat(in_file_name,out_file_name,methode='MEAN',nbcell=3):
     Data = source_ds.GetRasterBand(1).ReadAsArray()  
     #Make analysis
     if methode=='MEAN':
-        outData = fc.focal_stat_mean(np.float_(Data),float(nodata),nbcell)
+        outData = focal_stat_mean(np.float_(Data),float(nodata),nbcell)
     elif methode=='MIN':
-        outData = fc.focal_stat_min(np.float_(Data),float(nodata),nbcell)
+        outData = focal_stat_min(np.float_(Data),float(nodata),nbcell)
     elif methode=='MAX':
-        outData = fc.focal_stat_max(np.float_(Data),float(nodata),nbcell) 
+        outData = focal_stat_max(np.float_(Data),float(nodata),nbcell) 
     elif methode=='NB':
-        outData = fc.focal_stat_nb(np.float_(Data),float(nodata),nbcell)   
+        outData = focal_stat_nb(np.float_(Data),float(nodata),nbcell)   
     elif methode=='SUM':
-        outData = fc.focal_stat_sum(np.float_(Data),float(nodata),nbcell)   
+        outData = focal_stat_sum(np.float_(Data),float(nodata),nbcell)   
     #Inititialiaze output raster
     if os.path.exists(out_file_name):driver.Delete(out_file_name)
     target_ds = driver.Create(out_file_name, int(ncols), int(nrows), Bandnb, gdal.GDT_Float32)    
@@ -1467,15 +1551,15 @@ def focal_stat(in_file_name,out_file_name,methode='MEAN',nbcell=3):
 # Fonctions qui gère les calculs liés au cable
 def Cable():
     console_info("Cable")
-    Wspace,Rspace,file_MNT,file_shp_Foret,_,file_shp_Cable_dep,_,_,_,Dir_Obs_cable,file_Htree,file_Vol_AM,file_Vol_ha = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,1,0,1,0,0,0,1,1,1,1)
-    _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general(1,0,0,0,0,1)
-    Cable_type,sup_max,Htower,Lmax,Lmin=Sylvaccess_pluginDialog.get_type_cable(1,1,1,1,1,1)
-    Carriage_type,Pchar,slope_grav,slope_Wliner_up,slope_Wliner_down = Sylvaccess_pluginDialog.get_type_chariot(1,1,1,1,1,1,1)
-    d,masse_li,rupt_res,E = Sylvaccess_pluginDialog.get_proprietes_cable(1,1,1,1,1)
-    Hintsup,Hend,Hline_min,Hline_max,Lhor_max,Load_max,safe_fact = Sylvaccess_pluginDialog.get_param_modelisation(1,1,1,1,1,1,1,1)
-    test_cable_optimise,precision = Sylvaccess_pluginDialog.get_options(1,1,1)
-    prelevement, _, _, _, _, _, _ = Sylvaccess_pluginDialog.get_opti_cable(1,1, 0, 0, 0, 0, 0, 0)
-    surface, surface_poids, nbr_sup_int, nbr_sup_int_poids, sens_debardage, sens_debardage_poids, longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1,1)
+    Wspace,Rspace,file_MNT,file_shp_Foret,_,file_shp_Cable_dep,_,_,_,Dir_Obs_cable,file_Htree,file_Vol_AM,file_Vol_ha = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,0,1,0,0,0,1,1,1,1)
+    _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general(0,0,0,0,1)
+    Cable_type,sup_max,Htower,Lmax,Lmin=Sylvaccess_pluginDialog.get_type_cable(1,1,1,1,1)
+    Carriage_type,Pchar,slope_grav,slope_Wliner_up,slope_Wliner_down = Sylvaccess_pluginDialog.get_type_chariot(1,1,1,1,1,1)
+    d,masse_li,rupt_res,E = Sylvaccess_pluginDialog.get_proprites_cable(1,1,1,1)
+    Hintsup,Hend,Hline_min,Hline_max,Lhor_max,Load_max,safe_fact = Sylvaccess_pluginDialog.get_param_modelisation(1,1,1,1,1,1,1)
+    test_cable_optimise,precision = Sylvaccess_pluginDialog.get_options(1,1)
+    prelevement, _, _, _, _, _, _ = Sylvaccess_pluginDialog.get_opti_cable(1, 0, 0, 0, 0, 0, 0)
+    surface, surface_poids, nbr_sup_int, nbr_sup_int_poids, sens_debardage, sens_debardage_poids, longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1)
 
     masse_li2 = 0.5
     masse_li3 = 0.5
@@ -1518,7 +1602,7 @@ def Cable():
         try:
             Aspect = np.uint16(np.load(Dir_temp+"Aspect.npy"))
         except:
-            Aspect = np.uint16(fc.exposition(MNT,Csize,-9999))    
+            Aspect = np.uint16(exposition(MNT,Csize,-9999))    
         try:
             CoordRoute= np.load(Dir_temp+"CoordRoute.npy") 
         except:
@@ -1662,11 +1746,11 @@ def Cable():
                             continue
                         #console_info az,"up",Line[-1,0] 
                         if VariaH:
-                            Span = fc.OptPyl_Up(Line,Alts,Span,Htower,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,
+                            Span = OptPyl_Up(Line,Alts,Span,Htower,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,
                                                  Csize,angle_intsup,EAo,sup_max,rastLosup,rastTh,rastTv,Tmax,
                                                  LminSpan,slope_min_up,slope_max_up,test_hfor,nbconfig)
                         else:
-                            Span = fc.OptPyl_Up_NoH(Line,Alts,Span,Htower,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,
+                            Span = OptPyl_Up_NoH(Line,Alts,Span,Htower,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,
                                                      Csize,angle_intsup,EAo,sup_max,rastLosup,rastTh,rastTv,Tmax,
                                                      LminSpan,slope_min_up,slope_max_up,test_hfor,nbconfig)
                         config = 1
@@ -1675,7 +1759,7 @@ def Cable():
                             continue
                         #console_info az,"down",Line[-1,0]
                         if VariaH:
-                            Span = fc.OptPyl_Down_init(Line,Alts,Span,Htower, Hend,masse_li,masse_li2,masse_li3,Fo,
+                            Span = OptPyl_Down_init(Line,Alts,Span,Htower, Hend,masse_li,masse_li2,masse_li3,Fo,
                                              Hline_min,Hline_max,Csize,angle_intsup,EAo, 
                                              sup_max,rastLosup,rastTh,rastTv,Tmax,LminSpan,
                                              slope_min_down, slope_max_down,test_hfor)
@@ -1686,12 +1770,12 @@ def Cable():
                             Line2=return_profile(Line[:indmax+1])
                             Falt = InterpolatedUnivariateSpline(Line2[:,0],Line2[:,1])
                             Alts = Falt(np.arange(0.,Lline,0.5))    
-                            Span = fc.OptPyl_Down(Line2,Alts,Span*0,Htower,Hintsup,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,Csize,angle_intsup,
+                            Span = OptPyl_Down(Line2,Alts,Span*0,Htower,Hintsup,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,Csize,angle_intsup,
                                                    EAo,E,d,sup_max,rastLosup,rastTh,rastTv,Tmax,LminSpan, min(-slope_min_down,-slope_max_down),
                                                    max(-slope_min_down,-slope_max_down),Lmax2,test_hfor,nbconfig)
                             config=-1
                         else:
-                            Span = fc.OptPyl_Down_init_NoH(Line,Alts,Span,Htower, Hend,masse_li,masse_li2,masse_li3,Fo,
+                            Span = OptPyl_Down_init_NoH(Line,Alts,Span,Htower, Hend,masse_li,masse_li2,masse_li3,Fo,
                                              Hline_min,Hline_max,Csize,angle_intsup,EAo,
                                              sup_max,rastLosup,rastTh,rastTv,Tmax,LminSpan,
                                              slope_min_down, slope_max_down,test_hfor,nbconfig)
@@ -1702,7 +1786,7 @@ def Cable():
                             Line2=return_profile(Line[:indmax+1])
                             Falt = InterpolatedUnivariateSpline(Line2[:,0],Line2[:,1])
                             Alts = Falt(np.arange(0.,Lline,0.5))    
-                            Span = fc.OptPyl_Down_NoH(Line2,Alts,Span*0,Htower,Hintsup,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,Csize,
+                            Span = OptPyl_Down_NoH(Line2,Alts,Span*0,Htower,Hintsup,Hend,masse_li,masse_li2,masse_li3,Fo,Hline_min,Hline_max,Csize,
                                                        angle_intsup,EAo,E,d,sup_max,rastLosup,rastTh,rastTv,Tmax,LminSpan,min(-slope_min_down,-slope_max_down),
                                                        max(-slope_min_down,-slope_max_down),Lmax2,test_hfor,nbconfig)
                             config=-1
@@ -1716,14 +1800,14 @@ def Cable():
                     Lline = Line[ind_max_Line,0]                    
                     if test_vp or test_vam:    
                         if RoadState==2:
-                            Distance_moyenne,Surface,Vtot,VAM,Rast_couv = fc.get_line_carac_vol(coordX,coordY,az,Csize,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Forest,Rast_couv,Vol_ha,Vol_AM)
+                            Distance_moyenne,Surface,Vtot,VAM,Rast_couv = get_line_carac_vol(coordX,coordY,az,Csize,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Forest,Rast_couv,Vol_ha,Vol_AM)
                         else: 
-                            Distance_moyenne,Surface,Vtot,VAM,Rast_couv2 = fc.get_line_carac_vol(coordX,coordY,az,Csize,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Forest,Rast_couv2,Vol_ha,Vol_AM)
+                            Distance_moyenne,Surface,Vtot,VAM,Rast_couv2 = get_line_carac_vol(coordX,coordY,az,Csize,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Forest,Rast_couv2,Vol_ha,Vol_AM)
                     else:
                         if RoadState==2:
-                            Distance_moyenne,Surface,Rast_couv = fc.get_line_carac_simple(coordX,coordY,az,Csize,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Forest,Rast_couv)
+                            Distance_moyenne,Surface,Rast_couv = get_line_carac_simple(coordX,coordY,az,Csize,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Forest,Rast_couv)
                         else:
-                            Distance_moyenne,Surface,Rast_couv2 = fc.get_line_carac_simple(coordX,coordY,az,Csize,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Forest,Rast_couv2)
+                            Distance_moyenne,Surface,Rast_couv2 = get_line_carac_simple(coordX,coordY,az,Csize,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Forest,Rast_couv2)
                     #pixel, direction
                     Tab[id_line,0],Tab[id_line,1] = pixel,az
                     #Xstart,Ystart,Zstart,Hcable_start
@@ -1913,7 +1997,7 @@ def Cable():
 
 
 def prep_rast(Dir_temp,d,E,Tmax,Lmax,Fo,masse_li,masse_li2,masse_li3,Csize):
-    rastLosup,rastTh,rastTv = fc.Tabmesh(d,E,Tmax,Lmax,Fo,masse_li,masse_li2,masse_li3,Csize)
+    rastLosup,rastTh,rastTv = Tabmesh(d,E,Tmax,Lmax,Fo,masse_li,masse_li2,masse_li3,Csize)
     np.save(Dir_temp+"rastLosup.npy",rastLosup)
     np.save(Dir_temp+"rastTh.npy",rastTh)
     np.save(Dir_temp+"rastTv.npy",rastTv)
@@ -1979,7 +2063,7 @@ def get_ligne3(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,P
               Fo,Tmax,masse_li,masse_li2,masse_li3,Htower,Hend,Hline_max,Hintsup,Lslope,PropSlope):
                   
     npix = Nbpix_line[az]
-    npix = fc.get_npix(az,npix,coordY,coordX,ncols,nrows,Row_line,Col_line)   
+    npix = get_npix(az,npix,coordY,coordX,ncols,nrows,Row_line,Col_line)   
     if D_line[az,npix-1]>Lmin:  
         Line=np.zeros((npix,11),dtype=np.float)
         inds = (Row_line[az,0:npix]+coordY,Col_line[az,0:npix]+coordX)        
@@ -2016,7 +2100,7 @@ def get_ligne3(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,P
             if test:
                 break
         Line=Line[0:i+1]
-        test,indmax,Lline=fc.check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret,Lslope,PropSlope)
+        test,indmax,Lline=check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret,Lslope,PropSlope)
         Lline = 2 # A modifier    
         return test,Lline,Line[0:indmax, [0, 1, 2, 3, 4, 5, 6,10,9]]
     else:
@@ -2312,7 +2396,7 @@ def create_buffer2(Csize,Lmax,Lhor_max):
 def get_ligne(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,Pente,Lmax,Lmin,Csize,
               Row_line,Col_line,D_line,Nbpix_line,angle_transv,slope_trans,ncols,nrows,Lsans_foret):
     npix = Nbpix_line[az]
-    npix = fc.get_npix(az,npix,coordY,coordX,ncols,nrows,Row_line,Col_line)   
+    npix = get_npix(az,npix,coordY,coordX,ncols,nrows,Row_line,Col_line)   
     if D_line[az,npix-1]>Lmin:  
         Line=np.zeros((npix,10),dtype=np.float)
         inds = (Row_line[az,0:npix]+coordY,Col_line[az,0:npix]+coordX)        
@@ -2321,7 +2405,7 @@ def get_ligne(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,Pe
         Line[:,5],Line[:,6]=Col_line[az,0:npix]+coordX,Row_line[az,0:npix]+coordY 
         Line[:,7],Line[:,8],Line[:,9]=Fin_ligne_forcee[inds],np.abs(((az-np.int_(Aspect[inds]))+180)%360-180),(np.int_(Pente[inds])<slope_trans)*1
         Line[:,8] = (Line[:,8]>(90+angle_transv))*1+(Line[:,8]<(90-angle_transv))*1
-        test,indmax,Lline=fc.check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret)    
+        test,indmax,Lline=check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret)    
         return test,Lline,Line[0:indmax,0:7]
     else:
         return 0,0,0
@@ -2528,7 +2612,7 @@ def prepa_desserte_cable(Desserte_shapefile_name,MNT_file_name,Dir_temp,Pond_pen
             indice_forest_road +=1
     np.save(Dir_temp+"ID_RF.npy",ID_RF)  
     np.save(Dir_temp+"ID_res_pub.npy",ID_res_pub)
-    Dtransp_route, Lien_RF_respub = fc.calcul_distance_de_cout(ID_res_pub,Pond_pente,Route,Csize) 
+    Dtransp_route, Lien_RF_respub = calcul_distance_de_cout(ID_res_pub,Pond_pente,Route,Csize) 
     ### Get only forest roads
     Dir_temp2 = Dir_temp+"Temp/"
     try:os.mkdir(Dir_temp2)
@@ -2567,7 +2651,7 @@ def prepa_obstacle_cable(Obstacles_directory,file_MNT,Dir_temp):
     Csize= values[4]
     MNT = read_raster(file_MNT)
     MNT[MNT==values[5]]=-9999
-    Pente = fc.pente(np.float_(MNT),Csize,-9999)     
+    Pente = pente(np.float_(MNT),Csize,-9999)     
     if Obstacles_directory!="":
         liste_file = os.listdir(Obstacles_directory)
         liste_obs = [] 
@@ -2585,7 +2669,7 @@ def prepa_obstacle_cable(Obstacles_directory,file_MNT,Dir_temp):
 
 
 def prepa_pond_pente_cable(MNT,Csize,Direct,head_text):
-    Pente = fc.pente(MNT,Csize,-9999)
+    Pente = pente(MNT,Csize,-9999)
     Pond_pente = np.sqrt((Pente*0.01*Csize)**2+Csize**2)/float(Csize)
     Pond_pente[Pente==-9999] = 10000
     save_float_ascii(Direct+'/pond_pente.asc',head_text,Pond_pente)
@@ -2724,7 +2808,7 @@ def directions_a_tester(Dir_route,Dir_list,angle_sup,id_fin_ligne):
 
 def get_cable_configs(slope_Wliner_up,slope_Wliner_down,slope_grav,Skid_direction):
     #Get folder
-    _,Rspace,_,_,_,_,_,_,_,_,_,_,_ = Sylvaccess_pluginDialog.get_spatial(1,0,1,0,0,0,0,0,0,0,0,0,0,0)
+    _,Rspace,_,_,_,_,_,_,_,_,_,_,_ = Sylvaccess_pluginDialog.get_spatial(0,1,0,0,0,0,0,0,0,0,0,0,0)
     dirs = [d for d in os.listdir(Rspace) if os.path.isdir(os.path.join(Rspace, d))]
     list_dir = []
     
@@ -2735,9 +2819,9 @@ def get_cable_configs(slope_Wliner_up,slope_Wliner_down,slope_grav,Skid_directio
     optnum = len(list_dir)+1
     Rspace_c=Rspace+'Cable_'+str(optnum)        
     filename = Rspace_c+"/"
-    Cable_type,_,_,_,_ = Sylvaccess_pluginDialog.get_type_cable(1,1,0,0,0,0)
+    Cable_type,_,_,_,_ = Sylvaccess_pluginDialog.get_type_cable(1,0,0,0,0)
     filename += str(Cable_type)
-    Carriage_type,_,_,_,_ = Sylvaccess_pluginDialog.get_type_chariot(1,1,0,0,0,0)
+    Carriage_type,_,_,_,_ = Sylvaccess_pluginDialog.get_type_chariot(1,0,0,0,0)
     filename += "_"+str(Carriage_type)
     
     if Skid_direction ==0:
@@ -2898,7 +2982,7 @@ def select_best_lines(w_list,lim_list,Tab2,nrows,ncols,Csize,Row_ext,Col_ext,D_e
     for id_tab in vals:
         coordX,coordY = Tabbis[id_tab,-2],Tabbis[id_tab,-1]
         az,Lline=Tabbis[id_tab,1],sqrt((Tabbis[id_tab,2]-Tabbis[id_tab,6])**2+(Tabbis[id_tab,3]-Tabbis[id_tab,7])**2)  
-        test_free,Rast_couv=fc.Check_line2(coordX,coordY,az,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,D_lat,Rast_couv,recouv,0)
+        test_free,Rast_couv=Check_line2(coordX,coordY,az,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,D_lat,Rast_couv,recouv,0)
         if test_free:
             vals2.append(id_tab)
     # Check taht line contribute to total impacted surface
@@ -2907,7 +2991,7 @@ def select_best_lines(w_list,lim_list,Tab2,nrows,ncols,Csize,Row_ext,Col_ext,D_e
     for id_tab in vals2:
         coordX,coordY = Tabbis[id_tab,-2],Tabbis[id_tab,-1]
         az,Lline=Tabbis[id_tab,1],sqrt((Tabbis[id_tab,2]-Tabbis[id_tab,6])**2+(Tabbis[id_tab,3]-Tabbis[id_tab,7])**2)  
-        prop = fc.get_prop(coordX,coordY,az,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,D_lat,Rast_couv)  
+        prop = get_prop(coordX,coordY,az,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Rast_couv)  
         Tab_result[id_line]=id_tab,prop*1000
         id_line+=1
     Tab_result=Tab_result[np.lexsort((Tab_result[:,0],Tab_result[:,1]))]  
@@ -2918,7 +3002,7 @@ def select_best_lines(w_list,lim_list,Tab2,nrows,ncols,Csize,Row_ext,Col_ext,D_e
     for id_tab in Tab_result[:,0]:
         coordX,coordY = Tabbis[id_tab,-2],Tabbis[id_tab,-1]
         az,Lline=Tabbis[id_tab,1],sqrt((Tabbis[id_tab,2]-Tabbis[id_tab,6])**2+(Tabbis[id_tab,3]-Tabbis[id_tab,7])**2) 
-        test_free,Rast_couv=fc.Check_line3(coordX,coordY,az,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Rast_couv,0.6)         
+        test_free,Rast_couv=Check_line3(coordX,coordY,az,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Rast_couv,0.6)         
         if test_free:
             Tab_result2[id_line]=Tabbis[id_tab,0:-2]
             id_line+=1    
@@ -3077,7 +3161,7 @@ def generate_info_ligne(Dir_result,w_list,lim_list,Tab,Rast_couv,Vol_ha,Vol_AM,C
 
 def generate_info_cable_simu(Dir_result,Tab,Rast_couv,Vol_ha,Csize,Forest,Pente,Pente_max_bucheron):
     filename = Dir_result+"Resume_resultat_sylvaccess_cable.txt"
-    Pente_max = fc.focal_stat_max(np.float_(Pente),-9999,1)
+    Pente_max = focal_stat_max(np.float_(Pente),-9999,1)
     Pente_ok_buch = np.int8((Pente_max<=Pente_max_bucheron))
     del Pente_max
     gc.collect()    
@@ -3230,7 +3314,7 @@ def prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_Dep,Dir_Obs_c
     del Foret
     console_info("    - Raster de foret termine")    
     ### Forest : shapefile to raster 
-    Exposition = fc.exposition(MNT,Csize,-9999)
+    Exposition = exposition(MNT,Csize,-9999)
     np.save(Dir_temp+"Aspect",np.uint16(Exposition+0.5))
     Pente = prepa_obstacle_cable(Dir_Obs_cable,file_MNT,Dir_temp)
     np.save(Dir_temp+"Pente",Pente)    
@@ -3266,7 +3350,7 @@ def prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_Dep,Dir_Obs_c
             Lien_RF[ID,2]=Existing[pixel[0],pixel[1]]
         ID +=1         
     # Link RF with res_pub and calculate transportation distance
-#    Lien_RF=fc.Link_RF_res_pub(Tab_res_pub,Pond_pente,Route_for, Lien_RF,Csize) 
+#    Lien_RF=Link_RF_res_pub(Tab_res_pub,Pond_pente,Route_for, Lien_RF,Csize) 
 #    Lien_RF=Lien_RF[Lien_RF[:,4]>0]
     Lien_RF=Lien_RF[Lien_RF[:,2]>-1]
     np.save(Dir_temp+"Lien_RF_c",Lien_RF)    
@@ -3364,9 +3448,9 @@ def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,
             az=Tab[i,1]
             Lline=sqrt((Tab[i,2]-Tab[i,6])**2+(Tab[i,3]-Tab[i,7])**2)                                                      
             if test_vp or test_vam:
-                Distance_moyenne,Surface,Vtot,VAM,Rast_couv = fc.get_line_carac_vol(coordX,coordY,az,Csize,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Forest,Rast_couv,Vol_ha,Vol_AM)
+                Distance_moyenne,Surface,Vtot,VAM,Rast_couv = get_line_carac_vol(coordX,coordY,az,Csize,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Forest,Rast_couv,Vol_ha,Vol_AM)
             else:
-                Distance_moyenne,Surface,Rast_couv = fc.get_line_carac_simple(coordX,coordY,az,Csize,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Forest,Rast_couv)
+                Distance_moyenne,Surface,Rast_couv = get_line_carac_simple(coordX,coordY,az,Csize,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Forest,Rast_couv)
             #Surface foret Dmoy chariot
             Tab[i,13],Tab[i,14]=Surface,Distance_moyenne
             #Vtot IPC
@@ -3476,9 +3560,9 @@ def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,
 # Fonctions qui gère les calculs liés au skidder
 
 def Skidder():
-    Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,_,Dir_Full_Obs_skidder,Dir_Partial_Obs_skidder,_,_,file_Vol_ha,_,_ = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,1,1,0,1,1,0,0,1,0,0)
-    _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general(1,0,0,0,0,1)
-    Pente_max_skidder,Dtreuil_max_up,Dtreuil_max_down,Dmax_train_near_for,Pmax_amont,Pmax_aval,Option_Skidder,Skid_Debclass=Sylvaccess_pluginDialog.get_skidder(1,1,1,1,1,1,1,1,1)
+    Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,_,Dir_Full_Obs_skidder,Dir_Partial_Obs_skidder,_,_,file_Vol_ha,_,_ = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,1,0,1,1,0,0,1,0,0)
+    _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general(0,0,0,0,1)
+    Pente_max_skidder,Dtreuil_max_up,Dtreuil_max_down,Dmax_train_near_for,Pmax_amont,Pmax_aval,Option_Skidder,Skid_Debclass=Sylvaccess_pluginDialog.get_skidder(1,1,1,1,1,1,1,1)
     console_info("Debut du modele skidder")
     
     Hdebut = datetime.datetime.now()
@@ -3542,7 +3626,7 @@ def Skidder():
     orig = Dtreuil_max_up - coeff*deniv_up
     Csize = values[4]
     Pond_pente[Full_Obstacles_skidder==1] = 1000
-    Pente_max = fc.focal_stat_max(np.float_(Pente),-9999,1)
+    Pente_max = focal_stat_max(np.float_(Pente),-9999,1)
     Pente_ok_buch = np.int8((Pente_max<=Pente_max_bucheron))
     del Pente_max
     gc.collect()
@@ -3583,20 +3667,20 @@ def Skidder():
     zone_rast[MNT_OK==0]=0   
     from_rast = np.int8(((Piste==1)+(Route_for==1))>0)
     from_rast[Res_pub==1]=0
-    Zone_for,_ = fc.calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize) 
+    Zone_for,_ = calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize) 
     Zone_for[Zone_for>=0]=1
     Zone_for[from_rast==1]=1
     Zone_for=np.int8(Zone_for)
     
     # Create a buffer of Dmax_out_forest around these area taking into account slope and obstacles
-    from_rast = fc.focal_stat_nb(np.float_(Zone_for==1),0,1)
+    from_rast = focal_stat_nb(np.float_(Zone_for==1),0,1)
     from_rast = np.int8((from_rast<9)*(from_rast>0))
     zone_rast = np.copy(Pente_ok_skid)
     zone_rast[Full_Obstacles_skidder==1]=0
     zone_rast[Partial_Obstacles_skidder==1]=0
     zone_rast[Res_pub==1]=0   
     zone_rast[MNT_OK==0]=0 
-    Zone_for2,Out_alloc = fc.calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize,Dmax_train_near_for) 
+    Zone_for2,Out_alloc = calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize,Dmax_train_near_for) 
     Pente_ok_skidder = np.int8(Zone_for2>0)
     Pente_ok_skidder[Zone_for==1]=1 
     
@@ -3604,22 +3688,22 @@ def Skidder():
     gc.collect()
     
     #Stick all forest with pente_ok_skidder to the area
-    from_rast = fc.focal_stat_nb(np.float_(Pente_ok_skidder==1),0,1)
+    from_rast = focal_stat_nb(np.float_(Pente_ok_skidder==1),0,1)
     from_rast = np.int8((from_rast<9)*(from_rast>0))
     zone_rast = np.int8(1*Pente_ok_skid*(Foret==1))
     zone_rast[Full_Obstacles_skidder==1]=0
     zone_rast[Partial_Obstacles_skidder==1]=0
     zone_rast[Res_pub==1]=0   
     zone_rast[MNT_OK==0]=0   
-    Zone_for,Out_alloc = fc.calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize) 
+    Zone_for,Out_alloc = calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize) 
     Pente_ok_skidder[Zone_for>=0]=1    
            
     del Zone_for,from_rast,zone_rast,Out_alloc,Pente_ok_skid
     gc.collect()     
     
     
-    D_foret_piste,L_Piste,D_piste=fc.Dfwd_flat_forest_tracks(Lien_piste, Pond_pente, Pente_ok_skidder*(Route_for==0)*1, Csize)    
-    D_foret_RF,L_RF = fc.Dfwd_flat_forest_road(Lien_RF,Pond_pente,Pente_ok_skidder*1*(Piste==0),Csize)
+    D_foret_piste,L_Piste,D_piste=Dfwd_flat_forest_tracks(Lien_piste, Pond_pente, Pente_ok_skidder*(Route_for==0)*1, Csize)    
+    D_foret_RF,L_RF = Dfwd_flat_forest_road(Lien_RF,Pond_pente,Pente_ok_skidder*1*(Piste==0),Csize)
     
     del Pente_ok_skidder,Pond_pente
     gc.collect()          
@@ -3629,7 +3713,7 @@ def Skidder():
     ### Calculation of winching distance from forest roads
     ###############################################################################################################################################
     
-    DebRF_D,DebRF_LRF=fc.skid_debusq_RF(Lien_RF,MNT,Row_line,Col_line,D_line,Nbpix_line,coeff,orig,Pmax_up,Pmax_down,
+    DebRF_D,DebRF_LRF=skid_debusq_RF(Lien_RF,MNT,Row_line,Col_line,D_line,Nbpix_line,coeff,orig,Pmax_up,Pmax_down,
                                         Dtreuil_max_up,Dtreuil_max_down,nrows,ncols,Zone_OK*(Route_for==0)*1*(Piste==0))
     
 
@@ -3640,7 +3724,7 @@ def Skidder():
     #### Calculation of winching distance from forest tracks
     ###############################################################################################################################################                 
     
-    Debp_D,Debp_LP,Debp_Dtrpiste=fc.skid_debusq_Piste(Lien_piste,MNT,Row_line,Col_line,D_line,Nbpix_line,coeff,orig,Pmax_up,Pmax_down,
+    Debp_D,Debp_LP,Debp_Dtrpiste=skid_debusq_Piste(Lien_piste,MNT,Row_line,Col_line,D_line,Nbpix_line,coeff,orig,Pmax_up,Pmax_down,
                                                       Dtreuil_max_up,Dtreuil_max_down,nrows,ncols,Zone_OK*(Piste==0)*1*(Route_for==0))
 
 
@@ -3760,7 +3844,7 @@ def Skidder():
     ################################################################################################################################################  
     ### Calculation of winching distance from contours
     ################################################################################################################################################
-    contour = fc.focal_stat_nb(np.float_((zone_tracteur==1)*1),0,1)
+    contour = focal_stat_nb(np.float_((zone_tracteur==1)*1),0,1)
     contour = ((contour<9)*(contour>0)>0)*1
     contour[Full_Obstacles_skidder==1]=0
     contour[Partial_Obstacles_skidder==1]=0
@@ -3794,7 +3878,7 @@ def Skidder():
     gc.collect()    
     
     # Get the contour of traversable area
-    Ddebus,L_RF,L_Piste,Dpis,Dfor=fc.skid_debusq_contour(Lien_contour,MNT,Row_line,Col_line,D_line,Nbpix_line,coeff,orig,Pmax_up,Pmax_down,
+    Ddebus,L_RF,L_Piste,Dpis,Dfor=skid_debusq_contour(Lien_contour,MNT,Row_line,Col_line,D_line,Nbpix_line,coeff,orig,Pmax_up,Pmax_down,
                                                          Dtreuil_max_up,Dtreuil_max_down,nrows,ncols,Zone_OK*1*(Ddebusquage<=0))
                                                       
     del Lien_contour,pixels,MNT
@@ -3826,7 +3910,7 @@ def Skidder():
     gc.collect()
     
     # Fill Lien foret respub and Lien foret RF
-    Lien_foret_Res_pub,Lien_foret_RF,Keep=fc.fill_Link(Lien_foret_piste,Lien_piste,Lien_RF, Lien_foret_RF, nrows,ncols)
+    Lien_foret_Res_pub,Lien_foret_RF,Keep=fill_Link(Lien_foret_piste,Lien_piste,Lien_RF, Lien_foret_RF, nrows,ncols)
     
     Temp = (Keep<1)*((Piste==1)+(Route_for==1))>0
     DTrain_piste[Temp] = -9999
@@ -4419,7 +4503,7 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
     # Slope raster
     MNT,Extent,Csize,_ = load_float_raster(file_MNT,Dir_temp)
     np.save(Dir_temp+"MNT",np.float32(MNT))
-    Pente = fc.pente(MNT,Csize,-9999)
+    Pente = pente(MNT,Csize,-9999)
     np.save(Dir_temp+"Pente",np.float32(Pente))    
     # Cost raster of slope
     Pond_pente = np.sqrt((Pente*0.01*Csize)**2+Csize**2)/float(Csize)
@@ -4458,7 +4542,7 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
             Lien_RF[ID,2]=100001
         ID +=1 
     # Link RF with res_pub and calculate transportation distance
-    Lien_RF=fc.Link_RF_res_pub(Tab_res_pub,Pond_pente,Route_for,Res_pub, Lien_RF,Csize) 
+    Lien_RF=Link_RF_res_pub(Tab_res_pub,Pond_pente,Route_for,Res_pub, Lien_RF,Csize) 
     Lien_RF[:,2]=np.int_(Lien_RF[:,2]+0.5)
     Lien_RF=Lien_RF.astype('int')
     Temp = (Lien_RF[:,3]>0)*(Lien_RF[:,2]==0)
@@ -4492,7 +4576,7 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
         else:
             Lien_piste[ID,2]=100001
         ID +=1
-    Lien_piste=fc.Link_tracks_res_pub(Tab_res_pub,Lien_RF,Pond_pente,Piste,Route_for,Res_pub,Lien_piste,Csize)
+    Lien_piste=Link_tracks_res_pub(Tab_res_pub,Lien_RF,Pond_pente,Piste,Route_for,Res_pub,Lien_piste,Csize)
     Lien_piste[:,2]=np.int_(Lien_piste[:,2]+0.5)
     Lien_piste=Lien_piste.astype('int')
     Temp = (Lien_piste[:,5]>0)*(Lien_piste[:,2]==0)
@@ -4583,9 +4667,9 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
     # Slope raster
     MNT,Extent,Csize,_ = load_float_raster(file_MNT,Dir_temp)
     np.save(Dir_temp+"MNT",np.float32(MNT))      
-    Pente = fc.pente(MNT,Csize,-9999)
+    Pente = pente(MNT,Csize,-9999)
     np.save(Dir_temp+"Pente",np.float32(Pente))    
-    Exposition = np.int16(fc.exposition(MNT,Csize,-9999)+0.5)
+    Exposition = np.int16(exposition(MNT,Csize,-9999)+0.5)
     Exposition[Pente==-9999] = -9999
     np.save(Dir_temp+"Aspect",Exposition) 
     # Cost raster of slope
@@ -4624,7 +4708,7 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
             Lien_RF[ID,2]=100001
         ID +=1 
     # Link RF with res_pub and calculate transportation distance
-    Lien_RF=fc.Link_RF_res_pub(Tab_res_pub,Pond_pente,Route_for,Res_pub, Lien_RF,Csize) 
+    Lien_RF=Link_RF_res_pub(Tab_res_pub,Pond_pente,Route_for,Res_pub, Lien_RF,Csize) 
     Lien_RF[:,2]=np.int_(Lien_RF[:,2]+0.5)
     Lien_RF=Lien_RF.astype('int')
     Temp = (Lien_RF[:,3]>0)*(Lien_RF[:,2]==0)
@@ -4657,7 +4741,7 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
         else:
             Lien_piste[ID,2]=100001
         ID +=1
-    Lien_piste=fc.Link_tracks_res_pub(Tab_res_pub,Lien_RF,Pond_pente,Piste,Route_for,Res_pub,Lien_piste,Csize)
+    Lien_piste=Link_tracks_res_pub(Tab_res_pub,Lien_RF,Pond_pente,Piste,Route_for,Res_pub,Lien_piste,Csize)
     Lien_piste[:,2]=np.int_(Lien_piste[:,2]+0.5)
     Lien_piste=Lien_piste.astype('int')
     Temp = (Lien_piste[:,5]>0)*(Lien_piste[:,2]==0)
@@ -4701,9 +4785,9 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
 
 
 def process_forwarder():
-    Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,_,_,_,Dir_Obs_forwarder,_,file_Vol_ha,_,_ = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,1,1,0,0,0,1,0,1,0,0)
-    _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general(1,0,0,0,0,1)
-    Forw_angle_incl,Forw_angle_up,Forw_angle_down,Forw_Lmax,Forw_Dmax_out_for,Forw_portee,Forw_Debclass=Sylvaccess_pluginDialog.get_porteur(1,1,1,1,1,1,1,1)
+    Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,_,_,_,Dir_Obs_forwarder,_,file_Vol_ha,_,_ = Sylvaccess_pluginDialog.get_spatial(1,1,1,1,1,0,0,0,1,0,1,0,0)
+    _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general(0,0,0,0,1)
+    Forw_angle_incl,Forw_angle_up,Forw_angle_down,Forw_Lmax,Forw_Dmax_out_for,Forw_portee,Forw_Debclass=Sylvaccess_pluginDialog.get_porteur(1,1,1,1,1,1,1)
 
     console_info("Debut de Sylvaccess - Porteur")
 
@@ -4748,7 +4832,7 @@ def process_forwarder():
         try:
             Aspect = np.load(Dir_temp+"Aspect.npy")    
         except:
-            Aspect = np.int16(fc.exposition(np.float_(MNT),Csize,-9999))
+            Aspect = np.int16(exposition(np.float_(MNT),Csize,-9999))
             Aspect[Pente==-9999] = -9999
             np.save(Dir_temp+"Aspect",Aspect)             
         try:
@@ -4781,7 +4865,7 @@ def process_forwarder():
     Fwd_max_up = math.degrees(math.atan(Forw_angle_up*0.01))
     Fwd_max_down = math.degrees(math.atan(Forw_angle_down*0.01))
     Pond_pente[Obstacles_forwarder==1] = 1000
-    Pente_ok_buch = np.int8((fc.focal_stat_max(np.float_(Pente),-9999,1)<=Pente_max_bucheron))
+    Pente_ok_buch = np.int8((focal_stat_max(np.float_(Pente),-9999,1)<=Pente_max_bucheron))
     MNT_OK = np.int8((MNT!=values[5]))
     Pente_deg = np.degrees(np.arctan(Pente*0.01))
     Pente_deg[Pente==-9999]=-9999        
@@ -4820,19 +4904,19 @@ def process_forwarder():
     zone_rast[MNT_OK==0]=0   
     from_rast = np.int8(((Piste==1)+(Route_for==1))>0)
     from_rast[Res_pub==1]=0
-    Zone_for,_ = fc.calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize) 
+    Zone_for,_ = calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize) 
     Zone_for[Zone_for>=0]=1
     Zone_for[from_rast==1]=1
     Zone_for=np.int8(Zone_for)
     
     # Create a buffer of Dmax_out_forest around these area taking into account slope and obstacles
-    from_rast = fc.focal_stat_nb(np.float_(Zone_for==1),0,1)
+    from_rast = focal_stat_nb(np.float_(Zone_for==1),0,1)
     from_rast = np.int8((from_rast<9)*(from_rast>0))
     zone_rast = np.copy(Pente_ok_forw)
     zone_rast[Obstacles_forwarder==1]=0
     zone_rast[Res_pub==1]=0   
     zone_rast[MNT_OK==0]=0   
-    Zone_for2,Out_alloc = fc.calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize,Forw_Dmax_out_for) 
+    Zone_for2,Out_alloc = calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize,Forw_Dmax_out_for) 
     Pente_ok_forwarder = np.int8(Zone_for2>0)
     Pente_ok_forwarder[Zone_for==1]=1    
     
@@ -4840,24 +4924,24 @@ def process_forwarder():
     gc.collect()
     
     #Stick all forest with pente_ok_skidder to the area
-    from_rast = fc.focal_stat_nb(np.float_(Pente_ok_forwarder==1),0,1)
+    from_rast = focal_stat_nb(np.float_(Pente_ok_forwarder==1),0,1)
     from_rast = np.int8((from_rast<9)*(from_rast>0))
     zone_rast = Pente_ok_forw*(Foret==1)
     zone_rast[Obstacles_forwarder==1]=0
     zone_rast[Res_pub==1]=0   
     zone_rast[MNT_OK==0]=0   
-    Zone_for,Out_alloc = fc.calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize) 
+    Zone_for,Out_alloc = calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize) 
     Pente_ok_forwarder[Zone_for>=0]=1  
     
     # Create a buffer of Dmax_out_forest around forest
-    from_rast = fc.focal_stat_nb(np.float_(Foret==1),0,1)
+    from_rast = focal_stat_nb(np.float_(Foret==1),0,1)
     from_rast = np.int8((from_rast<9)*(from_rast>0))
     zone_rast = np.int8(Pente_deg<=max(Fwd_max_inc,Fwd_max_up,Fwd_max_down))
     zone_rast[Obstacles_forwarder==1]=0
     zone_rast[Foret==1]=0
     zone_rast[Res_pub==1]=0   
     zone_rast[MNT_OK==0]=0   
-    Zone_for,Out_alloc = fc.calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize,Forw_Dmax_out_for) 
+    Zone_for,Out_alloc = calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize,Forw_Dmax_out_for) 
     BufForest = np.int8(Zone_for>0)
            
     del Zone_for,from_rast,zone_rast,Out_alloc,Pente_ok_forw
@@ -4866,7 +4950,7 @@ def process_forwarder():
     ###############################################################################################################################################
     ### Get directly passable area from forest tracks PAFT (forwarder can reach throught the forest)
     ###############################################################################################################################################
-    D_foret,L_Piste,D_piste=fc.Dfwd_flat_forest_tracks(Lien_piste, Pond_pente,Pente_ok_forwarder*(Route_for==0), Csize)
+    D_foret,L_Piste,D_piste=Dfwd_flat_forest_tracks(Lien_piste, Pond_pente,Pente_ok_forwarder*(Route_for==0), Csize)
     
     D_foret[(Foret+BufForest)==0] = -9999
     L_Piste[(Foret+BufForest)==0] = -9999
@@ -4875,7 +4959,7 @@ def process_forwarder():
     ###############################################################################################################################################
     ### Get directly passable area from forest roads PAFR (forwarder can reach throught the forest)
     ###############################################################################################################################################
-    RF_D,RF_L_forRF = fc.Dfwd_flat_forest_road(Lien_RF,Pond_pente,Pente_ok_forwarder*(Piste==0),Csize)
+    RF_D,RF_L_forRF = Dfwd_flat_forest_road(Lien_RF,Pond_pente,Pente_ok_forwarder*(Piste==0),Csize)
 
     RF_D[(Foret+BufForest)==0] = -9999
     RF_L_forRF[(Foret+BufForest)==0] = -9999    
@@ -4886,14 +4970,14 @@ def process_forwarder():
     ###############################################################################################################################################
     ### Check forwarder inclination and terrain slope conditions from forest road network
     ###############################################################################################################################################
-    from_rast = fc.focal_stat_nb(np.float_(Foret==1),0,1)
+    from_rast = focal_stat_nb(np.float_(Foret==1),0,1)
     from_rast = np.int8((from_rast<9)*(from_rast>0))
     zone_rast = np.copy(Pente_ok_buch)
     zone_rast[Obstacles_forwarder==1]=0
     zone_rast[Foret==1]=0
     zone_rast[Res_pub==1]=0   
     zone_rast[MNT_OK==0]=0   
-    Zone_OK,Out_alloc = fc.calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize,Forw_Dmax_out_for) 
+    Zone_OK,Out_alloc = calcul_distance_de_cout(from_rast,Pond_pente,zone_rast,Csize,Forw_Dmax_out_for) 
     Zone_OK[Zone_OK>=0]=1
     Zone_OK[Zone_OK<0]=0
     Zone_OK=np.int8(Zone_OK)
@@ -4935,7 +5019,7 @@ def process_forwarder():
     
     zone_rast = np.int8(Zone_OK*(Pente_deg<=max(Fwd_max_inc,Fwd_max_up,Fwd_max_down)))
         
-    Dpente,L_RF,L_pis,Dpis,Dfor=fc.fwd_azimuts_contour(Lien_contour,MNT,Aspect,Pente_deg,Row_line,Col_line,D_line,Nbpix_line,
+    Dpente,L_RF,L_pis,Dpis,Dfor=fwd_azimuts_contour(Lien_contour,MNT,Aspect,Pente_deg,Row_line,Col_line,D_line,Nbpix_line,
                                                        Fwd_max_up, Fwd_max_down,Fwd_max_inc, Forw_Lmax, nrows,ncols,zone_rast)    
         
     del Dfor
@@ -4970,7 +5054,7 @@ def process_forwarder():
     Dpiste[Temp] = 0
     Lien_foret_RF[Temp] = RF_L_forRF[Temp]
     
-    contour = fc.focal_stat_nb(np.float_(Dforet),-9999,1)
+    contour = focal_stat_nb(np.float_(Dforet),-9999,1)
     contour = ((contour<9)*(contour>0))>0
     
     ### Get slope area from tracks and roads
@@ -5018,7 +5102,7 @@ def process_forwarder():
         
     zone_rast = np.int8(Zone_OK*(Pente_deg<=max(Fwd_max_inc,Fwd_max_up,Fwd_max_down))*(Temp==0))
         
-    Dpente,L_RF,L_pis,Dpis,Dfor=fc.fwd_azimuts_contour(Lien_contour,MNT,Aspect,Pente_deg,Row_line,Col_line,D_line,Nbpix_line,
+    Dpente,L_RF,L_pis,Dpis,Dfor=fwd_azimuts_contour(Lien_contour,MNT,Aspect,Pente_deg,Row_line,Col_line,D_line,Nbpix_line,
                                                        Fwd_max_up, Fwd_max_down,Fwd_max_inc, Forw_Lmax, nrows,ncols,zone_rast)
     
     del MNT,Aspect,Pente_deg
@@ -5051,7 +5135,7 @@ def process_forwarder():
     ### Calculation of area reachable with the grap
     ################################################################################################################################################                   
     # Get the contour of traversable area
-    contour = fc.focal_stat_nb(np.float_(Dforet),-9999,1)
+    contour = focal_stat_nb(np.float_(Dforet),-9999,1)
     contour = (contour<9)*(contour>0) 
     contour[Obstacles_forwarder==1]=0
     contour[Res_pub==1]=0   
@@ -5071,7 +5155,7 @@ def process_forwarder():
         ID +=1   
     
     zone_rast = Zone_OK*(Temp==0)   
-    Dbras,Lien_RF2,Lien_piste2,Dpiste2,Dforet2=fc.Fwd_add_contour(Lien_contour, Pond_pente,zone_rast,Forw_portee, Csize)
+    Dbras,Lien_RF2,Lien_piste2,Dpiste2,Dforet2=Fwd_add_contour(Lien_contour, Pond_pente,zone_rast,Forw_portee, Csize)
 
     ###############################################################################################################################################                                                                                    
     ### Concatenation of the resultats number 2
@@ -5097,7 +5181,7 @@ def process_forwarder():
     gc.collect()
     
     # Fill Lien foret respub and Lien foret RF
-    Lien_foret_Res_pub,Lien_foret_RF,Keep=fc.fill_Link(Lien_foret_piste,Lien_piste,Lien_RF, Lien_foret_RF, nrows,ncols)
+    Lien_foret_Res_pub,Lien_foret_RF,Keep=fill_Link(Lien_foret_piste,Lien_piste,Lien_RF, Lien_foret_RF, nrows,ncols)
     
     Temp = (Keep<1)*((Piste==1)+(Route_for==1))>0
     DTot[Temp] = -9999
@@ -5833,7 +5917,7 @@ def Check_line(coordX, coordY, az, ncols, nrows, Lline, Row_ext, Col_ext, D_ext,
     return test, Rast_couv
 
 
-def check_line2(coordX, coordY, az, ncols, nrows, Lline, Row_ext, Col_ext, D_ext, D_lat, Rast_couv, recouv, rapport):
+def Check_line2(coordX, coordY, az, ncols, nrows, Lline, Row_ext, Col_ext, D_ext, D_lat, Rast_couv, recouv, rapport):
     i = 0
     test = 1
     nb1 = 0
@@ -6545,7 +6629,7 @@ def get_Tabis2(Tab, lineTab, nbconfig, intsup, indmax):
     return Tabis
 
 
-def optpyl_up(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
+def OptPyl_Up(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
               angle_intsup, EAo, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
               slope_max, test_hfor, nbconfig=10):
     indmax = Line.shape[0] - 1
@@ -8804,4 +8888,87 @@ def fill_Link(Lien_foret_piste, Lien_piste, Lien_RF, Lien_foret_RF, nrows, ncols
                     Lien_foret_res_pub[y, x] = Lien_RF[pixel2, 3]
 
     return Lien_foret_res_pub, Lien_foret_RF, Keep
+
+
+def get_line_carac_vol(coordX, coordY, az, Csize, ncols, nrows, Lline, Row_ext, Col_ext, D_ext, Forest, Rast_couv, Vol_ha, Vol_AM):
+    x, y = 0, 0
+    i = 0
+    nfor = 0
+    nvam = 0
+    Dmoy_car = 0
+    Dmoy_car2 = 0
+    Vtot = 0
+    VAM = 0
+
+    while D_ext[az, i] <= Lline:
+        x = Col_ext[az, i] + coordX
+        if x < 0 or x >= ncols:
+            i += 1
+            continue
+
+        y = Row_ext[az, i] + coordY
+        if y < 0 or y >= nrows:
+            i += 1
+            continue
+
+        if Forest[y, x] == 1:
+            nfor += 1
+            Dmoy_car2 += D_ext[az, i]
+            Rast_couv[y, x] = 1
+
+        if Vol_ha[y, x] > 0:
+            Vtot += Vol_ha[y, x] * Csize * Csize * 0.0001
+            Dmoy_car += Vol_ha[y, x] * D_ext[az, i] * Csize * Csize * 0.0001
+
+        if Vol_AM[y, x] > 0:
+            nvam += 1
+            VAM += Vol_AM[y, x]
+
+        i += 1
+
+    Forest_area = nfor * Csize * Csize
+
+    if Vtot > 0:
+        Dmoy_car = Dmoy_car / Vtot
+    else:
+        Vtot = -1
+        if nfor > 0:
+            Dmoy_car = Dmoy_car2 / nfor
+        else:
+            Dmoy_car = D_ext[az, i]
+
+    if nvam > 0:
+        VAM = VAM / nvam
+    else:
+        VAM = -1
+
+    return int(Dmoy_car), int(Forest_area), int(Vtot), int(10 * VAM), Rast_couv
+
+
+def get_prop(coordX, coordY, az, ncols, nrows, Lline, Row_ext, Col_ext, D_ext, Rast_couv):
+    x, y = 0, 0
+    i = 0
+    nb1 = 0
+    nb2 = 0
+
+    while D_ext[az, i] <= Lline:
+        x = Col_ext[az, i] + coordX
+        if x < 0 or x >= ncols:
+            i += 1
+            continue
+
+        y = Row_ext[az, i] + coordY
+        if y < 0 or y >= nrows:
+            i += 1
+            continue
+
+        if Rast_couv[y, x] == 1:
+            nb1 += 1
+        elif Rast_couv[y, x] > 1:
+            nb2 += 1
+
+        i += 1
+
+    total = nb1 + nb2
+    return nb1 / total if total > 0 else 0
 
