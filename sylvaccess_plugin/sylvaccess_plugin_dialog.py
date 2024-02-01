@@ -30,7 +30,7 @@ from scipy import spatial
 import numpy as np
 from osgeo import gdal, osr, ogr
 import math
-from math import sqrt,degrees,atan,cos,sin,radians,pi,atan2
+from math import sqrt,degrees,atan,cos,sin,radians,pi,atan2,ceil
 import shutil
 import gc
 import datetime
@@ -6599,69 +6599,2072 @@ def optpyl_up(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min
     return Span
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def OptPyl_Up_NoH(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
+                  angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
+                  slope_max, Lmax, test_hfor, nbconfig=10):
+    """
+    Cable machine en haut
+    Optimise le placement des pylones intermediaire sans bouger la hauteur de fixation du cable porteur pour chaque pylone sur un profil
+    """
+
+    indmax = Line.shape[0] - 1
+    test = 0
+    test0, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, 0, indmax, Htower, Hend,
+                                                                            Hline_min, Hline_max, slope_min, slope_max,
+                                                                            Alts, Fo, Tmax, q1, q2, q3, EAo, rastLosup,
+                                                                            rastTh, rastTv, Csize, angle_intsup, 0,
+                                                                            slope_prev=-9999)
+
+    if test0:
+        Span[0, 0], Span[0, 1], Span[0, 2], Span[0, 3] = D, H, diag, slope
+        Span[0, 4], Span[0, 5], Span[0, 6], Span[0, 7] = fact, Xup, Zup, Lo
+        Span[0, 8], Span[0, 9], Span[0, 10], Span[0, 11] = Th, Tv, sqrt(Th * Th + Tv * Tv), sqrt(Th * Th + (Tv - F - Lo * g * q1) ** 2)
+        Span[0, 14], Span[0, 15] = Hend, indmax
+        test = 1
+
+    if not test and sup_max == 0:
+        indminmulti = 0
+        diff = 0.
+        while diff < double_max(Csize, LminSpan):
+            indminmulti += 1
+            diff = Line[indminmulti, 0] - Line[0, 0]
+        for posi in range(indmax - 1, indminmulti - 1, -1):
+            Hd = Line[posi, 7] if test_hfor else Hend
+            test0, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, 0, posi, Htower, Hd,
+                                                                                    Hline_min, Hline_max, slope_min,
+                                                                                    slope_max, Alts, Fo, Tmax, q1, q2, q3,
+                                                                                    EAo, rastLosup, rastTh, rastTv, Csize,
+                                                                                    angle_intsup, 0, slope_prev=-9999)
+            if test0:
+                Span[0, 0], Span[0, 1], Span[0, 2], Span[0, 3] = D, H, diag, slope
+                Span[0, 4], Span[0, 5], Span[0, 6], Span[0, 7] = fact, Xup, Zup, Lo
+                Span[0, 8], Span[0, 9], Span[0, 10], Span[0, 11] = Th, Tv, sqrt(Th * Th + Tv * Tv), sqrt(Th * Th + (Tv - F - Lo * g * q1) ** 2)
+                Span[0, 14], Span[0, 15] = Hd, posi
+                test = 1
+
+    if not test and sup_max > 0:
+        indmaxmulti = indmax
+        diff = 0.
+        while diff < double_max(Csize, LminSpan) and indmaxmulti > 0:
+            indmaxmulti -= 1
+            diff = Line[indmax, 0] - Line[indmaxmulti, 0]
+        if indmaxmulti == 0:
+            test = 1
+
+    if not test and sup_max > 0:
+        indminmulti = 1
+        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 14 * (sup_max + 1)), dtype=np.float)
+        lineTab = 0
+        Tabis = -9999 * np.ones((1, 14 * (sup_max + 1)), dtype=np.float)
+        lineTabis = 0
+        intsup = 1
+        newTmax = Tmax
+        Dsupdep = 0
+        pg = 0
+        Hg = Htower
+        best = 0
+        slope_prev = -9999
+        indmin = indminmulti - 1
+
+        while intsup <= sup_max and not best:
+            for p in range(0, nblineTabis):
+                if intsup > 1:
+                    lineTabis = p
+                    col = (intsup - 2) * 14
+                    indmin = ceil(Tabis[p, 13 + col])
+                    pg = indmin
+                    newTmax = Tabis[p, 10 + col]
+                    Dsupdep = 0
+                    Hg = Tabis[p, 12 + col]
+                    for c in range(col + 2, 1, -14):
+                        Dsupdep += Tabis[p, c]
+                    slope_prev = Tabis[p, 3 + col]
+
+                for posi in range(indmaxmulti, indmin, -1):
+                    Hd = Line[posi, 7]
+                    test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, pg, posi, Hg, Hd,
+                                                                                              Hline_min, Hline_max,
+                                                                                              slope_min, slope_max, Alts,
+                                                                                              Fo, newTmax, q1, q2, q3,
+                                                                                              EAo, rastLosup, rastTh,
+                                                                                              rastTv, Csize,
+                                                                                              angle_intsup, 0,
+                                                                                              slope_prev=-9999)
+                    if test1:
+                        Tdown = sqrt(Th * Th + (Tv - q1 * g * Lo) * (Tv - q1 * g * Lo))
+                        Tab[lineTab, 0:(intsup - 1) * 14] = Tabis[lineTabis, 0:(intsup - 1) * 14]
+                        Tab[lineTab, (intsup - 1) * 14:((intsup - 1) * 14 + 14)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(
+                            Th * Th + (Tv - F - Lo * g * q1) ** 2), Hd, posi
+                        lineTab += 1
+
+                        if test_hfor:
+                            Hd2 = Line[indmax, 7]
+                        else:
+                            Hd2 = Hend
+
+                        test2, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, posi, indmax, Hd, Hd2,
+                                                                                                  Hline_min, Hline_max,
+                                                                                                  slope_min, slope_max,
+                                                                                                  Alts, Fo, Tdown, q1, q2,
+                                                                                                  q3, EAo, rastLosup, rastTh,
+                                                                                                  rastTv, Csize,
+                                                                                                  angle_intsup,
+                                                                                                  diag + Dsupdep, slope)
+                        if test2:
+                            best = 1
+                            Tab[lineTab, 0:intsup * 14] = Tab[lineTab - 1, 0:intsup * 14]
+                            Tab[lineTab, intsup * 14:(intsup * 14 + 14)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(
+                                Th * Th + (Tv - F - Lo * g * q1) ** 2), Hd2, indmax
+                            break
+
+                if best:
+                    break
+
+            if not best:
+                if lineTab == 0:
+                    test = 0
+                    intsup -= 2
+
+                    if Tabis[0, 0] > 0:
+                        Tab[lineTab] = Tabis[0]
+                    else:
+                        Tab[lineTab] *= 0
+
+                    break
+
+                Tabis = get_Tabis(Tab, lineTab, nbconfig, intsup, indmax)
+                nblineTabis = Tabis.shape[0]
+
+                if nblineTabis > 0:
+                    Tab = -9999 * np.ones((indmaxmulti * Tabis.shape[0] * 100 * nbconfig, 14 * (sup_max + 1)),
+                                         dtype=np.float)
+                    intsup += 1
+                    lineTab = 0
+
+                else:
+                    test = 0
+                    intsup = -2
+                    break
+
+        if not best and test:
+            lineTab = 0
+
+            for p in range(0, nblineTabis):
+                lineTabis = p
+                col = (intsup - 2) * 14
+                pg = ceil(Tabis[p, 13 + col])
+                Hg = Tabis[p, 12 + col]
+                indminmulti = pg
+                diff = 0.
+
+                while diff < double_max(Csize, LminSpan):
+                    indminmulti += 1
+                    diff = Line[indminmulti, 0] - Line[pg, 0]
+
+                newTmax = Tabis[p, 10 + col]
+                Dsupdep = 0
+
+                for c in range(col + 2, 1, -14):
+                    Dsupdep += Tabis[p, c]
+
+                slope_prev = Tabis[p, 3 + col]
+
+                for posi in range(indmax - 1, indminmulti - 1, -1):
+                    Hd = Line[indmax, 7] if test_hfor else Hend
+                    test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, pg, posi, Hg, Hd,
+                                                                                              Hline_min, Hline_max,
+                                                                                              slope_min, slope_max, Alts,
+                                                                                              Fo, newTmax, q1, q2, q3,
+                                                                                              EAo, rastLosup, rastTh,
+                                                                                              rastTv, Csize,
+                                                                                              angle_intsup, Dsupdep,
+                                                                                              slope_prev)
+                    if test1:
+                        Tdown = sqrt(Th * Th + (Tv - q1 * g * Lo) * (Tv - q1 * g * Lo))
+                        Tab[lineTab, 0:(intsup - 1) * 14] = Tabis[lineTabis, 0:(intsup - 1) * 14]
+                        Tab[lineTab, (intsup - 1) * 14:((intsup - 1) * 14 + 14)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(
+                            Th * Th + (Tv - F - Lo * g * q1) ** 2), Hd, posi
+                        lineTab += 1
+                        break
+
+            if lineTab == 0:
+                intsup -= 2
+                lineTab = 0
+                Tab[lineTab] = Tabis[0]
+
+            else:
+                Tab = get_Tabis(Tab, lineTab, 1, intsup, indmax)
+                lineTab = 0
+                intsup = sup_max
+
+        for i in range(0, intsup + 1):
+            col = i * 14
+            Span[i, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15]] = Tab[lineTab, col:col + 14]
+
+    return Span
+
+
+def OptPyl_Down_init(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
+                     angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
+                     slope_max, Lmax, test_hfor, nbconfig=5):
+    """
+    Cable machine en bas
+    Permet de recuperer la partie de profil ou il est possible de tendre un cable (avec hauteur de cable porteur variable)
+    """
+
+    indmax = Line.shape[0] - 1
+    test = 0
+    test0, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, 0, indmax, Htower, Hend,
+                                                                            Hline_min, Hline_max, slope_min, slope_max,
+                                                                            Alts, Fo, Tmax, q1, q2, q3, EAo, rastLosup,
+                                                                            rastTh, rastTv, Csize, angle_intsup, 0,
+                                                                            slope_prev=-9999)
+
+    if test0:
+        Span[0, 0], Span[0, 1], Span[0, 2], Span[0, 3] = D, H, diag, slope
+        Span[0, 4], Span[0, 5], Span[0, 6], Span[0, 7] = fact, Xup, Zup, Lo
+        Span[0, 8], Span[0, 9], Span[0, 10], Span[0, 11] = Th, Tv, sqrt(Th * Th + Tv * Tv), sqrt(Th * Th + (Tv - F - Lo * g * q1) ** 2)
+        Span[0, 14], Span[0, 15] = Hend, indmax
+        test = 1
+
+    while test and Hend > 1:
+        Hend -= 1
+        test0, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, 0, indmax, Htower, Hend,
+                                                                                Hline_min, Hline_max, slope_min,
+                                                                                slope_max, Alts, Fo, Tmax, q1, q2, q3,
+                                                                                EAo, rastLosup, rastTh, rastTv, Csize,
+                                                                                angle_intsup, 0, slope_prev=-9999)
+        if test0:
+            Span[0, 0], Span[0, 1], Span[0, 2], Span[0, 3] = D, H, diag, slope
+            Span[0, 4], Span[0, 5], Span[0, 6], Span[0, 7] = fact, Xup, Zup, Lo
+            Span[0, 8], Span[0, 9], Span[0, 10], Span[0, 11] = Th, Tv, sqrt(Th * Th + Tv * Tv), sqrt(Th * Th + (Tv - F - Lo * g * q1) ** 2)
+            Span[0, 14], Span[0, 15] = Hend, indmax
+            test = 1
+        else:
+            break
+
+    if not test and sup_max == 0:
+        indminmulti = 0
+        diff = 0.
+        while diff < double_max(Csize, LminSpan):
+            indminmulti += 1
+            diff = Line[indminmulti, 0] - Line[0, 0]
+        for posi in range(indmax - 1, indminmulti - 1, -1):
+            Hdmax = Line[posi, 7]
+            Hd = ceil(Hline_min)
+            while Hd <= Hdmax:
+                test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, 0, posi, Htower, Hd, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, Tmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, 0, slope_prev=-9999)
+                if test1:
+                    Span[0, 0], Span[0, 1], Span[0, 2], Span[0, 3] = D, H, diag, slope
+                    Span[0, 4], Span[0, 5], Span[0, 6], Span[0, 7] = fact, Xup, Zup, Lo
+                    Span[0, 8], Span[0, 9], Span[0, 10], Span[0, 11] = Th, Tv, sqrt(Th * Th + Tv * Tv), sqrt(Th * Th + (Tv - F - Lo * g * q1) ** 2)
+                    Span[0, 14], Span[0, 15] = Hd, posi
+                    test = 1
+                    break
+                Hd += 1
+            if test:
+                break
+
+    if not test and sup_max > 0:
+        indmaxmulti = indmax
+        diff = 0.
+        while diff < double_max(Csize, LminSpan) and indmaxmulti > 0:
+            indmaxmulti -= 1
+            diff = Line[indmax, 0] - Line[indmaxmulti, 0]
+        if indmaxmulti == 0:
+            test = 1
+
+    if not test and sup_max > 0:
+        indminmulti = 1
+        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 14 * (sup_max + 1)), dtype=np.float)
+        lineTab = 0
+        Tabis = -9999 * np.ones((1, 14 * (sup_max + 1)), dtype=np.float)
+        lineTabis = 0
+        intsup = 1
+        newTmax = Tmax
+        Dsupdep = 0
+        pg = 0
+        Hg = Htower
+        best = 0
+        slope_prev = -9999
+        indmin = indminmulti - 1
+
+        while intsup <= sup_max and not best:
+            for p in range(0, nblineTabis):
+                if intsup > 1:
+                    lineTabis = p
+                    col = (intsup - 2) * 14
+                    indmin = ceil(Tabis[p, 13 + col])
+                    pg = indmin
+                    newTmax = Tabis[p, 10 + col]
+                    Dsupdep = 0
+                    Hg = Tabis[p, 12 + col]
+                    slope_prev = Tabis[p, 3 + col]
+
+                for posi in range(indmaxmulti, indmin, -1):
+                    Hdmax = Line[posi, 7]
+                    Hd = 1
+
+                    while Hd <= Hdmax:
+                        test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, pg, posi, Hg, Hd, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, newTmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, Dsupdep, slope_prev)
+
+                        if test1:
+                            Tab[lineTab, 0:(intsup - 1) * 14] = Tabis[lineTabis, 0:(intsup - 1) * 14]
+                            Tab[lineTab, (intsup - 1) * 14:((intsup - 1) * 14 + 14)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(Th * Th + (Tv - F - Lo * g * q1) ** 2), Hd, posi
+                            lineTab += 1
+
+                            Hdmax2 = Line[indmax, 7] if test_hfor else Hend
+                            Hd2 = 1
+
+                            while Hd2 <= Hdmax2:
+                                test2, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, posi, indmax, Hd, Hd2, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, Tmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, diag + Dsupdep, slope)
+                                if test2:
+                                    best = 1
+                                    Tab[lineTab, 0:intsup * 14] = Tab[lineTab - 1, 0:intsup * 14]
+                                    Tab[lineTab, intsup * 14:(intsup * 14 + 14)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(Th * Th + (Tv - F - Lo * g * q1) ** 2), Hd2, indmax
+                                    break
+
+                                Hd2 += 1
+
+                            if best:
+                                break
+
+                        Hd += 1
+
+                    if best:
+                        break
+
+                if best:
+                    break
+
+            if not best:
+                if lineTab == 0:
+                    test = 0
+                    intsup -= 2
+
+                    if Tabis[0, 0] > 0:
+                        Tab[lineTab] = Tabis[0]
+                    else:
+                        Tab[lineTab] *= 0
+
+                    break
+
+                Tabis = get_Tabis(Tab, lineTab, nbconfig, intsup, indmax)
+                nblineTabis = Tabis.shape[0]
+
+                if nblineTabis > 0:
+                    Tab = -9999 * np.ones((indmaxmulti * Tabis.shape[0] * 100 * nbconfig, 14 * (sup_max + 1)),
+                                         dtype=np.float)
+                    intsup += 1
+                    lineTab = 0
+
+                else:
+                    test = 0
+                    intsup = -2
+                    break
+
+        if not best and test:
+            lineTab = 0
+
+            for p in range(0, nblineTabis):
+                lineTabis = p
+                col = (intsup - 2) * 14
+                pg = ceil(Tabis[p, 13 + col])
+                Hg = Tabis[p, 12 + col]
+                indminmulti = pg
+                diff = 0.
+
+                while diff < double_max(Csize, LminSpan):
+                    indminmulti += 1
+                    diff = Line[indminmulti, 0] - Line[pg, 0]
+
+                newTmax = Tabis[p, 10 + col]
+                Dsupdep = 0
+
+                for c in range(col + 2, 1, -14):
+                    Dsupdep += Tabis[p, c]
+
+                slope_prev = Tabis[p, 3 + col]
+
+                for posi in range(indmax - 1, indminmulti - 1, -1):
+                    Hd = Line[indmax, 7] if test_hfor else Hend
+                    test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, pg, posi, Hg, Hd,
+                                                                                              Hline_min, Hline_max,
+                                                                                              slope_min, slope_max, Alts,
+                                                                                              Fo, newTmax, q1, q2, q3,
+                                                                                              EAo, rastLosup, rastTh,
+                                                                                              rastTv, Csize,
+                                                                                              angle_intsup, Dsupdep,
+                                                                                              slope_prev)
+                    if test1:
+                        Tdown = sqrt(Th * Th + (Tv - q1 * g * Lo) * (Tv - q1 * g * Lo))
+                        Tab[lineTab, 0:(intsup - 1) * 14] = Tabis[lineTabis, 0:(intsup - 1) * 14]
+                        Tab[lineTab, (intsup - 1) * 14:((intsup - 1) * 14 + 14)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(
+                            Th * Th + (Tv - F - Lo * g * q1) ** 2), Hd, posi
+                        lineTab += 1
+                        break
+
+            if lineTab == 0:
+                intsup -= 2
+                lineTab = 0
+                Tab[lineTab] = Tabis[0]
+
+            else:
+                Tab = get_Tabis(Tab, lineTab, 1, intsup, indmax)
+                lineTab = 0
+                intsup = sup_max
+
+        for i in range(0, intsup + 1):
+            col = i * 14
+            Span[i, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15]] = Tab[lineTab, col:col + 14]
+
+    return Span
+
+
+def OptPyl_Down_init_NoH(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
+                         angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
+                         slope_max, Lmax, test_hfor, nbconfig=5):
+    """
+    Cable machine en bas
+    Permet de recuperer la partie de profil ou il est possible de tendre un cable (avec hauteur de cable porteur fixe)
+    """
+    indmax = Line.shape[0] - 1
+    test = 0
+    test0, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, 0, indmax, Htower, Hend,
+                                                                            Hline_min, Hline_max, slope_min, slope_max,
+                                                                            Alts, Fo, Tmax, q1, q2, q3, EAo, rastLosup,
+                                                                            rastTh, rastTv, Csize, angle_intsup, 0,
+                                                                            slope_prev=-9999)
+
+    if test0:
+        Span[0, 0], Span[0, 1], Span[0, 2], Span[0, 3] = D, H, diag, slope
+        Span[0, 4], Span[0, 5], Span[0, 6], Span[0, 7] = fact, Xup, Zup, Lo
+        Span[0, 8], Span[0, 9], Span[0, 10], Span[0, 11] = Th, Tv, sqrt(Th * Th + Tv * Tv), sqrt(
+            Th * Th + (Tv - F - Lo * g * q1) ** 2)
+        Span[0, 14], Span[0, 15] = Hend, indmax
+        test = 1
+
+    if not test and sup_max == 0:
+        indminmulti = 0
+        diff = 0.
+        while diff < double_max(Csize, LminSpan):
+            indminmulti += 1
+            diff = Line[indminmulti, 0] - Line[0, 0]
+        for posi in range(indmax - 1, indminmulti - 1, -1):
+            if test_hfor:
+                Hd = Line[posi, 7]
+            else:
+                Hd = Hend
+            test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, 0, posi, Htower, Hd, Hline_min,
+                                                                                    Hline_max, slope_min, slope_max, Alts,
+                                                                                    Fo, Tmax, q1, q2, q3, EAo, rastLosup,
+                                                                                    rastTh, rastTv, Csize, angle_intsup, 0,
+                                                                                    slope_prev=-9999)
+            if test1:
+                Span[0, 0], Span[0, 1], Span[0, 2], Span[0, 3] = D, H, diag, slope
+                Span[0, 4], Span[0, 5], Span[0, 6], Span[0, 7] = fact, Xup, Zup, Lo
+                Span[0, 8], Span[0, 9], Span[0, 10], Span[0, 11] = Th, Tv, sqrt(Th * Th + Tv * Tv), sqrt(
+                    Th * Th + (Tv - F - Lo * g * q1) ** 2)
+                Span[0, 14], Span[0, 15] = Hd, posi
+                test = 1
+                break
+
+    if not test and sup_max > 0:
+        indmaxmulti = indmax
+        diff = 0.
+        while diff < double_max(Csize, LminSpan) and indmaxmulti > 0:
+            indmaxmulti -= 1
+            diff = Line[indmax, 0] - Line[indmaxmulti, 0]
+        if indmaxmulti == 0:
+            test = 1
+
+    if not test and sup_max > 0:
+        indminmulti = 1
+        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 14 * (sup_max + 1)), dtype=np.float)
+        lineTab = 0
+        Tabis = -9999 * np.ones((1, 14 * (sup_max + 1)), dtype=np.float)
+        lineTabis = 0
+        intsup = 1
+        newTmax = Tmax
+        Dsupdep = 0
+        pg = 0
+        Hg = Htower
+        best = 0
+        slope_prev = -9999
+        indmin = indminmulti - 1
+
+        while intsup <= sup_max and not best:
+            for p in range(0, nblineTabis):
+                if intsup > 1:
+                    lineTabis = p
+                    col = (intsup - 2) * 14
+                    indmin = ceil(Tabis[p, 13 + col])
+                    pg = indmin
+                    newTmax = Tabis[p, 10 + col]
+                    Dsupdep = 0
+                    Hg = Tabis[p, 12 + col]
+                    slope_prev = Tabis[p, 3 + col]
+
+                for posi in range(indmaxmulti, indmin, -1):
+                    Hdmax = Line[posi, 7]
+                    Hd = 1
+
+                    while Hd <= Hdmax:
+                        test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, pg, posi, Hg, Hd,
+                                                                                                Hline_min, Hline_max,
+                                                                                                slope_min, slope_max, Alts,
+                                                                                                Fo, newTmax, q1, q2, q3,
+                                                                                                EAo, rastLosup, rastTh,
+                                                                                                rastTv, Csize,
+                                                                                                angle_intsup, 0,
+                                                                                                slope_prev=-9999)
+
+                        if test1:
+                            Tab[lineTab, 0:(intsup - 1) * 14] = Tabis[lineTabis, 0:(intsup - 1) * 14]
+                            Tab[lineTab, (intsup - 1) * 14:((intsup - 1) * 14 + 14)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(Th * Th + (Tv - F - Lo * g * q1) ** 2), Hd, posi
+                            lineTab += 1
+
+                            Hdmax2 = Line[indmax, 7] if test_hfor else Hend
+                            Hd2 = 1
+
+                            while Hd2 <= Hdmax2:
+                                test2, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, posi,
+                                                                                                      indmax, Hd, Hd2,
+                                                                                                      Hline_min,
+                                                                                                      Hline_max,
+                                                                                                      slope_min,
+                                                                                                      slope_max, Alts,
+                                                                                                      Fo, Tmax, q1,
+                                                                                                      q2, q3, EAo,
+                                                                                                      rastLosup, rastTh,
+                                                                                                      rastTv, Csize,
+                                                                                                      angle_intsup, 0,
+                                                                                                      slope)
+                                if test2:
+                                    best = 1
+                                    Tab[lineTab, 0:intsup * 14] = Tab[lineTab - 1, 0:intsup * 14]
+                                    Tab[lineTab, intsup * 14:(intsup * 14 + 14)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(Th * Th + (Tv - F - Lo * g * q1) ** 2), Hd2, indmax
+                                    break
+
+                                Hd2 += 1
+
+                            if best:
+                                break
+
+                        Hd += 1
+
+                    if best:
+                        break
+
+                if best:
+                    break
+
+            if not best:
+                if lineTab == 0:
+                    test = 0
+                    intsup -= 2
+
+                    if Tabis[0, 0] > 0:
+                        Tab[lineTab] = Tabis[0]
+                    else:
+                        Tab[lineTab] *= 0
+
+                    break
+
+                Tabis = get_Tabis(Tab, lineTab, nbconfig, intsup, indmax)
+                nblineTabis = Tabis.shape[0]
+
+                if nblineTabis > 0:
+                    Tab = -9999 * np.ones((indmaxmulti * Tabis.shape[0] * 100 * nbconfig, 14 * (sup_max + 1)),
+                                         dtype=np.float)
+                    intsup += 1
+                    lineTab = 0
+
+                else:
+                    test = 0
+                    intsup = -2
+                    break
+
+        if not best and test:
+            lineTab = 0
+
+            for p in range(0, nblineTabis):
+                lineTabis = p
+                col = (intsup - 2) * 14
+                pg = ceil(Tabis[p, 13 + col])
+                Hg = Tabis[p, 12 + col]
+                indminmulti = pg
+                diff = 0.
+
+                while diff < double_max(Csize, LminSpan):
+                    indminmulti += 1
+                    diff = Line[indminmulti, 0] - Line[pg, 0]
+
+                newTmax = Tabis[p, 10 + col]
+                Dsupdep = 0
+
+                for c in range(col + 2, 1, -14):
+                    Dsupdep += Tabis[p, c]
+
+                slope_prev = Tabis[p, 3 + col]
+
+                for posi in range(indmax - 1, indminmulti - 1, -1):
+                    Hd = Line[indmax, 7] if test_hfor else Hend
+                    test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, pg, posi, Hg, Hd,
+                                                                                              Hline_min, Hline_max,
+                                                                                              slope_min, slope_max, Alts,
+                                                                                              Fo, newTmax, q1, q2, q3,
+                                                                                              EAo, rastLosup, rastTh,
+                                                                                              rastTv, Csize,
+                                                                                              angle_intsup, Dsupdep,
+                                                                                              slope_prev)
+                    if test1:
+                        Tdown = sqrt(Th * Th + (Tv - q1 * g * Lo) * (Tv - q1 * g * Lo))
+                        Tab[lineTab, 0:(intsup - 1) * 14] = Tabis[lineTabis, 0:(intsup - 1) * 14]
+                        Tab[lineTab, (intsup - 1) * 14:((intsup - 1) * 14 + 14)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(
+                            Th * Th + (Tv - F - Lo * g * q1) ** 2), Hd, posi
+                        lineTab += 1
+                        break
+
+            if lineTab == 0:
+                intsup -= 2
+                lineTab = 0
+                Tab[lineTab] = Tabis[0]
+
+            else:
+                Tab = get_Tabis(Tab, lineTab, 1, intsup, indmax)
+                lineTab = 0
+                intsup = sup_max
+
+        for i in range(0, intsup + 1):
+            col = i * 14
+            Span[i, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15]] = Tab[lineTab, col:col + 14]
+
+    return Span
+
+
+def OptPyl_Up2(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize,
+               angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min,
+               slope_max, Lmax, test_hfor, nbconfig=10):
+    """
+    Cable machine en bas
+    Optimise le placement des pylones intermediaire et la hauteur de fixation du cable porteur pour chaque pylone sur un profil
+        
+    """
+    indmax = Line.shape[0] - 1
+    test = 0
+    test0 = test1 = test2 = 0
+    indminmulti = indmaxmulti = pg = posi = lineTab = lineTabis = 0
+    intsup = best = nblineTabis = indmin = 0
+    Hg = Hd = Tdown = Hgmax = Hdmax = Hginit = 0
+    slope_prev = Dsupdep = newTmax = diff = 0.0
+    
+    # Begin without intermediate support
+    if test_hfor:
+        Hg = Line[indmax, 7]
+    else:
+        Hg = Hend
+    while Hg > 1:
+        test0, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(
+            Line, 0, indmax, Hg, Htower, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, Tmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, 0, slope_prev=-9999)
+        if test0:
+            Span[0, 0], Span[0, 1], Span[0, 2], Span[0, 3] = D, H, diag, slope
+            Span[0, 4], Span[0, 5], Span[0, 6], Span[0, 7] = fact, Xup, Zup, Lo
+            Span[0, 8], Span[0, 9], Span[0, 10], Span[0, 11] = Th, Tv, sqrt(Th*Th + Tv*Tv), sqrt(Th*Th + (Tv - F - Lo*g*q1)**2)
+            Span[0, 14], Span[0, 15] = Hg, indmax
+            test = 1
+        else:
+            break
+        Hg -= 1
+
+    # End without intermediate support
+    # Start Cut the line if no intermediate support allowed
+    if not test and sup_max == 0:
+        indminmulti = 0
+        diff = 0.
+        while diff < double_max(Csize, LminSpan):
+            indminmulti += 1
+            diff = Line[indminmulti, 0] - Line[0, 0]
+        for posi in range(indmax - 1, indminmulti - 1, -1):
+            if test_hfor:
+                Hd = Line[posi, 7]
+            else:
+                Hd = Hend
+            while Hd > 1:
+                test0, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(
+                    Line, 0, posi, Hd, Htower, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, Tmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, 0, slope_prev=-9999)
+                if test0:
+                    Span[0, 0], Span[0, 1], Span[0, 2], Span[0, 3] = D, H, diag, slope
+                    Span[0, 4], Span[0, 5], Span[0, 6], Span[0, 7] = fact, Xup, Zup, Lo
+                    Span[0, 8], Span[0, 9], Span[0, 10], Span[0, 11] = Th, Tv, sqrt(Th*Th + Tv*Tv), sqrt(Th*Th + (Tv - F - Lo*g*q1)**2)
+                    Span[0, 14], Span[0, 15] = Hd, posi
+                    test = 1
+                else:
+                    break
+                Hd -= 1
+            if test:
+                break
+
+    # End Cut the line if no intermediate support allowed
+    # Start intermediate support position optimization
+    if not test and sup_max > 0:
+        indmaxmulti = indmax
+        diff = 0.
+        while diff < double_max(Csize, LminSpan) and indmaxmulti > 0:
+            indmaxmulti -= 1
+            diff = Line[indmax, 0] - Line[indmaxmulti, 0]
+        if indmaxmulti == 0:
+            test = 1
+
+    if not test and sup_max > 0:
+        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 15 * (sup_max + 1)), dtype=np.float)
+        lineTab = 0
+        Tabis = -9999 * np.ones((1, 15 * (sup_max + 1)), dtype=np.float)
+        lineTabis = 0
+
+        test = 1
+        intsup = 1
+        newTmax = Tmax
+        Dsupdep = 0
+        pg = 0
+        Hg = Htower
+        best = 0
+        slope_prev = -9999
+        indmin = 0
+
+        while intsup <= sup_max and not best:
+            for p in range(0, nblineTabis):
+                if intsup > 1:
+                    lineTabis = p
+                    col = (intsup - 2) * 15
+                    indmin = ceil(Tabis[p, 13 + col])
+                    pg = indmin
+                    Dsupdep = 0
+                    Hg = Tabis[p, 12 + col]
+                    for c in range(col + 2, 1, -15):
+                        Dsupdep += Tabis[p, c]
+                    slope_prev = Tabis[p, 3 + col]
+                for posi in range(indmaxmulti, indmin, -1):
+                    Hdmax = Line[posi, 7]
+                    Hg = Hginit
+                    while Hg <= Hgmax:
+                        Hd = ceil(Hline_min)
+                        while Hd <= Hdmax:
+                            test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(
+                                Line, pg, posi, Hg, Hd, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, newTmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, Dsupdep, slope_prev)
+                            if test1:
+                                Tdown = sqrt(Th*Th + (Tv - q1 * g * Lo) * (Tv - q1 * g * Lo))
+                                Tab[lineTab, 0:(intsup - 1) * 15] = Tabis[lineTabis, 0:(intsup - 1) * 15]
+                                Tab[lineTab, (intsup - 1) * 15:((intsup - 1) * 15 + 15)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(Th*Th + (Tv - F - Lo * g * q1)**2), Hg, posi, Hd
+                                lineTab += 1
+                                test2, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(
+                                    Line, posi, indmax, Hd, Htower, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, Tdown, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, diag + Dsupdep, slope)
+                                if test2:
+                                    best = 1
+                                    Tab[lineTab, 0:intsup * 15] = Tab[lineTab - 1, 0:intsup * 15]
+                                    Tab[lineTab, intsup * 15:(intsup * 15 + 15)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(Th*Th + (Tv - F - Lo * g * q1)**2), Hd, indmax, Htower
+                                    break
+                            Hd += 1
+                        if best:
+                            break
+                        Hg += 1
+                    if best:
+                        break
+                if best:
+                    break
+            if not best:
+                if lineTab == 0:
+                    test = 0
+                    intsup -= 2
+                    if Tabis[0, 0] > 0:
+                        Tab[lineTab] = Tabis[0]
+                    else:
+                        Tab[lineTab] *= 0
+                    break
+                Tabis = get_Tabis2(Tab, lineTab, nbconfig, intsup, indmax)
+                nblineTabis = Tabis.shape[0]
+                if nblineTabis > 0:
+                    Tab = -9999 * np.ones((indmaxmulti * Tabis.shape[0] * 100 * nbconfig, 15 * (sup_max + 1)), dtype=np.float)
+                    intsup += 1
+                    lineTab = 0
+                else:
+                    test = 0
+                    intsup = -2
+                    break
+
+        if not best and test:
+            lineTab = 0
+            for p in range(0, nblineTabis):
+                lineTabis = p
+                col = (intsup - 2) * 15
+                pg = ceil(Tabis[p, 13 + col])
+                Hg = Tabis[p, 14 + col]
+                indminmulti = pg
+                diff = 0.
+                while diff < double_max(Csize, LminSpan):
+                    indminmulti += 1
+                    diff = Line[indminmulti, 0] - Line[pg, 0]
+                newTmax = Tabis[p, 10 + col]
+                Dsupdep = 0
+                for c in range(col + 2, 1, -15):
+                    Dsupdep += Tabis[p, c]
+                slope_prev = Tabis[p, 3 + col]
+                for posi in range(indmax - 1, indminmulti - 1, -1):
+                    test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(
+                        Line, pg, posi, Hg, Htower, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, newTmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, Dsupdep, slope_prev)
+                    if test1:
+                        Tdown = sqrt(Th*Th + (Tv - q1 * g * Lo) * (Tv - q1 * g * Lo))
+                        Tab[lineTab, 0:(intsup - 1) * 15] = Tabis[lineTabis, 0:(intsup - 1) * 15]
+                        Tab[lineTab, (intsup - 1) * 15:((intsup - 1) * 15 + 15)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(Th*Th + (Tv - F - Lo * g * q1)**2), Hg, posi, Htower
+                        lineTab += 1
+
+            if lineTab == 0:
+                intsup -= 2
+                lineTab = 0
+                Tab[lineTab] = Tabis[0]
+            else:
+                Tab = get_Tabis2(Tab, lineTab, 1, intsup, indmax)
+                lineTab = 0
+                intsup = sup_max
+
+        for i in range(0, intsup + 1):
+            col = i * 15
+            Span[i, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15]] = Tab[lineTab, col:col + 14]
+
+    return Span
+
+
+def OptPyl_Up2_NoH(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize, angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min, slope_max, Lmax, test_hfor, nbconfig=10):
+    indmax = Line.shape[0] - 1
+    test = 0
+    test0, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, 0, indmax, Htower, Htower, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, Tmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, 0, slope_prev=-9999)
+    if test0:
+        Span[0, 0], Span[0, 1], Span[0, 2], Span[0, 3] = D, H, diag, slope
+        Span[0, 4], Span[0, 5], Span[0, 6], Span[0, 7] = fact, Xup, Zup, Lo
+        Span[0, 8], Span[0, 9], Span[0, 10], Span[0, 11] = Th, Tv, sqrt(Th * Th + Tv * Tv), sqrt(Th * Th + (Tv - F - Lo * 9.81 * q1) ** 2)
+        Span[0, 14], Span[0, 15] = Line[indmax, 7] if test_hfor else Hend, indmax
+        test = 1
+
+    if not test and sup_max == 0:
+        indminmulti = 0
+        diff = 0.0
+        while diff < Csize * LminSpan:
+            indminmulti += 1
+            diff = Line[indminmulti, 0] - Line[0, 0]
+
+        for posi in range(indmax - 1, indminmulti - 1, -1):
+            Hg = Line[posi, 7] if test_hfor else Hend
+            test0, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, 0, posi, Hg, Htower, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, Tmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, 0, slope_prev=-9999)
+            if test0:
+                Span[0, 0], Span[0, 1], Span[0, 2], Span[0, 3] = D, H, diag, slope
+                Span[0, 4], Span[0, 5], Span[0, 6], Span[0, 7] = fact, Xup, Zup, Lo
+                Span[0, 8], Span[0, 9], Span[0, 10], Span[0, 11] = Th, Tv, sqrt(Th * Th + Tv * Tv), sqrt(Th * Th + (Tv - F - Lo * 9.81 * q1) ** 2)
+                Span[0, 14], Span[0, 15] = Hg, posi
+                test = 1
+                break
+
+    if not test and sup_max > 0:
+        indmaxmulti = indmax
+        diff = 0.0
+        while diff < Csize * LminSpan and indmaxmulti > 0:
+            indmaxmulti -= 1
+            diff = Line[indmax, 0] - Line[indmaxmulti, 0]
+        if indmaxmulti == 0:
+            test = 1
+
+    if not test and sup_max > 0:
+        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 15 * (sup_max + 1)), dtype=np.float)
+        lineTab = 0
+        Tabis = -9999 * np.ones((1, 15 * (sup_max + 1)), dtype=np.float)
+        lineTabis = 0
+        test = 1
+        intsup = 1
+        newTmax = Tmax
+        Dsupdep = 0
+        pg = 0
+        Hginit = Line[0, 7] if test_hfor else Hend
+        best = 0
+        slope_prev = -9999
+        indmin = 0
+
+        while intsup <= sup_max and not best:
+            for p in range(0, nblineTabis):
+                if intsup > 1:
+                    lineTabis = p
+                    col = (intsup - 2) * 15
+                    indmin = ceil(Tabis[p, 13 + col])
+                    pg = indmin
+                    newTmax = Tabis[p, 10 + col]
+                    Dsupdep = 0
+                    Hginit = Tabis[p, 14 + col]
+
+                    for c in range(col + 2, 1, -15):
+                        Dsupdep += Tabis[p, c]
+
+                    slope_prev = Tabis[p, 3 + col]
+
+                for posi in range(indmaxmulti, indmin, -1):
+                    Hd = Line[posi, 7]
+                    Hg = Hginit
+                    test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, pg, posi, Hg, Hd, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, newTmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, Dsupdep, slope_prev)
+
+                    if test1:
+                        Tdown = sqrt(Th * Th + (Tv - q1 * 9.81 * Lo) * (Tv - q1 * 9.81 * Lo))
+                        Tab[lineTab, 0:(intsup - 1) * 15] = Tabis[lineTabis, 0:(intsup - 1) * 15]
+                        Tab[lineTab, (intsup - 1) * 15:((intsup - 1) * 15 + 15)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(Th * Th + (Tv - F - Lo * 9.81 * q1) ** 2), Hg, posi, Hd
+                        lineTab += 1
+                        test2, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, posi, indmax, Hd, Htower, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, Tdown, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, diag + Dsupdep, slope)
+
+                        if test2:
+                            best = 1
+                            Tab[lineTab, 0:intsup * 15] = Tab[lineTab - 1, 0:intsup * 15]
+                            Tab[lineTab, intsup * 15:(intsup * 15 + 15)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(Th * Th + (Tv - F - Lo * 9.81 * q1) ** 2), Hd, indmax, Htower
+                            break
+
+                if best:
+                    break
+
+            if not best:
+                if lineTab == 0:
+                    test = 0
+                    intsup -= 2
+
+                    if Tabis[0, 0] > 0:
+                        Tab[lineTab] = Tabis[0]
+                    else:
+                        Tab[lineTab] *= 0
+
+                    break
+
+                Tabis = get_Tabis2(Tab, lineTab, nbconfig, intsup, indmax)
+                nblineTabis = Tabis.shape[0]
+
+                if nblineTabis > 0:
+                    Tab = -9999 * np.ones((indmaxmulti * nbconfig * Tabis.shape[0] * 100, 15 * (sup_max + 1)), dtype=np.float)
+                    intsup += 1
+                    lineTab = 0
+                else:
+                    test = 0
+                    intsup = -2
+                    break
+
+        if not best and test:
+            lineTab = 0
+
+            for p in range(0, nblineTabis):
+                lineTabis = p
+                col = (intsup - 2) * 15
+                pg = ceil(Tabis[p, 13 + col])
+                Hg = Tabis[p, 14 + col]
+                indminmulti = pg
+                diff = 0.0
+
+                while diff < Csize * LminSpan:
+                    indminmulti += 1
+                    diff = Line[indminmulti, 0] - Line[pg, 0]
+
+                newTmax = Tabis[p, 10 + col]
+                Dsupdep = 0
+
+                for c in range(col + 2, 1, -15):
+                    Dsupdep += Tabis[p, c]
+
+                slope_prev = Tabis[p, 3 + col]
+
+                for posi in range(indmax - 1, indminmulti - 1, -1):
+                    test1, D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, F = test_Span(Line, pg, posi, Hg, Htower, Hline_min, Hline_max, slope_min, slope_max, Alts, Fo, newTmax, q1, q2, q3, EAo, rastLosup, rastTh, rastTv, Csize, angle_intsup, Dsupdep, slope_prev)
+
+                    if test1:
+                        Tdown = sqrt(Th * Th + (Tv - q1 * 9.81 * Lo) * (Tv - q1 * 9.81 * Lo))
+                        Tab[lineTab, 0:(intsup - 1) * 15] = Tabis[lineTabis, 0:(intsup - 1) * 15]
+                        Tab[lineTab, (intsup - 1) * 15:((intsup - 1) * 15 + 15)] = D, H, diag, slope, fact, Xup, Zup, Lo, Th, Tv, Tcalc, sqrt(Th * Th + (Tv - F - Lo * 9.81 * q1) ** 2), Hg, posi, Htower
+                        lineTab += 1
+
+            if lineTab == 0:
+                intsup -= 2
+                lineTab = 0
+                Tab[lineTab] = Tabis[0]
+            else:
+                Tab = get_Tabis2(Tab, lineTab, 1, intsup, indmax)
+                lineTab = 0
+                intsup = sup_max
+
+        for i in range(0, intsup + 1):
+            col = i * 15
+            Span[i, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15]] = Tab[lineTab, col:col + 14]
+
+    return Span
+
+
+def OptPyl_Down(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize, angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min, slope_max, Lmax, test_hfor, nbconfig=5):
+    indmax = Line.shape[0] - 1
+    i = -1
+    j = sup_max
+    Dmax = Line[indmax, 0]
+    test = 0
+    Spanbis = np.zeros_like(Span)
+
+    while not test:
+        indmax = Line.shape[0] - 1
+        if indmax == 1:
+            test = 0
+            break
+
+        Span = OptPyl_Up2(Line, Alts, Span * 0, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize, angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min, slope_max, Lmax, test_hfor, nbconfig)
+
+        if np.max(Span[:, 15]) == indmax:
+            test = 1
+            break
+        else:
+            Line = Line[1:]
+
+    if test:
+        for j in range(sup_max, -1, -1):
+            if Span[j, 0] > 0:
+                break
+
+        i = -1
+
+        while j > -1:
+            i += 1
+            Spanbis[i] = Span[j]
+            Spanbis[i, 5] = Dmax - Span[j, 5]
+            Spanbis[i, 15] = indmax - Span[j - 1, 15]
+            j -= 1
+
+        Spanbis[i, 15] = indmax
+        Spanbis[:, 4] *= -1
+
+    return Spanbis
+
+
+def OptPyl_Down_NoH(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize, angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min, slope_max, Lmax, test_hfor, nbconfig=5):
+    indmax = Line.shape[0] - 1
+    i = -1
+    j = sup_max
+    Dmax = Line[indmax, 0]
+    test = 0
+    Spanbis = np.zeros_like(Span)
+
+    while not test:
+        indmax = Line.shape[0] - 1
+        if indmax == 1:
+            test = 0
+            break
+
+        Span = OptPyl_Up2_NoH(Line, Alts, Span * 0, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hline_min, Hline_max, Csize, angle_intsup, EAo, E, d, sup_max, rastLosup, rastTh, rastTv, Tmax, LminSpan, slope_min, slope_max, Lmax, test_hfor, nbconfig)
+
+        if np.max(Span[:, 15]) == indmax:
+            test = 1
+            break
+        else:
+            Line = Line[1:]
+
+    if test:
+        for j in range(sup_max, -1, -1):
+            if Span[j, 0] > 0:
+                break
+
+        i = -1
+
+        while j > -1:
+            i += 1
+            Spanbis[i] = Span[j]
+            Spanbis[i, 5] = Dmax - Span[j, 5]
+            Spanbis[i, 15] = indmax - Span[j - 1, 15]
+            j -= 1
+
+        Spanbis[i, 15] = indmax
+        Spanbis[:, 4] *= -1
+
+    return Spanbis
+
+
+def mask_3(matrice, nbpixel_bis):
+    nline = matrice.shape[0]
+    ncol = matrice.shape[1]
+    top = nline
+    bottom = 0
+    left = ncol
+    right = 0
+
+    for y in range(nline):
+        for x in range(ncol):
+            if matrice[y, x] == 1:
+                if y < top:
+                    top = y
+                if y > bottom:
+                    bottom = y
+                if x < left:
+                    left = x
+                if x > right:
+                    right = x
+
+    top = max(0, top - nbpixel_bis)
+    bottom = min(nline, bottom + 1 + nbpixel_bis)
+    left = max(0, left - nbpixel_bis)
+    right = min(ncol, right + 1 + nbpixel_bis)
+
+    return top, bottom, left, right
+
+
+def Line_emprise(zone, direction, Buffer_cote, Ligne_perpendic):
+    zone_ok = zone.copy()
+    h3 = direction * (1 + 2 * Buffer_cote)
+    b3 = h3 + (1 + 2 * Buffer_cote)
+    Mask = Ligne_perpendic[h3:b3] * 1
+    nline, ncol = zone.shape
+
+    for L in range(nline):
+        for C in range(ncol):
+            if zone[L, C] == 1:
+                h = max(0, L - Buffer_cote)
+                buf_h = 0
+
+                if h == 0:
+                    buf_h = Buffer_cote - L
+
+                b = min(nline, L + 1 + Buffer_cote)
+                l = max(0, C - Buffer_cote)
+                buf_l = 0
+
+                if l == 0:
+                    buf_l = Buffer_cote - C
+
+                r = min(ncol, C + 1 + Buffer_cote)
+                y = h
+                x = l
+                y1 = buf_h
+
+                for y in range(h, b):
+                    x1 = buf_l
+
+                    for x in range(l, r):
+                        zone_ok[y, x] = min((zone_ok[y, x] + Mask[y1, x1]), 1)
+                        x1 += 1
+
+                    y1 += 1
+
+    return zone_ok
+
+
+def concatenate_int(zone, h, b, l, r, Mask):
+    y1 = 0
+
+    for y in range(h, b):
+        x1 = 0
+
+        for x in range(l, r):
+            zone[y, x] = zone[y, x] + Mask[y1, x1]
+            x1 += 1
+
+        y1 += 1
+
+    return zone
+
+
+def concatenate_float(zone, h, b, l, r, Mask):
+    y1 = 0
+
+    for y in range(h, b):
+        x1 = 0
+
+        for x in range(l, r):
+            zone[y, x] = zone[y, x] + Mask[y1, x1]
+            x1 += 1
+
+        y1 += 1
+
+    return zone
+
+
+def skid_debusq_RF(Lien_RF, MNT, Row_line, Col_line, D_line, Nbpix_line,
+                   coeff, orig, Pmax_up, Pmax_down, damont, daval, Csize,
+                   nrows, ncols, Zone_ok):
+    Max_distance = 100000
+    dmin = min(damont, daval)
+    Out_distance = np.ones((nrows, ncols), dtype=np.int32) * (Max_distance + 1)
+    L_des = np.zeros((nrows, ncols), dtype=np.int32)
+
+    for pixel in range(1, Lien_RF.shape[0]):
+        coordY, coordX = Lien_RF[pixel, 0], Lien_RF[pixel, 1]
+        Alt_RF = MNT[coordY, coordX]
+        testRF = 0
+
+        for az in range(360):
+            nbpix = Nbpix_line[az]
+
+            for i in range(1, nbpix):
+                Y, X = coordY + Row_line[az, i], coordX + Col_line[az, i]
+
+                if not (0 <= Y < nrows) or not (0 <= X < ncols) or not Zone_ok[Y, X]:
+                    break
+
+                Hdist = D_line[az, i]
+                Alt_pixel = MNT[Y, X]
+                dist = sqrt(Hdist**2 + (Alt_pixel - Alt_RF)**2)
+                coef_l = (Alt_pixel - Alt_RF) / Hdist
+
+                if Out_distance[Y, X] > dist:
+                    j = 1
+                    test = 1
+
+                    for j in range(1, i):
+                        Hline = (Alt_RF + coef_l * D_line[az, j] + 10.) - MNT[coordY + Row_line[az, j], coordX + Col_line[az, j]]
+
+                        if Hline < 0 or Hline > 30.:
+                            test = 0
+                            break
+
+                    if not test:
+                        break
+
+                    if dist > dmin:
+                        if coef_l <= Pmax_down:
+                            dmax = daval
+                        elif coef_l > Pmax_up:
+                            dmax = damont
+                        else:
+                            dmax = orig / (1 - coeff * coef_l / sqrt(1 + coef_l**2))
+
+                        if dist > dmax:
+                            break
+
+                    Out_distance[Y, X] = int(dist + 0.5)
+                    L_des[Y, X] = pixel
+                    testRF = 1
+
+        if testRF:
+            Out_distance[coordY, coordX] = 0
+            L_des[coordY, coordX] = pixel
+
+    for Y in range(nrows):
+        for X in range(ncols):
+            if Out_distance[Y, X] > Max_distance:
+                Out_distance[Y, X] = -9999
+                L_des[Y, X] = -9999
+
+    return Out_distance, L_des
+
+
+def skid_debusq_Piste(Lien_RF, MNT, Row_line, Col_line, D_line, Nbpix_line,
+                      coeff, orig, Pmax_up, Pmax_down, damont, daval, Csize,
+                      nrows, ncols, Zone_ok):
+    Max_distance = 100000
+    dmin = min(damont, daval)
+    Out_distance = np.ones((nrows, ncols), dtype=np.int32) * (Max_distance + 1)
+    L_des = np.zeros((nrows, ncols), dtype=np.int32)
+    Dpis = np.zeros((nrows, ncols), dtype=np.int32)
+
+    for pixel in range(1, Lien_RF.shape[0]):
+        coordY, coordX = Lien_RF[pixel, 0], Lien_RF[pixel, 1]
+        Alt_RF = MNT[coordY, coordX]
+        testRF = 0
+        dpist = Lien_RF[pixel, 2]
+
+        for az in range(360):
+            nbpix = Nbpix_line[az]
+
+            for i in range(1, nbpix):
+                Y, X = coordY + Row_line[az, i], coordX + Col_line[az, i]
+
+                if not (0 <= Y < nrows) or not (0 <= X < ncols) or not Zone_ok[Y, X]:
+                    break
+
+                Hdist = D_line[az, i]
+                Alt_pixel = MNT[Y, X]
+                dist = sqrt(Hdist**2 + (Alt_pixel - Alt_RF)**2)
+                coef_l = (Alt_pixel - Alt_RF) / Hdist
+
+                if Out_distance[Y, X] > dist:
+                    j = 1
+                    test = 1
+
+                    for j in range(1, i):
+                        Hline = (Alt_RF + coef_l * D_line[az, j] + 10.) - MNT[coordY + Row_line[az, j], coordX + Col_line[az, j]]
+
+                        if Hline < 0 or Hline > 30.:
+                            test = 0
+                            break
+
+                    if not test:
+                        break
+
+                    if dist > dmin:
+                        if coef_l <= Pmax_down:
+                            dmax = daval
+                        elif coef_l > Pmax_up:
+                            dmax = damont
+                        else:
+                            dmax = orig / (1 - coeff * coef_l / sqrt(1 + coef_l**2))
+
+                        if dist > dmax:
+                            break
+
+                    Out_distance[Y, X] = int(dist + 0.5)
+                    L_des[Y, X] = pixel
+                    Dpis[Y, X] = int(dpist + 0.5)
+                    testRF = 1
+
+        if testRF:
+            Out_distance[coordY, coordX] = 0
+            L_des[coordY, coordX] = pixel
+            Dpis[coordY, coordX] = int(dpist + 0.5)
+
+    for Y in range(nrows):
+        for X in range(ncols):
+            if Out_distance[Y, X] > Max_distance:
+                Out_distance[Y, X] = -9999
+                L_des[Y, X] = -9999
+                Dpis[Y, X] = -9999
+
+    return Out_distance, L_des, Dpis
+
+
+def skid_debusq_contour(Lien_RF, MNT, Row_line, Col_line, D_line, Nbpix_line,
+                        coeff, orig, Pmax_up, Pmax_down, damont, daval, Csize,
+                        nrows, ncols, Zone_ok):
+    Max_distance = 100000
+    dmin = min(damont, daval)
+    Out_distance = np.ones((nrows, ncols), dtype=np.int32) * (Max_distance + 1)
+    L_RF = np.zeros((nrows, ncols), dtype=np.int32)
+    L_Piste = np.zeros((nrows, ncols), dtype=np.int32)
+    Dpis = np.zeros((nrows, ncols), dtype=np.int32)
+    Dfor = np.zeros((nrows, ncols), dtype=np.int32)
+
+    for pixel in range(1, Lien_RF.shape[0]):
+        coordY, coordX = Lien_RF[pixel, 0], Lien_RF[pixel, 1]
+        Alt_RF = MNT[coordY, coordX] 
+        testRF = 0
+        lienRF, lienPiste = Lien_RF[pixel, 2], Lien_RF[pixel, 3]
+        dpist, dfor = Lien_RF[pixel, 5], Lien_RF[pixel, 4]
+
+        for az in range(360):
+            nbpix = Nbpix_line[az]
+
+            for i in range(1, nbpix):
+                Y, X = coordY + Row_line[az, i], coordX + Col_line[az, i]
+
+                if not (0 <= Y < nrows) or not (0 <= X < ncols) or not Zone_ok[Y, X]:
+                    break
+
+                Hdist = D_line[az, i]
+                Alt_pixel = MNT[Y, X]
+                coef_l = (Alt_pixel - Alt_RF) / Hdist
+                dist = sqrt(Hdist**2 + (Alt_pixel - Alt_RF)**2)
+
+                if (Out_distance[Y, X] + Dpis[Y, X] + Dfor[Y, X]) > (dist + dpist + dfor):
+                    j = 1
+                    test = 1
+
+                    for j in range(1, i):
+                        Hline = (Alt_RF + coef_l * D_line[az, j] + 10.) - MNT[coordY + Row_line[az, j], coordX + Col_line[az, j]]
+
+                        if Hline < 0 or Hline > 30.:
+                            test = 0
+                            break
+
+                    if not test:
+                        break
+
+                    if dist > dmin:
+                        if coef_l <= Pmax_down:
+                            dmax = daval
+                        elif coef_l > Pmax_up:
+                            dmax = damont
+                        else:
+                            dmax = orig / (1 - coeff * coef_l / sqrt(1 + coef_l**2))
+
+                        if dist > dmax:
+                            break
+
+                    Out_distance[Y, X] = int(dist + 0.5)
+                    L_RF[Y, X] = lienRF 
+                    L_Piste[Y, X] = lienPiste
+                    Dpis[Y, X] = int(dpist + 0.5)
+                    Dfor[Y, X] = int(dfor + 0.5)
+                    testRF = 1
+
+        if testRF:
+            Out_distance[coordY, coordX] = 0
+            L_RF[coordY, coordX] = lienRF 
+            L_Piste[coordY, coordX] = lienPiste
+            Dpis[coordY, coordX] = int(dpist + 0.5)
+            Dfor[coordY, coordX] = int(dfor + 0.5)
+
+    for Y in range(nrows):
+        for X in range(ncols):
+            if Out_distance[Y, X] > Max_distance:
+                Out_distance[Y, X] = -9999
+                L_RF[Y, X] = -9999
+                L_Piste[Y, X] = -9999
+                Dpis[Y, X] = -9999
+                Dfor[Y, X] = -9999
+
+    return Out_distance, L_RF, L_Piste, Dpis, Dfor
+
+
+def seek_ind(Tab, x, y):
+    nline = Tab.shape[0]
+    y1 = 1
+    ind = 1
+
+    while y1 < nline:
+        if Tab[y1, 0] == y:
+            if Tab[y1, 1] == x:
+                ind = y1
+                break
+        y1 += 1
+
+    return ind
+
+
+def seek_ind_i(Tab, x, y):
+    nline = Tab.shape[0]
+    y1 = 1
+    ind = 1
+
+    while y1 < nline:
+        if Tab[y1, 0] == y:
+            if Tab[y1, 1] == x:
+                ind = y1
+                break
+        y1 += 1
+
+    return ind
+
+
+def Link_RF_res_pub(Tab_res_pub, cost_rast, RF, Res_pub, Link_RF, Csize, Max_distance=100000):
+    nline, ncol = cost_rast.shape
+    diag = 1.414214 * Csize
+    direct = Csize
+    dist_ac = Csize
+    nb_pixel_res_pub = Tab_res_pub.shape[0]
+    nb_pixel_RF = Link_RF.shape[0]
+    pixel = 1
+
+    while pixel < nb_pixel_res_pub:
+        y1 = Tab_res_pub[pixel, 0]
+        x1 = Tab_res_pub[pixel, 1]
+        if RF[y1, x1] == 1:
+            ind = seek_ind(Link_RF, x1, y1)
+            Link_RF[ind, 2] = 0
+            Link_RF[ind, 3] = pixel
+            Link_RF[ind, 4] = 1
+        pixel += 1
+
+    while dist_ac <= Max_distance:
+        test = 0
+        pixel = 1
+        while pixel < nb_pixel_RF:
+            if Link_RF[pixel, 4] == 1:
+                test = 1
+                y1 = int(Link_RF[pixel, 0])
+                x1 = int(Link_RF[pixel, 1])
+                Link_RF[pixel, 4] = 2
+                dist_ac = Link_RF[pixel, 2]
+
+                for y in range(max(0, y1 - 1), min(nline, y1 + 2)):
+                    for x in range(max(0, x1 - 1), min(ncol, x1 + 2)):
+                        if RF[y, x] == 1:
+                            if y != y1 and x != x1:
+                                Dist = cost_rast[y, x] * diag + dist_ac
+                            else:
+                                Dist = cost_rast[y, x] * direct + dist_ac
+                            ind = seek_ind(Link_RF, x, y)
+                            if Link_RF[ind, 2] > Dist:
+                                Link_RF[ind, 2] = Dist
+                                Link_RF[ind, 3] = Link_RF[pixel, 3]
+                                Link_RF[ind, 4] = 1
+            pixel += 1
+
+        if test == 0:
+            break
+
+    test = 0
+    pixel = 1
+
+    while pixel < nb_pixel_RF:
+        if Link_RF[pixel, 2] == 100001:
+            y1 = int(Link_RF[pixel, 0])
+            x1 = int(Link_RF[pixel, 1])
+            for y in range(max(0, y1 - 1), min(nline, y1 + 2)):
+                for x in range(max(0, x1 - 1), min(ncol, x1 + 2)):
+                    if Res_pub[y, x] == 1:
+                        if y != y1 and x != x1:
+                            Dist = cost_rast[y, x] * diag
+                        else:
+                            Dist = cost_rast[y, x] * direct
+                        ind = seek_ind_i(Tab_res_pub, x, y)
+                        Link_RF[pixel, 2] = Dist
+                        Link_RF[pixel, 3] = ind
+                        Link_RF[pixel, 4] = 1
+                        test = 1
+        pixel += 1
+
+    while test:
+        test = 0
+        pixel = 1
+        while pixel < nb_pixel_RF:
+            if Link_RF[pixel, 4] == 1:
+                test = 1
+                y1 = int(Link_RF[pixel, 0])
+                x1 = int(Link_RF[pixel, 1])
+                Link_RF[pixel, 4] = 2
+                dist_ac = Link_RF[pixel, 2]
+
+                for y in range(max(0, y1 - 1), min(nline, y1 + 2)):
+                    for x in range(max(0, x1 - 1), min(ncol, x1 + 2)):
+                        if RF[y, x] == 1:
+                            if y != y1 and x != x1:
+                                Dist = cost_rast[y, x] * diag + dist_ac
+                            else:
+                                Dist = cost_rast[y, x] * direct + dist_ac
+                            ind = seek_ind(Link_RF, x, y)
+                            if Link_RF[ind, 2] > Dist:
+                                Link_RF[ind, 2] = Dist
+                                Link_RF[ind, 3] = Link_RF[pixel, 3]
+                                Link_RF[ind, 4] = 1
+            pixel += 1
+
+    return Link_RF[:, 0:-1]
+
+
+def Link_tracks_res_pub(Tab_res_pub, Link_RF, cost_rast, Piste, RF, Res_Pub, Link_Piste, Csize, Max_distance=100000):
+    nline, ncol = cost_rast.shape
+    diag = 1.414214 * Csize
+    direct = Csize
+    dist_ac = Csize
+    nb_pixel_res_pub = Tab_res_pub.shape[0]
+    nb_pixel_RF = Link_RF.shape[0]
+    nb_pixel_Piste = Link_Piste.shape[0]
+    pixel = 1
+
+    # Initialisation du raster depuis reseau public
+    while pixel < nb_pixel_res_pub:
+        y1 = Tab_res_pub[pixel, 0]
+        x1 = Tab_res_pub[pixel, 1]
+        if Piste[y1, x1] == 1:
+            ind = seek_ind(Link_Piste, x1, y1)
+            Link_Piste[ind, 2] = 0
+            Link_Piste[ind, 3] = 0
+            Link_Piste[ind, 4] = -9999
+            Link_Piste[ind, 5] = pixel
+            Link_Piste[ind, 6] = 1
+        pixel += 1
+
+    pixel = 1
+    # Initialisation du raster depuis route_for
+    while pixel < nb_pixel_RF:
+        y1 = Link_RF[pixel, 0]
+        x1 = Link_RF[pixel, 1]
+        if Piste[y1, x1] == 1:
+            ind = seek_ind(Link_Piste, x1, y1)
+            Link_Piste[ind, 2] = 0
+            Link_Piste[ind, 3] = Link_RF[pixel, 2]
+            Link_Piste[ind, 4] = pixel
+            Link_Piste[ind, 5] = Link_RF[pixel, 3]
+            Link_Piste[ind, 6] = 1
+        pixel += 1
+
+    # Traitement complet
+    while dist_ac <= Max_distance:
+        test = 0
+        pixel = 1
+        while pixel < nb_pixel_Piste:
+            if Link_Piste[pixel, 6] == 1:
+                test = 1
+                y1 = int(Link_Piste[pixel, 0])
+                x1 = int(Link_Piste[pixel, 1])
+                Link_Piste[pixel, 6] = 2
+                dist_ac = Link_Piste[pixel, 2]
+
+                for y in range(max(0, y1 - 1), min(nline, y1 + 2)):
+                    for x in range(max(0, x1 - 1), min(ncol, x1 + 2)):
+                        if Piste[y, x] == 1:
+                            if y != y1 and x != x1:
+                                Dist = cost_rast[y, x] * diag + dist_ac
+                            else:
+                                Dist = cost_rast[y, x] * direct + dist_ac
+                            ind = seek_ind(Link_Piste, x, y)
+                            if Link_Piste[ind, 2] > Dist:
+                                Link_Piste[ind, 2] = Dist
+                                Link_Piste[ind, 3] = Link_Piste[pixel, 3]
+                                Link_Piste[ind, 4] = Link_Piste[pixel, 4]
+                                Link_Piste[ind, 5] = Link_Piste[pixel, 5]
+                                Link_Piste[ind, 6] = 1
+            pixel += 1
+
+        if test == 0:
+            break
+
+    # Verifie si certaines pistes ne sont pas connectee
+    test = 0
+    pixel = 1
+
+    # Initialisation du raster
+    while pixel < nb_pixel_Piste:
+        if Link_Piste[pixel, 2] == 100001:
+            y1 = int(Link_Piste[pixel, 0])
+            x1 = int(Link_Piste[pixel, 1])
+            for y in range(max(0, y1 - 1), min(nline, y1 + 2)):
+                for x in range(max(0, x1 - 1), min(ncol, x1 + 2)):
+                    if Res_Pub[y, x] == 1:
+                        if y != y1 and x != x1:
+                            Dist = cost_rast[y, x] * diag
+                        else:
+                            Dist = cost_rast[y, x] * direct
+                        if Link_Piste[pixel, 2] > Dist:
+                            ind = seek_ind_i(Tab_res_pub, x, y)
+                            Link_Piste[pixel, 2] = Dist
+                            Link_Piste[pixel, 3] = 0
+                            Link_Piste[pixel, 4] = -9999
+                            Link_Piste[pixel, 5] = ind
+                            Link_Piste[pixel, 6] = 1
+                            test = 1
+                    if RF[y, x] == 1:
+                        if y != y1 and x != x1:
+                            Dist = cost_rast[y, x] * diag
+                        else:
+                            Dist = cost_rast[y, x] * direct
+                        if Link_Piste[pixel, 2] > Dist:
+                            ind = seek_ind_i(Link_RF, x, y)
+                            Link_Piste[pixel, 2] = Dist
+                            Link_Piste[pixel, 3] = Link_RF[ind, 2]
+                            Link_Piste[pixel, 4] = ind
+                            Link_Piste[pixel, 5] = Link_RF[ind, 3]
+                            Link_Piste[pixel, 6] = 1
+                            test = 1
+        pixel += 1
+
+    # Traitement complet
+    while test:
+        test = 0
+        pixel = 1
+        while pixel < nb_pixel_Piste:
+            if Link_Piste[pixel, 6] == 1:
+                test = 1
+                y1 = int(Link_Piste[pixel, 0])
+                x1 = int(Link_Piste[pixel, 1])
+                Link_Piste[pixel, 6] = 2
+                dist_ac = Link_Piste[pixel, 2]
+
+                for y in range(max(0, y1 - 1), min(nline, y1 + 2)):
+                    for x in range(max(0, x1 - 1), min(ncol, x1 + 2)):
+                        if Piste[y, x] == 1:
+                            if y != y1 and x != x1:
+                                Dist = cost_rast[y, x] * diag + dist_ac
+                            else:
+                                Dist = cost_rast[y, x] * direct + dist_ac
+                            ind = seek_ind(Link_Piste, x, y)
+                            if Link_Piste[ind, 2] > Dist:
+                                Link_Piste[ind, 2] = Dist
+                                Link_Piste[ind, 3] = Link_Piste[pixel, 3]
+                                Link_Piste[ind, 4] = Link_Piste[pixel, 4]
+                                Link_Piste[ind, 5] = Link_Piste[pixel, 5]
+                                Link_Piste[ind, 6] = 1
+            pixel += 1
+
+    return Link_Piste[:, 0:-1]
+
+
+def Dfwd_flat_forest_road(Link_RF, cost_rast, zone_rast, Csize, Max_distance=100000):
+    nline, ncol = zone_rast.shape
+    diag = 1.414214 * Csize
+    direct = Csize
+    nb_pixel_RF = Link_RF.shape[0]
+    pixel = 1
+    ind = 0
+    nb_pixel = 0
+
+    # Creation des rasters de sorties
+    Out_distance = np.ones_like(zone_rast, dtype=np.int32) * (Max_distance + 1)
+    L_forRF = np.ones_like(zone_rast, dtype=np.int32) * -9999
+
+    x, y, x1, y1 = 0, 0, 0, 0
+    test = 0
+    count_sans_match = 0
+    Dist = 0
+    dist_ac = Csize
+
+    # Initialisation du raster
+    pixel = 1
+    while pixel < nb_pixel_RF:
+        y1 = Link_RF[pixel, 0]
+        x1 = Link_RF[pixel, 1]
+        Out_distance[y1, x1] = 0
+        L_forRF[y1, x1] = pixel
+        for y in range(max(0, y1 - 1), min(nline, y1 + 2)):
+            for x in range(max(0, x1 - 1), min(ncol, x1 + 2)):
+                if zone_rast[y, x] == 1:
+                    if y != y1 and x != x1:
+                        Dist = cost_rast[y, x] * diag
+                    else:
+                        Dist = cost_rast[y, x] * direct
+                    if Out_distance[y, x] > Dist:
+                        Out_distance[y, x] = int(Dist + 0.5)
+                        L_forRF[y, x] = pixel
+                        x1, y1 = x, y
+        pixel += 1
+
+    # Traitement complet
+    while dist_ac <= Max_distance and count_sans_match < 15 * Csize:
+        y1, x1 = h, l
+        test = 0
+        for y1 in range(h, b):
+            for x1 in range(l, r):
+                if Out_distance[y1, x1] == dist_ac:
+                    test = 1
+                    for y in range(max(0, y1 - 1), min(nline, y1 + 2)):
+                        for x in range(max(0, x1 - 1), min(ncol, x1 + 2)):
+                            if zone_rast[y, x] == 1:
+                                if y != y1 and x != x1:
+                                    Dist = cost_rast[y, x] * diag + dist_ac
+                                else:
+                                    Dist = cost_rast[y, x] * direct + dist_ac
+                                if Out_distance[y, x] > Dist:
+                                    Out_distance[y, x] = int(Dist + 0.5)
+                                    L_forRF[y, x] = L_forRF[y1, x1]
+        if test == 1:
+            count_sans_match = 0
+        else:
+            count_sans_match += 1
+        dist_ac += 1
+        h = max(0, h - 1)
+        b = min(nline, b + 1)
+        l = max(0, l - 1)
+        r = min(ncol, r + 1)
+
+    for y in range(0, nline):
+        for x in range(0, ncol):
+            if Out_distance[y, x] > Max_distance:
+                Out_distance[y, x] = -9999
+                L_forRF[y, x] = -9999
+
+    return Out_distance, L_forRF
+
+
+def Dfwd_flat_forest_tracks(Link_Piste, cost_rast, zone_rast, Csize, Max_distance=100000):
+    nline, ncol = zone_rast.shape
+    diag = 1.414214 * Csize
+    direct = Csize
+    nb_pixel_Piste = Link_Piste.shape[0]
+    pixel = 1
+    ind = 0
+    nb_pixel = 0
+
+    # Creation des rasters de sorties
+    Out_distance = np.ones_like(zone_rast, dtype=np.int32) * (Max_distance + 1)
+    L_forPiste = np.ones_like(zone_rast, dtype=np.int32) * -9999
+    Dpiste = np.ones_like(zone_rast, dtype=np.int32) * -9999
+
+    x, y, x1, y1 = 0, 0, 0, 0
+    test = 0
+    count_sans_match = 0
+    Dist = 0
+    dist_ac = Csize
+
+    # Initialisation du raster
+    pixel = 1
+    while pixel < nb_pixel_Piste:
+        y1 = Link_Piste[pixel, 0]
+        x1 = Link_Piste[pixel, 1]
+        Out_distance[y1, x1] = 0
+        L_forPiste[y1, x1] = pixel
+        Dpiste[y1, x1] = Link_Piste[pixel, 2]
+        for y in range(max(0, y1 - 1), min(nline, y1 + 2)):
+            for x in range(max(0, x1 - 1), min(ncol, x1 + 2)):
+                if zone_rast[y, x] == 1:
+                    if y != y1 and x != x1:
+                        Dist = cost_rast[y, x] * diag
+                    else:
+                        Dist = cost_rast[y, x] * direct
+                    if Out_distance[y, x] >= Dist and Dpiste[y, x] + 2 * Out_distance[y, x] > 2 * Dist + Link_Piste[
+                        pixel, 2]:
+                        Out_distance[y, x] = int(Dist + 0.5)
+                        L_forPiste[y, x] = pixel
+                        Dpiste[y, x] = Link_Piste[pixel, 2]
+                        if y < h: h = y
+                        if x < l: l = x
+                        if y > b: b = y
+                        if x > r: r = x
+        pixel += 1
+
+    # Traitement complet
+    while dist_ac <= Max_distance and count_sans_match < 15 * Csize:
+        y1, x1 = h, l
+        test = 0
+        for y1 in range(h, b):
+            for x1 in range(l, r):
+                if Out_distance[y1, x1] == dist_ac:
+                    test = 1
+                    for y in range(max(0, y1 - 1), min(nline, y1 + 2)):
+                        for x in range(max(0, x1 - 1), min(ncol, x1 + 2)):
+                            if zone_rast[y, x] == 1:
+                                if y != y1 and x != x1:
+                                    Dist = cost_rast[y, x] * diag + dist_ac
+                                else:
+                                    Dist = cost_rast[y, x] * direct + dist_ac
+                                if Out_distance[y, x] >= Dist and Dpiste[y, x] + 2 * Out_distance[y, x] > 2 * Dist + Dpiste[
+                                    y1, x1]:
+                                    Out_distance[y, x] = int(Dist + 0.5)
+                                    L_forPiste[y, x] = L_forPiste[y1, x1]
+                                    Dpiste[y, x] = Dpiste[y1, x1]
+        if test == 1:
+            count_sans_match = 0
+        else:
+            count_sans_match += 1
+        dist_ac += 1
+        h = max(0, h - 1)
+        b = min(nline, b + 1)
+        l = max(0, l - 1)
+        r = min(ncol, r + 1)
+
+    for y in range(0, nline):
+        for x in range(0, ncol):
+            if Out_distance[y, x] > Max_distance:
+                Out_distance[y, x] = -9999
+                L_forPiste[y, x] = -9999
+                Dpiste[y, x] = -9999
+
+    return Out_distance, L_forPiste, Dpiste
+
+
+def fwd_azimuts_contour(Lien_RF, MNT, Aspect, Pente, Row_line, Col_line, D_line, Nbpix_line,
+                        Fwd_max_up, Fwd_max_down, Fwd_max_inc, Forw_Lmax, Csize, nrows, ncols, Zone_ok):
+    Max_distance = 100000
+    Out_distance = np.ones((nrows, ncols), dtype=np.int32) * (Max_distance + 1)
+    Dfor = np.ones((nrows, ncols), dtype=np.int32) * (Max_distance + 1)
+    Dpis = np.ones((nrows, ncols), dtype=np.int32) * (Max_distance + 1)
+    L_pis = np.zeros((nrows, ncols), dtype=np.int32) - 9999
+    L_RF = np.zeros((nrows, ncols), dtype=np.int32) - 9999
+
+    for pixel in range(1, Lien_RF.shape[0]):
+        coordY = Lien_RF[pixel, 0]
+        coordX = Lien_RF[pixel, 1]
+        Alt_RF = MNT[coordY, coordX]
+        testRF = 0
+        lienRF = Lien_RF[pixel, 4]
+        lienPiste = Lien_RF[pixel, 5]
+        dpist = Lien_RF[pixel, 2]
+        dfor = Lien_RF[pixel, 3]
+        dist_init = dpist + dfor
+
+        for az in range(360):
+            nbpix = Nbpix_line[az]
+
+            for i in range(1, nbpix):
+                Y = coordY + Row_line[az, i]
+                if Y < 0:
+                    break
+                if Y >= nrows:
+                    break
+                X = coordX + Col_line[az, i]
+                if X < 0:
+                    break
+                if X >= ncols:
+                    break
+                if not Zone_ok[Y, X]:
+                    break
+
+                Hdist = D_line[az, i]
+                Alt_pixel = MNT[Y, X]
+                dist = sqrt(Hdist * Hdist + (Alt_pixel - Alt_RF) * (Alt_pixel - Alt_RF))
+
+                if dist > Forw_Lmax:
+                    break
+
+                if MNT[Y, X] > Alt_RF:
+                    if Pente[Y, X] > Fwd_max_down:
+                        break
+                else:
+                    if Pente[Y, X] > Fwd_max_up:
+                        break
+
+                dif_angle = (az - Aspect[Y, X]) % 180.
+                max_slope = fabs(Fwd_max_inc / cos((90. - dif_angle) / 180 * pi))
+
+                if Pente[Y, X] > max_slope:
+                    break
+
+                if Dpis[Y, X] == (Max_distance + 1):
+                    Out_distance[Y, X] = int(dist + 0.5)
+                    Dpis[Y, X] = int(dpist + 0.5)
+                    Dfor[Y, X] = int(dfor + 0.5)
+                    L_RF[Y, X] = lienRF
+                    L_pis[Y, X] = lienPiste
+                    testRF = 1
+                else:
+                    if (Out_distance[Y, X] + Dpis[Y, X] * 0.1 + Dfor[Y, X]) > (dist + dfor + 0.1 * dpist):
+                        Out_distance[Y, X] = int(dist + 0.5)
+                        Dpis[Y, X] = int(dpist + 0.5)
+                        Dfor[Y, X] = int(dfor + 0.5)
+                        L_RF[Y, X] = lienRF
+                        L_pis[Y, X] = lienPiste
+                        testRF = 1
+
+        if testRF:
+            Out_distance[coordY, coordX] = 0
+            Dpis[coordY, coordX] = int(dpist + 0.5)
+            Dfor[coordY, coordX] = int(dfor + 0.5)
+            L_RF[coordY, coordX] = lienRF
+            L_pis[coordY, coordX] = lienPiste
+
+    for Y in range(0, nrows, 1):
+        for X in range(0, ncols, 1):
+            if Out_distance[Y, X] > Max_distance:
+                Out_distance[Y, X] = -9999
+                L_RF[Y, X] = -9999
+                L_pis[Y, X] = -9999
+                Dpis[Y, X] = -9999
+                Dfor[Y, X] = -9999
+
+    return Out_distance, L_RF, L_pis, Dpis, Dfor
+
+
+def Fwd_add_contour(Lien_contour, cost_rast, zone_rast, Forw_portee, Csize):
+    nline, ncol = zone_rast.shape[0], zone_rast.shape[1]
+    diag = 1.414214 * Csize
+    direct = Csize
+    Dist, dist_ac = Csize, Csize
+    Max_distance = int(Forw_portee + 0.5)
+    nb_pixel_contour = Lien_contour.shape[0]
+    h, b, l, r = nline, 0, ncol, 0
+
+    # Creation des rasters de sorties
+    Out_distance = np.ones_like(zone_rast, dtype=np.int32) * (100 + 1)
+    Lien_RF = np.ones_like(zone_rast, dtype=np.int32) * -9999
+    Lien_piste = np.ones_like(zone_rast, dtype=np.int32) * -9999
+    Dpiste = np.ones_like(zone_rast, dtype=np.int32) * -9999
+    Dforet = np.ones_like(zone_rast, dtype=np.int32) * -9999
+
+    y1, x1, test, count_sans_match, pixel = 0, 0, 0, 0, 1
+
+    # Initialisation du raster
+    while pixel < nb_pixel_contour:
+        y1, x1 = Lien_contour[pixel, 0], Lien_contour[pixel, 1]
+        Out_distance[y1, x1] = 0
+        Lien_RF[y1, x1] = Lien_contour[pixel, 3]
+        Lien_piste[y1, x1] = Lien_contour[pixel, 5]
+        Dpiste[y1, x1] = Lien_contour[pixel, 4]
+        Dforet[y1, x1] = Lien_contour[pixel, 2]
+
+        for y in range(max(0, y1 - 1), min(nline, y1 + 2), 1):
+            for x in range(max(0, x1 - 1), min(ncol, x1 + 2), 1):
+                if zone_rast[y, x] == 1:
+                    if y != y1 and x != x1:
+                        Dist = cost_rast[y, x] * diag
+                    else:
+                        Dist = cost_rast[y, x] * direct
+
+                    if Dist <= Max_distance:
+                        if Out_distance[y, x] == 101:
+                            Out_distance[y, x] = int(Dist + 0.5)
+                            Lien_RF[y, x] = Lien_RF[y1, x1]
+                            Lien_piste[y, x] = Lien_piste[y1, x1]
+                            Dpiste[y, x] = Dpiste[y1, x1]
+                            Dforet[y, x] = Dforet[y1, x1]
+
+                            if y < h:
+                                h = y
+                            if x < l:
+                                l = x
+                            if y > b:
+                                b = y
+                            if x > r:
+                                r = x
+                        else:
+                            if Out_distance[y, x] + 0.1 * Dpiste[y, x] + Dforet[y, x] > Dist + 0.1 * Dpiste[y1, x1] + Dforet[y1, x1]:
+                                Out_distance[y, x] = int(Dist + 0.5)
+                                Lien_RF[y, x] = Lien_RF[y1, x1]
+                                Lien_piste[y, x] = Lien_piste[y1, x1]
+                                Dpiste[y, x] = Dpiste[y1, x1]
+                                Dforet[y, x] = Dforet[y1, x1]
+
+                                if y < h:
+                                    h = y
+                                if x < l:
+                                    l = x
+                                if y > b:
+                                    b = y
+                                if x > r:
+                                    r = x
+
+        pixel += 1
+
+    # Traitement complet
+    while dist_ac <= 100 and count_sans_match < 15 * Csize:
+        test = 0
+        y1, x1 = h, l
+
+        for y1 in range(h, b):
+            for x1 in range(l, r):
+                if Out_distance[y1, x1] == dist_ac:
+                    test = 1
+                    for y in range(max(0, y1 - 1), min(nline, y1 + 2), 1):
+                        for x in range(max(0, x1 - 1), min(ncol, x1 + 2), 1):
+                            if zone_rast[y, x] == 1:
+                                if y != y1 and x != x1:
+                                    Dist = cost_rast[y, x] * diag + dist_ac
+                                else:
+                                    Dist = cost_rast[y, x] * direct + dist_ac
+
+                                if Dist <= Max_distance:
+                                    if Out_distance[y, x] == 101:
+                                        Out_distance[y, x] = int(Dist + 0.5)
+                                        Lien_RF[y, x] = Lien_RF[y1, x1]
+                                        Lien_piste[y, x] = Lien_piste[y1, x1]
+                                        Dpiste[y, x] = Dpiste[y1, x1]
+                                        Dforet[y, x] = Dforet[y1, x1]
+                                    else:
+                                        if Out_distance[y, x] + 0.1 * Dpiste[y, x] + Dforet[y, x] > Dist + 0.1 * Dpiste[y1, x1] + Dforet[y1, x1]:
+                                            Out_distance[y, x] = int(Dist + 0.5)
+                                            Lien_RF[y, x] = Lien_RF[y1, x1]
+                                            Lien_piste[y, x] = Lien_piste[y1, x1]
+                                            Dpiste[y, x] = Dpiste[y1, x1]
+                                            Dforet[y, x] = Dforet[y1, x1]
+
+        if test == 1:
+            count_sans_match = 0
+        else:
+            count_sans_match += 1
+
+        dist_ac += 1
+        h = max(0, h - 1)
+        b = min(nline, b + 1)
+        l = max(0, l - 1)
+        r = min(ncol, r + 1)
+
+    for y in range(0, nline, 1):
+        for x in range(0, ncol, 1):
+            if Out_distance[y, x] > 100:
+                Out_distance[y, x] = -9999
+                Lien_RF[y, x] = -9999
+                Lien_piste[y, x] = -9999
+                Dpiste[y, x] = -9999
+                Dforet[y, x] = -9999
+
+    return Out_distance, Lien_RF, Lien_piste, Dpiste, Dforet
+
+
+def fill_Link(Lien_foret_piste, Lien_piste, Lien_RF, Lien_foret_RF, nrows, ncols):
+    Lien_foret_res_pub = np.ones((nrows, ncols), dtype=np.int32) * -9999
+    Keep = np.zeros((nrows, ncols), dtype=np.int8)
+
+    for y in range(nrows):
+        for x in range(ncols):
+            pixel = Lien_foret_piste[y, x]
+
+            if pixel > 0:
+                Keep[Lien_piste[pixel, 0], Lien_piste[pixel, 1]] = 1
+                Lien_foret_res_pub[y, x] = Lien_piste[pixel, 5]
+                Lien_foret_RF[y, x] = Lien_piste[pixel, 4]
+            else:
+                pixel2 = Lien_foret_RF[y, x]
+
+                if pixel2 > 0:
+                    Keep[Lien_RF[pixel2, 0], Lien_RF[pixel2, 1]] = 1
+                    Lien_foret_res_pub[y, x] = Lien_RF[pixel2, 3]
+
+    return Lien_foret_res_pub, Lien_foret_RF, Keep
 
