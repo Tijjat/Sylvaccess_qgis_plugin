@@ -287,6 +287,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.spinBox_108.setMinimum(0)
                 self.spinBox_108.setMaximum(0)
 
+
     def initialisation(self):
         global Sylvaccess_UI
         Sylvaccess_UI = Sylvaccess_pluginDialog()
@@ -336,7 +337,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                     gc.collect()
                 
                 if test_Porteur:
-                    Porteur()
+                    process_forwarder()
                     gc.collect()
             
             ###################################################################################################################
@@ -364,7 +365,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                     new= Rspace+"Porteur/1_Existant/"  
                     try:os.mkdir(Rspace_f)
                     except:pass
-                    Porteur(file_shp_Desserte_Exist)
+                    process_forwarder()
                     gc.collect()
                     os.rename(old,new)  
                     
@@ -388,7 +389,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                     Rspace_f = Rspace+"Porteur/"
                     old=Rspace+"Porteur/Porteur/"
                     new= Rspace+"Porteur/2_Projet/"                                
-                    Porteur()
+                    process_forwarder()
                     gc.collect()         
                     os.rename(old,new)   
                     make_dif_files(Rspace,1)                       
@@ -413,14 +414,14 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         test_Porteur = self.checkBox_3.isChecked()
         test_cable_optim = self.checkBox_1.isChecked()
         test_Cable = self.checkBox_2.isChecked()
-        file_MNT = getattr(self, f"lineEdit_3".text())
-        file_shp_Desserte = getattr(self, f"lineEdit_5".text())
-        file_shp_Foret = getattr(self, f"lineEdit_4".text())
-        file_vol_BP = getattr(self, f"lineEdit_13".text())
-        file_vol_AM = getattr(self, f"lineEdit_12".text())
-        file_HA = getattr(self, f"lineEdit_14".text())
+        file_MNT = getattr(self, f"lineEdit_3").text()
+        file_shp_Desserte = getattr(self, f"lineEdit_5").text()
+        file_shp_Foret = getattr(self, f"lineEdit_4").text()
+        file_vol_BP = getattr(self, f"lineEdit_13").text()
+        file_vol_AM = getattr(self, f"lineEdit_12").text()
+        file_HA = getattr(self, f"lineEdit_14").text()
         new_calc = self.checkBox_6.isChecked()
-        file_shp_Cable_dep = getattr(self, f"lineEdit_6".text())
+        file_shp_Cable_dep = getattr(self, f"lineEdit_6").text()
 
         msg="\nLES PROBLEMES SUIVANTS ONT ETE IDENTIFIES CONCERNANT LES ENTREES SPATIALES: \n"
         #Check MNT
@@ -569,7 +570,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         _pente_max_descendant = self.spinBox_12.value()
         _distance_max_pente_sup = self.spinBox_10.value()
         _distance_max_hors_frt = self.spinBox_11.value()
-        _taille_grue = self.doublespinBox_1.value()
+        _taille_grue = self.doubleSpinBox_1.value()
         _bornes_p = self.plainTextEdit_2.toPlainText()
     ##testing:
         console_info(f"get_porteur: pente_max={_pente_max}, pente_max_remonant={_pente_max_remonant}, pente_max_descendant={_pente_max_descendant}, distance_max_pente_sup={_distance_max_pente_sup}, distance_max_hors_frt={_distance_max_hors_frt}, taille_grue={_taille_grue}, bornes_p={_bornes_p}")
@@ -581,7 +582,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         self.update()
         _type_machine = self.comboBox_1.currentText()
         _supports_inter = self.spinBox_14.value()
-        _hauteur = self.doublespinBox_2.value()
+        _hauteur = self.doubleSpinBox_2.value()
         _longueur_max = self.spinBox_16.value()
         _longueur_min = self.spinBox_17.value()
     ##testing:
@@ -592,7 +593,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def get_type_chariot(self):
         self.update()
-        _type_chariot = self.comboBox_2.currentText()
+        _type_chariot = self.comboBox_3.currentText()
         _masse = self.spinBox_22.value()
         _pente_min = self.spinBox_23.value()
         _pente_max_amont = self.spinBox_24.value()
@@ -605,8 +606,8 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def get_proprietes_cable(self):
         self.update()
-        _diametre = self.doublespinBox_3.value()
-        _masse_li = self.doublespinBox_4.value()
+        _diametre = self.doubleSpinBox_3.value()
+        _masse_li = self.doubleSpinBox_4.value()
         _tension_rupt = self.spinBox_26.value()
         _elasticite = self.spinBox_27.value()
     ##testing:
@@ -617,13 +618,13 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def get_param_modelisation(self):
         self.update()
-        _hauteur_sup = self.doublespinBox_5.value()
-        _hauteur_mat = self.doublespinBox_8.value()
-        _hauteur_min_cable = self.doublespinBox_6.value()
-        _hauteur_max_cable = self.doublespinBox_9.value()
+        _hauteur_sup = self.doubleSpinBox_5.value()
+        _hauteur_mat = self.doubleSpinBox_8.value()
+        _hauteur_min_cable = self.doubleSpinBox_6.value()
+        _hauteur_max_cable = self.doubleSpinBox_9.value()
         _pechage = self.spinBox_40.value()
         _masse_max = self.spinBox_39.value()
-        _securite = self.doublespinBox_10.value()
+        _securite = self.doubleSpinBox_10.value()
     ##testing:
         console_info(f"get_param_modelisation: hauteur_sup={_hauteur_sup}, hauteur_mat={_hauteur_mat}, hauteur_min_cable={_hauteur_min_cable}, hauteur_max_cable={_hauteur_max_cable}, pechage={_pechage}, masse_max={_masse_max}, securite={_securite}")
 
@@ -659,43 +660,43 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         self.update()
         surface_poids,nbr_sup_int_poids,sens_debardage_poids,longueure_ligne_poids,vol_ligne_poids,indice_prelev_poids,VAM_poids,dist_chariot_poids = 0,0,0,0,0,0,0,0
         if self.checkBox_101.isChecked():
-            _surface = self.doublespinBox_11.value()
-            surface_poids = self.spinBox_18.value()
+            _surface = self.doubleSpinBox_11.value()
+            surface_poids = self.spinBox_101.value()
         else:
             _surface = 0
         if  self.checkBox_102.isChecked():
             _nbr_sup_int = self.spinBox_46.value()
-            nbr_sup_int_poids = self.spinBox_19.value()
+            nbr_sup_int_poids = self.spinBox_102.value()
         else:
             _nbr_sup_int = 0
         if self.checkBox_103.isChecked():
             _sens_debardage = self.spinBox_45.value()
-            sens_debardage_poids = self.spinBox_20.value()
+            sens_debardage_poids = self.spinBox_103.value()
         else:
             _sens_debardage = 0
         if  self.checkBox_104.isChecked():
             _longueure_ligne = self.spinBox_44.value()
-            longueure_ligne_poids = self.spinBox_21.value()
+            longueure_ligne_poids = self.spinBox_104.value()
         else:
             _longueure_ligne = 0
         if self.checkBox_105.isChecked():
             _vol_ligne = self.spinBox_43.value()
-            vol_ligne_poids = self.spinBox_31.value()
+            vol_ligne_poids = self.spinBox_105.value()
         else:
             _vol_ligne = 0
         if  self.checkBox_106.isChecked():
-            _indice_prelev = self.doublespinBox_12.value()
-            indice_prelev_poids = self.spinBox_32.value()
+            _indice_prelev = self.doubleSpinBox_12.value()
+            indice_prelev_poids = self.spinBox_106.value()
         else:
             _indice_prelev = 0
         if self.checkBox_107.isChecked():
-            _VAM = self.doublespinBox_13.value()
-            VAM_poids = self.spinBox_33.value()
+            _VAM = self.doubleSpinBox_13.value()
+            VAM_poids = self.spinBox_107.value()
         else:
             _VAM = 0
         if  self.checkBox_108.isChecked():
             _dist_chariot = self.spinBox_50.value()
-            dist_chariot_poids = self.spinBox_51.value()
+            dist_chariot_poids = self.spinBox_108.value()
         else:
             _dist_chariot = 0
     ##testing:
@@ -703,10 +704,60 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         console_info(f"get_crit_opti_poids : surface_poids={surface_poids}, nbr_sup_int_poids={nbr_sup_int_poids}, sens_debardage_poids={sens_debardage_poids}, longueure_ligne_poids={longueure_ligne_poids}, vol_ligne_poids={vol_ligne_poids}, indice_prelev_poids={indice_prelev_poids}, VAM_poids={VAM_poids}, dist_chariot_poids={dist_chariot_poids}")
         return _surface,surface_poids,_nbr_sup_int,nbr_sup_int_poids,_sens_debardage,sens_debardage_poids,_longueure_ligne,longueure_ligne_poids,_vol_ligne,vol_ligne_poids,_indice_prelev,indice_prelev_poids,_VAM,VAM_poids,_dist_chariot,dist_chariot_poids
 
+    @classmethod
+    def get_general_cls(cls):
+        _ski, _por, _cab, _opti, _pente = Sylvaccess_UI.get_general()
+        return _ski, _por, _cab, _opti, _pente
 
-# Fonctions qui gère les calculs liés au porteur
-def Porteur():
-    console_info("Porteur")
+    @classmethod
+    def get_spatial_cls(cls):
+        _Wspace, _Rspace, _mnt, _foret, _desserte, _dep_cable, _ski_no_t_d, _ski_no_t, _por_obstacle, _cab_obstacle, _HA, _VAM, _VBP = Sylvaccess_UI.get_spatial()
+        return _Wspace, _Rspace, _mnt, _foret, _desserte, _dep_cable, _ski_no_t_d, _ski_no_t, _por_obstacle, _cab_obstacle, _HA, _VAM, _VBP
+
+    @classmethod
+    def get_skidder_cls(cls):
+        _pente_max, _distance_max_amont, _distance_max_aval, _distance_max_hors_frt_dsrt, _pente_amont_max, _pente_aval_max, _limite, _bornes_s = Sylvaccess_UI.get_skidder()
+        return _pente_max, _distance_max_amont, _distance_max_aval, _distance_max_hors_frt_dsrt, _pente_amont_max, _pente_aval_max, _limite, _bornes_s
+
+    @classmethod
+    def get_porteur_cls(cls):
+        _pente_max, _pente_max_remonant, _pente_max_descendant, _distance_max_pente_sup, _distance_max_hors_frt, _taille_grue, _bornes_p = Sylvaccess_UI.get_porteur()
+        return _pente_max, _pente_max_remonant, _pente_max_descendant, _distance_max_pente_sup, _distance_max_hors_frt, _taille_grue, _bornes_p
+
+    @classmethod
+    def get_type_cable_cls(cls):
+        _type_machine, _supports_inter, _hauteur, _longueur_max, _longueur_min = Sylvaccess_UI.get_type_cable()
+        return _type_machine, _supports_inter, _hauteur, _longueur_max, _longueur_min
+
+    @classmethod
+    def get_type_chariot_cls(cls):
+        _type_chariot, _masse, _pente_min, _pente_max_amont, _pente_max_aval = Sylvaccess_UI.get_type_chariot()
+        return _type_chariot, _masse, _pente_min, _pente_max_amont, _pente_max_aval
+
+    @classmethod
+    def get_proprietes_cable_cls(cls):
+        _diametre, _masse_li, _tension_rupt, _elasticite = Sylvaccess_UI.get_proprietes_cable()
+        return _diametre, _masse_li, _tension_rupt, _elasticite
+
+    @classmethod
+    def get_param_modelisation_cls(cls):
+        _hauteur_sup, _hauteur_mat, _hauteur_min_cable, _hauteur_max_cable, _pechage, _masse_max, _securite = Sylvaccess_UI.get_param_modelisation()
+        return _hauteur_sup, _hauteur_mat, _hauteur_min_cable, _hauteur_max_cable, _pechage, _masse_max, _securite
+
+    @classmethod
+    def get_options_cls(cls):
+        _opti, _precision = Sylvaccess_UI.get_options()
+        return _opti, _precision
+
+    @classmethod
+    def get_opti_cable_cls(cls):
+        _prelevement, _recalculer, _Rspace_c, _foret_c, _VBP_c, _VAM_c, _pechage_c = Sylvaccess_UI.get_opti_cable()
+        return _prelevement, _recalculer, _Rspace_c, _foret_c, _VBP_c, _VAM_c, _pechage_c
+
+    @classmethod
+    def get_crit_opti_cls(cls):
+        _surface, _surface_poids, _nbr_sup_int, _nbr_sup_int_poids, _sens_debardage, _sens_debardage_poids, _longueure_ligne, _longueure_ligne_poids, _vol_ligne, _vol_ligne_poids, _indice_prelev, _indice_prelev_poids, _VAM, _VAM_poids, _dist_chariot, _dist_chariot_poids = Sylvaccess_UI.get_crit_opti()
+        return _surface, _surface_poids, _nbr_sup_int, _nbr_sup_int_poids, _sens_debardage, _sens_debardage_poids, _longueure_ligne, _longueure_ligne_poids, _vol_ligne, _vol_ligne_poids, _indice_prelev, _indice_prelev_poids, _VAM, _VAM_poids, _dist_chariot, _dist_chariot_poids
 
 
 #################################################
@@ -828,17 +879,17 @@ def raster_get_info(in_file_name):
 
 
 def write_file():
-    Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP = Sylvaccess_pluginDialog.get_spatial()
-    ski,por,cab,opti,pente = Sylvaccess_pluginDialog.get_general()
-    pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes=Sylvaccess_pluginDialog.get_skidder(1,1,1,1,1,1,1,1)
-    pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2=Sylvaccess_pluginDialog.get_porteur(1,1,1,1,1,1,1)
-    type_machine,supports_inter,hauteur,longueure_max,longueure_min=Sylvaccess_pluginDialog.get_type_cable(1,1,1,1,1)
-    type_chariot,masse,pente_min,pente_max_amont,pente_max_aval = Sylvaccess_pluginDialog.get_type_chariot(1,1,1,1,1,1)
-    diamètre,masse_li,tension_rupt,elasticité = Sylvaccess_pluginDialog.get_proprites_cable(1,1,1,1)
-    hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,masse_max,securite = Sylvaccess_pluginDialog.get_param_modelisation(1,1,1,1,1,1,1)
-    opti2,precision = Sylvaccess_pluginDialog.get_options(1,1)
-    prelevement,recalculer,Rspace2,foret2,VBP2,VAM2,pechage2 = Sylvaccess_pluginDialog.get_opti_cable(1,1,1,1,1,1,1)
-    surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1)
+    Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP = Sylvaccess_UI.get_spatial_cls()
+    ski,por,cab,opti,pente = Sylvaccess_UI.get_general_cls()
+    pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes = Sylvaccess_UI.get_skidder_cls()
+    pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2=Sylvaccess_UI.get_porteur_cls()
+    type_machine,supports_inter,hauteur,longueure_max,longueure_min=Sylvaccess_UI.get_type_cable_cls()
+    type_chariot,masse,pente_min,pente_max_amont,pente_max_aval = Sylvaccess_UI.get_type_chariot_cls()
+    diamètre,masse_li,tension_rupt,elasticité = Sylvaccess_UI.get_proprietes_cable()
+    hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,masse_max,securite = Sylvaccess_UI.get_param_modelisation()
+    opti2,precision = Sylvaccess_UI.get_options()
+    prelevement,recalculer,Rspace2,foret2,VBP2,VAM2,pechage2 = Sylvaccess_UI.get_opti_cable()
+    surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_UI.get_crit_opti()
     var_list= [Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP,ski,por,cab,opti,pente,pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,
                pente_amont_max,pente_aval_max,limite,bornes,pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2,type_machine,supports_inter,hauteur,
                longueure_max,longueure_min,type_chariot,masse,pente_min,pente_max_amont,pente_max_aval,diamètre,masse_li,tension_rupt,elasticité,hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,
@@ -1165,7 +1216,7 @@ def calculate_direction(x1,y1,x2,y2):
 
 def get_head_text(ASCII_file):
     names = np.genfromtxt(ASCII_file, dtype=None,usecols=(0))[0:6]
-    values = np.genfromtxt(ASCII_file, dtype=np.float,usecols=(1))[0:6]
+    values = np.genfromtxt(ASCII_file, dtype=np.float32,usecols=(1))[0:6]
     Extent = [values[2],values[2]+values[4]*values[0],values[3],values[3]+values[4]*values[1]]
     return names,values,Extent
 
@@ -1209,7 +1260,7 @@ def shapefile_obs_to_np_array(file_list,Extent,Csize):
     xmin,xmax,ymin,ymax = Extent[0],Extent[1],Extent[2],Extent[3]
     nrows,ncols = int((ymax-ymin)/float(Csize)+0.5),int((xmax-xmin)/float(Csize)+0.5)        
     #Create obstacle raster
-    Obstacle = np.zeros((nrows,ncols),dtype=np.int)
+    Obstacle = np.zeros((nrows,ncols),dtype=np.int16)
     #Loop on all shaefile
     for shp in file_list:        
         # Get shapefile info
@@ -1466,15 +1517,15 @@ def focal_stat(in_file_name,out_file_name,methode='MEAN',nbcell=3):
 # Fonctions qui gère les calculs liés au cable
 def Cable():
     console_info("Cable")
-    Wspace,Rspace,file_MNT,file_shp_Foret,_,file_shp_Cable_dep,_,_,_,Dir_Obs_cable,file_Htree,file_Vol_AM,file_Vol_ha = Sylvaccess_pluginDialog.get_spatial()
-    _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general()
-    Cable_type,sup_max,Htower,Lmax,Lmin=Sylvaccess_pluginDialog.get_type_cable(1,1,1,1,1)
-    Carriage_type,Pchar,slope_grav,slope_Wliner_up,slope_Wliner_down = Sylvaccess_pluginDialog.get_type_chariot(1,1,1,1,1,1)
-    d,masse_li,rupt_res,E = Sylvaccess_pluginDialog.get_proprites_cable(1,1,1,1)
-    Hintsup,Hend,Hline_min,Hline_max,Lhor_max,Load_max,safe_fact = Sylvaccess_pluginDialog.get_param_modelisation(1,1,1,1,1,1,1)
-    test_cable_optimise,precision = Sylvaccess_pluginDialog.get_options(1,1)
-    prelevement, _, _, _, _, _, _ = Sylvaccess_pluginDialog.get_opti_cable(1, 0, 0, 0, 0, 0, 0)
-    surface, surface_poids, nbr_sup_int, nbr_sup_int_poids, sens_debardage, sens_debardage_poids, longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_pluginDialog.get_crit_opti(1,1,1,1,1,1,1,1)
+    Wspace,Rspace,file_MNT,file_shp_Foret,_,file_shp_Cable_dep,_,_,_,Dir_Obs_cable,file_Htree,file_Vol_AM,file_Vol_ha = Sylvaccess_UI.get_spatial_cls()
+    _,_,_,_,Pente_max_bucheron = Sylvaccess_UI.get_general_cls()
+    Cable_type,sup_max,Htower,Lmax,Lmin=Sylvaccess_UI.get_type_cable_cls()
+    Carriage_type,Pchar,slope_grav,slope_Wliner_up,slope_Wliner_down = Sylvaccess_UI.get_type_chariot_cls()
+    d,masse_li,rupt_res,E = Sylvaccess_UI.get_proprietes_cable_cls()
+    Hintsup,Hend,Hline_min,Hline_max,Lhor_max,Load_max,safe_fact = Sylvaccess_UI.get_param_modelisation_cls()
+    test_cable_optimise,precision = Sylvaccess_UI.get_options_cls()
+    prelevement, _, _, _, _, _, _ = Sylvaccess_UI.get_opti_cable_cls()
+    surface, surface_poids, nbr_sup_int, nbr_sup_int_poids, sens_debardage, sens_debardage_poids, longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_UI.get_crit_opti_cls()
 
     masse_li2 = 0.5
     masse_li3 = 0.5
@@ -1522,7 +1573,7 @@ def Cable():
             CoordRoute= np.load(Dir_temp+"CoordRoute.npy") 
         except:
             TableX,TableY=create_coord_pixel_center_raster(values,nrows,ncols,Csize,Dir_temp)
-            CoordRoute = np.zeros((Lien_RF.shape[0],2),dtype=np.float)
+            CoordRoute = np.zeros((Lien_RF.shape[0],2),dtype=np.float32)
             for i,pixel in enumerate(Lien_RF):
                 CoordRoute[i,0]=TableX[pixel[1]]
                 CoordRoute[i,1]=TableY[pixel[0]] 
@@ -1598,7 +1649,7 @@ def Cable():
     
     # D H diag slope fact indmin indmax LoL ThL TvL TupL TdownL LoUg ThUg TvUg ind_fin_span free xmidL zmidL 
     # 0 1 2    3     4    5      6      7   8   9   10   11     12   13   14   15           16   17    18  
-    Span = np.zeros((sup_max+1,16),dtype=np.float)
+    Span = np.zeros((sup_max+1,16),dtype=np.float32)
     rastLosup,rastTh,rastTv= check_tabconv(Dir_temp,d,E,Tmax,Lmax2,Fo,masse_li,masse_li2,masse_li3,Csize)    
     
     ### Preparation of forest roads
@@ -1616,7 +1667,7 @@ def Cable():
     console_info("    - Initialisation achevee, debut de traitement...")
     str_nb_pixel_route=  " / "+str(nb_pixel_route-1)+ " pixels traites"
     
-    Tab = np.zeros((min(1000000,int(nb_pixel_route*(360)/step_route)),18+5*sup_max),dtype=np.int)
+    Tab = np.zeros((min(1000000,int(nb_pixel_route*(360)/step_route)),18+5*sup_max),dtype=np.int16)
     File_Tab = []
     Tab_nb=0
     
@@ -1753,7 +1804,7 @@ def Cable():
                         File_Tab.append(Dir_temp+"Tab"+str(Tab_nb)+".npy")
                         Tab_nb +=1
                         id_line=0
-                        Tab = np.zeros((1000000,18+5*sup_max),dtype=np.int)
+                        Tab = np.zeros((1000000,18+5*sup_max),dtype=np.int16)
 
    
     console_info("\n    - Sauvegarde des resultats")
@@ -1980,7 +2031,7 @@ def get_ligne3(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,P
     npix = Nbpix_line[az]
     npix = get_npix(az,npix,coordY,coordX,ncols,nrows,Row_line,Col_line)   
     if D_line[az,npix-1]>Lmin:  
-        Line=np.zeros((npix,11),dtype=np.float)
+        Line=np.zeros((npix,11),dtype=np.float32)
         inds = (Row_line[az,0:npix]+coordY,Col_line[az,0:npix]+coordX)        
         Line[:,0],Line[:,1],Line[:,2]=D_line[az,0:npix],MNT[inds],Forest[inds]
         Line[:,3],Line[:,4]=Csize*Col_line[az,0:npix]+posiX,-Csize*Row_line[az,0:npix]+posiY
@@ -2223,11 +2274,11 @@ def create_buffer(Csize,Lmax,Lhor_max):
     Dir_list = range(0,360,1)
     Row_line = np.zeros((len(Dir_list),3*Buffer_cote),dtype=np.int16)
     Col_line = np.zeros((len(Dir_list),3*Buffer_cote),dtype=np.int16)
-    D_line = np.ones((len(Dir_list),3*Buffer_cote),dtype=np.float)*-1
+    D_line = np.ones((len(Dir_list),3*Buffer_cote),dtype=np.float32)*-1
     Nbpix_line = np.zeros((len(Dir_list),),dtype=np.int16)
     Row_ext = np.zeros((len(Dir_list),50*Buffer_cote),dtype=np.int16)
     Col_ext = np.zeros((len(Dir_list),50*Buffer_cote),dtype=np.int16)
-    D_ext = np.ones((len(Dir_list),50*Buffer_cote),dtype=np.float)*(Lmax+Lhor_max)
+    D_ext = np.ones((len(Dir_list),50*Buffer_cote),dtype=np.float32)*(Lmax+Lhor_max)
     Nbpix_ext = 0
     Dmin = sqrt(2)*Csize*0.5
     for az in Dir_list:
@@ -2268,12 +2319,12 @@ def create_buffer2(Csize,Lmax,Lhor_max):
     Dir_list = range(0,360,1)
     Row_line = np.zeros((len(Dir_list),3*Buffer_cote),dtype=np.int16)
     Col_line = np.zeros((len(Dir_list),3*Buffer_cote),dtype=np.int16)
-    D_line = np.ones((len(Dir_list),3*Buffer_cote),dtype=np.float)*-1
+    D_line = np.ones((len(Dir_list),3*Buffer_cote),dtype=np.float32)*-1
     Nbpix_line = np.zeros((len(Dir_list),),dtype=np.int16)
     Row_ext = np.zeros((len(Dir_list),50*Buffer_cote),dtype=np.int16)
     Col_ext = np.zeros((len(Dir_list),50*Buffer_cote),dtype=np.int16)
-    D_ext = np.ones((len(Dir_list),50*Buffer_cote),dtype=np.float)*-1
-    D_lat = np.ones((len(Dir_list),50*Buffer_cote),dtype=np.float)*(Lmax+Lhor_max)
+    D_ext = np.ones((len(Dir_list),50*Buffer_cote),dtype=np.float32)*-1
+    D_lat = np.ones((len(Dir_list),50*Buffer_cote),dtype=np.float32)*(Lmax+Lhor_max)
     Nbpix_ext = 0
     Dmin = sqrt(2)*Csize*0.5
     for az in Dir_list:
@@ -2313,7 +2364,7 @@ def get_ligne(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,Pe
     npix = Nbpix_line[az]
     npix = get_npix(az,npix,coordY,coordX,ncols,nrows,Row_line,Col_line)   
     if D_line[az,npix-1]>Lmin:  
-        Line=np.zeros((npix,10),dtype=np.float)
+        Line=np.zeros((npix,10),dtype=np.float32)
         inds = (Row_line[az,0:npix]+coordY,Col_line[az,0:npix]+coordX)        
         Line[:,0],Line[:,1],Line[:,2]=D_line[az,0:npix],MNT[inds],Forest[inds]
         Line[:,3],Line[:,4]=Csize*Col_line[az,0:npix]+posiX,-Csize*Row_line[az,0:npix]+posiY
@@ -2474,8 +2525,8 @@ def Pylone_in_shapefile(Tab,Cable_line_Path,source_src):
 
 
 def create_coord_pixel_center_raster(values,nline,ncol,Csize,Dir_temp):
-    Xcoord = np.zeros((ncol),dtype=np.float)
-    Ycoord = np.zeros((nline),dtype=np.float)
+    Xcoord = np.zeros((ncol),dtype=np.float32)
+    Ycoord = np.zeros((nline),dtype=np.float32)
     y= values[3]+Csize*0.5
     for i in range(nline-1,-1,-1):
         Ycoord[i] = y
@@ -2490,8 +2541,8 @@ def create_coord_pixel_center_raster(values,nline,ncol,Csize,Dir_temp):
 
 
 def create_coord_pixel_center_raster2(values,nline,ncol,Csize):
-    Xcoord = np.zeros((ncol),dtype=np.float)
-    Ycoord = np.zeros((nline),dtype=np.float)
+    Xcoord = np.zeros((ncol),dtype=np.float32)
+    Ycoord = np.zeros((nline),dtype=np.float32)
     y= values[3]+Csize*0.5
     for i in range(nline-1,-1,-1):
         Ycoord[i] = y
@@ -2513,8 +2564,8 @@ def prepa_desserte_cable(Desserte_shapefile_name,MNT_file_name,Dir_temp,Pond_pen
     Res_pub = (Desserte_temp==3)*1
     # Forest road
     Route = (Desserte_temp==2)*1
-    ID_RF = -9999*np.ones((nrows,ncols),dtype=np.int)
-    ID_res_pub = -9999*np.ones((nrows,ncols),dtype=np.int)
+    ID_RF = -9999*np.ones((nrows,ncols),dtype=np.int16)
+    ID_res_pub = -9999*np.ones((nrows,ncols),dtype=np.int16)
     indice_forest_road = 0
     indice_public_road = 0
     pixels = np.argwhere(Desserte_temp>1)
@@ -2544,7 +2595,7 @@ def prepa_desserte_cable(Desserte_shapefile_name,MNT_file_name,Dir_temp,Pond_pen
     points_to_lineshape(geoLocations,Az_route_shp,projection)
     Az_route = shapefile_to_np_array(Az_route_shp,Extent,Csize,'DIRECTION','DIRECTION','DESC')
     ID_routefor = np.unique(ID_RF)[1:]
-    Link_RF_Res_pub = np.zeros((ID_routefor.shape[0],7),dtype=np.int)    
+    Link_RF_Res_pub = np.zeros((ID_routefor.shape[0],7),dtype=np.int16)    
     for ind in ID_routefor:
         Temp = np.argwhere(ID_RF==ind)
         Link_RF_Res_pub[ind,0]=ind
@@ -2723,7 +2774,7 @@ def directions_a_tester(Dir_route,Dir_list,angle_sup,id_fin_ligne):
 
 def get_cable_configs(slope_Wliner_up,slope_Wliner_down,slope_grav,Skid_direction):
     #Get folder
-    _,Rspace,_,_,_,_,_,_,_,_,_,_,_ = Sylvaccess_pluginDialog.get_spatial()
+    _,Rspace,_,_,_,_,_,_,_,_,_,_,_ = Sylvaccess_UI.get_spatial_cls()
     dirs = [d for d in os.listdir(Rspace) if os.path.isdir(os.path.join(Rspace, d))]
     list_dir = []
     
@@ -2734,9 +2785,9 @@ def get_cable_configs(slope_Wliner_up,slope_Wliner_down,slope_grav,Skid_directio
     optnum = len(list_dir)+1
     Rspace_c=Rspace+'Cable_'+str(optnum)        
     filename = Rspace_c+"/"
-    Cable_type,_,_,_,_ = Sylvaccess_pluginDialog.get_type_cable(1,0,0,0,0)
+    Cable_type,_,_,_,_ = Sylvaccess_UI.get_type_cable_cls()
     filename += str(Cable_type)
-    Carriage_type,_,_,_,_ = Sylvaccess_pluginDialog.get_type_chariot(1,0,0,0,0)
+    Carriage_type,_,_,_,_ = Sylvaccess_UI.get_type_chariot_cls()
     filename += "_"+str(Carriage_type)
     
     if Skid_direction ==0:
@@ -2864,7 +2915,7 @@ def create_best_table(Tab2,w_list,lim_list,sup_max):
         Tab[i,0]=i                      #first col is idline of Tab2
         Tab[i,col]=np.sum(Tab[i,1:col]) #last col is the total weight
     #classify
-    ordre = np.zeros((Tab2.shape[0],),dtype=np.int)   
+    ordre = np.zeros((Tab2.shape[0],),dtype=np.int16)   
     if idsensdeb>0:
         #first the best direction
         tp = Tab2[:,12]==Tab_crit[idsensdeb,1]        
@@ -2901,7 +2952,7 @@ def select_best_lines(w_list,lim_list,Tab2,nrows,ncols,Csize,Row_ext,Col_ext,D_e
         if test_free:
             vals2.append(id_tab)
     # Check taht line contribute to total impacted surface
-    Tab_result = np.zeros((len(vals2),2),dtype=np.int)
+    Tab_result = np.zeros((len(vals2),2),dtype=np.int16)
     id_line = 0    
     for id_tab in vals2:
         coordX,coordY = Tabbis[id_tab,-2],Tabbis[id_tab,-1]
@@ -2912,7 +2963,7 @@ def select_best_lines(w_list,lim_list,Tab2,nrows,ncols,Csize,Row_ext,Col_ext,D_e
     Tab_result=Tab_result[np.lexsort((Tab_result[:,0],Tab_result[:,1]))]  
     # Remove lines that does not contribute significantly to impacted surface
     nb_line = Tab_result.shape[0]
-    Tab_result2 = np.zeros((nb_line,nb_cols-2),dtype=np.int)
+    Tab_result2 = np.zeros((nb_line,nb_cols-2),dtype=np.int16)
     id_line = 0    
     for id_tab in Tab_result[:,0]:
         coordX,coordY = Tabbis[id_tab,-2],Tabbis[id_tab,-1]
@@ -3253,7 +3304,7 @@ def prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_Dep,Dir_Obs_c
         Existing = np.ones_like(Cable_start,dtype=np.int8)*2
 
     pixels = np.argwhere(Cable_start>0)
-    Lien_RF = np.zeros((pixels.shape[0]+1,5),dtype=np.int) 
+    Lien_RF = np.zeros((pixels.shape[0]+1,5),dtype=np.int16) 
     ID = 1
     for pixel in pixels:
         Lien_RF[ID,0],Lien_RF[ID,1]=pixel[0],pixel[1]
@@ -3280,7 +3331,7 @@ def prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_Dep,Dir_Obs_c
     _,values,_,Extent = raster_get_info(file_MNT)
     Csize,ncols,nrows = values[4],int(values[0]),int(values[1])  
     TableX,TableY=create_coord_pixel_center_raster(values,nrows,ncols,Csize,Dir_temp)
-    CoordRoute = np.zeros((Lien_RF.shape[0],2),dtype=np.float)
+    CoordRoute = np.zeros((Lien_RF.shape[0],2),dtype=np.float32)
     for i,pixel in enumerate(Lien_RF):
         CoordRoute[i,0]=TableX[pixel[1]]
         CoordRoute[i,1]=TableY[pixel[0]] 
@@ -3335,7 +3386,7 @@ def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,
         else:
             test_vp = False            
             if file_Vol_AM != "":
-                Vol_ha = np.zeros((Forest.shape),dtype=np.float)
+                Vol_ha = np.zeros((Forest.shape),dtype=np.float32)
             else:
                 Vol_ha = np.zeros_like(Forest,dtype=np.int8)
         #Couche vol_am
@@ -3347,7 +3398,7 @@ def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,
         else:
             test_vam = False  
             if file_Vol_ha != "":
-                Vol_AM = np.zeros((Forest.shape),dtype=np.float)   
+                Vol_AM = np.zeros((Forest.shape),dtype=np.float32)   
             else:
                 Vol_AM = np.zeros_like(Forest,dtype=np.int8)   
        
@@ -3380,7 +3431,7 @@ def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,
     ### Calc IPC according to prelevement
     ############################################
     
-    Tab2 = np.zeros((Tab.shape[0],Tab.shape[1]+4),dtype=np.int)
+    Tab2 = np.zeros((Tab.shape[0],Tab.shape[1]+4),dtype=np.int16)
     Tab2[:,0:-4]=Tab
     Tab2[:,-4]=np.int_(100.0*Tab[:,15]*prelevement/Tab[:,11])
     del Tab
@@ -3475,9 +3526,9 @@ def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,
 # Fonctions qui gère les calculs liés au skidder
 
 def Skidder():
-    Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,_,Dir_Full_Obs_skidder,Dir_Partial_Obs_skidder,_,_,file_Vol_ha,_,_ = Sylvaccess_pluginDialog.get_spatial()
-    _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general()
-    Pente_max_skidder,Dtreuil_max_up,Dtreuil_max_down,Dmax_train_near_for,Pmax_amont,Pmax_aval,Option_Skidder,Skid_Debclass=Sylvaccess_pluginDialog.get_skidder(1,1,1,1,1,1,1,1)
+    Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,_,Dir_Full_Obs_skidder,Dir_Partial_Obs_skidder,_,_,file_Vol_ha,_,_ = Sylvaccess_UI.get_spatial_cls()
+    _,_,_,_,Pente_max_bucheron = Sylvaccess_UI.get_general_cls()
+    Pente_max_skidder,Dtreuil_max_up,Dtreuil_max_down,Dmax_train_near_for,Pmax_amont,Pmax_aval,Option_Skidder,Skid_Debclass=Sylvaccess_UI.get_skidder_cls()
     console_info("Debut du modele skidder")
     
     Hdebut = datetime.datetime.now()
@@ -3772,7 +3823,7 @@ def Skidder():
     
     #line=ID_contour, Y, X,L_RF,L_piste,Dtrain,Dpis
     
-    Lien_contour = np.zeros((pixels.shape[0]+1,6),dtype=np.int)    
+    Lien_contour = np.zeros((pixels.shape[0]+1,6),dtype=np.int16)    
     ID = 1
     for pixel in pixels:
         Lien_contour[ID,0],Lien_contour[ID,1]=pixel[0],pixel[1]
@@ -3976,13 +4027,19 @@ def make_summary_surface_vol(Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_acce
                                 str(round((Temp+Surf_Cum)/Surf_foret*100,1))])
         Surf_Cum += Temp
     #add infinite distance class 
-    dmin = int(Skid_list[nbclass-1])
-    Temp = np.sum((Dtotal>=dmin)*Csize*Csize*0.0001)
-    Table[nbclass,0:5] = np.array(["> "+str(dmin)+" m",str(round(Temp,1)),
-                                   str(round(Temp/Surf_foret*100,1)),
-                                   str(round((Temp+Surf_Cum),1)),
-                                   str(round((Temp+Surf_Cum)/Surf_foret*100,1))])
-    Surf_Cum += Temp  
+    dmin = int(Skid_list[nbclass - 1])
+    if dmin:
+        try:
+            Temp = np.sum((Dtotal>=dmin)*Csize*Csize*0.0001)
+            Table[nbclass,0:5] = np.array(["> "+str(dmin)+" m",str(round(Temp,1)),
+                                        str(round(Temp/Surf_foret*100,1)),
+                                        str(round((Temp+Surf_Cum),1)),
+                                        str(round((Temp+Surf_Cum)/Surf_foret*100,1))])
+            Surf_Cum += Temp  
+        except ValueError as e:
+            console_warning(f"Error converting '{dmin}' to an integer. Skid_list: {Skid_list}")
+            console_warning(f"Dtotal: {Dtotal}")
+        raise e
          
     Table[-5,1] = str(round(Surf_Cum,1))+" ha"
     Table[-5,2] = str(round(Surf_Cum/Surf_foret*100,1))+" %"
@@ -4146,7 +4203,7 @@ def create_buffer_skidder(Csize,Dtreuil_max_up,Dtreuil_max_down):
     Dir_list = range(0,360,1)
     Row_line = np.zeros((len(Dir_list),3*Buffer_cote),dtype=np.int16)
     Col_line = np.zeros((len(Dir_list),3*Buffer_cote),dtype=np.int16)
-    D_line = np.ones((len(Dir_list),3*Buffer_cote),dtype=np.float)*-1
+    D_line = np.ones((len(Dir_list),3*Buffer_cote),dtype=np.float32)*-1
     Nbpix_line = np.zeros((len(Dir_list),),dtype=np.int16)    
     for az in Dir_list:
         #Fill line info
@@ -4700,9 +4757,9 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
 
 
 def process_forwarder():
-    Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,_,_,_,Dir_Obs_forwarder,_,file_Vol_ha,_,_ = Sylvaccess_pluginDialog.get_spatial()
-    _,_,_,_,Pente_max_bucheron = Sylvaccess_pluginDialog.get_general()
-    Forw_angle_incl,Forw_angle_up,Forw_angle_down,Forw_Lmax,Forw_Dmax_out_for,Forw_portee,Forw_Debclass=Sylvaccess_pluginDialog.get_porteur(1,1,1,1,1,1,1)
+    Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,_,_,_,Dir_Obs_forwarder,_,file_Vol_ha,_,_ = Sylvaccess_UI.get_spatial_cls()
+    _,_,_,_,Pente_max_bucheron = Sylvaccess_UI.get_general_cls()
+    Forw_angle_incl,Forw_angle_up,Forw_angle_down,Forw_Lmax,Forw_Dmax_out_for,Forw_portee,Forw_Debclass=Sylvaccess_UI.get_porteur_cls()
 
     console_info("Debut de Sylvaccess - Porteur")
 
@@ -4911,7 +4968,7 @@ def process_forwarder():
     del contour    
     
     #line=ID_contour, Y, X,Dpis,Dfor,L_RF,L_Piste    
-    Lien_contour = np.zeros((pixels.shape[0]+1,6),dtype=np.int)    
+    Lien_contour = np.zeros((pixels.shape[0]+1,6),dtype=np.int16)    
     ID = 1
     Dpis=np.zeros_like(MNT,np.int32)
     Lpis=np.zeros_like(MNT,np.int32)
@@ -5007,7 +5064,7 @@ def process_forwarder():
     del contour
     
     #line=ID_contour, Y, X,Dpis,Dfor,L_RF,L_Piste    
-    Lien_contour = np.zeros((pixels.shape[0]+1,6),dtype=np.int)    
+    Lien_contour = np.zeros((pixels.shape[0]+1,6),dtype=np.int16)    
     ID = 1
     for pixel in pixels:
         Lien_contour[ID,0],Lien_contour[ID,1]=pixel[0],pixel[1]
@@ -5061,7 +5118,7 @@ def process_forwarder():
     gc.collect()
     
     Temp = (DTot<100001)    
-    Lien_contour = np.zeros((pixels.shape[0]+1,6),dtype=np.int)    
+    Lien_contour = np.zeros((pixels.shape[0]+1,6),dtype=np.int16)    
     ID = 1
     for pixel in pixels:
         Lien_contour[ID,0],Lien_contour[ID,1]=pixel[0],pixel[1]
@@ -5275,61 +5332,155 @@ def pente(raster_mnt, Csize, nodata):
             if e > nodata:
                 a, b, c, d, f, g, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
                                           raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x-1],
-                                          raster_mnt[y+1, x], raster_mnt[y+1, x+1])
+                                          raster_mnt[y + 1, x], raster_mnt[y + 1, x + 1])
+                if a == nodata: a = e
+                if b == nodata: b = e
+                if c == nodata: c = e
+                if d == nodata: d = e
+                if f == nodata: f = e
+                if g == nodata: g = e
+                if h == nodata: h = e
+                if i == nodata: i = e
                 dz_dx = float(c + 2*f + i - (a + 2*d + g)) / float(8 * Csize)
                 dz_dy = float(g + 2*h + i - (a + 2*b + c)) / float(8 * Csize)
                 pente[y, x] = sqrt(dz_dx * dz_dx + dz_dy * dz_dy) * 100
             else:
                 pente[y, x] = nodata
 
-    # Coins
-    pente[0, 0] = calculate_corner_pente(raster_mnt, nodata, Csize, 0, 0)
-    pente[nline-1, 0] = calculate_corner_pente(raster_mnt, nodata, Csize, nline-1, 0)
-    pente[0, ncol-1] = calculate_corner_pente(raster_mnt, nodata, Csize, 0, ncol-1)
-    pente[nline-1, ncol-1] = calculate_corner_pente(raster_mnt, nodata, Csize, nline-1, ncol-1)
-
-    # First and last rows
-    for x in range(1, ncol-1):
-        pente[0, x] = calculate_edge_pente(raster_mnt, nodata, Csize, 0, x)
-        pente[nline-1, x] = calculate_edge_pente(raster_mnt, nodata, Csize, nline-1, x)
-
-    # First and last columns
-    for y in range(1, nline-1):
-        pente[y, 0] = calculate_edge_pente(raster_mnt, nodata, Csize, y, 0)
-        pente[y, ncol-1] = calculate_edge_pente(raster_mnt, nodata, Csize, y, ncol-1)
+    # Coins sup gauche
+    if raster_mnt[0,0]>nodata:
+        e = raster_mnt[0,0]
+        f = raster_mnt[0,1]
+        if f==nodata:f=e
+        h = raster_mnt[1,0]
+        if h==nodata:h=e
+        i = raster_mnt[1,1]
+        if i==nodata:i=e
+        dz_dx = float(f+i-(e+h))/float(2*Csize)
+        dz_dy = float(h+i-(d+f))/float(2*Csize)
+        pente[0,0]= sqrt(dz_dx*dz_dx+dz_dy*dz_dy)*100      
+    else: pente[0, 0] = nodata
+        # Coin inferieur gauche    
+    if raster_mnt[nline-1,0]>nodata:
+        e = raster_mnt[nline-1,0]
+        b = raster_mnt[nline-2,0]
+        if b==nodata:b=e
+        c = raster_mnt[nline-2,1]
+        if c==nodata:c=e
+        f = raster_mnt[nline-1,1]
+        if f==nodata:f=e
+        dz_dx = float(c+f-(b+e))/float(2*Csize)
+        dz_dy = float(e+f-(b+c))/float(2*Csize)
+        pente[nline-1,0]= sqrt(dz_dx*dz_dx+dz_dy*dz_dy)*100       
+    else: pente[nline-1,0]=nodata 
+    # Coin superieur droite
+    if raster_mnt[0,ncol-1]>nodata:
+        e = raster_mnt[0,ncol-1]
+        d = raster_mnt[0,ncol-2]
+        if d==nodata:d=e
+        g = raster_mnt[1,ncol-2]
+        if g==nodata:g=e
+        h = raster_mnt[1,ncol-1]
+        if h==nodata:h=e
+        dz_dx = float(e+h-(d+g))/float(2*Csize)
+        dz_dy = float(g+h-(d+e))/float(2*Csize)
+        pente[0,ncol-1]= sqrt(dz_dx*dz_dx+dz_dy*dz_dy)*100      
+    else: pente[0,ncol-1]=nodata
+    # Coin inferieur droite
+    if raster_mnt[nline-1,ncol-1]>nodata:
+        e = raster_mnt[nline-1,ncol-1]
+        a = raster_mnt[nline-2,ncol-2]
+        if a==nodata:a=e
+        d = raster_mnt[nline-1,ncol-2]
+        if d==nodata:d=e
+        b = raster_mnt[nline-2,ncol-1]
+        if b==nodata:b=e
+        dz_dx = float(e+b-(d+a))/float(2*Csize)
+        dz_dy = float(d+e-(a+b))/float(2*Csize)
+        pente[nline-1,ncol-1]= sqrt(dz_dx*dz_dx+dz_dy*dz_dy)*100       
+    else: pente[nline - 1, ncol - 1] = nodata
+    # Pour premiere ligne
+    x=1
+    for x in range( 1 <= x < ncol-1):
+        e = raster_mnt[0,x] 
+        if e > nodata:            
+            d = raster_mnt[0,x-1]    
+            if d==nodata:d=e
+            f = raster_mnt[0,x+1]
+            if f==nodata:f=e
+            g = raster_mnt[1,x-1]  
+            if g==nodata:g=e
+            h = raster_mnt[1,x] 
+            if h==nodata:h=e
+            i = raster_mnt[1,x+1]
+            if i==nodata:i=e                            
+            dz_dx = float(f+i-(d+g))/float(4*Csize)
+            dz_dy = float(g+h+i-(d+e+f))/float(3*Csize)
+            pente[0,x]= sqrt(dz_dx*dz_dx+dz_dy*dz_dy)*100
+        else: pente[0,x]=nodata
+    # Pour derniere ligne
+    for x in range (1 <= x < ncol-1):
+        e = raster_mnt[nline-1,x] 
+        if e > nodata:            
+            d = raster_mnt[nline-1,x-1]    
+            if d==nodata:d=e
+            f = raster_mnt[nline-1,x+1]
+            if f==nodata:f=e
+            a = raster_mnt[nline-2,x-1]  
+            if a==nodata:a=e
+            b = raster_mnt[nline-2,x] 
+            if b==nodata:b=e
+            c = raster_mnt[nline-2,x+1]
+            if c==nodata:c=e                            
+            dz_dx = float(f+c-(d+a))/float(4*Csize)
+            dz_dy = float(d+e+f-(a+b+c))/float(3*Csize)
+            pente[nline-1,x]= sqrt(dz_dx*dz_dx+dz_dy*dz_dy)*100
+        else: pente[nline-1,x]=nodata
+    # Pour premiere colonne
+    for y in range (1 <= x < nline-1):
+        e = raster_mnt[x,0] 
+        if e > nodata:            
+            b = raster_mnt[x+1,0]    
+            if b==nodata:b=e
+            c = raster_mnt[x+1,1]
+            if c==nodata:c=e
+            f = raster_mnt[x,1]  
+            if f==nodata:f=e
+            h = raster_mnt[x+1,0] 
+            if h==nodata:h=e
+            i = raster_mnt[x+1,1]
+            if i==nodata:i=e                            
+            dz_dx = float(c+f+i-(b+e+h))/float(3*Csize)
+            dz_dy = float(h+i-(b+c))/float(4*Csize)
+            pente[x,0]= sqrt(dz_dx*dz_dx+dz_dy*dz_dy)*100
+        else: pente[x,0]=nodata
+    # Pour derniere colonne
+    for x in range (1 <= x < nline-1):
+        e = raster_mnt[x,ncol-1] 
+        if e > nodata:            
+            a = raster_mnt[x-1,ncol-2]    
+            if a==nodata:a=e
+            b = raster_mnt[x-1,ncol-1]
+            if b==nodata:b=e
+            d = raster_mnt[x,ncol-2]  
+            if d==nodata:d=e
+            g = raster_mnt[x+1,ncol-2] 
+            if g==nodata:g=e
+            h = raster_mnt[x+1,ncol-1]
+            if h==nodata:h=e                            
+            dz_dx = float(b+e+h-(a+d+g))/float(3*Csize)
+            dz_dy = float(h+g-(b+a))/float(4*Csize)
+            pente[x,ncol-1]= sqrt(dz_dx*dz_dx+dz_dy*dz_dy)*100
+        else: pente[x,ncol-1]=nodata
 
     return pente
 
 
-def calculate_corner_pente(raster_mnt, nodata, Csize, y, x):
-    e = raster_mnt[y, x]
-    if e > nodata:
-        _, _, _, d, f, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
-                               raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x],
-                               raster_mnt[y+1, x+1])
-        dz_dx = float(f + i - (e + h)) / float(2 * Csize)
-        dz_dy = float(h + i - (d + f)) / float(2 * Csize)
-        return sqrt(dz_dx * dz_dx + dz_dy * dz_dy) * 100
-    else:
-        return nodata
-
-
-def calculate_edge_pente(raster_mnt, nodata, Csize, y, x):
-    e = raster_mnt[y, x]
-    if e > nodata:
-        _, b, c, _, f, _, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
-                                  raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x-1],
-                                  raster_mnt[y+1, x], raster_mnt[y+1, x+1])
-        dz_dx = float(f + c - (b + e + h)) / float(4 * Csize)
-        dz_dy = float(h + i - (b + e + f)) / float(3 * Csize)
-        return sqrt(dz_dx * dz_dx + dz_dy * dz_dy) * 100
-    else:
-        return nodata
 
 
 def exposition(raster_mnt, Csize, nodata):
     nline, ncol = raster_mnt.shape
-    expo = np.zeros_like(raster_mnt, dtype=np.float)
+    expo = np.zeros_like(raster_mnt, dtype=np.float32)
 
     for y in range(1, nline-1):
         for x in range(1, ncol-1):
@@ -5493,9 +5644,9 @@ def calcul_distance_de_cout_2_alloc(from_rast1, from_rast2, cost_rast, zone_rast
     h, b, l, r = mask_zone(from_rast1)
     
     # Création des rasters de sortie
-    Out_distance = np.ones_like(from_rast1, dtype=np.int) * (Max_distance + 1)
-    Out_alloc1 = np.ones_like(from_rast1, dtype=np.int) * -9999
-    Out_alloc2 = np.ones_like(from_rast1, dtype=np.int) * -9999
+    Out_distance = np.ones_like(from_rast1, dtype=np.int16) * (Max_distance + 1)
+    Out_alloc1 = np.ones_like(from_rast1, dtype=np.int16) * -9999
+    Out_alloc2 = np.ones_like(from_rast1, dtype=np.int16) * -9999
     
     x1, y1 = l, h
     for y1 in range(h, b):
@@ -5557,7 +5708,7 @@ def calcul_distance_de_cout_2_alloc(from_rast1, from_rast2, cost_rast, zone_rast
 
 def focal_stat_mean(raster, nodata, cote):
     nline, ncol = raster.shape
-    mean = np.ones_like(raster, dtype=np.float) * nodata
+    mean = np.ones_like(raster, dtype=np.float32) * nodata
     
     for y1 in range(nline):
         for x1 in range(ncol):
@@ -5578,7 +5729,7 @@ def focal_stat_mean(raster, nodata, cote):
 
 def focal_stat_sum(raster, nodata, cote):
     nline, ncol = raster.shape
-    rsomme = np.ones_like(raster, dtype=np.float) * nodata
+    rsomme = np.ones_like(raster, dtype=np.float32) * nodata
     
     for y1 in range(nline):
         for x1 in range(ncol):
@@ -5598,7 +5749,7 @@ def focal_stat_sum(raster, nodata, cote):
 
 def focal_stat_nb(raster, nodata, cote):
     nline, ncol = raster.shape
-    rnb = np.ones_like(raster, dtype=np.float) * nodata
+    rnb = np.ones_like(raster, dtype=np.float32) * nodata
     
     for y1 in range(nline):
         for x1 in range(ncol):
@@ -5618,7 +5769,7 @@ def focal_stat_nb(raster, nodata, cote):
 
 def focal_stat_min(raster, nodata, cote):
     nline, ncol = raster.shape
-    rmin = np.ones_like(raster, dtype=np.float) * nodata
+    rmin = np.ones_like(raster, dtype=np.float32) * nodata
     max_value = np.max(raster[raster != nodata])
     
     for y1 in range(nline):
@@ -5639,7 +5790,7 @@ def focal_stat_min(raster, nodata, cote):
 
 def focal_stat_max(raster, nodata, cote):
     nline, ncol = raster.shape
-    rmax = np.ones_like(raster, dtype=np.float) * nodata
+    rmax = np.ones_like(raster, dtype=np.float32) * nodata
     min_value = np.min(raster[raster != nodata])
     
     for y1 in range(nline):
@@ -6055,7 +6206,7 @@ def Tabmesh(d, E, Tmax, Lmax, Fo, q1, q2, q3, Csize):
     pas = 1
     ncol = int(np.ceil((Lmax + Csize) / pas - 1))
     nline = ncol + 1
-    rastLosup = np.full((nline, ncol), np.nan, dtype=np.float)
+    rastLosup = np.full((nline, ncol), np.nan, dtype=np.float32)
     rastTh = np.copy(rastLosup)
     rastTv = np.copy(rastLosup)
     col = 0
@@ -6494,7 +6645,7 @@ def get_Tabis(Tab, lineTab, nbconfig, intsup, indmax):
     idmax2 = indmax + 1
     idline = 0
     linemax = min(lineTab, nbconfig)
-    Tabis = np.zeros((linemax, Tab.shape[1]), dtype=np.float)
+    Tabis = np.zeros((linemax, Tab.shape[1]), dtype=np.float32)
 
     Hmin = 100
 
@@ -6523,7 +6674,7 @@ def get_Tabis2(Tab, lineTab, nbconfig, intsup, indmax):
     idmax2 = indmax + 1
     idline = 0
     linemax = min(lineTab, nbconfig)
-    Tabis = np.zeros((linemax, Tab.shape[1]), dtype=np.float)
+    Tabis = np.zeros((linemax, Tab.shape[1]), dtype=np.float32)
 
     Hmin = 100
 
@@ -6611,9 +6762,9 @@ def OptPyl_Up(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, Hline_m
 
     if not test and sup_max > 0:
         indminmulti = 1
-        Tab = -9999 * np.ones((indmaxmulti * nbconfig * 100, 14 * (sup_max + 1)), dtype=np.float)
+        Tab = -9999 * np.ones((indmaxmulti * nbconfig * 100, 14 * (sup_max + 1)), dtype=np.float32)
         lineTab = 0
-        Tabis = -9999 * np.ones((1, 14 * (sup_max + 1)), dtype=np.float)
+        Tabis = -9999 * np.ones((1, 14 * (sup_max + 1)), dtype=np.float32)
         lineTabis = 0
         while intsup <= sup_max and not best:
             for p in range(0, nblineTabis):
@@ -6681,7 +6832,7 @@ def OptPyl_Up(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, Hline_m
                 nblineTabis = Tabis.shape[0]
                 if nblineTabis > 0:
                     Tab = -9999 * np.ones((indmaxmulti * Tabis.shape[0] * nbconfig * 100, 14 * (sup_max + 1)),
-                                         dtype=np.float)
+                                         dtype=np.float32)
                     intsup += 1
                     lineTab = 0
                 else:
@@ -6795,9 +6946,9 @@ def OptPyl_Up_NoH(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, Hli
 
     if not test and sup_max > 0:
         indminmulti = 1
-        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 14 * (sup_max + 1)), dtype=np.float)
+        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 14 * (sup_max + 1)), dtype=np.float32)
         lineTab = 0
-        Tabis = -9999 * np.ones((1, 14 * (sup_max + 1)), dtype=np.float)
+        Tabis = -9999 * np.ones((1, 14 * (sup_max + 1)), dtype=np.float32)
         lineTabis = 0
         intsup = 1
         newTmax = Tmax
@@ -6879,7 +7030,7 @@ def OptPyl_Up_NoH(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, Hli
 
                 if nblineTabis > 0:
                     Tab = -9999 * np.ones((indmaxmulti * Tabis.shape[0] * 100 * nbconfig, 14 * (sup_max + 1)),
-                                         dtype=np.float)
+                                         dtype=np.float32)
                     intsup += 1
                     lineTab = 0
 
@@ -7018,9 +7169,9 @@ def OptPyl_Down_init(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, 
 
     if not test and sup_max > 0:
         indminmulti = 1
-        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 14 * (sup_max + 1)), dtype=np.float)
+        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 14 * (sup_max + 1)), dtype=np.float32)
         lineTab = 0
-        Tabis = -9999 * np.ones((1, 14 * (sup_max + 1)), dtype=np.float)
+        Tabis = -9999 * np.ones((1, 14 * (sup_max + 1)), dtype=np.float32)
         lineTabis = 0
         intsup = 1
         newTmax = Tmax
@@ -7096,7 +7247,7 @@ def OptPyl_Down_init(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, 
 
                 if nblineTabis > 0:
                     Tab = -9999 * np.ones((indmaxmulti * Tabis.shape[0] * 100 * nbconfig, 14 * (sup_max + 1)),
-                                         dtype=np.float)
+                                         dtype=np.float32)
                     intsup += 1
                     lineTab = 0
 
@@ -7221,9 +7372,9 @@ def OptPyl_Down_init_NoH(Line, Alts, Span, Htower , Hend, q1, q2, q3, Fo, Hline_
 
     if not test and sup_max > 0:
         indminmulti = 1
-        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 14 * (sup_max + 1)), dtype=np.float)
+        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 14 * (sup_max + 1)), dtype=np.float32)
         lineTab = 0
-        Tabis = -9999 * np.ones((1, 14 * (sup_max + 1)), dtype=np.float)
+        Tabis = -9999 * np.ones((1, 14 * (sup_max + 1)), dtype=np.float32)
         lineTabis = 0
         intsup = 1
         newTmax = Tmax
@@ -7317,7 +7468,7 @@ def OptPyl_Down_init_NoH(Line, Alts, Span, Htower , Hend, q1, q2, q3, Fo, Hline_
 
                 if nblineTabis > 0:
                     Tab = -9999 * np.ones((indmaxmulti * Tabis.shape[0] * 100 * nbconfig, 14 * (sup_max + 1)),
-                                         dtype=np.float)
+                                         dtype=np.float32)
                     intsup += 1
                     lineTab = 0
 
@@ -7457,9 +7608,9 @@ def OptPyl_Up2(Line, Alts, Span, Htower,  Hend, q1, q2, q3, Fo, Hline_min, Hline
             test = 1
 
     if not test and sup_max > 0:
-        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 15 * (sup_max + 1)), dtype=np.float)
+        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 15 * (sup_max + 1)), dtype=np.float32)
         lineTab = 0
-        Tabis = -9999 * np.ones((1, 15 * (sup_max + 1)), dtype=np.float)
+        Tabis = -9999 * np.ones((1, 15 * (sup_max + 1)), dtype=np.float32)
         lineTabis = 0
 
         test = 1
@@ -7524,7 +7675,7 @@ def OptPyl_Up2(Line, Alts, Span, Htower,  Hend, q1, q2, q3, Fo, Hline_min, Hline
                 Tabis = get_Tabis2(Tab, lineTab, nbconfig, intsup, indmax)
                 nblineTabis = Tabis.shape[0]
                 if nblineTabis > 0:
-                    Tab = -9999 * np.ones((indmaxmulti * Tabis.shape[0] * 100 * nbconfig, 15 * (sup_max + 1)), dtype=np.float)
+                    Tab = -9999 * np.ones((indmaxmulti * Tabis.shape[0] * 100 * nbconfig, 15 * (sup_max + 1)), dtype=np.float32)
                     intsup += 1
                     lineTab = 0
                 else:
@@ -7615,9 +7766,9 @@ def OptPyl_Up2_NoH(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, Hl
             test = 1
 
     if not test and sup_max > 0:
-        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 15 * (sup_max + 1)), dtype=np.float)
+        Tab = -9999 * np.ones((indmaxmulti * 100 * nbconfig, 15 * (sup_max + 1)), dtype=np.float32)
         lineTab = 0
-        Tabis = -9999 * np.ones((1, 15 * (sup_max + 1)), dtype=np.float)
+        Tabis = -9999 * np.ones((1, 15 * (sup_max + 1)), dtype=np.float32)
         lineTabis = 0
         test = 1
         intsup = 1
@@ -7682,7 +7833,7 @@ def OptPyl_Up2_NoH(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, Hl
                 nblineTabis = Tabis.shape[0]
 
                 if nblineTabis > 0:
-                    Tab = -9999 * np.ones((indmaxmulti * nbconfig * Tabis.shape[0] * 100, 15 * (sup_max + 1)), dtype=np.float)
+                    Tab = -9999 * np.ones((indmaxmulti * nbconfig * Tabis.shape[0] * 100, 15 * (sup_max + 1)), dtype=np.float32)
                     intsup += 1
                     lineTab = 0
                 else:
@@ -8425,6 +8576,10 @@ def Dfwd_flat_forest_road(Link_RF, cost_rast, zone_rast, Csize, Max_distance=100
     count_sans_match = 0
     Dist = 0
     dist_ac = Csize
+    h = nline
+    b = 0
+    l = ncol
+    r = 0
 
     # Initialisation du raster
     pixel = 1
@@ -8484,7 +8639,8 @@ def Dfwd_flat_forest_road(Link_RF, cost_rast, zone_rast, Csize, Max_distance=100
 
 
 def Dfwd_flat_forest_tracks(Link_Piste, cost_rast, zone_rast, Csize, Max_distance=100000):
-    nline, ncol = zone_rast.shape
+    nline = zone_rast.shape[0]
+    ncol = zone_rast.shape[1]
     diag = 1.414214 * Csize
     direct = Csize
     nb_pixel_Piste = Link_Piste.shape[0]
@@ -8500,6 +8656,11 @@ def Dfwd_flat_forest_tracks(Link_Piste, cost_rast, zone_rast, Csize, Max_distanc
     count_sans_match = 0
     Dist = 0
     dist_ac = Csize
+    h = nline
+    b = 0
+    l = ncol
+    r = 0
+
 
     # Initialisation du raster
     pixel = 1
