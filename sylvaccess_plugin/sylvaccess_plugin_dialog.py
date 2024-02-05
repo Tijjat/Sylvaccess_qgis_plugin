@@ -30,14 +30,14 @@ from scipy import spatial
 import numpy as np
 from osgeo import gdal, osr, ogr
 import math
-
+from .resources import *
 from math import sqrt,degrees,atan,cos,sin,radians,pi,atan2,ceil,floor,fabs
 import shutil
 import gc
 import datetime
 from scipy.interpolate import InterpolatedUnivariateSpline
 import sys
-
+Sylvaccess_UI = None
 
 # Chargement de l'interface utilisateur depuis le fichier .ui
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'sylvaccess_plugin_dialog_base.ui'))
@@ -46,6 +46,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
         super(Sylvaccess_pluginDialog, self).__init__(parent)
         self.setupUi(self)
+
 
 ##################################################################
 #.______     ______    __    __  .__________.  ______   .__   __.# 
@@ -70,6 +71,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             checkbox.stateChanged.connect(lambda _, num=i: self.checkbox_state_changed_opti(num))
 
         # Connexion des signaux des boutons OK et Annuler()
+        self.pushButton_14.clicked.connect(self.initialisation)
         self.button_box.accepted.connect(self.launch)
         self.button_box.rejected.connect(self.reject)
         self.spinBox_40.valueChanged.connect(self.spinBox_40_changed)
@@ -158,14 +160,18 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             if checkbox_number == 2:
                 self.cable.setEnabled(False)
             if checkbox_number == 3:
-                self.porteur.setEnabled(False) 
+                self.porteur.setEnabled(False)
+                self.plainTextEdit_2.setText("0;500;1000;1500") 
             if checkbox_number == 4:
                 self.skidder.setEnabled(False)
+                self.plainTextEdit_1.setText("0;500;1000;1500")
 
 
     def spinBox_40_changed(self):
         value = self.spinBox_40.value()
-        self.spinBox_49.setValue(value)
+        #self.spinBox_49.setValue(value)
+        ##testing
+        console_info(f"spinBox_40_changed: value={value}")
 
 
     def comboBox_1_changed(self):
@@ -281,6 +287,11 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.spinBox_108.setMinimum(0)
                 self.spinBox_108.setMaximum(0)
 
+    def initialisation(self):
+        global Sylvaccess_UI
+        Sylvaccess_UI = Sylvaccess_pluginDialog()
+        Sylvaccess_UI.show()
+
 
 ###############################################################################################
 # __          ___      .__   __.   ______  _______ .___  ___.  _______ .__   __. .___________.#
@@ -297,11 +308,11 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         ##testing
         console_info("launch")
         ##
-        Sylvaccess_class = Sylvaccess_pluginDialog() 
-        Wspace,Rspace,_,_,file_shp_Desserte,_,_,_,_,_,_,_,_ = Sylvaccess_class.get_spatial()
-        test_Skidder,test_Porteur,test_Cable,test_cable_optimise,pente = Sylvaccess_class.get_general()
-        prelevement,recalculer,_,foret2,VBP2,VAM2,pechage2 = Sylvaccess_class.get_opti_cable()
-        surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_class.get_crit_opti()
+         
+        Wspace,Rspace,_,_,file_shp_Desserte,_,_,_,_,_,_,_,_ = Sylvaccess_UI.get_spatial()
+        test_Skidder,test_Porteur,test_Cable,test_cable_optimise,pente = Sylvaccess_UI.get_general()
+        prelevement,recalculer,_,foret2,VBP2,VAM2,pechage2 = Sylvaccess_UI.get_opti_cable()
+        surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_UI.get_crit_opti()
         w_list = [surface, nbr_sup_int, sens_debardage, longueure_ligne, vol_ligne, indice_prelev, VAM3, dist_chariot]
         lim_list = [surface_poids, nbr_sup_int_poids, sens_debardage_poids, longueure_ligne_poids, vol_ligne_poids, indice_prelev_poids, VAM_poids, dist_chariot_poids]  
         try:os.mkdir(Rspace)
@@ -310,7 +321,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             if not getattr(self, f"lineEdit_{i}").text():
                 console_warning("Veuillez remplir tous les champs obligatoires")
                 return
-        Sylvaccess_pluginDialog.check_files()
+        Sylvaccess_UI.check_files()
         write_file()
         if (test_Skidder + test_Porteur) > 0:
             # Verifie si une partie de la desserte correspond a un projet
@@ -501,6 +512,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
 
     def get_general(self):
+        self.update()
         _ski = self.checkBox_4.isChecked()
         _por = self.checkBox_3.isChecked()
         _cab = self.checkBox_2.isChecked()
@@ -512,7 +524,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
 
     def get_spatial(self):
-
+        self.update()
         _Wspace = getattr(self, f"lineEdit_1").text()
         _Rspace = getattr(self, f"lineEdit_2").text()
         _mnt = getattr(self, f"lineEdit_3").text()
@@ -533,7 +545,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
 
     def get_skidder(self):
-
+        self.update()
         _pente_max = self.spinBox_3.value()
         _distance_max_amont = self.spinBox_4.value()
         _distance_max_aval = self.spinBox_5.value()
@@ -551,7 +563,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
   
 
     def get_porteur(self):
-
+        self.update()
         _pente_max = self.spinBox_8.value()
         _pente_max_remonant = self.spinBox_9.value()
         _pente_max_descendant = self.spinBox_12.value()
@@ -566,7 +578,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
 
     def get_type_cable(self):
-
+        self.update()
         _type_machine = self.comboBox_1.currentText()
         _supports_inter = self.spinBox_14.value()
         _hauteur = self.doublespinBox_2.value()
@@ -579,7 +591,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
 
     def get_type_chariot(self):
-
+        self.update()
         _type_chariot = self.comboBox_2.currentText()
         _masse = self.spinBox_22.value()
         _pente_min = self.spinBox_23.value()
@@ -592,7 +604,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
 
     def get_proprietes_cable(self):
-
+        self.update()
         _diametre = self.doublespinBox_3.value()
         _masse_li = self.doublespinBox_4.value()
         _tension_rupt = self.spinBox_26.value()
@@ -604,7 +616,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
 
     def get_param_modelisation(self):
-
+        self.update()
         _hauteur_sup = self.doublespinBox_5.value()
         _hauteur_mat = self.doublespinBox_8.value()
         _hauteur_min_cable = self.doublespinBox_6.value()
@@ -619,7 +631,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
 
     def get_options(self):
-
+        self.update()
         _opti = self.checkBox_5.isChecked()
         _precision = self.spinBox_41.value()
     ##testing:
@@ -629,8 +641,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
 
     def get_opti_cable(self,):
-
-
+        self.update()
         _prelevement = self.spinBox_48.value()
         _recalculer = self.checkBox_6.isChecked()
         _Rspace_c = getattr(self, f"lineEdit_17").text()
@@ -645,6 +656,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
 
     def get_crit_opti(self):
+        self.update()
         surface_poids,nbr_sup_int_poids,sens_debardage_poids,longueure_ligne_poids,vol_ligne_poids,indice_prelev_poids,VAM_poids,dist_chariot_poids = 0,0,0,0,0,0,0,0
         if self.checkBox_101.isChecked():
             _surface = self.doublespinBox_11.value()

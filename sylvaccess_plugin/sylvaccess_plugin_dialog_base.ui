@@ -65,6 +65,24 @@
    <property name="currentIndex">
     <number>0</number>
    </property>
+   <widget class="QWidget" name="start">
+    <attribute name="title">
+     <string>Page</string>
+    </attribute>
+    <widget class="QPushButton" name="pushButton_14">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>280</y>
+       <width>271</width>
+       <height>181</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>lancement du plugin</string>
+     </property>
+    </widget>
+   </widget>
    <widget class="QWidget" name="general">
     <property name="enabled">
      <bool>true</bool>
