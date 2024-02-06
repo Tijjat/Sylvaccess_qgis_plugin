@@ -81,7 +81,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
     # Connexion des signaux des boutons d'ouverture de fichier à la fonction open_folder
     def open_folder(self, button_number):
         # Définit les filtres génériques pour Shapefiles et fichiers raster
-        shapefile_filter = "Shapefiles (*.shp);;All files (*)"
+        shapefile_filter = "Shapefiles (*.shp );;Geopackage(*.gpkg);;All files (*)"
         raster_filter = "Raster files (*.tif *.asc *.txt);;All files (*)"
 
         # Définit les options de la boîte de dialogue
@@ -151,9 +151,15 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             if checkbox_number == 2:
                 self.cable.setEnabled(True)
             if checkbox_number == 3:
-                self.porteur.setEnabled(True) 
+                self.porteur.setEnabled(True)
+                #test
+                self.plainTextEdit_2.setPlainText("0;500;1000;1500") 
+                ##
             if checkbox_number == 4:
                 self.skidder.setEnabled(True)
+                #test
+                self.plainTextEdit_1.setPlainText("0;500;1000;1500")
+                ##
         elif not checkbox_state:
             if checkbox_number == 1:
                 self.cable_opti.setEnabled(False)
@@ -161,10 +167,10 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.cable.setEnabled(False)
             if checkbox_number == 3:
                 self.porteur.setEnabled(False)
-                self.plainTextEdit_2.setText("0;500;1000;1500") 
+ 
             if checkbox_number == 4:
                 self.skidder.setEnabled(False)
-                self.plainTextEdit_1.setText("0;500;1000;1500")
+
 
 
     def spinBox_40_changed(self):
@@ -800,8 +806,7 @@ def heures(Hdebut):
     nb_hours = int(ts/3600)
     ts -= nb_hours*3600
     nb_minutes = int(ts/60)
-    ts -= nb_minutes*60  
-    if nb_days>0:
+    if nb_days>0: 
         str_duree = str(nb_days)+'j '+str(nb_hours)+'h '+str(nb_minutes)+'min '+str(ts)+'s'
     elif nb_hours >0:
         str_duree = str(nb_hours)+'h '+str(nb_minutes)+'min '+str(ts)+'s'
@@ -809,8 +814,8 @@ def heures(Hdebut):
         str_duree = str(nb_minutes)+'min '+str(ts)+'s'
     else:
         str_duree = str(ts)+'s'        
-        str_debut = str(Hdebut.day)+'/'+str(Hdebut.month)+'/'+str(Hdebut.year)+' '+str(Hdebut.hour)+':'+str(Hdebut.minute)+':'+str(Hdebut.second)
-        str_fin = str(Hfin.day)+'/'+str(Hfin.month)+'/'+str(Hfin.year)+' '+str(Hfin.hour)+':'+str(Hfin.minute)+':'+str(Hfin.second)
+    str_debut = str(Hdebut.day)+'/'+str(Hdebut.month)+'/'+str(Hdebut.year)+' '+str(Hdebut.hour)+':'+str(Hdebut.minute)+':'+str(Hdebut.second)
+    str_fin = str(Hfin.day)+'/'+str(Hfin.month)+'/'+str(Hfin.year)+' '+str(Hfin.hour)+':'+str(Hfin.minute)+':'+str(Hfin.second)
 
     return str_duree,str_fin,str_debut
 
@@ -3918,7 +3923,7 @@ def Skidder():
     ArrayToGtiff(Lien_foret_Res_pub,Rspace_s+'Lien_foret_Reseau_public',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
     layer_name = 'Skidder_recap_accessibilite'
     source_src=get_source_src(file_shp_Desserte)  
-    create_access_shapefile(Dtotal,Rspace_s,zone_accessible,Foret,Skid_Debclass.split(";"),road_network_proj,source_src,Csize, Dir_temp,Extent,nrows,ncols,layer_name)
+    create_access_shapefile(Dtotal,Rspace_s,Foret,Skid_Debclass.split(";"),road_network_proj,source_src, Dir_temp,Extent,nrows,ncols,layer_name)
       
     del zone_accessible,DTrain_piste,DTrain_foret,Ddebusquage,Dtotal
     del Lien_foret_piste,Lien_foret_RF,Lien_foret_Res_pub
@@ -4027,8 +4032,9 @@ def make_summary_surface_vol(Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_acce
                                 str(round((Temp+Surf_Cum)/Surf_foret*100,1))])
         Surf_Cum += Temp
     #add infinite distance class 
-    dmin = int(Skid_list[nbclass - 1])
-    if dmin:
+    dmin = Skid_list[nbclass - 1]
+    if dmin.isdigit():
+        dmin = int(dmin)
         try:
             Temp = np.sum((Dtotal>=dmin)*Csize*Csize*0.0001)
             Table[nbclass,0:5] = np.array(["> "+str(dmin)+" m",str(round(Temp,1)),
@@ -4039,7 +4045,10 @@ def make_summary_surface_vol(Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_acce
         except ValueError as e:
             console_warning(f"Error converting '{dmin}' to an integer. Skid_list: {Skid_list}")
             console_warning(f"Dtotal: {Dtotal}")
-        raise e
+            raise e
+    else:
+        console_warning(f"Invalid literal for int() with base 10: '{dmin}'. Skid_list: {Skid_list}")
+        raise ValueError(f"Invalid literal for int() with base 10: '{dmin}'")
          
     Table[-5,1] = str(round(Surf_Cum,1))+" ha"
     Table[-5,2] = str(round(Surf_Cum/Surf_foret*100,1))+" %"
@@ -5189,7 +5198,7 @@ def process_forwarder():
     
     layer_name = 'Porteur_recap_accessibilite'
     source_src=get_source_src(file_shp_Desserte)  
-    create_access_shapefile(DTot,Rspace_s,Zone_accessible,Foret,Forw_Debclass.split(";"),road_network_proj,source_src,Csize, Dir_temp,Extent,nrows,ncols,layer_name)
+    create_access_shapefile(DTot,Rspace_s,Foret,Forw_Debclass.split(";"),road_network_proj,source_src,Csize, Dir_temp,Extent,nrows,ncols,layer_name)
        
     ###############################################################################################################################################                                                                                    
     ### SAVE PARAMETERS
