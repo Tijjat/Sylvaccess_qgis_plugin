@@ -298,6 +298,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         global Sylvaccess_UI
         Sylvaccess_UI = Sylvaccess_pluginDialog()
         Sylvaccess_UI.show()
+        Sylvaccess_UI.start.setEnabled(False)
 
 
 ###############################################################################################
