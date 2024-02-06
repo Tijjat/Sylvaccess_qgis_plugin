@@ -91,13 +91,13 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         # Affiche le dialogue de sélection de fichier avec les filtres appropriés
         if button_number in [4, 5, 6]:
             selected_file, _ = QFileDialog.getOpenFileName(
-                None, "Choisir un fichier", filter=shapefile_filter, options=options)
+                None, "Select a file", filter=shapefile_filter, options=options)
         elif button_number in [3, 11, 12, 13]:
             selected_file, _ = QFileDialog.getOpenFileName(
-                None, "Choisir un fichier", filter=raster_filter, options=options)
+                None, "Select a file", filter=raster_filter, options=options)
         elif button_number in [1, 2, 7, 8, 9, 10]:  # Pour le bouton qui doit ouvrir un dossier
             selected_file = QFileDialog.getExistingDirectory(
-                None, "Choisir un dossier", options=options)
+                None, "Select a folder", options=options)
 
         if selected_file:
             # Mise à jour du champ de texte approprié
@@ -151,7 +151,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             if checkbox_number == 2:
                 self.cable.setEnabled(True)
             if checkbox_number == 3:
-                self.porteur.setEnabled(True)
+                self.Forwarder.setEnabled(True)
                 #test
                 self.plainTextEdit_2.setPlainText("0;500;1000;1500") 
                 ##
@@ -166,7 +166,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             if checkbox_number == 2:
                 self.cable.setEnabled(False)
             if checkbox_number == 3:
-                self.porteur.setEnabled(False)
+                self.Forwarder.setEnabled(False)
  
             if checkbox_number == 4:
                 self.skidder.setEnabled(False)
@@ -318,7 +318,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         ##
          
         Wspace,Rspace,_,_,file_shp_Desserte,_,_,_,_,_,_,_,_ = Sylvaccess_UI.get_spatial()
-        test_Skidder,test_Porteur,test_Cable,test_cable_optimise,pente = Sylvaccess_UI.get_general()
+        test_Skidder,test_Forwarder,test_Cable,test_cable_optimise,pente = Sylvaccess_UI.get_general()
         prelevement,recalculer,_,foret2,VBP2,VAM2,pechage2 = Sylvaccess_UI.get_opti_cable()
         surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_UI.get_crit_opti()
         w_list = [surface, nbr_sup_int, sens_debardage, longueure_ligne, vol_ligne, indice_prelev, VAM3, dist_chariot]
@@ -327,11 +327,11 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         except:pass
         for i in range (1,5):
             if not getattr(self, f"lineEdit_{i}").text():
-                console_warning("Veuillez remplir tous les champs obligatoires")
+                console_warning("Please fill in all required fields")
                 return
         Sylvaccess_UI.check_files()
         write_file()
-        if (test_Skidder + test_Porteur) > 0:
+        if (test_Skidder + test_Forwarder) > 0:
             # Verifie si une partie de la desserte correspond a un projet
             testExist = check_field_EXIST(file_shp_Desserte,"EXIST") 
                     
@@ -343,7 +343,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                     Skidder()                    
                     gc.collect()
                 
-                if test_Porteur:
+                if test_Forwarder:
                     process_forwarder()
                     gc.collect()
             
@@ -355,7 +355,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 
                 #Premiere simu sans projet
     
-                console_info("\nSIMULATION DEPUIS LA DESSERTE EXISTANTE")
+                console_info("\nSIMULATION FROM EXISTING SERVICE")
                 if test_Skidder:   
                     try:os.mkdir(Rspace+"Skidder/")
                     except:pass
@@ -366,36 +366,36 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                     
                     os.rename(Rspace+"Skidder/Skidder/",projdir)
                 
-                if test_Porteur:
-                    Rspace_f = Rspace+"Porteur/"
-                    old=Rspace+"Porteur/Porteur/"
-                    new= Rspace+"Porteur/1_Existant/"  
+                if test_Forwarder:
+                    Rspace_f = Rspace+"Forwarder/"
+                    old=Rspace+"Forwarder/Forwarder/"
+                    new= Rspace+"Forwarder/1_Existant/"  
                     try:os.mkdir(Rspace_f)
                     except:pass
                     process_forwarder()
                     gc.collect()
                     os.rename(old,new)  
                     
-                os.remove(Wspace+"Temp/Lien_piste.npy")
-                os.remove(Wspace+"Temp/Lien_RF.npy")
+                os.remove(Wspace+"Temp/Link_track.npy")
+                os.remove(Wspace+"Temp/Link_RF.npy")
                 os.remove(Wspace+"Temp/Tab_res_pub.npy")
-                os.remove(Wspace+"Temp/Route_for.npy")
-                os.remove(Wspace+"Temp/Piste.npy")
+                os.remove(Wspace+"Temp/Road_for.npy")
+                os.remove(Wspace+"Temp/Track.npy")
                 
                 #Deuxieme simu avec projet
-                console_info("\nSIMULATION INCLUANT LE PROJET DE DESSERTE")
+                console_info("\nSIMULATION INCLUDING THE SERVICE PROJECT")
                 if test_Skidder: 
                     Skidder()                    
                     gc.collect()
-                    projdir = Rspace+"Skidder/2_Projet/"
+                    projdir = Rspace+"Skidder/2_Project/"
                     
                     os.rename(Rspace+"Skidder/Skidder/",projdir)
                     make_dif_files(Rspace,0)     
                     
-                if test_Porteur:
-                    Rspace_f = Rspace+"Porteur/"
-                    old=Rspace+"Porteur/Porteur/"
-                    new= Rspace+"Porteur/2_Projet/"                                
+                if test_Forwarder:
+                    Rspace_f = Rspace+"Forwarder/"
+                    old=Rspace+"Forwarder/Forwarder/"
+                    new= Rspace+"Forwarder/2_Project/"                                
                     process_forwarder()
                     gc.collect()         
                     os.rename(old,new)   
@@ -418,7 +418,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
     def check_files(self):
         verif=True
         test_Skidder = self.checkBox_4.isChecked()
-        test_Porteur = self.checkBox_3.isChecked()
+        test_Forwarder = self.checkBox_3.isChecked()
         test_cable_optim = self.checkBox_1.isChecked()
         test_Cable = self.checkBox_2.isChecked()
         file_MNT = getattr(self, f"lineEdit_3").text()
@@ -430,26 +430,33 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         new_calc = self.checkBox_6.isChecked()
         file_shp_Cable_dep = getattr(self, f"lineEdit_6").text()
 
-        msg="\nLES PROBLEMES SUIVANTS ONT ETE IDENTIFIES CONCERNANT LES ENTREES SPATIALES: \n"
+        msg="\nTHE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY: \n"
         #Check MNT
-        if test_Skidder+test_Porteur+test_Cable>0:
+        if test_Skidder+test_Forwarder+test_Cable>0:
             try:
                 _,values,_,Extent = raster_get_info(file_MNT)   
                 if values[5]==None:
                     verif=False
-                    msg+=" -   Raster MNT: Aucune valeur de NoData definie\n" 
+                    msg+=" -   Raster MNT: No value of NoData definie\n" 
             except:
-                msg+=" -   Raster MNT:  Le chemin d'acces est manquant ou incorrect. Ce raster est obligatoire pour lancer Sylvaccess\n" 
+                msg += " -   Raster MNT:  Path is missing or incorrect. This raster is required to run Sylvaccess\n" 
+                verif = False
+            if not file_MNT.endswith(".tif") or not file_MNT.endswith(".asc") or not file_MNT.endswith(".txt"):
+                verif = False
+                msg += " -   Raster MNT: The file must be a tif, asc or txt file\n"
                 
         #Check file_shp_Desserte   
-        if test_Skidder+test_Porteur>0:
+        if test_Skidder+test_Forwarder>0:
             try:    
                 if not check_field(file_shp_Desserte,"CL_SVAC"):
                     verif=False
-                    msg+=" -   Couche desserte: Le champs 'CL_SVAC' est manquant\n"  
+                    msg+=" -   Service layer: The 'CL_SVAC' field is missing\n"  
             except:
                 verif=False
-                msg+=" -   Couche desserte: Le chemin d'acces est manquant ou incorrect. Cette couche est obligatoire pour les modules skidder et porteur\n" 
+                msg += " -   Service layer: Path is missing or incorrect. This layer is required for skidder and forwarder modules\n"
+            if not file_shp_Desserte.endswith(".shp") or not file_shp_Desserte.endswith(".gpkg"):
+                verif = False
+                msg += " -   Service layer: The file must be a shapefile or a geopackage\n" 
             
 
         #Check file_shp_Cable_Dep    
@@ -457,54 +464,66 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             try: 
                 if not check_field(file_shp_Cable_dep,"CABLE"):
                     verif=False
-                    msg+=" -   Couche desserte: Le champs 'CABLE' est manquant\n"  
+                    msg+=" -   Service layer: The 'CABLE' field is missing\n"  
             except:
                 verif=False
-                msg+=" -   Couche départs de cable potentiels: Le chemin d'acces est manquant ou incorrect. Cette couche est obligatoire pour le module cable\n" 
+                msg += " -   Potential cable departures layer: The access path is missing or incorrect. This layer is mandatory for the cable module\n"
+            if not file_shp_Cable_dep.endswith(".shp") or not file_shp_Cable_dep.endswith(".gpkg"):
+                verif = False
+                msg += " -   Potential cable departures layer: The file must be a shapefile or a geopackage\n" 
 
             
         #Check file_shp_Foret   
-        if test_Skidder+test_Porteur+test_Cable>0:    
+        if test_Skidder+test_Forwarder+test_Cable>0:    
             try:     
                 if not check_field(file_shp_Foret,"FORET"):
                     verif=False
-                    msg+=" -   Couche foret: Le champs 'FORET' est manquant\n" 
+                    msg+=" -   Forest layer: The 'FOREST' field is missing\n" 
             except:
                 verif=False
-                msg+=" -   Couche foret: Le chemin d'acces est manquant ou incorrect. Cette couche est obligatoire pour lancer Sylvaccess\n"     
+                msg += " -   Forest layer: Path is missing or incorrect. This layer is required to run Sylvaccess\n"
+            if not file_shp_Foret.endswith(".shp") or not file_shp_Foret.endswith(".gpkg"):
+                verif = False
+                msg += " -   Forest layer: The file must be a shapefile or a geopackage\n"     
                     
         #Check file_shp_Foret for cable optim
         if not test_Cable and test_cable_optim and new_calc and file_shp_Foret!="":
             try:     
                 if not check_field(file_shp_Foret,"FORET"):
                     verif=False
-                    msg+=" -   Couche foret (onglet optimisation cable): Le champs 'FORET' est manquant\n" 
+                    msg+=" -   Forest layer (optimization cable tab): The 'FOREST' field is missing\n" 
             except:
                 verif=False
-                msg+=" -   Couche foret (onglet optimisation cable): Le chemin d'acces est manquant ou incorrect. \n"     
+                msg += " -   Forest layer (optimization cable tab): The path is missing or incorrect. \n"
+            if not file_shp_Foret.endswith(".shp") or not file_shp_Foret.endswith(".gpkg"):
+                verif = False
+                msg += " -   Forest layer (optimization cable tab): The file must be a shapefile or a geopackage\n"     
             
         #Check file_vol_BP,file_vol_AM,file_HA
-        FR_name = ["Raster Volume/ha","Raster volume arbre moyen","Raster hauteur des arbres"]
+        name = ["Raster Volume/ha","Raster medium tree volume","Raster tree height"]
         for i,f in enumerate([file_vol_BP,file_vol_AM,file_HA]):
             if f!="":
                 try:
                     _,values2,_,Extent2 = raster_get_info(f)    
                     if values2[5]==None:
                         verif=False
-                        msg+=" -   "+FR_name[i]+": Aucune valeur de NoData definie\n" 
+                        msg+=" -   "+name[i]+": No value of NoData definie\n" 
                     if not values[4]==values2[4]:
                         verif=False
-                        msg+=" -   "+FR_name[i]+": La taille de cellules du raster doit etre la meme que celle du MNT\n" 
+                        msg+=" -   "+name[i]+": Raster cell size should be the same as NTM\n" 
                     if not np.all(Extent==Extent2):
                         verif=False
-                        msg+=" -   "+FR_name[i]+": L'etendue du raster doit etre la meme que celle du MNT\n" 
+                        msg+=" -   "+name[i]+": The extent of the raster must be the same as that of the NTM\n" 
                 except:
                     verif=False
-                    msg+=" -   "+FR_name[i]+": Le chemin d'access est incorrect\n"     
+                    msg += " -   " + name[i] + ": The access path is incorrect\n"
+                if not f.endswith(".tif") or not f.endswith(".asc") or not f.endswith(".txt"):
+                    verif = False
+                    msg += " -   " + name[i] + ": The file must be a tif, asc or txt file\n"     
 
         if not verif:
             msg+="\n"
-            msg+="MERCI DE CORRIGER AVANT DE RELANCER SYLVACCESS\n"
+            msg+="PLEASE CORRECT BEFORE RELAUNCHING SYLVACCESS\n"
             console_warning(msg)
         return verif
 
@@ -570,7 +589,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         return _pente_max, _distance_max_amont, _distance_max_aval, _distance_max_hors_frt_dsrt, _pente_amont_max, _pente_aval_max, _limite, _bornes_s
   
 
-    def get_porteur(self):
+    def get_Forwarder(self):
         self.update()
         _pente_max = self.spinBox_8.value()
         _pente_max_remonant = self.spinBox_9.value()
@@ -580,7 +599,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         _taille_grue = self.doubleSpinBox_1.value()
         _bornes_p = self.plainTextEdit_2.toPlainText()
     ##testing:
-        console_info(f"get_porteur: pente_max={_pente_max}, pente_max_remonant={_pente_max_remonant}, pente_max_descendant={_pente_max_descendant}, distance_max_pente_sup={_distance_max_pente_sup}, distance_max_hors_frt={_distance_max_hors_frt}, taille_grue={_taille_grue}, bornes_p={_bornes_p}")
+        console_info(f"get_Forwarder: pente_max={_pente_max}, pente_max_remonant={_pente_max_remonant}, pente_max_descendant={_pente_max_descendant}, distance_max_pente_sup={_distance_max_pente_sup}, distance_max_hors_frt={_distance_max_hors_frt}, taille_grue={_taille_grue}, bornes_p={_bornes_p}")
 
         return _pente_max, _pente_max_remonant, _pente_max_descendant, _distance_max_pente_sup, _distance_max_hors_frt, _taille_grue, _bornes_p
 
@@ -727,8 +746,8 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         return _pente_max, _distance_max_amont, _distance_max_aval, _distance_max_hors_frt_dsrt, _pente_amont_max, _pente_aval_max, _limite, _bornes_s
 
     @classmethod
-    def get_porteur_cls(cls):
-        _pente_max, _pente_max_remonant, _pente_max_descendant, _distance_max_pente_sup, _distance_max_hors_frt, _taille_grue, _bornes_p = Sylvaccess_UI.get_porteur()
+    def get_Forwarder_cls(cls):
+        _pente_max, _pente_max_remonant, _pente_max_descendant, _distance_max_pente_sup, _distance_max_hors_frt, _taille_grue, _bornes_p = Sylvaccess_UI.get_Forwarder()
         return _pente_max, _pente_max_remonant, _pente_max_descendant, _distance_max_pente_sup, _distance_max_hors_frt, _taille_grue, _bornes_p
 
     @classmethod
@@ -808,7 +827,7 @@ def heures(Hdebut):
     ts -= nb_hours*3600
     nb_minutes = int(ts/60)
     if nb_days>0: 
-        str_duree = str(nb_days)+'j '+str(nb_hours)+'h '+str(nb_minutes)+'min '+str(ts)+'s'
+        str_duree = str(nb_days)+'d '+str(nb_hours)+'h '+str(nb_minutes)+'min '+str(ts)+'s'
     elif nb_hours >0:
         str_duree = str(nb_hours)+'h '+str(nb_minutes)+'min '+str(ts)+'s'
     elif nb_minutes>0:
@@ -888,7 +907,7 @@ def write_file():
     Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP = Sylvaccess_UI.get_spatial_cls()
     ski,por,cab,opti,pente = Sylvaccess_UI.get_general_cls()
     pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes = Sylvaccess_UI.get_skidder_cls()
-    pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2=Sylvaccess_UI.get_porteur_cls()
+    pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2=Sylvaccess_UI.get_Forwarder_cls()
     type_machine,supports_inter,hauteur,longueure_max,longueure_min=Sylvaccess_UI.get_type_cable_cls()
     type_chariot,masse,pente_min,pente_max_amont,pente_max_aval = Sylvaccess_UI.get_type_chariot_cls()
     diamètre,masse_li,tension_rupt,elasticité = Sylvaccess_UI.get_proprietes_cable()
@@ -1072,7 +1091,10 @@ def shapefile_to_np_array(file_name,Extent,Csize,attribute_name,order_field=None
 
 def select_in_shapefile(source_shapefile,out_Shape_Path,expression):
     #Recupere le driver
-    driver = ogr.GetDriverByName('ESRI Shapefile')
+    if source_shapefile.endswith('.gbkg'):
+        driver = ogr.GetDriverByName('GBKG')
+    elif source_shapefile.endswith('.shp'):
+        driver = ogr.GetDriverByName('ESRI Shapefile')
     #Get information from source shapefile
     source_ds = ogr.Open(source_shapefile)
     source_layer = source_ds.GetLayer()    
@@ -1900,25 +1922,25 @@ def Cable():
     resume_texte = resume_texte+"Temps total d'execution du script:                                         "+str_duree+"\n\n"
     resume_texte = resume_texte+"PROPRIETES DU MATERIEL MODELISE:\n"
     resume_texte = resume_texte+"   - Type de machine:                                                      "+str(cable_name)+"\n"
-    resume_texte = resume_texte+"   - Hauteur du mat ou du cable porteur au niveau de la place de depot:    "+str(Htower)+" m\n"
+    resume_texte = resume_texte+"   - Hauteur du mat ou du cable Forwarder au niveau de la place de depot:    "+str(Htower)+" m\n"
     resume_texte = resume_texte+"   - Nombre maximum de support(s) intermediaire(s):                        "+str(sup_max)+"\n"
-    resume_texte = resume_texte+"   - Longueur maximale du cable porteur:                                   "+str(Lmax)+" m\n"
+    resume_texte = resume_texte+"   - Longueur maximale du cable Forwarder:                                   "+str(Lmax)+" m\n"
     resume_texte = resume_texte+"   - Longueur minimale d'une ligne:                                        "+str(Lmin)+" m\n"
     resume_texte = resume_texte+"   - Longueur minimale entre deux supports:                                "+str(LminSpan)+" m\n"
     resume_texte = resume_texte+"   - Type de chariot:                                                      "+str(carriage_name)+"\n"
     resume_texte = resume_texte+"   - Masse a vide du chariot:                                              "+str(Pchar)+" kg\n"
     resume_texte = resume_texte+"   - Masse maximale de la charge:                                          "+str(Load_max)+" kg\n"
     if Carriage_type==1:   
-        resume_texte = resume_texte+"   - Pente max du cable porteur pour un debardage vers l'amont:            "+str(slope_Wliner_up)+" %\n"    
-        resume_texte = resume_texte+"   - Pente max du cable porteur pour un debardage vers l'aval:             "+str(slope_Wliner_down)+" %\n"   
+        resume_texte = resume_texte+"   - Pente max du cable Forwarder pour un debardage vers l'amont:            "+str(slope_Wliner_up)+" %\n"    
+        resume_texte = resume_texte+"   - Pente max du cable Forwarder pour un debardage vers l'aval:             "+str(slope_Wliner_down)+" %\n"   
     else: 
-        resume_texte = resume_texte+"   - Pente min du cable porteur pour que le chariot descende par gravite:  "+str(slope_grav)+" %\n"  
+        resume_texte = resume_texte+"   - Pente min du cable Forwarder pour que le chariot descende par gravite:  "+str(slope_grav)+" %\n"  
     resume_texte = resume_texte+"\n"
-    resume_texte = resume_texte+"PROPRIETES DU CABLE PORTEUR:\n"    
-    resume_texte = resume_texte+"   - Diametre du cable porteur:                                            "+str(d)+" mm\n"
-    resume_texte = resume_texte+"   - Masse lineique du cable porteur:                                      "+str(masse_li)+" kg.m-1\n"
+    resume_texte = resume_texte+"PROPRIETES DU CABLE Forwarder:\n"    
+    resume_texte = resume_texte+"   - Diametre du cable Forwarder:                                            "+str(d)+" mm\n"
+    resume_texte = resume_texte+"   - Masse lineique du cable Forwarder:                                      "+str(masse_li)+" kg.m-1\n"
     resume_texte = resume_texte+"   - Module de Young (Elasticite):                                         "+str(E)+" N.mm-2\n"
-    resume_texte = resume_texte+"   - Tension de rupture du cable porteur                                   "+str(rupt_res)+" kgF\n\n"
+    resume_texte = resume_texte+"   - Tension de rupture du cable Forwarder                                   "+str(rupt_res)+" kgF\n\n"
     if Carriage_type!=1:
         resume_texte = resume_texte+"PROPRIETES DES CABLES TRACTEUR ET RETOUR:\n"  
         resume_texte = resume_texte+"   - Masse lineique du cable tracteur:                                     "+str(masse_li2)+" kg.m-1\n"
@@ -1926,11 +1948,11 @@ def Cable():
         resume_texte = resume_texte+"\n"        
     resume_texte = resume_texte+"PARAMETRES DE MODELISATION:\n"
     resume_texte = resume_texte+"   - Distance laterale de pechage des bois:                                "+str(Lhor_max)+" m\n"
-    resume_texte = resume_texte+"   - Hauteur du cable porteur au niveau des pylone intermediaire:          "+str(Hintsup)+" m\n"
-    resume_texte = resume_texte+"   - Hauteur du cable porteur en fin de ligne:                             "+str(Hend)+" m\n"
+    resume_texte = resume_texte+"   - Hauteur du cable Forwarder au niveau des pylone intermediaire:          "+str(Hintsup)+" m\n"
+    resume_texte = resume_texte+"   - Hauteur du cable Forwarder en fin de ligne:                             "+str(Hend)+" m\n"
     resume_texte = resume_texte+"   - Hauteur minimale du cable en tout point (en charge):                  "+str(Hline_min)+" m\n"
     resume_texte = resume_texte+"   - Hauteur maximale du cable en tout point:                              "+str(Hline_max)+" m\n"
-    resume_texte = resume_texte+"   - Angle maximum du cable porteur au niveau d'un pylone intermediaire:   "+str(Max_angle)+" degres\n"
+    resume_texte = resume_texte+"   - Angle maximum du cable Forwarder au niveau d'un pylone intermediaire:   "+str(Max_angle)+" degres\n"
     resume_texte = resume_texte+"   - Facteur de securite:                                                  "+str(safe_fact)+"\n"
     resume_texte = resume_texte+"   - Valeur de l'angle de frottement:                                      "+str(coeff_frot)+" rad\n\n"
     resume_texte = resume_texte+"   - Resolution du MNT utilise:                                            "+str(Csize)+" m\n"
@@ -4103,8 +4125,8 @@ def make_summary_surface_vol(Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_acce
         np.savetxt(file_name, Table[:,0:5],fmt='%s', delimiter=';')
 
 
-def make_dif_files(Rspace,idmod):#idmod 0 : Skidder, 1 : Porteur
-    Modele = ["Skidder","Porteur"]
+def make_dif_files(Rspace,idmod):#idmod 0 : Skidder, 1 : Forwarder
+    Modele = ["Skidder","Forwarder"]
     Rspace_s = Rspace+Modele[idmod]+"/"
     filename = "Resume_resultats_Sylvaccess_"+Modele[idmod]+".txt"
     rastname = "Distance_totale_foret_route_forestiere.tif"
@@ -4622,12 +4644,12 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
 
   
 def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Obs_forwarder):
-    console_info("Preparation des entrees pour le modele porteur")
+    console_info("Preparation des entrees pour le modele Forwarder")
     ### Make directory for temporary files
     Dir_temp = Wspace+"Temp/"
     try:os.mkdir(Dir_temp)
     except:pass 
-    Rspace_f = Rspace+"Porteur/"
+    Rspace_f = Rspace+"Forwarder/"
     try:os.mkdir(Rspace_f)
     except:pass
     ##############################################################################################################################################
@@ -4769,9 +4791,9 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
 def process_forwarder():
     Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,_,_,_,Dir_Obs_forwarder,_,file_Vol_ha,_,_ = Sylvaccess_UI.get_spatial_cls()
     _,_,_,_,Pente_max_bucheron = Sylvaccess_UI.get_general_cls()
-    Forw_angle_incl,Forw_angle_up,Forw_angle_down,Forw_Lmax,Forw_Dmax_out_for,Forw_portee,Forw_Debclass=Sylvaccess_UI.get_porteur_cls()
+    Forw_angle_incl,Forw_angle_up,Forw_angle_down,Forw_Lmax,Forw_Dmax_out_for,Forw_portee,Forw_Debclass=Sylvaccess_UI.get_Forwarder_cls()
 
-    console_info("Debut de Sylvaccess - Porteur")
+    console_info("Debut de Sylvaccess - Forwarder")
 
     ###############################################################################################################################################
     ### Initialisation
@@ -4779,7 +4801,7 @@ def process_forwarder():
     Hdebut = datetime.datetime.now()
     
     # Create a folder for process result
-    Rspace_s = Rspace+"Porteur/"
+    Rspace_s = Rspace+"Forwarder/"
     try:os.mkdir(Rspace_s)
     except:pass
     Dir_temp = Wspace+"Temp/"
@@ -5177,7 +5199,7 @@ def process_forwarder():
     del Keep,Piste,Route_for
     gc.collect()    
     console_info("    - Surface accessible avec la grue ajoutee") 
-    model_name = "Porteur"
+    model_name = "Forwarder"
     
     
     ###############################################################################################################################################                                                                                    
@@ -5197,7 +5219,7 @@ def process_forwarder():
     ArrayToGtiff(Dpiste,Rspace_s+'Distance_sur_piste',Extent,nrows,ncols,road_network_proj,-9999,'INT16')
     ArrayToGtiff(Zone_accessible,Rspace_s+'Zone_accessible',Extent,nrows,ncols,road_network_proj,0,'UINT8')
     
-    layer_name = 'Porteur_recap_accessibilite'
+    layer_name = 'Forwarder_recap_accessibilite'
     source_src=get_source_src(file_shp_Desserte)  
     create_access_shapefile(DTot,Rspace_s,Foret,Forw_Debclass.split(";"),road_network_proj,source_src,Csize, Dir_temp,Extent,nrows,ncols,layer_name)
        
@@ -5208,7 +5230,7 @@ def process_forwarder():
     str_duree,str_fin,str_debut=heures(Hdebut)
     ### Genere le fichier avec le resume des parametres de simulation
     file_name = str(Rspace_s)+"Parametres_simulation.txt"
-    resume_texte = "Sylvaccess : CARTOGRAPHIE AUTOMATIQUE DES ZONES ACCESSIBLES PAR PORTEUR FORESTIER\n\n\n"
+    resume_texte = "Sylvaccess : CARTOGRAPHIE AUTOMATIQUE DES ZONES ACCESSIBLES PAR Forwarder FORESTIER\n\n\n"
     resume_texte = resume_texte+"Version du programme : 3.5.1 de 12/2021\n\n"
     resume_texte = resume_texte+"Resolution           : "+str(Csize)+" m\n\n"
     resume_texte = resume_texte+"Date et heure de lancement du script:             "+str_debut+"\n"
@@ -5233,7 +5255,7 @@ def process_forwarder():
     fichier = open(file_name, "w")
     fichier.write(resume_texte)
     fichier.close()
-    console_info("Accessibilite avec porteur terminee")
+    console_info("Accessibilite avec Forwarder terminee")
 
     ##############################################################################################################################################
     ### Close the script
@@ -6907,7 +6929,7 @@ def OptPyl_Up_NoH(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, Hli
                   slope_max, test_hfor, nbconfig=10):
     """
     Cable machine en haut
-    Optimise le placement des pylones intermediaire sans bouger la hauteur de fixation du cable porteur pour chaque pylone sur un profil
+    Optimise le placement des pylones intermediaire sans bouger la hauteur de fixation du cable Forwarder pour chaque pylone sur un profil
     """
 
     indmax = Line.shape[0] - 1
@@ -7112,7 +7134,7 @@ def OptPyl_Down_init(Line, Alts, Span, Htower, Hend, q1, q2, q3, Fo, Hline_min, 
                      slope_max, test_hfor, nbconfig=5):
     """
     Cable machine en bas
-    Permet de recuperer la partie de profil ou il est possible de tendre un cable (avec hauteur de cable porteur variable)
+    Permet de recuperer la partie de profil ou il est possible de tendre un cable (avec hauteur de cable Forwarder variable)
     """
 
     indmax = Line.shape[0] - 1
@@ -7328,7 +7350,7 @@ def OptPyl_Down_init_NoH(Line, Alts, Span, Htower , Hend, q1, q2, q3, Fo, Hline_
                          slope_max, test_hfor, nbconfig=5):
     """
     Cable machine en bas
-    Permet de recuperer la partie de profil ou il est possible de tendre un cable (avec hauteur de cable porteur fixe)
+    Permet de recuperer la partie de profil ou il est possible de tendre un cable (avec hauteur de cable Forwarder fixe)
     """
     indmax = Line.shape[0] - 1
     test = 0
@@ -7549,7 +7571,7 @@ def OptPyl_Up2(Line, Alts, Span, Htower,  Hend, q1, q2, q3, Fo, Hline_min, Hline
                slope_max, test_hfor, nbconfig=10):
     """
     Cable machine en bas
-    Optimise le placement des pylones intermediaire et la hauteur de fixation du cable porteur pour chaque pylone sur un profil
+    Optimise le placement des pylones intermediaire et la hauteur de fixation du cable Forwarder pour chaque pylone sur un profil
         
     """
     indmax = Line.shape[0] - 1
