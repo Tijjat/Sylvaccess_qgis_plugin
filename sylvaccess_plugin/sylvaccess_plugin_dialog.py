@@ -3964,39 +3964,39 @@ def Skidder():
     str_duree,str_fin,str_debut=heures(Hdebut)
     
     ### Genere le fichier avec le resume des parametres de simulation
-    file_name = str(Rspace_s)+"Parametres_simulation.txt"
-    resume_texte = "Sylvaccess : CARTOGRAPHIE AUTOMATIQUE DES ZONES ACCESSIBLES PAR TRACTEUR FORESTIER\n\n\n"
-    resume_texte = resume_texte+"Version du programme : 3.5.1 de 12/2021\n\n"
-    resume_texte = resume_texte+"Resolution           : "+str(Csize)+" m\n\n"
-    resume_texte = resume_texte+"Date et heure de lancement du script:             "+str_debut+"\n"
-    resume_texte = resume_texte+"Date et heure a la fin de l'execution du script:  "+str_fin+"\n"
-    resume_texte = resume_texte+"Temps total d'execution du script:                "+str_duree+"\n\n"
-    resume_texte = resume_texte+"PARAMETRES UTILISES POUR LA MODELISATION:\n\n"
-    resume_texte = resume_texte+"   - Distance maximale de debusquage en amont de la desserte :       "+str(Dtreuil_max_up)+" m\n"
-    resume_texte = resume_texte+"   - Distance maximale de debusquage en aval de la desserte  :       "+str(Dtreuil_max_down)+" m\n"
-    resume_texte = resume_texte+"   - Pente au-dela de laquelle le debusquage amont = distance max :  "+str(Pmax_amont)+" %\n"
-    resume_texte = resume_texte+"   - Pente au-dela de laquelle le debusquage aval  = distance max :  "+str(Pmax_aval)+" %\n\n"
-    resume_texte = resume_texte+"   - Distance maximale parcourable hors foret et hors desserte :     "+str(Dmax_train_near_for)+" m\n"
-    resume_texte = resume_texte+"   - Pente maximale pour parcourir le terrain en skidder :           "+str(Pente_max_skidder)+" %\n"
-    resume_texte = resume_texte+"   - Pente maximale pour l'abattage manuel des arbres :              "+str(Pente_max_bucheron)+" %\n\n"
-    resume_texte = resume_texte+"   - Option de simulation :\n"    
+    file_name = str(Rspace_s)+"Parameters_of_simulation.txt"
+    resume_texte = "Sylvaccess : AUTOMATIC MAPPING OF FOREST ACCESSIBILITY WITH SKIDDER\n\n\n"
+    resume_texte = resume_texte+"Software version : 3.5.1 - 2021/12\n\n"
+    resume_texte = resume_texte+"Resolution       : "+str(Csize)+" m\n\n"
+    resume_texte = resume_texte+"Date and time when launching the script:              "+str_debut+"\n"
+    resume_texte = resume_texte+"Date and time at the end of execution of the script:  "+str_fin+"\n"
+    resume_texte = resume_texte+"Total execution time of the script:                   "+str_duree+"\n\n"
+    resume_texte = resume_texte+"PARAMETERS USED FOR THE MODELING:\n\n"
+    resume_texte = resume_texte+"   - Maximum uphill distance for winching:                        "+str(Dtreuil_max_up)+" m\n"
+    resume_texte = resume_texte+"   - Maximum downhill distance for winching:                      "+str(Dtreuil_max_down)+" m\n"
+    resume_texte = resume_texte+"   - Maximum slope to get maximum uphill winching distance:       "+str(Pmax_amont)+" %\n"
+    resume_texte = resume_texte+"   - Maximum slope to get maximum downhill winching distance:     "+str(Pmax_aval)+" %\n\n"
+    resume_texte = resume_texte+"   - Maximum distance outside forest and forest road network:     "+str(Dmax_train_near_for)+" m\n"
+    resume_texte = resume_texte+"   - Maximum slope for a free access of the parcels with skidder: "+str(Pente_max_skidder)+" %\n"
+    resume_texte = resume_texte+"   - Maximum slope for manual felling of the trees:               "+str(Pente_max_bucheron)+" %\n\n"
+    resume_texte = resume_texte+"   - Simulation option:\n"    
     if Option_Skidder==1:
-        resume_texte = resume_texte+"      * Limiter l'impact sur les sols : forcer le skidder a proceder autant que possible\n"    
-        resume_texte = resume_texte+"        depuis le reseau de desserte forestiere\n" 
+        resume_texte = resume_texte+"      * Limit soil damages: force the skidder to process as much as possible \n"    
+        resume_texte = resume_texte+"        from the forest road network\n" 
     else:
-        resume_texte = resume_texte+"      * Limiter le debusquage : forcer le skidder a se rapprocher autant que possible\n"    
-        resume_texte = resume_texte+"        des grumes de bois\n" 
+        resume_texte = resume_texte+"      * Limit winching distances: force the skidder to go as close as possible\n"    
+        resume_texte = resume_texte+"        to the timber\n" 
     if Dir_Full_Obs_skidder!='':
-        resume_texte = resume_texte+"      * Prise en compte de zones totalement interdites a l'exploitation par skidder\n"  
+        resume_texte = resume_texte+"      * Simulation with areas where skidder operations are forbidden (Full obstacles)\n"  
     if Dir_Partial_Obs_skidder!='':
-        resume_texte = resume_texte+"      * Prise en compte de zones ou le trainage des bois est interdit\n"  
+        resume_texte = resume_texte+"      * Simulation with areas where skidding is forbidden but winching possible (Partial obstacles)\n"  
         
-    if os.path.exists(Rspace_s+'Pistes_non_connectees.tif'):
+    if os.path.exists(Rspace_s+"Forest_tracks_not_connected.tif"):
         resume_texte = resume_texte+"\n\n"
-        resume_texte = resume_texte+"      !!! Attention !!! Certaines pistes forestières ne sont pas connectée.\n"  
-        resume_texte = resume_texte+"      Elles ont été exclues de l'analyse.\n"  
-    if os.path.exists(Rspace_s+'Routes_forestieres_non_connectees.tif'):
-        resume_texte = resume_texte+"\n\n      !!! Attention !!! Certaines routes forestières ne sont pas connectée.\n"  
+        resume_texte = resume_texte+"      !!! Warning !!! Some forest tracks are not connected to public network.\n"  
+        resume_texte = resume_texte+"      They were removed from the analysis.\n"  
+    if os.path.exists(Rspace_s+"Forest_road_not_connected.tif"):
+        resume_texte = resume_texte+"\n\n      !!! Warning !!! Some forest roads are not connected to public network.\n"  
     fichier = open(file_name, "w")
     fichier.write(resume_texte)
     fichier.close()
@@ -4045,14 +4045,14 @@ def make_summary_surface_vol(Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_acce
     nbclass = len(Skid_list)
             
     Table = np.empty((nbclass+7,9),dtype='|U39')
-    Table[0] = np.array(["Distance totale de debardage",
-                         "Surface (ha)","Surface par classe (%)","Surface cumulee (ha)","Surface cumulee (%)",
-                         "Volume (m3)","Volume par classe (%)","Volume cumule (m3)","Volume cumule (%)"])    
-    Table[nbclass+2:nbclass+7,0]=["Total foret accessible","Total foret inaccessible",
-                                  "    dont non bucheronnable","",
-                                  "Superficie totale de la foret"]
-    file_name = str(Rspace_s)+"Resume_resultats_Sylvaccess_"+modele_name+".txt"  
-        
+    Table[0] = np.array(["Total yarding distance",
+                            "Surface area (ha)","Surface per class (%)","Cumulative surface (ha)","Cumulative surface (%)",
+                            "Volume (m3)","Volume per class (%)","Cumulative volume (m3)","Cumulative volume (%)"])
+    
+    Table[nbclass+2:nbclass+7,0]=["Total accessible forest","Total unaccessible forest",
+                                    "    including impossible manual felling","",
+                                    "Total area of forest"]
+    file_name = str(Rspace_s)+"Summary_results_Sylvaccess_"+modele_name+".txt" 
     #SURFACE
     Surf_Cum = 0 
     for i in range(1,nbclass):
@@ -4135,18 +4135,17 @@ def make_summary_surface_vol(Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_acce
         np.savetxt(file_name, Table[:,0:5],fmt='%s', delimiter=';')
 
 
-def make_dif_files(Rspace,idmod):#idmod 0 : Skidder, 1 : Forwarder
+def make_dif_files(Rspace, idmod):  # idmod 0 : Skidder, 1 : Forwarder
     Modele = ["Skidder","Forwarder"]
     Rspace_s = Rspace+Modele[idmod]+"/"
-    filename = "Resume_resultats_Sylvaccess_"+Modele[idmod]+".txt"
-    rastname = "Distance_totale_foret_route_forestiere.tif"
-    foldExist = Rspace_s+"1_Existant/"
-    foldProj = Rspace_s+"2_Projet/"
-    txtname = Rspace_s+"Comparaison_avant_apres_projet.txt"
-    shpname = "Surface_impactee"
+    filename = "Summary_results_Sylvaccess_"+Modele[idmod]+".txt"
+    rastname = "Total_distance.tif"
+    foldExist = Rspace_s+"1_Existing/"
+    foldProj = Rspace_s+"2_Project/"
+    txtname = Rspace_s+"Comparison_before_after_project.txt"
+    shpname = "Impacted_area"
+        
 
-        
-        
     #Shapefile des differences
     _,values,_,Extent = raster_get_info(foldExist+rastname)
     Csize = values[4]
@@ -4163,23 +4162,23 @@ def make_dif_files(Rspace,idmod):#idmod 0 : Skidder, 1 : Forwarder
     Diff[((Diff2>1000)*(Diff2<1500))>0] = 4
     Diff[Diff2>1500] = 5
     Surf_impact = round(np.sum(Diff>0)*Csize*Csize/10000,1)
-    road_network_proj=get_proj_from_road_network(foldExist+Modele[idmod]+"_recap_accessibilite.shp")
-    source_src=get_source_src(foldExist+Modele[idmod]+"_recap_accessibilite.shp") 
+    road_network_proj=get_proj_from_road_network(foldExist+Modele[idmod]+"_recap_accessibility.shp")
+    source_src=get_source_src(foldExist+Modele[idmod]+"_recap_accessibility.shp") 
 
        
     ArrayToGtiff(Diff,Rspace_s+"Recap",Extent,nrows,ncols,road_network_proj,0,raster_type='UINT8')
     del DExist,DProj,Diff2,Diff
     gc.collect()
     
-    label = ["","0_Nouvellement accessible","4_Distance raccourcie de 1 a 500m",
-               "3_Distance raccourcie de 500 a 999m", "2_Distance raccourcie de 1000 a 1499m",
-               "1_Distance raccourcie d'au moins 1500m"]
+    label =  ["","0_New accessible area","4_Shortened distance from 1 to 500m",
+               "3_Shortened distance from 500 to 999m", "2_Shortened distance from 1000 to 1499m",
+               "1_Shortened distance of at least 1500m"]
 
     
     ds = gdal.Open(Rspace_s+"Recap.tif")
     srcband = ds.GetRasterBand(1)
-    drv = ogr.GetDriverByName("ESRI Shapefile")
-    dst_ds = drv.CreateDataSource( Rspace_s+shpname+".shp")
+    drv = ogr.GetDriverByName("GPKG")
+    dst_ds = drv.CreateDataSource( Rspace_s+shpname+".gpkg")
     dst_layer = dst_ds.CreateLayer(shpname, source_src , ogr.wkbPolygon)
     raster_field = ogr.FieldDefn('Class', ogr.OFTInteger)
     dst_layer.CreateField(raster_field)
@@ -4215,8 +4214,8 @@ def make_dif_files(Rspace,idmod):#idmod 0 : Skidder, 1 : Forwarder
         for j in range(1,Table.shape[1]):
             Table[i,j]=round(float(TabProj[i,j])-float(TabExist[i,j]),1)
     
-    Table[-2,0]="Total foret accessible supplementaire"
-    Table[-1,0]="Surface de foret impactee"
+        Table[-2,0]="Total supplementary forest area"
+        Table[-1,0]="Impacted forest area"
             
     for i in colrecap:
         Table[-2,i]=round(np.sum(np.float32(Table[1:-3,i])),1)
@@ -4229,7 +4228,8 @@ def prepa_obstacle_skidder(Obstacles_directory,Extent,Csize,ncols,nrows,Rast_des
     liste_file = os.listdir(Obstacles_directory)
     liste_obs = []
     for files in liste_file:
-        if files[-4:len(files)]=='.shp':liste_obs.append(Obstacles_directory+files)
+        if files[-4:len(files)] == '.shp' or files[-4:len(files)] == '.gbkg':
+            liste_obs.append(Obstacles_directory+files)
     if len(liste_obs)>0:
         Obstacles_skidder = shapefile_obs_to_np_array(liste_obs,Extent,Csize)
         Temp = (Rast_desserte_ok>0)
@@ -4271,20 +4271,20 @@ def create_access_shapefile(Dtotal,Rspace_s,Foret,HarvClass_list,road_network_pr
     #1: inaccessible forest
     #2: Non_buch
     #Then harvesting classes
-    label = ["Zone hors foret","Inaccessible","Zone non exploitable (pente trop elevee)"]
+    label = ["Non-forest area","Inaccessible forest","Non harvestable (too steep slope)"]
     nbclass = len(HarvClass_list)    
     for i in range(1,nbclass):
         dmin,dmax = int(HarvClass_list[i-1]),int(HarvClass_list[i])
-        label.append("Accessible - Classe de debardage "+str(i)+' : '+str(HarvClass_list[i-1])+" - "+str(HarvClass_list[i])+" m")
+        label.append("Accessible - Skidding class "+str(i)+': '+str(HarvClass_list[i-1])+" - "+str(HarvClass_list[i])+" m")
         Temp = ((Dtotal>=dmin)*(Dtotal<dmax)*(Foret==1))>0
         Recap[Temp]=2+i
     #add infinite distance class 
     dmin = int(HarvClass_list[nbclass-1])
-    label.append("Accessible - Classe de debardage "+str(nbclass)+" : > "+str(dmin)+" m")
+    label.append("Accessible - Skidding class "+str(nbclass)+" : > "+str(dmin)+" m")
     Temp = ((Dtotal>=dmin)*(Foret==1))>0
     Recap[Temp]=2+nbclass
     #Get area too slopy for harvesting
-    Temp = load_float_raster_simple(Rspace_s+'Pente_ok_buch.tif')
+    Temp = load_float_raster_simple(Rspace_s+'Manual_harvesting.tif')
     Temp = ((Temp!=1)*(Foret==1))>0
     Recap[Temp]=2
     #Save as Gtiff
@@ -4304,8 +4304,8 @@ def create_access_shapefile(Dtotal,Rspace_s,Foret,HarvClass_list,road_network_pr
 
     ds = gdal.Open(Dir_temp+"Recap.tif")
     srcband = ds.GetRasterBand(1)
-    drv = ogr.GetDriverByName("ESRI Shapefile")
-    dst_ds = drv.CreateDataSource( Rspace_s+layer_name+".shp" )
+    drv = ogr.GetDriverByName("GPKG")
+    dst_ds = drv.CreateDataSource( Rspace_s+layer_name+".gpkg" )
     dst_layer = dst_ds.CreateLayer(layer_name, source_src , ogr.wkbPolygon)
     raster_field = ogr.FieldDefn('Class', type_mapping[srcband.DataType])
     dst_layer.CreateField(raster_field)
