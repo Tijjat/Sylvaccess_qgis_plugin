@@ -151,7 +151,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             if checkbox_number == 2:
                 self.cable.setEnabled(True)
             if checkbox_number == 3:
-                self.Forwarder.setEnabled(True)
+                self.porteur.setEnabled(True)
                 #test
                 self.plainTextEdit_2.setPlainText("0;500;1000;1500") 
                 ##
@@ -175,8 +175,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def spinBox_40_changed(self):
         value = self.spinBox_40.value()
-        #self.spinBox_49.setValue(value)
-        ##testing
+        self.spinBox_49.setValue(value)
         console_info(f"spinBox_40_changed: value={value}")
 
 
@@ -441,9 +440,6 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             except:
                 msg += " -   Raster MNT:  Path is missing or incorrect. This raster is required to run Sylvaccess\n" 
                 verif = False
-            if not file_MNT.endswith(".tif") or not file_MNT.endswith(".asc") or not file_MNT.endswith(".txt"):
-                verif = False
-                msg += " -   Raster MNT: The file must be a tif, asc or txt file\n"
                 
         #Check file_shp_Desserte   
         if test_Skidder+test_Forwarder>0:
@@ -453,10 +449,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                     msg+=" -   Service layer: The 'CL_SVAC' field is missing\n"  
             except:
                 verif=False
-                msg += " -   Service layer: Path is missing or incorrect. This layer is required for skidder and forwarder modules\n"
-            if not file_shp_Desserte.endswith(".shp") or not file_shp_Desserte.endswith(".gpkg"):
-                verif = False
-                msg += " -   Service layer: The file must be a shapefile or a geopackage\n" 
+                msg += " -   Service layer: Path is missing or incorrect. This layer is required for skidder and forwarder modules\n" 
             
 
         #Check file_shp_Cable_Dep    
@@ -468,9 +461,6 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             except:
                 verif=False
                 msg += " -   Potential cable departures layer: The access path is missing or incorrect. This layer is mandatory for the cable module\n"
-            if not file_shp_Cable_dep.endswith(".shp") or not file_shp_Cable_dep.endswith(".gpkg"):
-                verif = False
-                msg += " -   Potential cable departures layer: The file must be a shapefile or a geopackage\n" 
 
             
         #Check file_shp_Foret   
@@ -3166,7 +3156,7 @@ def generate_info_ligne(Dir_result,w_list,lim_list,Tab,Rast_couv,Vol_ha,Vol_AM,C
 def generate_info_cable_simu(Dir_result,Tab,Rast_couv,Vol_ha,Csize,Forest,Pente,Pente_max_bucheron):
     filename = Dir_result+"Summary_results_sylvaccess_cable.txt"
     Pente_max = focal_stat_max(np.float_(Pente),-9999,1)
-    Pente_ok_buch = np.int8((Pente_max<=Pente_max_bucheron))
+    Manual_harvesting = np.int8((Pente_max<=Pente_max_bucheron))
     del Pente_max
     gc.collect()    
     pix_area = Csize*Csize/10000.
@@ -3174,7 +3164,7 @@ def generate_info_cable_simu(Dir_result,Tab,Rast_couv,Vol_ha,Csize,Forest,Pente,
     Surface_exis = round(np.sum(Rast_couv==2)*pix_area,1)
     Surface_proj = round(np.sum(Rast_couv==1)*pix_area,1)
     Surface_foret = round(np.sum(Forest==1)*pix_area,1)    
-    Surface_nonbuch = round(np.sum((Forest==1)*(Pente_ok_buch==0))*pix_area,1)
+    Surface_nonbuch = round(np.sum((Forest==1)*(Manual_harvesting==0))*pix_area,1)
         
     Vol_ha[np.isnan(Vol_ha)]=0
     Vol_ha[Forest==0]=0
@@ -3631,15 +3621,15 @@ def Skidder():
     Csize = values[4]
     Pond_pente[Full_Obstacles_skidder==1] = 1000
     Pente_max = focal_stat_max(np.float_(Pente),-9999,1)
-    Pente_ok_buch = np.int8((Pente_max<=Pente_max_bucheron))
+    Manual_harvesting = np.int8((Pente_max<=Pente_max_bucheron))
     del Pente_max
     gc.collect()
     Pente_ok_skid = np.int8((Pente <= Pente_max_skidder)*(Pente > -9999))
     MNT_OK = np.int8((MNT!=values[5]))
-    Zone_OK = np.int8(MNT_OK*(Foret==1)*(Full_Obstacles_skidder==0)*Pente_ok_buch==1)
+    Zone_OK = np.int8(MNT_OK*(Foret==1)*(Full_Obstacles_skidder==0)*Manual_harvesting==1)
     
     Surf_foret = np.sum((Foret==1)*MNT_OK)*Csize*Csize*0.0001
-    Surf_foret_non_access = int(np.sum((Pente_ok_buch==0)*(Foret==1)*MNT_OK*Csize*Csize*0.0001)+0.5)
+    Surf_foret_non_access = int(np.sum((Manual_harvesting==0)*(Foret==1)*MNT_OK*Csize*Csize*0.0001)+0.5)
     
     Row_line,Col_line,D_line,Nbpix_line=create_buffer_skidder(Csize,Dtreuil_max_up,Dtreuil_max_down)
             
@@ -3648,16 +3638,16 @@ def Skidder():
         Vol_ha[np.isnan(Vol_ha)]=0
         Temp = ((Vol_ha>0)*(Foret==1)*MNT_OK)>0
         Vtot = np.mean(Vol_ha[Temp])*np.sum(Temp)*Csize*Csize*0.0001
-        Temp = ((Vol_ha>0)*(Pente_ok_buch==0)*(Foret==1)*MNT_OK)>0
+        Temp = ((Vol_ha>0)*(Manual_harvesting==0)*(Foret==1)*MNT_OK)>0
         Vtot_non_buch = np.mean(Vol_ha[Temp])*np.sum(Temp)*Csize*Csize*0.0001
         del Vol_ha,Temp
     else:
         Vtot=0    
         Vtot_non_buch =0
        
-    ArrayToGtiff(Pente_ok_buch,Rspace_s+'Pente_ok_buch',Extent,nrows,ncols,road_network_proj,0,'UINT8')   
-    console_info("    - Initialisation terminee")  
-    del Pente,Pente_ok_buch
+    ArrayToGtiff(Manual_harvesting,Rspace_s+'Manual_harvesting',Extent,nrows,ncols,road_network_proj,0,'UINT8')   
+    console_info("    - Initialization complete")  
+    del Pente,Manual_harvesting
     gc.collect()     
     
     ###############################################################################################################################################    
@@ -3840,8 +3830,8 @@ def Skidder():
     zone_tracteur[((D_foret_piste>=0)*(Foret==1))>0]=1
     zone_tracteur[((D_foret_RF>=0)*(Foret==1))>0]=1    
     
-    ArrayToGtiff(zone_tracteur,Rspace_s+'Zone_parcourable_par_skidder',Extent,nrows,ncols,road_network_proj,0,'UINT8')
-    console_info("    - Concatenation 1 terminee")  
+    ArrayToGtiff(zone_tracteur,Rspace_s+'Free_access_of_the_skidder',Extent,nrows,ncols,road_network_proj,0,'UINT8')
+    console_info("    - First concatenation done")  
     del DebRF_D,DebRF_LRF,Debp_D,Debp_LP,Debp_Dtrpiste
     gc.collect() 
     
@@ -3945,16 +3935,16 @@ def Skidder():
     make_summary_surface_vol(Skid_Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_access,Csize,Dtotal,Vtot,Vtot_non_buch,Rspace_s,"Skidder")
      
     ### Save output rasters
-    ArrayToGtiff(zone_accessible,Rspace_s+'Foret_accessible',Extent,nrows,ncols,road_network_proj,0,raster_type='UINT8')
-    ArrayToGtiff(Foret-zone_accessible,Rspace_s+'Foret_inaccessible',Extent,nrows,ncols,road_network_proj,0,'UINT8')
-    ArrayToGtiff(DTrain_piste,Rspace_s+'Distance_trainage_piste',Extent,nrows,ncols,road_network_proj,-9999,'INT16')
-    ArrayToGtiff(DTrain_foret,Rspace_s+'Distance_trainage_foret',Extent,nrows,ncols,road_network_proj,-9999,'INT16')
-    ArrayToGtiff(Ddebusquage,Rspace_s+'Distance_debusquage',Extent,nrows,ncols,road_network_proj,-9999,'INT16')
-    ArrayToGtiff(Dtotal,Rspace_s+'Distance_totale_foret_route_forestiere',Extent,nrows,ncols,road_network_proj,-9999,'INT32')        
-    ArrayToGtiff(Lien_foret_piste,Rspace_s+'Lien_foret_piste',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
-    ArrayToGtiff(Lien_foret_RF,Rspace_s+'Lien_foret_route_forestiere',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
-    ArrayToGtiff(Lien_foret_Res_pub,Rspace_s+'Lien_foret_Reseau_public',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
-    layer_name = 'Skidder_recap_accessibilite'
+    ArrayToGtiff(zone_accessible,Rspace_s+'Accesible_forest',Extent,nrows,ncols,road_network_proj,0,raster_type='UINT8')
+    ArrayToGtiff(Foret-zone_accessible,Rspace_s+'Unacccessible_forest',Extent,nrows,ncols,road_network_proj,0,'UINT8')
+    ArrayToGtiff(DTrain_piste,Rspace_s+'Skidding_distance_on_tracks',Extent,nrows,ncols,road_network_proj,-9999,'INT16')
+    ArrayToGtiff(DTrain_foret,Rspace_s+'Skidding_distance_in_forest',Extent,nrows,ncols,road_network_proj,-9999,'INT16')
+    ArrayToGtiff(Ddebusquage,Rspace_s+'Winching_distance',Extent,nrows,ncols,road_network_proj,-9999,'INT16')
+    ArrayToGtiff(Dtotal,Rspace_s+'Total_distance',Extent,nrows,ncols,road_network_proj,-9999,'INT32')        
+    ArrayToGtiff(Lien_foret_piste,Rspace_s+'Link_forest_ForestTrack',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
+    ArrayToGtiff(Lien_foret_RF,Rspace_s+'Link_forest_ForestRoads',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
+    ArrayToGtiff(Lien_foret_Res_pub,Rspace_s+'link_forest_public_road_network',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
+    layer_name = 'Skidder_recap_accessibility'
     source_src=get_source_src(file_shp_Desserte)  
     create_access_shapefile(Dtotal,Rspace_s,Foret,Skid_Debclass.split(";"),road_network_proj,source_src, Dir_temp,Extent,nrows,ncols,layer_name)
       
@@ -4006,7 +3996,7 @@ def Skidder():
     fichier = open(file_name, "w")
     fichier.write(resume_texte)
     fichier.close()
-    console_info("Modele skidder termine")
+    console_info("Skidder model finished")
     clear_big_nparray()
     gc.collect()
     
@@ -4735,7 +4725,7 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
         for pixel in pixels:
             ind = pixel[0]            
             RF_bad[Lien_RF[ind,0],Lien_RF[ind,1]]=1        
-            ArrayToGtiff(RF_bad,Rspace_f+'Forest_road_not_connected',Extent,nrows,ncols,Csize,road_network_proj,0,'UINT8')
+            ArrayToGtiff(RF_bad,Rspace_f+'Forest_road_not_connected',Extent,nrows,ncols,road_network_proj,0,'UINT8')
             console_info("    - Some forest road are not connected to public network. To see where, check raster "+Rspace_f+"Forest_road_not_connected.tif")
     else:
         console_info("    - Forest road processed") 
@@ -4879,7 +4869,7 @@ def process_forwarder():
     Fwd_max_up = math.degrees(math.atan(Forw_angle_up*0.01))
     Fwd_max_down = math.degrees(math.atan(Forw_angle_down*0.01))
     Pond_pente[Obstacles_forwarder==1] = 1000
-    Pente_ok_buch = np.int8((focal_stat_max(np.float_(Pente),-9999,1)<=Pente_max_bucheron))
+    Manual_harvesting = np.int8((focal_stat_max(np.float_(Pente),-9999,1)<=Pente_max_bucheron))
     MNT_OK = np.int8((MNT!=values[5]))
     Pente_deg = np.degrees(np.arctan(Pente*0.01))
     Pente_deg[Pente==-9999]=-9999        
@@ -4887,7 +4877,7 @@ def process_forwarder():
     Pente_ok_forw = np.int8((Pente_deg<=min(Fwd_max_inc,Fwd_max_up,Fwd_max_down))*(Pente_deg > -9999))    
     
     Surf_foret = np.sum((Foret==1)*MNT_OK)*Csize*Csize*0.0001
-    Surf_foret_non_access = int(np.sum((Pente_ok_buch==0)*(Foret==1)*MNT_OK*Csize*Csize*0.0001)+0.5)
+    Surf_foret_non_access = int(np.sum((Manual_harvesting==0)*(Foret==1)*MNT_OK*Csize*Csize*0.0001)+0.5)
     
     Row_line,Col_line,D_line,Nbpix_line=create_buffer_skidder(Csize,Forw_Lmax,Forw_Lmax)
     
@@ -4896,14 +4886,14 @@ def process_forwarder():
         Vol_ha[np.isnan(Vol_ha)]=0
         Temp = ((Vol_ha>0)*(Foret==1)*MNT_OK)>0
         Vtot = np.mean(Vol_ha[Temp])*np.sum(Temp)*Csize*Csize*0.0001
-        Temp = ((Vol_ha>0)*(Pente_ok_buch==0)*(Foret==1)*MNT_OK)>0
+        Temp = ((Vol_ha>0)*(Manual_harvesting==0)*(Foret==1)*MNT_OK)>0
         Vtot_non_buch = np.mean(Vol_ha[Temp])*np.sum(Temp)*Csize*Csize*0.0001
         del Vol_ha,Temp
     else:
         Vtot=0    
         Vtot_non_buch =0
        
-        ArrayToGtiff(Pente_ok_buch,Rspace_s+'Manual_harvesting',Extent,nrows,ncols,Csize,road_network_proj,0,'UINT8')
+        ArrayToGtiff(Manual_harvesting,Rspace_s+'Manual_harvesting',Extent,nrows,ncols,road_network_proj,0,'UINT8')
         console_info("    - Initialization achieved")   
     del Pente
     gc.collect()     
@@ -4986,7 +4976,7 @@ def process_forwarder():
     ###############################################################################################################################################
     from_rast = focal_stat_nb(np.float_(Foret==1),0,1)
     from_rast = np.int8((from_rast<9)*(from_rast>0))
-    zone_rast = np.copy(Pente_ok_buch)
+    zone_rast = np.copy(Manual_harvesting)
     zone_rast[Obstacles_forwarder==1]=0
     zone_rast[Foret==1]=0
     zone_rast[Res_pub==1]=0   
@@ -4998,7 +4988,7 @@ def process_forwarder():
     Zone_OK[Foret==1]=1
     Zone_OK[MNT_OK==0]=0
     Zone_OK[Obstacles_forwarder==1]=0
-    Zone_OK[Pente_ok_buch==0]=0
+    Zone_OK[Manual_harvesting==0]=0
     
     del Out_alloc
     
@@ -5221,17 +5211,17 @@ def process_forwarder():
     ### SAVE RASTER
     ###############################################################################################################################################    
     console_info("    - Saving output files") 
-    ArrayToGtiff(DTot,Rspace_s+'Total_yarding_distance',Extent,nrows,ncols,Csize,road_network_proj,-9999,'INT16')
-    ArrayToGtiff(Lien_foret_piste,Rspace_s+'Link_forest_forest_tracks',Extent,nrows,ncols,Csize,road_network_proj,-9999,'INT32')
-    ArrayToGtiff(Lien_foret_RF,Rspace_s+'Link_forest_forest_road',Extent,nrows,ncols,Csize,road_network_proj,-9999,'INT32')
-    ArrayToGtiff(Lien_foret_Res_pub,Rspace_s+'Link_forest_public_network',Extent,nrows,ncols,Csize,road_network_proj,-9999,'INT32')
-    ArrayToGtiff(Dforet,Rspace_s+'Distance_in_forest',Extent,nrows,ncols,Csize,road_network_proj,-9999,'INT16')
-    ArrayToGtiff(Dpiste,Rspace_s+'Distance_on_forest_tracks',Extent,nrows,ncols,Csize,road_network_proj,-9999,'INT16')
-    ArrayToGtiff(Zone_accessible,Rspace_s+'Accessible_area',Extent,nrows,ncols,Csize,road_network_proj,0,'UINT8')
+    ArrayToGtiff(DTot,Rspace_s+'Total_yarding_distance',Extent,nrows,ncols,road_network_proj,-9999,'INT16')
+    ArrayToGtiff(Lien_foret_piste,Rspace_s+'Link_forest_forest_tracks',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
+    ArrayToGtiff(Lien_foret_RF,Rspace_s+'Link_forest_forest_road',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
+    ArrayToGtiff(Lien_foret_Res_pub,Rspace_s+'Link_forest_public_network',Extent,nrows,ncols,road_network_proj,-9999,'INT32')
+    ArrayToGtiff(Dforet,Rspace_s+'Distance_in_forest',Extent,nrows,ncols,road_network_proj,-9999,'INT16')
+    ArrayToGtiff(Dpiste,Rspace_s+'Distance_on_forest_tracks',Extent,nrows,ncols,road_network_proj,-9999,'INT16')
+    ArrayToGtiff(Zone_accessible,Rspace_s+'Accessible_area',Extent,nrows,ncols,road_network_proj,0,'UINT8')
     
     layer_name = 'Forwarder_recap_accessibility'
     source_src=get_source_src(file_shp_Desserte)  
-    create_access_shapefile(DTot,Rspace_s,Foret,Forw_Debclass.split(";"),road_network_proj,source_src,Csize, Dir_temp,Extent,nrows,ncols,layer_name)
+    create_access_shapefile(DTot,Rspace_s,Foret,Forw_Debclass.split(";"),road_network_proj,source_src, Dir_temp,Extent,nrows,ncols,layer_name)
        
     ###############################################################################################################################################                                                                                    
     ### SAVE PARAMETERS
@@ -5252,7 +5242,7 @@ def process_forwarder():
     resume_texte = resume_texte+"   - Maximum slope for an downhill yarding:                       "+str(Forw_angle_down)+" %\n"
     resume_texte = resume_texte+"   - Boom reach:                                                  "+str(Forw_portee)+" m\n"
     resume_texte = resume_texte+"   - Maximum yarding distance when terrain slope > MPLI:          "+str(Forw_Lmax)+" m\n"
-    resume_texte = resume_texte+"   - Maximum slope for a free access of the parcels with skidder: "+str(Pente_max_skidder)+" %\n"
+    resume_texte = resume_texte+"   - Maximum slope for a free access of the parcels with skidder: "+str(Forw_angle_incl)+" %\n"
     resume_texte = resume_texte+"   - Maximum slope for manual felling of the trees:               "+str(Pente_max_bucheron)+" %\n"       
     
     if os.path.exists(Rspace_s+"Forest_tracks_not_connected.tif"):
@@ -5534,6 +5524,14 @@ def exposition(raster_mnt, Csize, nodata):
                 dz_dx = float(c + 2*f + i - (a + 2*d + g)) / float(8 * Csize)
                 dz_dy = float(g + 2*h + i - (a + 2*b + c)) / float(8 * Csize)
                 expo1 = 57.29578 * atan2(dz_dy, -dz_dx)
+                if a == nodata: a = e
+                if b == nodata: b = e
+                if c == nodata: c = e
+                if d == nodata: d = e
+                if f == nodata: f = e
+                if g == nodata: g = e
+                if h == nodata: h = e
+                if i == nodata: i = e
                 if expo1 < 0.:
                     expo[y, x] = 90.0 - expo1
                 elif expo1 > 90.:
@@ -5544,60 +5542,184 @@ def exposition(raster_mnt, Csize, nodata):
                 expo[y, x] = nodata
 
     # Coins
-    expo[0, 0] = calculate_corner_expo(raster_mnt, nodata, Csize, 0, 0)
-    expo[nline-1, 0] = calculate_corner_expo(raster_mnt, nodata, Csize, nline-1, 0)
-    expo[0, ncol-1] = calculate_corner_expo(raster_mnt, nodata, Csize, 0, ncol-1)
-    expo[nline-1, ncol-1] = calculate_corner_expo(raster_mnt, nodata, Csize, nline-1, ncol-1)
-
-    # First and last rows
-    for x in range(1, ncol-1):
-        expo[0, x] = calculate_edge_expo(raster_mnt, nodata, Csize, 0, x)
-        expo[nline-1, x] = calculate_edge_expo(raster_mnt, nodata, Csize, nline-1, x)
-
-    # First and last columns
-    for y in range(1, nline-1):
-        expo[y, 0] = calculate_edge_expo(raster_mnt, nodata, Csize, y, 0)
-        expo[y, ncol-1] = calculate_edge_expo(raster_mnt, nodata, Csize, y, ncol-1)
+    # Coin sup gauche
+    if raster_mnt[0,0]>nodata:
+        e = raster_mnt[0,0]
+        f = raster_mnt[0,1]
+        if f==nodata:f=e
+        h = raster_mnt[1,0]
+        if h==nodata:h=e
+        i = raster_mnt[1,1]
+        if i==nodata:i=e
+        dz_dx = float(f+i-(e+h))/float(2*Csize)
+        dz_dy = float(h+i-(d+f))/float(2*Csize)
+        expo1 = 57.29578 * atan2(dz_dy, -dz_dx)
+        if expo1<0.:
+            expo[0,0]= 90.0 - expo1
+        elif expo1>90.:
+            expo[0,0]= 360.0 - expo1 + 90.0
+        else:
+            expo[0,0]= 90.0 - expo1    
+    else: expo[0,0]=nodata
+        # Coin inferieur gauche    
+    if raster_mnt[nline-1,0]>nodata:
+        e = raster_mnt[nline-1,0]
+        b = raster_mnt[nline-2,0]
+        if b==nodata:b=e
+        c = raster_mnt[nline-2,1]
+        if c==nodata:c=e
+        f = raster_mnt[nline-1,1]
+        if f==nodata:f=e
+        dz_dx = float(c+f-(b+e))/float(2*Csize)
+        dz_dy = float(e+f-(b+c))/float(2*Csize)
+        expo1 = 57.29578 * atan2(dz_dy, -dz_dx)
+        if expo1<0.:
+            expo[nline-1,0]= 90.0 - expo1
+        elif expo1>90.:
+            expo[nline-1,0]= 360.0 - expo1 + 90.0
+        else:
+            expo[nline-1,0]= 90.0 - expo1          
+    else: expo[nline-1,0]=nodata 
+    # Coin superieur droite
+    if raster_mnt[0,ncol-1]>nodata:
+        e = raster_mnt[0,ncol-1]
+        d = raster_mnt[0,ncol-2]
+        if d==nodata:d=e
+        g = raster_mnt[1,ncol-2]
+        if g==nodata:g=e
+        h = raster_mnt[1,ncol-1]
+        if h==nodata:h=e
+        dz_dx = float(e+h-(d+g))/float(2*Csize)
+        dz_dy = float(g+h-(d+e))/float(2*Csize)
+        expo1 = 57.29578 * atan2(dz_dy, -dz_dx)
+        if expo1<0.:
+            expo[0,ncol-1]= 90.0 - expo1
+        elif expo1>90.:
+            expo[0,ncol-1]= 360.0 - expo1 + 90.0
+        else:
+            expo[0,ncol-1]= 90.0 - expo1           
+    else: expo[0,ncol-1]=nodata
+    # Coin inferieur droite
+    if raster_mnt[nline-1,ncol-1]>nodata:
+        e = raster_mnt[nline-1,ncol-1]
+        a = raster_mnt[nline-2,ncol-2]
+        if a==nodata:a=e
+        d = raster_mnt[nline-1,ncol-2]
+        if d==nodata:d=e
+        b = raster_mnt[nline-2,ncol-1]
+        if b==nodata:b=e
+        dz_dx = float(e+b-(d+a))/float(2*Csize)
+        dz_dy = float(d+e-(a+b))/float(2*Csize)
+        expo1 = 57.29578 * atan2(dz_dy, -dz_dx)
+        if expo1<0.:
+            expo[nline-1,ncol-1]= 90.0 - expo1
+        elif expo1>90.:
+            expo[nline-1,ncol-1]= 360.0 - expo1 + 90.0
+        else:
+            expo[nline-1,ncol-1]= 90.0 - expo1 
+    else: expo[nline-1,ncol-1]=nodata
+    # Pour premiere ligne
+    x=1
+    for x in range(1,ncol-1):
+        e = raster_mnt[0,x] 
+        if e > nodata:            
+            d = raster_mnt[0,x-1]    
+            if d==nodata:d=e
+            f = raster_mnt[0,x+1]
+            if f==nodata:f=e
+            g = raster_mnt[1,x-1]  
+            if g==nodata:g=e
+            h = raster_mnt[1,x] 
+            if h==nodata:h=e
+            i = raster_mnt[1,x+1]
+            if i==nodata:i=e                            
+            dz_dx = float(f+i-(d+g))/float(4*Csize)
+            dz_dy = float(g+h+i-(d+e+f))/float(3*Csize)
+            expo1 = 57.29578 * atan2(dz_dy, -dz_dx)
+            if expo1<0.:
+                expo[0,x]= 90.0 - expo1
+            elif expo1>90.:
+                expo[0,x]= 360.0 - expo1 + 90.0
+            else:
+                expo[0,x]= 90.0 - expo1 
+        else: expo[0,x]=nodata
+    # Pour derniere ligne
+    x=1
+    for x in range(1,ncol-1):
+        e = raster_mnt[nline-1,x] 
+        if e > nodata:            
+            d = raster_mnt[nline-1,x-1]    
+            if d==nodata:d=e
+            f = raster_mnt[nline-1,x+1]
+            if f==nodata:f=e
+            a = raster_mnt[nline-2,x-1]  
+            if a==nodata:a=e
+            b = raster_mnt[nline-2,x] 
+            if b==nodata:b=e
+            c = raster_mnt[nline-2,x+1]
+            if c==nodata:c=e                            
+            dz_dx = float(f+c-(d+a))/float(4*Csize)
+            dz_dy = float(d+e+f-(a+b+c))/float(3*Csize)
+            expo1 = 57.29578 * atan2(dz_dy, -dz_dx)
+            if expo1<0.:
+                expo[nline-1,x]= 90.0 - expo1
+            elif expo1>90.:
+                expo[nline-1,x]= 360.0 - expo1 + 90.0
+            else:
+                expo[nline-1,x]= 90.0 - expo1 
+        else: expo[nline-1,x]=nodata
+    # Pour premiere colonne
+    y=1
+    for y in range(1,nline-1):
+        e = raster_mnt[y,0] 
+        if e > nodata:            
+            b = raster_mnt[y+1,0]    
+            if b==nodata:b=e
+            c = raster_mnt[y+1,1]
+            if c==nodata:c=e
+            f = raster_mnt[y,1]  
+            if f==nodata:f=e
+            h = raster_mnt[y+1,0] 
+            if h==nodata:h=e
+            i = raster_mnt[y+1,1]
+            if i==nodata:i=e                            
+            dz_dx = float(c+f+i-(b+e+h))/float(3*Csize)
+            dz_dy = float(h+i-(b+c))/float(4*Csize)
+            expo1 = 57.29578 * atan2(dz_dy, -dz_dx)
+            if expo1<0.:
+                expo[y,0]= 90.0 - expo1
+            elif expo1>90.:
+                expo[y,0]= 360.0 - expo1 + 90.0
+            else:
+                expo[y,0]= 90.0 - expo1 
+        else: expo[y,0]=nodata
+    # Pour derniere colonne
+    y=1
+    for y in range(1,nline-1):
+        e = raster_mnt[y,ncol-1] 
+        if e > nodata:            
+            a = raster_mnt[y-1,ncol-2]    
+            if a==nodata:a=e
+            b = raster_mnt[y-1,ncol-1]
+            if b==nodata:b=e
+            d = raster_mnt[y,ncol-2]  
+            if d==nodata:d=e
+            g = raster_mnt[y+1,ncol-2] 
+            if g==nodata:g=e
+            h = raster_mnt[y+1,ncol-1]
+            if h==nodata:h=e                            
+            dz_dx = float(b+e+h-(a+d+g))/float(3*Csize)
+            dz_dy = float(h+g-(b+a))/float(4*Csize)
+            expo1 = 57.29578 * atan2(dz_dy, -dz_dx)
+            if expo1<0.:
+                expo[y,ncol-1]= 90.0 - expo1
+            elif expo1>90.:
+                expo[y,ncol-1]= 360.0 - expo1 + 90.0
+            else:
+                expo[y,ncol-1]= 90.0 - expo1 
+        else: expo[y,ncol-1]=nodata
 
     return expo
-
-
-def calculate_corner_expo(raster_mnt, nodata, Csize, y, x):
-    e = raster_mnt[y, x]
-    if e > nodata:
-        _, _, _, d, f, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
-                               raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x],
-                               raster_mnt[y+1, x+1])
-        dz_dx = float(f + i - (e + h)) / float(2 * Csize)
-        dz_dy = float(h + i - (d + f)) / float(2 * Csize)
-        expo1 = 57.29578 * atan2(dz_dy, -dz_dx)
-        if expo1 < 0.:
-            return 90.0 - expo1
-        elif expo1 > 90.:
-            return 360.0 - expo1 + 90.0
-        else:
-            return 90.0 - expo1
-    else:
-        return nodata
-
-
-def calculate_edge_expo(raster_mnt, nodata, Csize, y, x):
-    e = raster_mnt[y, x]
-    if e > nodata:
-        _, b, c, _, f, _, h, i = (raster_mnt[y-1, x-1], raster_mnt[y-1, x], raster_mnt[y-1, x+1],
-                                  raster_mnt[y, x-1], raster_mnt[y, x+1], raster_mnt[y+1, x-1],
-                                  raster_mnt[y+1, x], raster_mnt[y+1, x+1])
-        dz_dx = float(f + c - (b + e + h)) / float(4 * Csize)
-        dz_dy = float(h + i - (b + e + f)) / float(3 * Csize)
-        expo1 = 57.29578 * atan2(dz_dy, -dz_dx)
-        if expo1 < 0.:
-            return 90.0 - expo1
-        elif expo1 > 90.:
-            return 360.0 - expo1 + 90.0
-        else:
-            return 90.0 - expo1
-    else:
-        return nodata
 
 
 def mask_zone(matrice):

@@ -63,7 +63,7 @@
     </font>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>6</number>
    </property>
    <widget class="QWidget" name="start">
     <attribute name="title">
@@ -115,7 +115,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Système d'exploitation à tester</string>
+         <string>Forest operating systems to process</string>
         </property>
        </widget>
       </item>
@@ -127,7 +127,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Effectuer l'analyse pour le skidder</string>
+         <string>Perform skidder analysis</string>
         </property>
        </widget>
       </item>
@@ -139,7 +139,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Effectuer l'analyse pour le porteur</string>
+         <string>Perform forxarder analysis</string>
         </property>
        </widget>
       </item>
@@ -151,7 +151,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Effectuer l'analyse pour le câble</string>
+         <string>perform cable yarding analysis</string>
         </property>
        </widget>
       </item>
@@ -163,7 +163,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Optimiser l'emplacement des lignes de câble</string>
+         <string>Select best cable lines according to several criteria</string>
         </property>
        </widget>
       </item>
@@ -192,7 +192,7 @@
          <cursorShape>ArrowCursor</cursorShape>
         </property>
         <property name="text">
-         <string>Bûcheronnage manuel</string>
+         <string>Maximal harvesting</string>
         </property>
        </widget>
       </item>
@@ -206,7 +206,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Pente maximale pour le bûcheronnage manuel</string>
+           <string>Maximum slope for manual harvesting</string>
           </property>
          </widget>
         </item>
@@ -286,7 +286,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Espace de travail et dossier de résultat</string>
+         <string>Workspace and folder of results</string>
         </property>
        </widget>
       </item>
@@ -320,7 +320,7 @@
            </size>
           </property>
           <property name="text">
-           <string>(dossier)</string>
+           <string>(Folder)</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -341,7 +341,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Espace de travail         </string>
+           <string>Workspace</string>
           </property>
          </widget>
         </item>
@@ -391,7 +391,7 @@
            </size>
           </property>
           <property name="text">
-           <string>(dossier)</string>
+           <string>(Folder)</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -506,7 +506,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Départs potentiels de câble</string>
+           <string>Potential cable crane starts</string>
           </property>
          </widget>
         </item>
@@ -559,7 +559,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Forêt  </string>
+           <string>Forest area</string>
           </property>
          </widget>
         </item>
@@ -704,7 +704,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Desserte (skidder et porteur)</string>
+           <string>Forest road network </string>
           </property>
          </widget>
         </item>
@@ -738,7 +738,7 @@
            </font>
           </property>
           <property name="text">
-           <string>MNT                </string>
+           <string>DTM</string>
           </property>
          </widget>
         </item>
@@ -751,7 +751,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Obligatoire pour l'analyse de câble :</string>
+           <string>Mandatory for cable analysis :</string>
           </property>
          </widget>
         </item>
@@ -773,8 +773,378 @@
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout_15">
-        <item row="7" column="2">
+        <item row="5" column="2">
+         <widget class="QLineEdit" name="lineEdit_11">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>170</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>170</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_37">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Height of the trees</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="3">
+         <widget class="QPushButton" name="pushButton_12">
+          <property name="minimumSize">
+           <size>
+            <width>75</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>75</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Parcourir</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_39">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Forwarder: obstacles for the free movement of the machine</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QPushButton" name="pushButton_9">
+          <property name="minimumSize">
+           <size>
+            <width>75</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>75</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Parcourir</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="label_27">
+          <property name="maximumSize">
+           <size>
+            <width>170</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>(Folder)</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="2">
          <widget class="QLineEdit" name="lineEdit_13">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>170</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>170</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="label_35">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Average tree volume</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QPushButton" name="pushButton_8">
+          <property name="minimumSize">
+           <size>
+            <width>75</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>75</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Parcourir</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0">
+         <widget class="QLabel" name="label_33">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Volume per hectare</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_41">
+          <property name="maximumSize">
+           <size>
+            <width>1700</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Skidder: area where winching and skidding are forbidden</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLineEdit" name="lineEdit_8">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>170</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>170</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QLabel" name="label_36">
+          <property name="text">
+           <string>(.tif, .asc)</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_38">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Cable yarding : obstacles for the set-up of cable line</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="3">
+         <widget class="QPushButton" name="pushButton_13">
+          <property name="minimumSize">
+           <size>
+            <width>75</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>75</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Parcourir</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="label_28">
+          <property name="maximumSize">
+           <size>
+            <width>170</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>(Folder)</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLabel" name="label_30">
+          <property name="maximumSize">
+           <size>
+            <width>170</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>(Folder)</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="2">
+         <widget class="QLineEdit" name="lineEdit_12">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>170</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>170</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QLabel" name="label_32">
+          <property name="text">
+           <string>(.tif, .asc)</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_40">
+          <property name="maximumSize">
+           <size>
+            <width>1700</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Skidder: area where skidding is forbidden</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QPushButton" name="pushButton_7">
+          <property name="minimumSize">
+           <size>
+            <width>75</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>75</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Parcourir</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QLineEdit" name="lineEdit_10">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>170</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>170</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_24">
+          <property name="maximumSize">
+           <size>
+            <width>170</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>(Folder)</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLineEdit" name="lineEdit_9">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -811,358 +1181,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_39">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Porteur : obstacles pour la circulation de l'engin</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="2">
-         <widget class="QLineEdit" name="lineEdit_11">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>170</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>170</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
-        </item>
         <item row="7" column="1">
-         <widget class="QLabel" name="label_36">
-          <property name="text">
-           <string>(.tif, .asc)</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label_24">
-          <property name="maximumSize">
-           <size>
-            <width>170</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>(dossier)</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="2">
-         <widget class="QLineEdit" name="lineEdit_12">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>170</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>170</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="3">
-         <widget class="QPushButton" name="pushButton_12">
-          <property name="minimumSize">
-           <size>
-            <width>75</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>75</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Parcourir</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="QLineEdit" name="lineEdit_9">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>170</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>170</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QLabel" name="label_35">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Volume de l'arbre moyen</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="0">
-         <widget class="QLabel" name="label_33">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Volume de bois sur pieds</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_37">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Hauteur des arbres</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QLabel" name="label_32">
-          <property name="text">
-           <string>(.tif, .asc)</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLabel" name="label_30">
-          <property name="maximumSize">
-           <size>
-            <width>170</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>(dossier)</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QPushButton" name="pushButton_7">
-          <property name="minimumSize">
-           <size>
-            <width>75</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>75</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Parcourir</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="3">
-         <widget class="QPushButton" name="pushButton_13">
-          <property name="minimumSize">
-           <size>
-            <width>75</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>75</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Parcourir</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3">
-         <widget class="QPushButton" name="pushButton_8">
-          <property name="minimumSize">
-           <size>
-            <width>75</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>75</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Parcourir</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_38">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Câble : obstacles pour la mise en place des lignes</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_41">
-          <property name="maximumSize">
-           <size>
-            <width>1700</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Skidder : zone où le traînage et le débusquage sont impossible</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="label_28">
-          <property name="maximumSize">
-           <size>
-            <width>170</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>(dossier)</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QLineEdit" name="lineEdit_8">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>170</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>170</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLabel" name="label_27">
-          <property name="maximumSize">
-           <size>
-            <width>170</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>(dossier)</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_40">
-          <property name="maximumSize">
-           <size>
-            <width>1700</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Skidder : zone où seul le traînage est impossible </string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
-         <widget class="QLineEdit" name="lineEdit_10">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>170</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>170</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
          <widget class="QLabel" name="label_34">
           <property name="text">
            <string>(.tif, .asc)</string>
@@ -1172,27 +1191,8 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="3">
+        <item row="5" column="3">
          <widget class="QPushButton" name="pushButton_11">
-          <property name="minimumSize">
-           <size>
-            <width>75</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>75</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Parcourir</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="3">
-         <widget class="QPushButton" name="pushButton_9">
           <property name="minimumSize">
            <size>
             <width>75</width>
@@ -1229,7 +1229,7 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="0">
+        <item row="4" column="0">
          <widget class="QLabel" name="label_29">
           <property name="font">
            <font>
@@ -1239,7 +1239,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Données spatiales requise pour l'optimisation des lignes de câble</string>
+           <string>Spatial data required for cable line optimization</string>
           </property>
          </widget>
         </item>
@@ -1275,7 +1275,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Paramètres pour le skidder</string>
+         <string>parameters for skidder processing </string>
         </property>
        </widget>
       </item>
@@ -1289,7 +1289,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Pente maximale hors desserte pour le skidder</string>
+           <string>Maximal slope outside forest network for the skidder</string>
           </property>
          </widget>
         </item>
@@ -1565,7 +1565,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Distance maximale de débusquage en amont de la desserte</string>
+           <string>Maximum uphill winching distance</string>
           </property>
          </widget>
         </item>
@@ -1577,7 +1577,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Distance maximale de débusquage en aval de la desserte </string>
+           <string>Maximum downhill winching distance</string>
           </property>
          </widget>
         </item>
@@ -1589,7 +1589,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Distance maximale autorisée hors desserte et hors forêt </string>
+           <string>Maximal distance outside forest</string>
           </property>
          </widget>
         </item>
@@ -1601,7 +1601,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Pente à partir de laquelle le débusquage amont atteint la distance maximale</string>
+           <string>Slope from which uphill winching reaches maximum distance</string>
           </property>
          </widget>
         </item>
@@ -1613,7 +1613,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Pente à partir de laquelle le débusquage aval atteint la distance maximale</string>
+           <string>Slope from which downhill winching reaches maximum distance</string>
           </property>
          </widget>
         </item>
@@ -1635,7 +1635,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Option de simulation</string>
+         <string>Simulation option</string>
         </property>
        </widget>
       </item>
@@ -1653,7 +1653,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Limiter l'impact sur les sols : forcer le skidder à procéder autant que possible depuis le réseau de desserte forestière</string>
+         <string>Limit soil damages: force the skidder to proceed from the forest road network</string>
         </property>
        </widget>
       </item>
@@ -1671,7 +1671,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Limiter le débusquage des bois : forcer le skidder à se rapprocher autant que possible des grumes de bois </string>
+         <string>Limit winching operations: force the skidder to get as close as possible from logs</string>
         </property>
        </widget>
       </item>
@@ -1685,7 +1685,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Classes de facilité du débardage (Distance totale de débardage)</string>
+         <string>Classes of skidding distance (Total distance)</string>
         </property>
        </widget>
       </item>
@@ -1699,7 +1699,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Bornes minimales des classes de débardages (m)</string>
+           <string>Minimum values of the skidding distance classes (m)</string>
           </property>
          </widget>
         </item>
@@ -1747,7 +1747,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Séparer les borne par des points-virgules</string>
+           <string>Separate values with semicolons</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -1791,7 +1791,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Paramètres pour le skidder</string>
+         <string>Parameters for forwwarder processing</string>
         </property>
        </widget>
       </item>
@@ -1872,7 +1872,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Pente maximale en remontant les bois</string>
+           <string>Maximum slope for a uphill yarding</string>
           </property>
          </widget>
         </item>
@@ -1909,7 +1909,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Distance maximale de portage quand la pente</string>
+             <string>Maximum yarding distance when slope is greater than maximum</string>
             </property>
            </widget>
           </item>
@@ -1921,7 +1921,7 @@
              </font>
             </property>
             <property name="text">
-             <string>est supérieur à la pente en travers maximale</string>
+             <string>lateral inclination of the machine</string>
             </property>
            </widget>
           </item>
@@ -2000,7 +2000,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Pente en travers maximale</string>
+           <string>Maximum lateral inclination of the machine</string>
           </property>
          </widget>
         </item>
@@ -2012,7 +2012,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Pente maximale en descendant les bois</string>
+           <string>Maximum slope for a downhill yarding</string>
           </property>
          </widget>
         </item>
@@ -2045,7 +2045,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Distance maximale hors forêt</string>
+           <string>Maximum distance outside forest</string>
           </property>
          </widget>
         </item>
@@ -2107,7 +2107,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Longueure de la grue</string>
+           <string>Length of the hoist</string>
           </property>
          </widget>
         </item>
@@ -2165,7 +2165,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Classes de facilité du débardage (Distance totale de débardage)</string>
+         <string>Classes of skidding distance (Total distance)</string>
         </property>
        </widget>
       </item>
@@ -2179,7 +2179,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Bornes minimales des classes de débardages (m)</string>
+           <string>Minimum values of the skidding distance classes (m)</string>
           </property>
          </widget>
         </item>
@@ -2231,7 +2231,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Séparer les borne par des points-virgules</string>
+           <string>Separate values with semicolons</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -2276,7 +2276,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Propriété du type de câble à tester</string>
+         <string>Cable machine properties</string>
         </property>
        </widget>
       </item>
@@ -2302,7 +2302,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Nombre max de supports intermédiaire</string>
+           <string>Max. number of intermediate supports</string>
           </property>
          </widget>
         </item>
@@ -2338,7 +2338,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Hauteur du mât (m)</string>
+           <string>Crane height (m)</string>
           </property>
          </widget>
         </item>
@@ -2350,7 +2350,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Type de machine</string>
+           <string>Type of material</string>
           </property>
          </widget>
         </item>
@@ -2374,7 +2374,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Longueure max du câble porteur (m)</string>
+           <string>Maximum skyline length (m)</string>
           </property>
          </widget>
         </item>
@@ -2413,7 +2413,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Longueur min du câble porteur (m)</string>
+           <string>Minimum skyline length (m)</string>
           </property>
          </widget>
         </item>
@@ -2533,7 +2533,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Propriété du type de chariot à tester</string>
+         <string>Carriage properties</string>
         </property>
        </widget>
       </item>
@@ -2561,7 +2561,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Pente max du câble porteur pour </string>
+             <string>Maximum slope of the skyline</string>
             </property>
            </widget>
           </item>
@@ -2585,7 +2585,7 @@
              </font>
             </property>
             <property name="text">
-             <string>un débardage vers l'amont ( % )</string>
+             <string>for an uphill yarding (%)</string>
             </property>
            </widget>
           </item>
@@ -2611,7 +2611,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Masse à vide (kg)</string>
+           <string>Empty weigth (kg)</string>
           </property>
          </widget>
         </item>
@@ -2664,7 +2664,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Pente min pour descente du </string>
+             <string>Minimum slope for a gravity</string>
             </property>
            </widget>
           </item>
@@ -2688,7 +2688,7 @@
              </font>
             </property>
             <property name="text">
-             <string>chariot par gravité ( % )</string>
+             <string>descent of the carriage (%)</string>
             </property>
            </widget>
           </item>
@@ -2816,7 +2816,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Pente max du câble porteur pour</string>
+             <string>Maximum slope of the skyline </string>
             </property>
            </widget>
           </item>
@@ -2834,7 +2834,7 @@
              </font>
             </property>
             <property name="text">
-             <string>un débardge vers l'aval ( % ) </string>
+             <string>for an downhill yarding (%)</string>
             </property>
            </widget>
           </item>
@@ -2848,7 +2848,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Type de chariot</string>
+           <string>Carriage type</string>
           </property>
          </widget>
         </item>
@@ -2870,7 +2870,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Propriétés du câble porteur </string>
+         <string>Skyline porperties</string>
         </property>
        </widget>
       </item>
@@ -2896,7 +2896,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Tension de rupture ( kgF ) </string>
+           <string>Breakdown tensile force (kgF)</string>
           </property>
          </widget>
         </item>
@@ -2974,7 +2974,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Diamètre (mm)</string>
+           <string>Diameter (mm)</string>
           </property>
          </widget>
         </item>
@@ -2998,7 +2998,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Masse linéique (kg/m)</string>
+           <string>Skyline self-weight (kg/mm)</string>
           </property>
          </widget>
         </item>
@@ -3022,7 +3022,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Module de Young (Elasticité) (N/mm²)</string>
+           <string>Young Modulus ( Elasticity) (N/mm²)</string>
           </property>
          </widget>
         </item>
@@ -3110,7 +3110,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Paramètres de modélisation</string>
+         <string>Modeling parameters</string>
         </property>
        </widget>
       </item>
@@ -3124,7 +3124,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Masse maximale suspendue (kg)</string>
+           <string>Payload capacity (kg)</string>
           </property>
          </widget>
         </item>
@@ -3163,7 +3163,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Hauteur du mât terminal (m)</string>
+           <string>Tailspar height (m)</string>
           </property>
          </widget>
         </item>
@@ -3201,7 +3201,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Hauteur max du câble porteur en</string>
+             <string>Skyline max.height </string>
             </property>
            </widget>
           </item>
@@ -3225,7 +3225,7 @@
              </font>
             </property>
             <property name="text">
-             <string>tout point (m)</string>
+             <string>at any point (m)</string>
             </property>
            </widget>
           </item>
@@ -3251,7 +3251,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Facteur de sécurité</string>
+           <string>Security factor</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -3278,7 +3278,7 @@
            </font>
           </property>
           <property name="text">
-           <string>hauteur support intermédiaire (m)</string>
+           <string>Intermediate supports height (m)</string>
           </property>
          </widget>
         </item>
@@ -3508,7 +3508,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Hauteur min du câble porteur en</string>
+             <string>Skyline min. height </string>
             </property>
            </widget>
           </item>
@@ -3532,7 +3532,7 @@
              </font>
             </property>
             <property name="text">
-             <string>tout point (m)</string>
+             <string>at any point (m)</string>
             </property>
            </widget>
           </item>
@@ -3558,7 +3558,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Distance latérale de pêchage (m)</string>
+           <string>Lateral yarding distance (m)</string>
           </property>
          </widget>
         </item>
@@ -3602,7 +3602,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Optimiser la hauteur de fixation du câble </string>
+             <string>Optimize skyline height at</string>
             </property>
            </widget>
           </item>
@@ -3614,7 +3614,7 @@
              </font>
             </property>
             <property name="text">
-             <string>      aux pylônes intermédiaires et à l'ancrage</string>
+             <string>interlediate supports and tailspar</string>
             </property>
            </widget>
           </item>
@@ -3628,7 +3628,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Précision de la modélisation câble</string>
+           <string>Precision of the modeling</string>
           </property>
          </widget>
         </item>
@@ -3691,7 +3691,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Module câble - Optimisation d'un plan de câblage</string>
+         <string>Cable yarding - Optimization of cable yarding management plan </string>
         </property>
        </widget>
       </item>
@@ -3703,7 +3703,7 @@
         <item row="9" column="0">
          <widget class="QLabel" name="label_132">
           <property name="text">
-           <string>Distance latérale de pêchage</string>
+           <string>Lateral yarding distance (mp)</string>
           </property>
          </widget>
         </item>
@@ -3735,28 +3735,28 @@
         <item row="6" column="0">
          <widget class="QLabel" name="label_128">
           <property name="text">
-           <string>Forêt ( .shp, .gbkg)</string>
+           <string>Forest ( .shp, .gbkg)</string>
           </property>
          </widget>
         </item>
         <item row="8" column="0">
          <widget class="QLabel" name="label_130">
           <property name="text">
-           <string>Volume de l'arbre moyen (raster)</string>
+           <string>Average tree volume (raster)</string>
           </property>
          </widget>
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_126">
           <property name="text">
-           <string>Prélevement ( % du volume sur pied )</string>
+           <string>Percentage of volume per hectare taken off</string>
           </property>
          </widget>
         </item>
         <item row="1" column="0">
          <widget class="QCheckBox" name="checkBox_6">
           <property name="text">
-           <string>Recalculer les caractéristiques des lignes de cables </string>
+           <string>Re-compute lines characteristics from new spatial data</string>
           </property>
          </widget>
         </item>
@@ -3770,14 +3770,14 @@
         <item row="7" column="0">
          <widget class="QLabel" name="label_129">
           <property name="text">
-           <string>Volume de bois sur pied (raster)</string>
+           <string>Volume per hectare (raster)</string>
           </property>
          </widget>
         </item>
         <item row="3" column="0">
          <widget class="QLabel" name="label_127">
           <property name="text">
-           <string>Dossier de résultats</string>
+           <string>Result folder</string>
           </property>
          </widget>
         </item>
@@ -3815,7 +3815,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Données spatiale, même que dans l'onglet Données spatiale :</string>
+           <string>Spatial data, same as in the Spatial data tab:</string>
           </property>
          </widget>
         </item>
@@ -3831,7 +3831,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Critères utilisés pour l'optimisation</string>
+         <string>Criteria use for optimization</string>
         </property>
        </widget>
       </item>
@@ -3847,7 +3847,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Poids</string>
+           <string>Weight</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -3867,7 +3867,7 @@
         <item row="5" column="2">
          <widget class="QLabel" name="label_123">
           <property name="text">
-           <string>Maximiser</string>
+           <string>Maximize</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -3877,7 +3877,7 @@
         <item row="3" column="0">
          <widget class="QCheckBox" name="checkBox_103">
           <property name="text">
-           <string>Sens de débardage à privilégier</string>
+           <string>Prefered yarding direction</string>
           </property>
          </widget>
         </item>
@@ -3911,7 +3911,7 @@
         <item row="6" column="0">
          <widget class="QCheckBox" name="checkBox_106">
           <property name="text">
-           <string>Indice de prélèvement câble</string>
+           <string>Volume per meter of line</string>
           </property>
          </widget>
         </item>
@@ -3928,7 +3928,7 @@
         <item row="4" column="2">
          <widget class="QLabel" name="label_122">
           <property name="text">
-           <string>Maximiser</string>
+           <string>Maximize</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -3938,14 +3938,14 @@
         <item row="7" column="0">
          <widget class="QCheckBox" name="checkBox_107">
           <property name="text">
-           <string>Volume de l'arbre moyen</string>
+           <string>Average tree volume</string>
           </property>
          </widget>
         </item>
         <item row="5" column="0">
          <widget class="QCheckBox" name="checkBox_105">
           <property name="text">
-           <string>Volume total de la ligne</string>
+           <string>Total volume per line</string>
           </property>
          </widget>
         </item>
@@ -3964,7 +3964,7 @@
           <item>
            <widget class="QLabel" name="label_121">
             <property name="text">
-             <string>-1 : vers l'aval</string>
+             <string>-1 : Downhill</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -3974,7 +3974,7 @@
           <item>
            <widget class="QLabel" name="label_133">
             <property name="text">
-             <string>1 : vers l'amont</string>
+             <string>1 : Uphill</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -3984,7 +3984,7 @@
           <item>
            <widget class="QLabel" name="label_134">
             <property name="text">
-             <string>0 : indifférrent</string>
+             <string>0 : none</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -3996,7 +3996,7 @@
         <item row="2" column="2">
          <widget class="QLabel" name="label_120">
           <property name="text">
-           <string>Minimiser</string>
+           <string>Minimize</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -4013,7 +4013,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Objectif</string>
+           <string>Objective</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -4065,7 +4065,7 @@
         <item row="7" column="2">
          <widget class="QLabel" name="label_125">
           <property name="text">
-           <string>Maximiser</string>
+           <string>Maximize</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -4090,14 +4090,14 @@
         <item row="2" column="0">
          <widget class="QCheckBox" name="checkBox_102">
           <property name="text">
-           <string>Nombre de support(s) intermédiaire(s)</string>
+           <string>Number of intermediate supports</string>
           </property>
          </widget>
         </item>
         <item row="1" column="0">
          <widget class="QCheckBox" name="checkBox_101">
           <property name="text">
-           <string>Surface de forêt impactée</string>
+           <string>Forest area impacted</string>
           </property>
          </widget>
         </item>
@@ -4144,7 +4144,7 @@
         <item row="4" column="0">
          <widget class="QCheckBox" name="checkBox_104">
           <property name="text">
-           <string>Longueur total de la ligne</string>
+           <string>Line leingth</string>
           </property>
          </widget>
         </item>
@@ -4168,7 +4168,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Unité</string>
+           <string>Unit</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -4188,7 +4188,7 @@
         <item row="1" column="2">
          <widget class="QLabel" name="label_119">
           <property name="text">
-           <string>Maximiser</string>
+           <string>Maximize</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -4257,7 +4257,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Valeur limite</string>
+           <string>limit value</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -4267,7 +4267,7 @@
         <item row="6" column="2">
          <widget class="QLabel" name="label_124">
           <property name="text">
-           <string>Maximiser</string>
+           <string>Maximize</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -4287,14 +4287,14 @@
         <item row="8" column="0">
          <widget class="QCheckBox" name="checkBox_108">
           <property name="text">
-           <string>Distance moyenne du chariot</string>
+           <string>Carriage average distance</string>
           </property>
          </widget>
         </item>
         <item row="8" column="2">
          <widget class="QLabel" name="label_136">
           <property name="text">
-           <string>Maximiser</string>
+           <string>Maximize</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -4486,7 +4486,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Auteur : Sylvain DUPIRE</string>
+         <string>Author : Sylvain DUPIRE</string>
         </property>
        </widget>
       </item>
@@ -4498,7 +4498,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Logiciel libre régit par la licence GNU-GPL-v3</string>
+         <string>Open source software under  GNU-GPL-v3 license</string>
         </property>
         <property name="textInteractionFlags">
          <set>Qt::LinksAccessibleByMouse</set>
