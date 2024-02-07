@@ -63,7 +63,7 @@
     </font>
    </property>
    <property name="currentIndex">
-    <number>6</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="start">
     <attribute name="title">
@@ -85,7 +85,7 @@
    </widget>
    <widget class="QWidget" name="general">
     <property name="enabled">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="font">
      <font>
@@ -261,7 +261,7 @@
    </widget>
    <widget class="QWidget" name="donnees_spatiale">
     <property name="enabled">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <attribute name="title">
      <string>Données spatiales</string>

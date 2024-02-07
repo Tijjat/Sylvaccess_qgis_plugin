@@ -295,9 +295,12 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def initialisation(self):
         global Sylvaccess_UI
+        self.close()
         Sylvaccess_UI = Sylvaccess_pluginDialog()
         Sylvaccess_UI.show()
         Sylvaccess_UI.start.setEnabled(False)
+        Sylvaccess_UI.general.setEnabled(True)
+        Sylvaccess_UI.donnees_spatiale.setEnabled(True)
 
 
 ###############################################################################################
@@ -1581,10 +1584,10 @@ def Cable():
         _,v1=read_info(Dir_temp+'info_extent.txt')
         for i,item in enumerate(values):
             if v1[i]!=round(item,2):
-                prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable,Pente_max_bucheron)
+                prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable)
             if i+1>4:break
     except:
-        prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable,Pente_max_bucheron)
+        prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable)
     
     # Inputs
     try:
@@ -1612,7 +1615,7 @@ def Cable():
             Pente = np.uint16(prepa_obstacle_cable(Dir_Obs_cable,file_MNT,Dir_temp))
             Aerian_obs= np.int8(np.load(Dir_temp+"Obstacles_cables.npy"))  
     except: 
-        prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable,Pente_max_bucheron)
+        prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_dep,Dir_Obs_cable)
         Forest = np.int8(np.load(Dir_temp+"Foret.npy"))
         Aerian_obs= np.int8(np.load(Dir_temp+"Obstacles_cables.npy"))         
         MNT= np.load(Dir_temp+"MNT.npy") 
@@ -5506,8 +5509,6 @@ def pente(raster_mnt, Csize, nodata):
         else: pente[x,ncol-1]=nodata
 
     return pente
-
-
 
 
 def exposition(raster_mnt, Csize, nodata):
