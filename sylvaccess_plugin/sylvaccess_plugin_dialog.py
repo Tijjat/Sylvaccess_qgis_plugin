@@ -73,7 +73,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         # Connexion des signaux des boutons OK et Annuler()
         self.pushButton_14.clicked.connect(self.initialisation)
         self.button_box.accepted.connect(self.launch)
-        self.button_box.rejected.connect(self.reject)
+        self.button_box.rejected.connect(self.abort)
         self.spinBox_40.valueChanged.connect(self.spinBox_40_changed)
         self.comboBox_1.currentIndexChanged.connect(self.comboBox_1_changed)
         self.comboBox_3.currentIndexChanged.connect(self.comboBox_3_changed)
@@ -170,7 +170,6 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
  
             if checkbox_number == 4:
                 self.skidder.setEnabled(False)
-
 
 
     def spinBox_40_changed(self):
@@ -303,6 +302,10 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         Sylvaccess_UI.donnees_spatiale.setEnabled(True)
 
 
+    def abort(self):
+        self.close()
+
+
 ###############################################################################################
 # __          ___      .__   __.   ______  _______ .___  ___.  _______ .__   __. .___________.#
 #|  |        /   \     |  \ |  |  /      ||   ____||   \/   | |   ____||  \ |  | |           |#
@@ -327,9 +330,10 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         lim_list = [surface_poids, nbr_sup_int_poids, sens_debardage_poids, longueure_ligne_poids, vol_ligne_poids, indice_prelev_poids, VAM_poids, dist_chariot_poids]  
         try:os.mkdir(Rspace)
         except:pass
-        for i in range (1,5):
+        for i in range (1,5):   
             if not getattr(self, f"lineEdit_{i}").text():
                 console_warning("Please fill in all required fields")
+                Sylvaccess_UI.close()
                 return
         Sylvaccess_UI.check_files()
         write_file()
@@ -337,9 +341,9 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             # Verifie si une partie de la desserte correspond a un projet
             testExist = check_field_EXIST(file_shp_Desserte,"EXIST") 
                     
-                    ###################################################################################################################
-                    ### Si pas de projet desserte
-                    ###################################################################################################################
+            ###################################################################################################################
+            ### Si pas de projet desserte
+            ###################################################################################################################
             if not testExist: 
                 if test_Skidder:  
                     Skidder()                    
@@ -349,9 +353,9 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                     process_forwarder()
                     gc.collect()
             
-            ###################################################################################################################
-            ### Si projet desserte
-            ###################################################################################################################
+                ###################################################################################################################
+                ### Si projet desserte
+                ###################################################################################################################
             else:                        
                 file_shp_Desserte_Exist = create_new_road_network(file_shp_Desserte,Wspace)
                 
@@ -518,6 +522,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             msg+="\n"
             msg+="PLEASE CORRECT BEFORE RELAUNCHING SYLVACCESS\n"
             console_warning(msg)
+            Sylvaccess_UI.close()
         return verif
 
 
@@ -1579,6 +1584,7 @@ def Cable():
         Csize,ncols,nrows = values[4],int(values[0]),int(values[1])    
     except:
         console_warning("Error: please define a projection for MNT raster")
+        Sylvaccess_UI.close()
         return ""
     try: 
         _,v1=read_info(Dir_temp+'info_extent.txt')
@@ -4071,9 +4077,11 @@ def make_summary_surface_vol(Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_acce
         except ValueError as e:
             console_warning(f"Error converting '{dmin}' to an integer. Skid_list: {Skid_list}")
             console_warning(f"Dtotal: {Dtotal}")
+            Sylvaccess_UI.close()
             raise e
     else:
         console_warning(f"Invalid literal for int() with base 10: '{dmin}'. Skid_list: {Skid_list}")
+        Sylvaccess_UI.close()
         raise ValueError(f"Invalid literal for int() with base 10: '{dmin}'")
          
     Table[-5,1] = str(round(Surf_Cum,1))+" ha"
@@ -4562,8 +4570,8 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
         for pixel in pixels:
             ind = pixel[0]            
             RF_bad[Lien_RF[ind,0],Lien_RF[ind,1]]=1        
-            ArrayToGtiff(RF_bad,Rspace_s+'Forest_road_not_connected',Extent,nrows,ncols,road_network_proj,0,'UINT8')
-            console_info("    - Some forest road are not connected to public network. To see where, check raster "+Rspace_s+"Forest_road_not_connected.tif")
+        ArrayToGtiff(RF_bad,Rspace_s+'Forest_road_not_connected',Extent,nrows,ncols,road_network_proj,0,'UINT8')
+        console_info("    - Some forest road are not connected to public network. To see where, check raster "+Rspace_s+"Forest_road_not_connected.tif")
     else:
         console_info("    - Forest road processed") 
             
@@ -4728,8 +4736,8 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
         for pixel in pixels:
             ind = pixel[0]            
             RF_bad[Lien_RF[ind,0],Lien_RF[ind,1]]=1        
-            ArrayToGtiff(RF_bad,Rspace_f+'Forest_road_not_connected',Extent,nrows,ncols,road_network_proj,0,'UINT8')
-            console_info("    - Some forest road are not connected to public network. To see where, check raster "+Rspace_f+"Forest_road_not_connected.tif")
+        ArrayToGtiff(RF_bad,Rspace_f+'Forest_road_not_connected',Extent,nrows,ncols,road_network_proj,0,'UINT8')
+        console_info("    - Some forest road are not connected to public network. To see where, check raster "+Rspace_f+"Forest_road_not_connected.tif")
     else:
         console_info("    - Forest road processed") 
              

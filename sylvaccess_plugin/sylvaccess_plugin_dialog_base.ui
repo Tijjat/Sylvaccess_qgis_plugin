@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>968</width>
-    <height>852</height>
+    <width>972</width>
+    <height>861</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -30,7 +30,7 @@
      <x>670</x>
      <y>700</y>
      <width>211</width>
-     <height>31</height>
+     <height>81</height>
     </rect>
    </property>
    <property name="font">
@@ -38,11 +38,20 @@
      <pointsize>9</pointsize>
     </font>
    </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="inputMethodHints">
+    <set>Qt::ImhNone</set>
+   </property>
    <property name="orientation">
-    <enum>Qt::Horizontal</enum>
+    <enum>Qt::Vertical</enum>
    </property>
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+   <property name="centerButtons">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QTabWidget" name="tabWidget">
@@ -62,12 +71,28 @@
      <pointsize>9</pointsize>
     </font>
    </property>
+   <property name="tabPosition">
+    <enum>QTabWidget::North</enum>
+   </property>
    <property name="currentIndex">
     <number>0</number>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>20</width>
+     <height>20</height>
+    </size>
+   </property>
    <widget class="QWidget" name="start">
+    <attribute name="icon">
+     <iconset>
+      <normaloff>icon.png</normaloff>icon.png</iconset>
+    </attribute>
     <attribute name="title">
-     <string>Page</string>
+     <string/>
+    </attribute>
+    <attribute name="whatsThis">
+     <string>used to launch the plugin</string>
     </attribute>
     <widget class="QPushButton" name="pushButton_14">
      <property name="geometry">
@@ -79,7 +104,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>lancement du plugin</string>
+      <string>Launch the plugin</string>
      </property>
     </widget>
    </widget>
@@ -93,7 +118,10 @@
      </font>
     </property>
     <attribute name="title">
-     <string>Général</string>
+     <string>General</string>
+    </attribute>
+    <attribute name="whatsThis">
+     <string>choose which analysis to do </string>
     </attribute>
     <widget class="QWidget" name="verticalLayoutWidget">
      <property name="geometry">
@@ -139,7 +167,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Perform forxarder analysis</string>
+         <string>Perform forwarder analysis</string>
         </property>
        </widget>
       </item>
@@ -151,7 +179,7 @@
          </font>
         </property>
         <property name="text">
-         <string>perform cable yarding analysis</string>
+         <string>Perform cable yarding analysis</string>
         </property>
        </widget>
       </item>
@@ -264,7 +292,10 @@
      <bool>false</bool>
     </property>
     <attribute name="title">
-     <string>Données spatiales</string>
+     <string>Spatial input</string>
+    </attribute>
+    <attribute name="whatsThis">
+     <string>put all the files needed for the selected analysis</string>
     </attribute>
     <widget class="QWidget" name="verticalLayoutWidget_4">
      <property name="geometry">
@@ -307,7 +338,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Parcourir</string>
+           <string>Browse</string>
           </property>
          </widget>
         </item>
@@ -432,7 +463,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Parcourir</string>
+           <string>Browse</string>
           </property>
          </widget>
         </item>
@@ -469,7 +500,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Parcourir</string>
+           <string>Browse</string>
           </property>
          </widget>
         </item>
@@ -488,7 +519,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Parcourir</string>
+           <string>Browse</string>
           </property>
          </widget>
         </item>
@@ -578,7 +609,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Parcourir</string>
+           <string>Browse</string>
           </property>
          </widget>
         </item>
@@ -686,7 +717,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Parcourir</string>
+           <string>Browse</string>
           </property>
          </widget>
         </item>
@@ -819,7 +850,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Parcourir</string>
+           <string>Browse</string>
           </property>
          </widget>
         </item>
@@ -850,7 +881,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Parcourir</string>
+           <string>Browse</string>
           </property>
          </widget>
         </item>
@@ -916,7 +947,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Parcourir</string>
+           <string>Browse</string>
           </property>
          </widget>
         </item>
@@ -1006,7 +1037,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Parcourir</string>
+           <string>Browse</string>
           </property>
          </widget>
         </item>
@@ -1104,7 +1135,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Parcourir</string>
+           <string>Browse</string>
           </property>
          </widget>
         </item>
@@ -1206,7 +1237,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Parcourir</string>
+           <string>Browse</string>
           </property>
          </widget>
         </item>
@@ -1225,7 +1256,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Parcourir</string>
+           <string>Browse</string>
           </property>
          </widget>
         </item>
@@ -1254,6 +1285,9 @@
     </property>
     <attribute name="title">
      <string>Skidder</string>
+    </attribute>
+    <attribute name="whatsThis">
+     <string>Skidder related parameters</string>
     </attribute>
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
@@ -1764,7 +1798,10 @@
      <bool>false</bool>
     </property>
     <attribute name="title">
-     <string>Porteur</string>
+     <string>Forwarder</string>
+    </attribute>
+    <attribute name="whatsThis">
+     <string>Forwarder related parameters</string>
     </attribute>
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
@@ -2248,7 +2285,10 @@
      <bool>false</bool>
     </property>
     <attribute name="title">
-     <string>Câble</string>
+     <string>Cable</string>
+    </attribute>
+    <attribute name="whatsThis">
+     <string>cable related parameters </string>
     </attribute>
     <widget class="QWidget" name="verticalLayoutWidget_12">
      <property name="geometry">
@@ -3669,7 +3709,10 @@
      <bool>false</bool>
     </property>
     <attribute name="title">
-     <string>Câble - Optimisation des lignes</string>
+     <string>Cable - Line Optimization</string>
+    </attribute>
+    <attribute name="whatsThis">
+     <string>Parameters for cable line optimization analysis</string>
     </attribute>
     <widget class="QWidget" name="verticalLayoutWidget_6">
      <property name="geometry">
@@ -4435,7 +4478,7 @@
     <rect>
      <x>10</x>
      <y>710</y>
-     <width>401</width>
+     <width>423</width>
      <height>91</height>
     </rect>
    </property>
