@@ -557,7 +557,9 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
     def get_spatial(self):
         self.update()
         _Wspace = getattr(self, f"lineEdit_1").text()
+        _Wspace += "/"
         _Rspace = getattr(self, f"lineEdit_2").text()
+        _Rspace += "/"
         _mnt = getattr(self, f"lineEdit_3").text()
         _foret = getattr(self, f"lineEdit_4").text()
         _desserte = getattr(self, f"lineEdit_5").text()
