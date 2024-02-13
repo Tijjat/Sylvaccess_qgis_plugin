@@ -173,14 +173,8 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.cable.setEnabled(True)
             if checkbox_number == 3:
                 self.porteur.setEnabled(True)
-                #test
-                self.plainTextEdit_2.setPlainText("0;500;1000;1500") 
-                ##
             if checkbox_number == 4:
                 self.skidder.setEnabled(True)
-                #test
-                self.plainTextEdit_1.setPlainText("0;500;1000;1500")
-                ##
         elif not checkbox_state:
             if checkbox_number == 1:
                 self.cable_opti.setEnabled(False)
@@ -196,12 +190,13 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
     def spinBox_40_changed(self):
         value = self.spinBox_40.value()
         self.spinBox_49.setValue(value)
+        ##test
         console_info(f"spinBox_40_changed: value={value}")
 
 
     def comboBox_1_changed(self):
         value = self.comboBox_1.currentText()
-        if value == "Câble-mât sur tracteur agricole":
+        if value == "Cable crane mounted on agricultural tractor":
             self.spinBox_14.setValue(2)
             self.doubleSpinBox_2.setValue(8.5)
             self.spinBox_16.setValue(500)
@@ -210,7 +205,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             self.doubleSpinBox_4.setValue(1.4)
             self.spinBox_26.setValue(25000)
             self.spinBox_40.setValue(35)
-        elif value == "Câble-mât sur remorque":
+        elif value == "Cable crane mounted on trailer":
             self.spinBox_14.setValue(3)
             self.doubleSpinBox_2.setValue(10.5)
             self.spinBox_16.setValue(780)
@@ -219,7 +214,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             self.doubleSpinBox_4.setValue(1.9)
             self.spinBox_26.setValue(35000)
             self.spinBox_40.setValue(35)
-        elif value == "Câble-mât sur camion":
+        elif value == "Cable crane mounted on truck":
             self.spinBox_14.setValue(3)
             self.doubleSpinBox_2.setValue(14)
             self.spinBox_16.setValue(1200)
@@ -228,7 +223,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             self.doubleSpinBox_4.setValue(2.6)
             self.spinBox_26.setValue(48000)
             self.spinBox_40.setValue(40)
-        elif value == "Câble long":
+        elif value == "Long cable":
             self.spinBox_14.setValue(3)
             self.doubleSpinBox_2.setValue(8.0)
             self.spinBox_16.setValue(1500)
@@ -241,7 +236,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def comboBox_3_changed(self):
         value = self.comboBox_3.currentText()
-        if value == "Chariot classique":
+        if value == "Classical carriage":
             self.spinBox_22.setValue(500)
             self.spinBox_23.setValue(15)
             self.spinBox_24.setValue(15)
@@ -250,7 +245,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             self.spinBox_23.setEnabled(True)
             self.spinBox_24.setEnabled(False)
             self.spinBox_25.setEnabled(False)
-        elif value == "Chariot automoteur":
+        elif value == "self-motorized carriage":
             self.spinBox_22.setValue(1200)
             self.spinBox_23.setValue(15)
             self.spinBox_24.setValue(15)
@@ -2855,7 +2850,7 @@ def get_cable_configs(slope_Wliner_up,slope_Wliner_down,slope_grav,Skid_directio
         slope_max_down = atan(slope_Wliner_down*0.01) 
         slope_min_down = -0.1 
     
-    if Cable_type == "Câble long":
+    if Cable_type == "Long cable":
         if Skid_direction ==0:
             filename += "_uphill&downhill"
             slope_min_up = -1.4

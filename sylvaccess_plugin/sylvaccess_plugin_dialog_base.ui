@@ -75,7 +75,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <property name="iconSize">
     <size>
@@ -83,31 +83,6 @@
      <height>20</height>
     </size>
    </property>
-   <widget class="QWidget" name="start">
-    <attribute name="icon">
-     <iconset>
-      <normaloff>icon.png</normaloff>icon.png</iconset>
-    </attribute>
-    <attribute name="title">
-     <string/>
-    </attribute>
-    <attribute name="whatsThis">
-     <string>used to launch the plugin</string>
-    </attribute>
-    <widget class="QPushButton" name="pushButton_14">
-     <property name="geometry">
-      <rect>
-       <x>300</x>
-       <y>280</y>
-       <width>271</width>
-       <height>181</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Launch the plugin</string>
-     </property>
-    </widget>
-   </widget>
    <widget class="QWidget" name="general">
     <property name="enabled">
      <bool>true</bool>
@@ -252,6 +227,9 @@
             <weight>50</weight>
             <bold>false</bold>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="maximum">
            <number>180</number>
@@ -1363,6 +1341,9 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="minimum">
            <number>1</number>
           </property>
@@ -1409,6 +1390,9 @@
             <weight>50</weight>
             <bold>false</bold>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="minimum">
            <number>1</number>
@@ -1478,6 +1462,9 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>10000</number>
           </property>
@@ -1500,6 +1487,9 @@
             <weight>50</weight>
             <bold>false</bold>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="minimum">
            <number>0</number>
@@ -1527,6 +1517,9 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>180</number>
           </property>
@@ -1549,6 +1542,9 @@
             <weight>50</weight>
             <bold>false</bold>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="minimum">
            <number>0</number>
@@ -1766,6 +1762,12 @@
           <property name="layoutDirection">
            <enum>Qt::LeftToRight</enum>
           </property>
+          <property name="inputMethodHints">
+           <set>Qt::ImhMultiLine</set>
+          </property>
+          <property name="plainText">
+           <string>0;500;1000;1500</string>
+          </property>
           <property name="placeholderText">
            <string>0;500;1000;1500</string>
           </property>
@@ -1861,6 +1863,9 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>100000</number>
           </property>
@@ -1883,6 +1888,9 @@
             <weight>50</weight>
             <bold>false</bold>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="minimum">
            <number>0</number>
@@ -1942,6 +1950,9 @@
             <weight>50</weight>
             <bold>false</bold>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="maximum">
            <number>100000</number>
@@ -2036,6 +2047,9 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="minimum">
            <number>0</number>
           </property>
@@ -2119,6 +2133,9 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>180</number>
           </property>
@@ -2195,7 +2212,7 @@
            </font>
           </property>
           <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="decimals">
            <number>1</number>
@@ -2262,6 +2279,9 @@
           </property>
           <property name="layoutDirection">
            <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="plainText">
+           <string>0;500;1000;1500</string>
           </property>
           <property name="placeholderText">
            <string>0;500;1000;1500</string>
@@ -2386,6 +2406,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="value">
            <number>2</number>
           </property>
@@ -2458,6 +2481,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>99999</number>
           </property>
@@ -2497,6 +2523,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>999999</number>
           </property>
@@ -2523,22 +2552,22 @@
           </property>
           <item>
            <property name="text">
-            <string>Câble-mât sur tracteur agricole</string>
+            <string>Cable crane mounted on agricultural tractor</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>Câble-mât sur remorque</string>
+            <string>Cable crane mounted on trailer</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>Câble-mât sur camion</string>
+            <string>Cable crane mounted on truck</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>Câble long</string>
+            <string>Long cable</string>
            </property>
           </item>
          </widget>
@@ -2561,6 +2590,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="decimals">
            <number>1</number>
@@ -2695,6 +2727,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>180</number>
           </property>
@@ -2774,6 +2809,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>99999</number>
           </property>
@@ -2801,6 +2839,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>180</number>
           </property>
@@ -2824,12 +2865,12 @@
           </property>
           <item>
            <property name="text">
-            <string>Chariot classique</string>
+            <string>Classical carriage</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>Chariot automoteur</string>
+            <string>self-motorized carriage</string>
            </property>
           </item>
          </widget>
@@ -2846,6 +2887,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="maximum">
            <number>180</number>
@@ -2980,6 +3024,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>99999</number>
           </property>
@@ -3006,6 +3053,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="maximum">
            <number>999999999</number>
@@ -3106,6 +3156,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="decimals">
            <number>1</number>
           </property>
@@ -3138,6 +3191,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="decimals">
            <number>1</number>
@@ -3207,6 +3263,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="maximum">
            <number>999999</number>
@@ -3362,6 +3421,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="decimals">
            <number>1</number>
           </property>
@@ -3394,6 +3456,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="decimals">
            <number>1</number>
@@ -3428,6 +3493,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="decimals">
            <number>1</number>
           </property>
@@ -3460,6 +3528,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="decimals">
            <number>1</number>
@@ -3494,6 +3565,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="decimals">
            <number>1</number>
           </property>
@@ -3526,6 +3600,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="maximum">
            <number>999999</number>
@@ -3712,6 +3789,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>999999</number>
           </property>
@@ -3777,6 +3857,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="maximum">
            <number>9999</number>
@@ -3851,6 +3934,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="maximum">
            <number>999999</number>
@@ -3952,6 +4038,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>10</number>
           </property>
@@ -3966,6 +4055,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="maximum">
            <number>10</number>
@@ -4091,6 +4183,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>10</number>
           </property>
@@ -4106,6 +4201,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>99999</number>
           </property>
@@ -4120,6 +4218,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="maximum">
            <number>10</number>
@@ -4142,6 +4243,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="maximum">
            <number>99999</number>
@@ -4172,6 +4276,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>10</number>
           </property>
@@ -4196,6 +4303,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="minimum">
            <number>0</number>
@@ -4266,6 +4376,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="minimum">
            <number>-1</number>
           </property>
@@ -4291,6 +4404,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>10</number>
           </property>
@@ -4302,6 +4418,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="maximum">
            <number>99999</number>
@@ -4372,6 +4491,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="maximum">
            <number>999999</number>
           </property>
@@ -4386,6 +4508,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="maximum">
            <number>10</number>
@@ -4410,6 +4535,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="decimals">
            <number>1</number>
@@ -4444,6 +4572,9 @@
             <pointsize>9</pointsize>
            </font>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="decimals">
            <number>1</number>
           </property>
@@ -4476,6 +4607,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="maximum">
            <double>999999999.000000000000000</double>
