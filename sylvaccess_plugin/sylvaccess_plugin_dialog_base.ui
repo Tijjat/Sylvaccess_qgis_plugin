@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>972</width>
+    <width>964</width>
     <height>861</height>
    </rect>
   </property>
@@ -75,7 +75,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <property name="iconSize">
     <size>
@@ -110,7 +110,7 @@
    </widget>
    <widget class="QWidget" name="general">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="font">
      <font>
@@ -289,7 +289,7 @@
    </widget>
    <widget class="QWidget" name="donnees_spatiale">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <attribute name="title">
      <string>Spatial input</string>
@@ -1363,6 +1363,9 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
           <property name="maximum">
            <number>100000</number>
           </property>
@@ -1406,6 +1409,9 @@
             <weight>50</weight>
             <bold>false</bold>
            </font>
+          </property>
+          <property name="minimum">
+           <number>1</number>
           </property>
           <property name="maximum">
            <number>100000</number>
@@ -1495,6 +1501,9 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="minimum">
+           <number>0</number>
+          </property>
           <property name="maximum">
            <number>180</number>
           </property>
@@ -1540,6 +1549,9 @@
             <weight>50</weight>
             <bold>false</bold>
            </font>
+          </property>
+          <property name="minimum">
+           <number>0</number>
           </property>
           <property name="maximum">
            <number>180</number>
@@ -1872,6 +1884,9 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="minimum">
+           <number>0</number>
+          </property>
           <property name="maximum">
            <number>180</number>
           </property>
@@ -2020,6 +2035,9 @@
             <weight>50</weight>
             <bold>false</bold>
            </font>
+          </property>
+          <property name="minimum">
+           <number>0</number>
           </property>
           <property name="maximum">
            <number>180</number>
@@ -2175,6 +2193,9 @@
            <font>
             <pointsize>9</pointsize>
            </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
           <property name="decimals">
            <number>1</number>

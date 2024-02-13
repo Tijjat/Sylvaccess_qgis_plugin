@@ -22,6 +22,7 @@
  ***************************************************************************/
 """
 
+# Importation des bibliothèques 
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
 import os
@@ -37,15 +38,35 @@ import gc
 import datetime
 from scipy.interpolate import InterpolatedUnivariateSpline
 import sys
+
+
+# variables globales
+global g,intsup,best,nblineTabis,h,b,l,r  
 Sylvaccess_UI = None
+g = 9.80665
+intsup = 0 
+best = 0
+nblineTabis = 1
+h = 0
+b = 0
+l = 0
+r = 0
+
 
 # Chargement de l'interface utilisateur depuis le fichier .ui
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'sylvaccess_plugin_dialog_base.ui'))
 
 class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
-    def __init__(self, parent=None):
+    def __init__(self,iface=None, parent=None):
         super(Sylvaccess_pluginDialog, self).__init__(parent)
         self.setupUi(self)
+        self.setWindowTitle("Sylvaccess")
+#self.setWindowIcon(QIcon(':/plugins/sylvaccess_plugin/icon.png'))
+        self.iface = iface
+        global Sylvaccess_UI
+        Sylvaccess_UI = self
+        Sylvaccess_UI.general.setEnabled(True)
+        Sylvaccess_UI.donnees_spatiale.setEnabled(True)
 
 
 ##################################################################
@@ -66,12 +87,12 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             checkbox = getattr(self, f"checkBox_{i}")
             checkbox.stateChanged.connect(lambda _, num=i: self.checkbox_state_changed(num))
 
+
         for i in range(101,109):
             checkbox = getattr(self, f"checkBox_{i}")
             checkbox.stateChanged.connect(lambda _, num=i: self.checkbox_state_changed_opti(num))
 
         # Connexion des signaux des boutons OK et Annuler()
-        self.pushButton_14.clicked.connect(self.initialisation)
         self.button_box.accepted.connect(self.launch)
         self.button_box.rejected.connect(self.abort)
         self.spinBox_40.valueChanged.connect(self.spinBox_40_changed)
@@ -290,16 +311,6 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             if checkbox_number == 108:
                 self.spinBox_108.setMinimum(0)
                 self.spinBox_108.setMaximum(0)
-
-
-    def initialisation(self):
-        global Sylvaccess_UI
-        self.close()
-        Sylvaccess_UI = Sylvaccess_pluginDialog()
-        Sylvaccess_UI.show()
-        Sylvaccess_UI.start.setEnabled(False)
-        Sylvaccess_UI.general.setEnabled(True)
-        Sylvaccess_UI.donnees_spatiale.setEnabled(True)
 
 
     def abort(self):
@@ -1552,7 +1563,7 @@ def focal_stat(in_file_name,out_file_name,methode='MEAN',nbcell=3):
 # Fonctions qui gère les calculs liés au cable
 def Cable():
     console_info("Cable")
-    Wspace,Rspace,file_MNT,file_shp_Foret,_,file_shp_Cable_dep,_,_,_,Dir_Obs_cable,file_Htree,file_Vol_AM,file_Vol_ha = Sylvaccess_UI.get_spatial_cls()
+    Wspace,_,file_MNT,file_shp_Foret,_,file_shp_Cable_dep,_,_,_,Dir_Obs_cable,file_Htree,file_Vol_AM,file_Vol_ha = Sylvaccess_UI.get_spatial_cls()
     _,_,_,_,Pente_max_bucheron = Sylvaccess_UI.get_general_cls()
     Cable_type,sup_max,Htower,Lmax,Lmin=Sylvaccess_UI.get_type_cable_cls()
     Carriage_type,Pchar,slope_grav,slope_Wliner_up,slope_Wliner_down = Sylvaccess_UI.get_type_chariot_cls()
@@ -1661,10 +1672,7 @@ def Cable():
     Row_line,Col_line,D_line,Nbpix_line, Row_ext,Col_ext,D_ext,Dir_list=create_buffer(Csize,Lmax2,Lhor_max)    
     road_network_proj=get_proj_from_road_network(file_shp_Cable_dep)
     Skid_direction = 0
-    Rspace_c,_,slope_min_up,slope_max_up,slope_min_down,slope_max_down=get_cable_configs(Rspace,slope_Wliner_up,
-                                                                                       slope_Wliner_down,slope_grav,
-                                                                                       Cable_type,Carriage_type,
-                                                                                       Skid_direction) 
+    Rspace_c,_,slope_min_up,slope_max_up,slope_min_down,slope_max_down=get_cable_configs(slope_Wliner_up,slope_Wliner_down,slope_grav,Skid_direction) 
     try:os.mkdir(Rspace_c)
     except:pass
     Rspace_c+="/"
@@ -2665,7 +2673,7 @@ def prepa_obstacle_cable(Obstacles_directory,file_MNT,Dir_temp):
     else: Obstacles_cable = np.zeros_like(MNT,dtype=np.int8)    
     Obstacles_cable[MNT==-9999]=1
     values[5]=-9999
-    np.save(Dir_temp+'Cable_obstacle.npy',np.int8(Obstacles_cable))
+    np.save(Dir_temp+'Obstacles_cables.npy',np.int8(Obstacles_cable))
     gc.collect()  
     return Pente
 
@@ -5282,16 +5290,6 @@ def process_forwarder():
 # \______|    |__|         |__|     |__|  |__|  \______/  |__| \__|# 
 ####################################################################                                                                  
 
-global g,intsup,best,nblineTabis,h,b,l,r  
-g = 9.80665
-intsup = 0 
-best = 0
-nblineTabis = 1
-h = 0
-b = 0
-l = 0
-r = 0
-
 
 def dg_dTh(Tv, Th, Lo, W, s1, F, rac1, rac2, rac3, rac4):
     a = 1. / (Th * Th) * (
@@ -6353,7 +6351,7 @@ def newton_ThTv(Th, Tv, H, D, Lo, W, s1, F, EAo, Tmax, err=1.0):
 
         if min(Th, Tv) < 0:
             it = 0
-            for i in range(0, math.ceil(Tmax), step):
+            for i in range(1, math.ceil(Tmax), step):
                 for j in range(0, math.ceil(Tmax), step):
                     Fx = f_x(float(i), float(j), Lo, EAo, W, F, s1, D)
                     if abs(Fx) < Fx_min:
