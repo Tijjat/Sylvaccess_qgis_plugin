@@ -846,18 +846,6 @@ def heures(Hdebut):
     return str_duree,str_fin,str_debut
 
 
-def get_info_ascii(file_name):
-    fs = open(file_name, 'r')
-    head_text=''
-    line = 1
-    while line<7:
-        head_text = head_text+fs.readline()
-        line=line+1
-    fs.close()
-    Csize = np.genfromtxt(file_name, dtype=None,usecols=(1))[4]
-    return head_text, Csize
-
-
 def save_integer_ascii(file_name,head_text,data):
     np.savetxt(file_name, data, fmt='%i', delimiter=' ')
     with open(file_name, "r+") as f:
@@ -865,20 +853,6 @@ def save_integer_ascii(file_name,head_text,data):
         f.seek(0)
         f.write(head_text + old)
         f.close()
-
-
-def save_float_ascii(file_name,head_text,data):
-    np.savetxt(file_name, data, fmt='%f', delimiter=' ')
-    with open(file_name, "r+") as f:
-        old = f.read()
-        f.seek(0)
-        f.write(head_text + old)
-        f.close()
-
-
-def replace_all(text, dic):
-    for i, j in dic.iteritems(): text = text.replace(i, j)
-    return text
 
 
 def clear_big_nparray():    
@@ -993,13 +967,6 @@ def check_field_EXIST(filename,fieldname):
     return verif
 
 
-def generate_HeadText(names,values):    
-    head_text=""
-    for i,item in enumerate(names):
-        head_text = head_text+item+(14-len(item))*" "+str(values[i])+"\n"
-    return head_text
-
-
 def save_raster_info(values,Rspace_c):   
     np.savetxt(Rspace_c+"Area_extent.txt", values, fmt='%f', delimiter=';')
 
@@ -1095,103 +1062,6 @@ def shapefile_to_np_array(file_name,Extent,Csize,attribute_name,order_field=None
         return mask_arr
 
 
-def select_in_shapefile(source_shapefile,out_Shape_Path,expression):
-    #Recupere le driver
-    if source_shapefile.endswith('.gbkg'):
-        driver = ogr.GetDriverByName('GBKG')
-    elif source_shapefile.endswith('.shp'):
-        driver = ogr.GetDriverByName('ESRI Shapefile')
-    #Get information from source shapefile
-    source_ds = ogr.Open(source_shapefile)
-    source_layer = source_ds.GetLayer()    
-    source_srs = source_layer.GetSpatialRef()
-    source_type = source_layer.GetGeomType()
-    try: source_layer_bis = source_ds.ExecuteSQL('SELECT * FROM '+str(source_layer.GetName())+' '+expression)   
-    except: console_info("Syntax error in the expression")
-    # Initialize the output shapefile
-    if os.path.exists(out_Shape_Path):
-        driver.DeleteDataSource(out_Shape_Path)
-    target_ds = driver.CreateDataSource(out_Shape_Path)
-    layerName = os.path.splitext(os.path.split(out_Shape_Path)[1])[0]
-    layer = target_ds.CreateLayer(layerName, source_srs, source_type)
-    layerDefinition = layer.GetLayerDefn()
-    new_field = ogr.FieldDefn('Route', ogr.OFTInteger)
-    layer.CreateField(new_field)
-    ind=0
-    for feat in source_layer_bis:
-        geometry = feat.GetGeometryRef()
-        feature = ogr.Feature(layerDefinition)
-        feature.SetGeometry(geometry)
-        feature.SetFID(ind)
-        feature.SetField('Route',1)
-        # Save feature
-        layer.CreateFeature(feature)
-        # Cleanup
-        feature.Destroy()
-        ind +=1
-    # Cleanup
-    target_ds.Destroy()
-    source_ds.Destroy()
-
-
-def linestring_to_point(Line_shapefile,Point_Shape_Path):
-    #Get driver
-    if Line_shapefile.endswith('.gbkg'):
-        driver = ogr.GetDriverByName('GBKG')
-    elif Line_shapefile.endswith('.shp'):
-        driver = ogr.GetDriverByName('ESRI Shapefile')
-    # Get line info
-    source_ds = ogr.Open(Line_shapefile)
-    source_layer = source_ds.GetLayer()
-    source_srs = source_layer.GetSpatialRef()
-    geoLocations = []
-    ind = 1
-    for feat in source_layer:
-        geom = feat.GetGeometryRef()
-        points = geom.GetPointCount()          
-        for p in range(points):
-            lon, lat,_ = geom.GetPoint(p)
-            geoLocations.append([lon,lat,ind])
-        ind +=1
-    geoLocations = np.array(geoLocations)
-    fins_ligne = fin_ligne(geoLocations)
-    # Create output point shapefile
-    if os.path.exists(Point_Shape_Path):driver.DeleteDataSource(Point_Shape_Path)
-    target_ds = driver.CreateDataSource(Point_Shape_Path)
-    layerName = os.path.splitext(os.path.split(Point_Shape_Path)[1])[0]
-    layer = target_ds.CreateLayer(layerName, source_srs, ogr.wkbPoint)
-    layerDefinition = layer.GetLayerDefn()
-    new_field = ogr.FieldDefn('IND_LINE', ogr.OFTInteger)
-    layer.CreateField(new_field)
-    new_field = ogr.FieldDefn('FIN_LIGNE', ogr.OFTInteger)
-    layer.CreateField(new_field)
-    ind = 0
-    for pointIndex, geoLocation in enumerate(geoLocations):
-        # Create point
-        geometry = ogr.Geometry(ogr.wkbPoint)
-        geometry.SetPoint(0, geoLocation[0], geoLocation[1])
-        # Create feature
-        feature = ogr.Feature(layerDefinition)
-        feature.SetGeometry(geometry)
-        feature.SetFID(pointIndex)
-        feature.SetField('IND_LINE',int(geoLocation[2]))
-        if pointIndex==fins_ligne[ind]:
-            feature.SetField('FIN_LIGNE',1)
-            ind +=1
-            if ind > len(fins_ligne)-1:
-                ind-=1
-        else:
-            feature.SetField('FIN_LIGNE',0)
-        # Save feature
-        layer.CreateFeature(feature)
-        # Cleanup
-        geometry.Destroy()
-        feature.Destroy()
-    # Cleanup
-    target_ds.Destroy()
-    return geoLocations,source_srs
-
-
 def fin_ligne(point_coords):
     fin_ligne = []
     for i in range(point_coords.shape[0]-1):
@@ -1203,96 +1073,6 @@ def fin_ligne(point_coords):
             elif i==0 and point_coords[i+1,2]==point_coords[i,2]:fin_ligne.append(i)
             elif i==point_coords.shape[0]-1 and point_coords[i-1,2]==point_coords[i,2]:fin_ligne.append(i)
     return fin_ligne  
-
-
-def points_to_lineshape(point_coords,Line_Shape_Path,projection):
-    #Recupere le driver
-    if Line_Shape_Path.endswith('.gbkg'):
-        driver = ogr.GetDriverByName('GBKG')
-    elif Line_Shape_Path.endswith('.shp'):
-        driver = ogr.GetDriverByName('ESRI Shapefile')
-    # Create output line shapefile 
-    if os.path.exists(Line_Shape_Path):driver.DeleteDataSource(Line_Shape_Path)
-    target_ds = driver.CreateDataSource(Line_Shape_Path)
-    layerName = os.path.splitext(os.path.split(Line_Shape_Path)[1])[0]
-    layer = target_ds.CreateLayer(layerName, projection, ogr.wkbLineString)
-    layerDefinition = layer.GetLayerDefn()
-    new_field = ogr.FieldDefn('DIRECTION', ogr.OFTInteger)
-    layer.CreateField(new_field)
-    ind = 0
-    while ind<point_coords.shape[0]-1:        
-        if point_coords[ind+1,2]==point_coords[ind,2]:
-            line = ogr.Geometry(ogr.wkbLineString)
-            line.AddPoint(point_coords[ind,0],point_coords[ind,1])
-            line.AddPoint(point_coords[ind+1,0],point_coords[ind+1,1])
-            feature = ogr.Feature(layerDefinition)
-            feature.SetGeometry(line)
-            feature.SetFID(ind)
-            direction = calculate_direction(point_coords[ind,0],point_coords[ind,1], point_coords[ind+1,0],point_coords[ind+1,1])
-            if ind+2< point_coords.shape[0] and point_coords[ind+1,2]==point_coords[ind+2,2]:
-                feature.SetField('DIRECTION',direction)
-            else:
-                if direction <0:feature.SetField('DIRECTION',direction%180)
-                else:feature.SetField('DIRECTION',direction%(-180))
-            layer.CreateFeature(feature)
-            ind +=1
-            line.Destroy()
-            feature.Destroy()
-        else:
-            ind +=1
-    target_ds.Destroy()
-
-
-def calculate_direction(x1,y1,x2,y2):
-    DX = x2-x1
-    DY = y2-y1
-    Deuc = math.sqrt(DX**2+DY**2)
-    if x2>x1:Fact=1
-    else:Fact=-1
-    Angle = math.degrees(math.acos(DY/Deuc))
-    Angle *=Fact
-    return int(Angle+0.5)
-
-
-def get_head_text(ASCII_file):
-    names = np.genfromtxt(ASCII_file, dtype=None,usecols=(0))[0:6]
-    values = np.genfromtxt(ASCII_file, dtype=np.float32,usecols=(1))[0:6]
-    Extent = [values[2],values[2]+values[4]*values[0],values[3],values[3]+values[4]*values[1]]
-    return names,values,Extent
-
-
-def generate_head_text(names,values,Csize):
-    rap = int(Csize/values[4])
-    values[0],values[1],values[4]= int(values[0]/rap+0.5),int(values[1]/rap+0.5),Csize
-    head_text=""
-    for i,item in enumerate(names):
-        head_text = head_text+item+(14-len(item))*" "+str(values[i])+"\n"
-    return head_text
-
-
-def buffer_shp(infile,outfile,buffdist):
-    try:
-        ds_in=ogr.Open( infile )
-        lyr_in=ds_in.GetLayer( 0 )
-        drv=ds_in.GetDriver()
-        if os.path.exists( outfile ):
-            drv.DeleteDataSource(outfile)
-        ds_out = drv.CreateDataSource( outfile )
-        layer = ds_out.CreateLayer(lyr_in.GetLayerDefn().GetName(),lyr_in.GetSpatialRef(), ogr.wkbPolygon)
-        for i in range ( lyr_in.GetLayerDefn().GetFieldCount() ):
-            field_in = lyr_in.GetLayerDefn().GetFieldDefn( i )
-            fielddef = ogr.FieldDefn( field_in.GetName(), field_in.GetType() )
-            layer.CreateField ( fielddef )
-        for feat in lyr_in:
-            geom = feat.GetGeometryRef()
-            feature = feat.Clone()
-            feature.SetGeometry(geom.Buffer(float(buffdist)))
-            layer.CreateFeature(feature)
-            del geom
-        ds_out.Destroy()
-    except:
-        return False
-    return True
 
 
 def shapefile_obs_to_np_array(file_list,Extent,Csize):
@@ -1354,122 +1134,6 @@ def shapefile_obs_to_np_array(file_list,Extent,Csize):
     return Obstacle
 
 
-def shapefile_to_int8array(file_name,Extent,Csize):
-    #Get raster dimension
-    xmin,xmax,ymin,ymax = Extent[0],Extent[1],Extent[2],Extent[3]
-    nrows,ncols = int((ymax-ymin)/float(Csize)+0.5),int((xmax-xmin)/float(Csize)+0.5)        
-    #Create obstacle raster
-    Array = np.zeros((nrows,ncols),dtype=np.int8)      
-    # Get shapefile info
-    source_ds = ogr.Open(file_name)
-    source_layer = source_ds.GetLayer()    
-    source_srs = source_layer.GetSpatialRef()
-    source_type = source_layer.GetGeomType()
-    # Create copy
-    target_ds1 = ogr.GetDriverByName("Memory").CreateDataSource("")
-    layerName = "shp"
-    layer = target_ds1.CreateLayer(layerName, source_srs, source_type)
-    layerDefinition = layer.GetLayerDefn()
-    new_field = ogr.FieldDefn('Transfo', ogr.OFTInteger)
-    layer.CreateField(new_field)
-    ind=0
-    for feat in source_layer:
-        geometry = feat.GetGeometryRef()
-        feature = ogr.Feature(layerDefinition)
-        feature.SetGeometry(geometry)
-        feature.SetFID(ind)
-        feature.SetField('Transfo',1)
-        # Save feature
-        layer.CreateFeature(feature)
-        # Cleanup
-        feature.Destroy()
-        ind +=1
-    # Initialize raster
-    maskvalue = 1    
-    xres=float(Csize)
-    yres=float(Csize)
-    geotransform=(xmin,xres,0,ymax,0, -yres)         
-    target_ds = gdal.GetDriverByName('MEM').Create('', int(ncols), int(nrows), 1, gdal.GDT_Int32)
-    target_ds.SetGeoTransform(geotransform)
-    if source_srs:
-        # Make the target raster have the same projection as the source
-        target_ds.SetProjection(source_srs.ExportToWkt())
-    else:
-        # Source has no projection (needs GDAL >= 1.7.0 to work)
-        target_ds.SetProjection('LOCAL_CS["arbitrary"]')
-    # Rasterize
-    err = gdal.RasterizeLayer(target_ds, [maskvalue], layer,options=["ATTRIBUTE=Transfo","ALL_TOUCHED=TRUE"])
-    if err != 0:
-        raise Exception("error rasterizing layer: %s" % err)
-    else:
-        target_ds.FlushCache()
-        Array = target_ds.GetRasterBand(1).ReadAsArray()
-    target_ds1.Destroy()
-    source_ds.Destroy()
-    return Array
-
-
-def raster_to_ASCII_int(raster_name,ascii_name):
-    source_ds = gdal.Open(raster_name)
-    content = source_ds.GetRasterBand(1).ReadAsArray()
-    xmin,Csize_x,_,ymax,_,Csize_y = source_ds.GetGeoTransform() 
-    ymin = ymax + Csize_y*source_ds.RasterYSize
-    names = ['ncols','nrows','xllcorner','yllcorner','cellsize','NODATA_value']
-    values = [source_ds.RasterXSize,source_ds.RasterYSize,xmin,ymin,Csize_x,-9999]
-    nodata = source_ds.GetRasterBand(1).GetNoDataValue()
-    content[content==nodata]=-10000
-    head_text=generate_head_text(names,values,Csize_x)
-    save_integer_ascii(ascii_name,head_text,np.int_(content+0.5))
-
-
-def raster_to_ASCII(raster_name,ascii_name):
-    source_ds = gdal.Open(raster_name)
-    content = source_ds.GetRasterBand(1).ReadAsArray()
-    xmin,Csize_x,_,ymax,_,Csize_y = source_ds.GetGeoTransform()   
-    ymin = ymax + Csize_y*source_ds.RasterYSize
-    names = ['ncols','nrows','xllcorner','yllcorner','cellsize','NODATA_value']
-    values = [source_ds.RasterXSize,source_ds.RasterYSize,xmin,ymin,Csize_x,-9999]
-    nodata = source_ds.GetRasterBand(1).GetNoDataValue()
-    content[content==nodata]=-9999    
-    head_text=generate_head_text(names,values,Csize_x)
-    save_float_ascii(ascii_name,head_text,content)
-
-
-def resample_raster(in_file_name,out_file_name,newCsize,methode=gdal.GRA_Bilinear):
-    # Get info from source
-    source_ds = gdal.Open(in_file_name)    
-    if out_file_name.endswith('.gbkg'):
-        driver = ogr.GetDriverByName('GBKG')
-    elif out_file_name.endswith('.shp'):
-        driver = ogr.GetDriverByName('ESRI Shapefile')
-    src_proj = source_ds.GetProjection()
-    src_ncols = source_ds.RasterXSize
-    src_nrows = source_ds.RasterYSize
-    xmin,Csize_x,_,ymax,_,Csize_y = source_ds.GetGeoTransform()
-    xmin,ymax = int(xmin+0.5),int(ymax+0.5)    
-    Bandnb = source_ds.RasterCount    
-    # Create ouptut raster
-    xres=float(newCsize)
-    yres=float(newCsize)
-    xmax,ymin = xmin+int(float(src_ncols)*float(Csize_x)+0.5),ymax+int(float(src_nrows)*float(Csize_y)-0.5)
-    nrows,ncols = int((ymax-ymin)/float(newCsize)+0.5),int((xmax-xmin)/float(newCsize)+0.5) 
-    geotransform=(xmin,xres,0,ymax,0,-yres)    
-    if os.path.exists(out_file_name):driver.Delete(out_file_name)
-    target_ds = driver.Create(out_file_name, int(ncols), int(nrows), Bandnb, gdal.GDT_Float32)    
-    target_ds.SetGeoTransform(geotransform)
-    if src_proj:
-        # Make the target raster have the same projection as the source
-        target_ds.SetProjection(src_proj)
-    else:
-        # Source has no projection (needs GDAL >= 1.7.0 to work)
-        target_ds.SetProjection('LOCAL_CS["arbitrary"]')
-        src_proj = 'LOCAL_CS["arbitrary"]'    
-    gdal.ReprojectImage(source_ds, target_ds, src_proj, src_proj, methode)
-    target_ds.GetRasterBand(1).SetNoDataValue(0)
-    target_ds.GetRasterBand(1).GetStatistics(0,1)
-    target_ds.FlushCache() # Flush 
-
-
 def get_proj_from_road_network(road_network_file):
     source_ds = ogr.Open(road_network_file)
     source_layer = source_ds.GetLayer()    
@@ -1507,44 +1171,6 @@ def ArrayToGtiff(Array,file_name,Extent,nrows,ncols,road_network_proj,nodata_val
     target_ds.GetRasterBand(1).SetNoDataValue(nodata_value)
     target_ds.GetRasterBand(1).GetStatistics(0,1)
     target_ds.FlushCache()
-
-
-def focal_stat(in_file_name,out_file_name,methode='MEAN',nbcell=3):    
-    # Get info of the input raster
-    source_ds = gdal.Open(in_file_name)
-    nodata = source_ds.GetRasterBand(1).GetNoDataValue()
-    driver = source_ds.GetDriver()
-    src_proj = source_ds.GetProjection()
-    nrows,ncols = source_ds.RasterYSize,source_ds.RasterXSize
-    geotransform = source_ds.GetGeoTransform()
-    Bandnb = source_ds.RasterCount   
-    Data = source_ds.GetRasterBand(1).ReadAsArray()  
-    #Make analysis
-    if methode=='MEAN':
-        outData = focal_stat_mean(np.float_(Data),float(nodata),nbcell)
-    elif methode=='MIN':
-        outData = focal_stat_min(np.float_(Data),float(nodata),nbcell)
-    elif methode=='MAX':
-        outData = focal_stat_max(np.float_(Data),float(nodata),nbcell) 
-    elif methode=='NB':
-        outData = focal_stat_nb(np.float_(Data),float(nodata),nbcell)   
-    elif methode=='SUM':
-        outData = focal_stat_sum(np.float_(Data),float(nodata),nbcell)   
-    #Inititialiaze output raster
-    if os.path.exists(out_file_name):driver.Delete(out_file_name)
-    target_ds = driver.Create(out_file_name, int(ncols), int(nrows), Bandnb, gdal.GDT_Float32)    
-    target_ds.SetGeoTransform(geotransform)
-    if src_proj:
-        # Make the target raster have the same projection as the source
-        target_ds.SetProjection(src_proj)
-    else:
-        # Source has no projection (needs GDAL >= 1.7.0 to work)
-        target_ds.SetProjection('LOCAL_CS["arbitrary"]')
-        src_proj = 'LOCAL_CS["arbitrary"]' 
-    target_ds.GetRasterBand(1).WriteArray(outData)
-    target_ds.GetRasterBand(1).SetNoDataValue(nodata)
-    target_ds.GetRasterBand(1).GetStatistics(0,1)
-    target_ds.FlushCache() # Flush
 
 
 ####################################################
@@ -2201,13 +1827,6 @@ def from_az_to_arr(xmin,xmax,ymin,ymax,Csize,Lmax,az):
     return X1,Y1,mask_arr
 
 
-def check_common_line(item,Row_line,Col_line,D_line,nb_pix):
-    i=0
-    while (Row_line[item-1,i]==Row_line[item,i]) and (Col_line[item-1,i]==Col_line[item,i]) and i<nb_pix:
-        i+=1
-    return D_line[item,i-1]
-
-
 def pt_emprise(X0,Y0,X1,Y1,Lhor_max):
     az=azimuth(X0,Y0,X1,Y1)
     #deb + 90
@@ -2400,40 +2019,6 @@ def create_buffer2(Csize,Lmax,Lhor_max):
     return Row_line[:,0:NbpixmaxL],Col_line[:,0:NbpixmaxL],D_line[:,0:NbpixmaxL],Nbpix_line, Row_ext[:,0:Nbpix_ext],Col_ext[:,0:Nbpix_ext],D_ext[:,0:Nbpix_ext],D_lat[:,0:Nbpix_ext],Dir_list
 
 
-def get_ligne(coordX,coordY,posiX,posiY,az,MNT,Forest,Fin_ligne_forcee,Aspect,Pente,Lmax,Lmin,Csize,
-              Row_line,Col_line,D_line,Nbpix_line,angle_transv,slope_trans,ncols,nrows,Lsans_foret):
-    npix = Nbpix_line[az]
-    npix = get_npix(az,npix,coordY,coordX,ncols,nrows,Row_line,Col_line)   
-    if D_line[az,npix-1]>Lmin:  
-        Line=np.zeros((npix,10),dtype=np.float32)
-        inds = (Row_line[az,0:npix]+coordY,Col_line[az,0:npix]+coordX)        
-        Line[:,0],Line[:,1],Line[:,2]=D_line[az,0:npix],MNT[inds],Forest[inds]
-        Line[:,3],Line[:,4]=Csize*Col_line[az,0:npix]+posiX,-Csize*Row_line[az,0:npix]+posiY
-        Line[:,5],Line[:,6]=Col_line[az,0:npix]+coordX,Row_line[az,0:npix]+coordY 
-        Line[:,7],Line[:,8],Line[:,9]=Fin_ligne_forcee[inds],np.abs(((az-np.int_(Aspect[inds]))+180)%360-180),(np.int_(Pente[inds])<slope_trans)*1
-        Line[:,8] = (Line[:,8]>(90+angle_transv))*1+(Line[:,8]<(90-angle_transv))*1
-        test,indmax,Lline=check_line(Line,Lmax,Lmin,nrows,ncols,Lsans_foret)    
-        return test,Lline,Line[0:indmax,0:7]
-    else:
-        return 0,0,0
-
-
-def create_az_rules(angle_transv):
-    matrice = np.zeros((360,360),dtype=np.int8)
-    b1 = 90-angle_transv
-    b2 = 90+angle_transv
-    b3 = 270-angle_transv
-    b4 = 270+angle_transv
-    matrice[0,0:b1]=1
-    matrice[0,b2:b3]=1
-    matrice[0,b4:360]=1
-    for expo in range(1,360,1):
-        matrice[expo,0]=matrice[expo-1,359]
-        for azi in range(1,360,1):
-            matrice[expo,azi]=matrice[expo-1,azi-1]
-    return matrice 
-
-
 def Line_to_shapefile(Tab,Cable_line_Path,source_src,prelevement,language):
     # Get driver
     driver = ogr.GetDriverByName('ESRI Shapefile')
@@ -2581,76 +2166,6 @@ def create_coord_pixel_center_raster(values,nline,ncol,Csize,Dir_temp):
     return Xcoord,Ycoord
 
 
-def create_coord_pixel_center_raster2(values,nline,ncol,Csize):
-    Xcoord = np.zeros((ncol),dtype=np.float32)
-    Ycoord = np.zeros((nline),dtype=np.float32)
-    y= values[3]+Csize*0.5
-    for i in range(nline-1,-1,-1):
-        Ycoord[i] = y
-        y+= Csize
-    x= values[2]+Csize*0.5
-    for j in range(0,ncol,1):
-        Xcoord[j]=x
-        x+= Csize
-    return Xcoord,Ycoord
-    
-
-def prepa_desserte_cable(Desserte_shapefile_name,MNT_file_name,Dir_temp,Pond_pente):
-    ### Get info on the area
-    _,values,_,Extent = raster_get_info(MNT_file_name)
-    Csize,ncols,nrows = values[4],int(values[0]),int(values[1])  
-    ### Get id of pixel of road and distance to public network
-    Desserte_temp = shapefile_to_np_array(Desserte_shapefile_name,Extent,Csize,"CL_SVAC","CL_SVAC",'ASC')
-    # Public network
-    Res_pub = (Desserte_temp==3)*1
-    # Forest road
-    Route = (Desserte_temp==2)*1
-    ID_RF = -9999*np.ones((nrows,ncols),dtype=np.int16)
-    ID_res_pub = -9999*np.ones((nrows,ncols),dtype=np.int16)
-    indice_forest_road = 0
-    indice_public_road = 0
-    pixels = np.argwhere(Desserte_temp>1)
-    for pixel in pixels:
-        if Res_pub[pixel[0],pixel[1]]==1:
-            ID_res_pub[pixel[0],pixel[1]] = indice_public_road
-            indice_public_road +=1
-        elif Route[pixel[0],pixel[1]]==1:
-            ID_RF[pixel[0],pixel[1]] = indice_forest_road
-            indice_forest_road +=1
-    np.save(Dir_temp+"ID_RF.npy",ID_RF)  
-    np.save(Dir_temp+"ID_res_pub.npy",ID_res_pub)
-    Dtransp_route, Lien_RF_respub = calcul_distance_de_cout(ID_res_pub,Pond_pente,Route,Csize) 
-    ### Get only forest roads
-    Dir_temp2 = Dir_temp+"Temp/"
-    try:os.mkdir(Dir_temp2)
-    except:pass 
-    Route_shp = Dir_temp2 + "Road.shp"
-    select_in_shapefile(Desserte_shapefile_name,Route_shp,'WHERE CL_SVAC=2')
-    ### Calculate azimuth and identify lines extremities
-    Points_shp = Dir_temp2 + "Road_points.shp"    
-    geoLocations,projection = linestring_to_point(Route_shp,Points_shp)
-    # lines extremities
-    Fin_ligne = np.int8(shapefile_to_np_array(Points_shp,Extent,Csize,'FIN_LIGNE','FIN_LIGNE','DESC'))
-    # Azimuth 
-    Az_route_shp = Dir_temp2 + "Az_Route.shp"
-    points_to_lineshape(geoLocations,Az_route_shp,projection)
-    Az_route = shapefile_to_np_array(Az_route_shp,Extent,Csize,'DIRECTION','DIRECTION','DESC')
-    ID_routefor = np.unique(ID_RF)[1:]
-    Link_RF_Res_pub = np.zeros((ID_routefor.shape[0],7),dtype=np.int16)    
-    for ind in ID_routefor:
-        Temp = np.argwhere(ID_RF==ind)
-        Link_RF_Res_pub[ind,0]=ind
-        Link_RF_Res_pub[ind,1]=Temp[0,0]
-        Link_RF_Res_pub[ind,2]=Temp[0,1]
-        Link_RF_Res_pub[ind,3]=Dtransp_route[Temp[0,0],Temp[0,1]]
-        Link_RF_Res_pub[ind,4]=Lien_RF_respub[Temp[0,0],Temp[0,1]]  
-        Link_RF_Res_pub[ind,5]=Fin_ligne[Temp[0,0],Temp[0,1]]  
-        Link_RF_Res_pub[ind,6]=Az_route[Temp[0,0],Temp[0,1]]
-    shutil.rmtree(Dir_temp2)
-    np.save(Dir_temp+"Link_RF_Res_pub",Link_RF_Res_pub)
-    return Link_RF_Res_pub
-
-
 # Create raster of obstacles from directory containing shapefiles 
 def prepa_obstacle_cable(Obstacles_directory,file_MNT,Dir_temp):
     ### Creation d'un repertoire temporaire       
@@ -2673,144 +2188,6 @@ def prepa_obstacle_cable(Obstacles_directory,file_MNT,Dir_temp):
     np.save(Dir_temp+'Obstacles_cables.npy',np.int8(Obstacles_cable))
     gc.collect()  
     return Pente
-
-
-def prepa_pond_pente_cable(MNT,Csize,Direct,head_text):
-    Pente = pente(MNT,Csize,-9999)
-    Pond_pente = np.sqrt((Pente*0.01*Csize)**2+Csize**2)/float(Csize)
-    Pond_pente[Pente==-9999] = 10000
-    save_float_ascii(Direct+'/pond_pente.asc',head_text,Pond_pente)
-    return Pond_pente
-    
-
-# Create a pair matrix
-def create_pair_matrice(matrice):
-    indices = np.indices(matrice.shape)
-    pair_l = np.fmod(indices[0],2)
-    pair_c = np.fmod(indices[1],2)
-    pair = pair_c + pair_l
-    pair = np.equal(pair,1)
-    return pair
-
-
-# Make buffer around a pixel
-def buffer_emprise(Csize,ct_Lhor_max):
-    temp = int(ct_Lhor_max/Csize)
-    Ligne_perpendic = np.zeros((360*(1+2*temp),(1+2*temp)),dtype=np.uint8)
-    Ind_mask = np.indices(((1+2*temp),(1+2*temp)),dtype=np.int16)
-    center_inv = np.ones(((1+2*temp),(1+2*temp)),dtype=np.int16)
-    center_inv[temp,temp]=0
-    center = np.equal(center_inv,0)*1
-    DX = Ind_mask[1]- temp
-    DY = temp - Ind_mask[0]
-    Dhor_ok = np.less_equal(Csize*np.sqrt(DX**2+DY**2),ct_Lhor_max)
-    dmax1,dmin1,dmax2,dmin2 = direction_to_center(DX,DY,Csize,center_inv,center)
-    z3_2 = np.less_equal((dmax2-dmin2),120)*1
-    z3_1 = np.less_equal((dmax1-dmin1),120)*1
-    Direction_list = range(0,360,1)
-    for item in Direction_list:
-        Dir_value = item+90
-        if Dir_value > 359:Dir_value = item-90
-        Mask1 = get_dir_area(Dir_value,dmax1,dmin1,dmax2,dmin2,center,z3_2,z3_1)
-        Dir_value1 = Dir_value+180
-        if Dir_value1 > 359:Dir_value1 = Dir_value-180
-        Mask2 = get_dir_area(Dir_value1,dmax1,dmin1,dmax2,dmin2,center,z3_2,z3_1)
-        Mask = np.greater((Mask1+Mask2),0)*Dhor_ok*1
-        h = item*(1+2*temp)
-        b = h+(1+2*temp)
-        r = (1+2*temp)
-        Ligne_perpendic[h:b,0:r]=Mask
-    return Ligne_perpendic
-
-
-def direction_to_center(DX,DY,Csize,center_inv,center):
-    corner=[[0.5,0.5],[0.5,-0.5],[-0.5,0.5],[-0.5,0.5]]
-    dmax1 = -400*np.ones_like(DX, dtype = np.int16)
-    dmax2 = -400*np.ones_like(DX, dtype = np.int16)
-    dmin1 = 400*np.ones_like(DX, dtype = np.int16)
-    dmin2 = 400*np.ones_like(DX, dtype = np.int16)
-    ind_center = np.nonzero(center==1)
-    for item in corner:
-        X = DX*Csize+item[1]*Csize
-        Y = DY*Csize+item[0]*Csize
-        D = np.sqrt(X**2+Y**2)
-        Temp = np.equal(X,np.abs(X))*1
-        Fact = Temp - np.less(Temp, 1)*1        
-        D[ind_center] = Csize
-        Angle = np.degrees(np.arccos(Y/D))
-        Angle[ind_center]=0
-        Temp = Angle*Fact
-        del (X,Y,D,Fact,Angle)
-        direction = 360*np.less(Temp, 0)+np.less(Temp, 0)*Temp+np.greater_equal(Temp, 0)*Temp
-        dmax1=np.maximum(direction,dmax1)
-        dmin1=np.minimum(direction,dmin1)
-        dmax2=np.maximum(Temp,dmax2)
-        dmin2=np.minimum(Temp,dmin2)
-        del (Temp,direction)
-    dmax1=np.float_(dmax1*center_inv+np.equal(center_inv,0)*9999)
-    dmax2=np.float_(dmax2*center_inv+np.equal(center_inv,0)*9999)
-    dmin1=np.float_(dmin1*center_inv+np.equal(center_inv,0)*9999)
-    dmin2=np.float_(dmin2*center_inv+np.equal(center_inv,0)*9999)
-    return dmax1,dmin1,dmax2,dmin2
-
-
-#Get area corresponding to an azimuth
-def get_dir_area(dir_value,dmax1,dmin1,dmax2,dmin2,center,z3_2,z3_1):
-    if dir_value < 90:
-        z1 = np.greater_equal(dir_value,dmin2)
-        z2 = np.less_equal(dir_value,dmax2)
-        zone = np.equal((z1*1+z2*1+z3_2*1),3)*1+center
-    elif dir_value > 270:
-        new_value = dir_value-360
-        z1 = np.greater_equal(new_value,dmin2)
-        z2 = np.less_equal(new_value,dmax2)
-        zone = np.equal((z1*1+z2*1+z3_2*1),3)*1+center
-    else:
-        z1 = np.greater_equal(dir_value,dmin1)
-        z2 = np.less_equal(dir_value,dmax1)
-        zone = np.equal((z1*1+z2*1+z3_1*1),3)*1+center
-    return zone
-
-
-# Create useful buffers
-def mask_buffers(test_coordY,test_coordX,ind_buffer_center,Buffer_cote,ncol,nline):
-    if test_coordX < ind_buffer_center[1][0]: mask_l,buf_l = 0,ind_buffer_center[1][0] - test_coordX
-    else: mask_l,buf_l = test_coordX - Buffer_cote,0
-    if test_coordX + Buffer_cote + 1 > ncol: mask_r,buf_r = ncol,ncol-test_coordX+ind_buffer_center[1][0]
-    else: mask_r,buf_r = test_coordX + Buffer_cote + 1,ind_buffer_center[1][0] + Buffer_cote + 1
-    if test_coordY < ind_buffer_center[0][0]: mask_h,buf_h = 0,ind_buffer_center[0][0] - test_coordY
-    else: mask_h,buf_h = test_coordY - Buffer_cote,0
-    if test_coordY + Buffer_cote + 1 > nline: mask_b,buf_b = nline,nline - test_coordY + ind_buffer_center[0][0]
-    else: mask_b,buf_b = test_coordY+Buffer_cote+1,ind_buffer_center[0][0]+Buffer_cote+1
-    return mask_h,mask_b,mask_l,mask_r,buf_h,buf_b,buf_l,buf_r
-
-
-def directions_a_tester(Dir_route,Dir_list,angle_sup,id_fin_ligne):
-    # Pixel tout seul
-    Dir_list_bis = list(Dir_list)
-    # Pixel de route en fin de troncon
-    if id_fin_ligne==1:
-        D_plus_a = (Dir_route+angle_sup)%360
-        D_moins_a = (Dir_route-angle_sup)%360
-        if D_moins_a > D_plus_a:valeur_a_suppr = range(D_moins_a,360,1)+range(0,D_plus_a+1,1)
-        else:valeur_a_suppr = range(D_moins_a,D_plus_a+1,1)
-        for item in valeur_a_suppr:
-            try:Dir_list_bis.remove(item)
-            except:continue
-    # Pixel de route au milieu d'un troncon
-    else:
-        D_plus_a = (Dir_route+angle_sup)%360
-        D_moins_a = (Dir_route-angle_sup)%360
-        if D_moins_a > D_plus_a:valeur_a_suppr = range(D_moins_a,360,1)+range(0,D_plus_a+1,1)
-        else:valeur_a_suppr = range(D_moins_a,D_plus_a+1,1)
-        D_plus_180_moins_a = (Dir_route+180-angle_sup)%360
-        D_plus_180_plus_a = (Dir_route+180+angle_sup)%360
-        if D_plus_180_plus_a < D_plus_180_moins_a: valeur_a_suppr = valeur_a_suppr + range(D_plus_180_moins_a,360,1)+range(0,D_plus_180_plus_a+1,1)
-        else:valeur_a_suppr = valeur_a_suppr + range(D_plus_180_moins_a,D_plus_180_plus_a+1,1)
-        for item in valeur_a_suppr:
-            try:Dir_list_bis.remove(item)
-            except:continue    
-    return Dir_list_bis
 
 
 def get_cable_configs(slope_Wliner_up,slope_Wliner_down,slope_grav,Skid_direction):
@@ -5313,53 +4690,6 @@ def double_min(a, b):
     return a if a <= b else b
 
 
-def max_array(a):
-    
-    max_a = a[0]
-    for item in range(1, a.shape[0]):
-        if a[item] > max_a:
-            max_a = a[item]
-    return max_a
-
-
-def max_array_f(a):
-    max_a = a[0]
-    for item in range(1, a.shape[0]):
-        if a[item] > max_a:
-            max_a = a[item]
-    return max_a
-
-
-def sum_array_f(a):
-    summ = a[0]
-    for item in range(1, a.shape[0]):
-        summ += a[item]
-    return summ
-
-
-def copy_int8_array(arraystock, arraytocopy, nline, ncol):
-    for i in range(nline):
-        for j in range(ncol):
-            arraystock[i, j] = arraytocopy[i, j]
-    return arraystock
-
-
-def int8_array_sum(matrice):
-    somme = 0
-    for y in range(matrice.shape[0]):
-        for x in range(matrice.shape[1]):
-            somme += matrice[y, x]
-    return somme
-
-
-def int_array_sum(matrice):
-    somme = 0
-    for y in range(matrice.shape[0]):
-        for x in range(matrice.shape[1]):
-            somme += matrice[y, x]
-    return somme
-
-
 def pente(raster_mnt, Csize, nodata):
     nline, ncol = raster_mnt.shape
     pente = np.zeros_like(raster_mnt, dtype=np.float32)
@@ -5805,116 +5135,6 @@ def calcul_distance_de_cout(from_rast, cost_rast, zone_rast, Csize, Max_distance
     return Out_distance, Out_alloc
 
 
-def calcul_distance_de_cout_2_alloc(from_rast1, from_rast2, cost_rast, zone_rast, Csize, Max_distance=100000):
-    nline, ncol = from_rast1.shape
-    diag = 1.414214 * Csize
-    direct = Csize
-    h, b, l, r = mask_zone(from_rast1)
-    
-    # Création des rasters de sortie
-    Out_distance = np.ones_like(from_rast1, dtype=np.int16) * (Max_distance + 1)
-    Out_alloc1 = np.ones_like(from_rast1, dtype=np.int16) * -9999
-    Out_alloc2 = np.ones_like(from_rast1, dtype=np.int16) * -9999
-    
-    x1, y1 = l, h
-    for y1 in range(h, b):
-        for x1 in range(l, r):
-            if from_rast1[y1, x1] > 0:
-                Out_distance[y1, x1] = 0
-                Out_alloc1[y1, x1] = from_rast1[y1, x1]
-                Out_alloc2[y1, x1] = from_rast2[y1, x1]
-                for y in range(max(0, y1-1), min(nline, y1+2)):
-                    for x in range(max(0, x1-1), min(ncol, x1+2)):                        
-                        if zone_rast[y, x] == 1:
-                            if y != y1 and x != x1:
-                                Dist = cost_rast[y, x] * diag
-                            else:
-                                Dist = cost_rast[y, x] * direct
-                            if Out_distance[y, x] > Dist:
-                                Out_distance[y, x] = int(Dist + 0.5)
-                                Out_alloc1[y, x] = from_rast1[y1, x1]
-                                Out_alloc2[y, x] = from_rast2[y1, x1]
-    
-    # Traitement complet
-    h, b, l, r = mask_zone(zone_rast)
-    dist_ac = Csize
-    count_sans_match = 0
-    
-    while dist_ac <= Max_distance and count_sans_match < 15 * Csize:
-        test = 0
-        y1, x1 = h, l
-        for y1 in range(h, b):
-            for x1 in range(l, r):
-                if Out_distance[y1, x1] == dist_ac:
-                    test = 1   
-                    for y in range(max(0, y1-1), min(nline, y1+2)):
-                        for x in range(max(0, x1-1), min(ncol, x1+2)):
-                            if zone_rast[y, x] == 1:
-                                if y != y1 and x != x1:
-                                    Dist = cost_rast[y, x] * diag + dist_ac
-                                else:
-                                    Dist = cost_rast[y, x] * direct + dist_ac
-                                if Out_distance[y, x] > Dist:
-                                    Out_distance[y, x] = int(Dist + 0.5)
-                                    Out_alloc1[y, x] = Out_alloc1[y1, x1]
-                                    Out_alloc2[y, x] = Out_alloc2[y1, x1]
-        if test == 1:
-            count_sans_match = 0
-        else:
-            count_sans_match += 1
-        dist_ac += 1
-    
-    for y in range(nline):
-        for x in range(ncol):
-            if Out_distance[y, x] > Max_distance:
-                Out_distance[y, x] = -9999
-                Out_alloc1[y, x] = -9999
-                Out_alloc2[y, x] = -9999
-    
-    return Out_distance, Out_alloc1, Out_alloc2
-
-
-def focal_stat_mean(raster, nodata, cote):
-    nline, ncol = raster.shape
-    mean = np.ones_like(raster, dtype=np.float32) * nodata
-    
-    for y1 in range(nline):
-        for x1 in range(ncol):
-            if raster[y1, x1] != nodata:
-                nb, somme, y, x = 0.0, 0.0, max(0, y1 - cote), max(0, x1 - cote)
-                
-                # Grille sans les bordures
-                for y in range(max(0, y1 - cote), min(nline, y1 + cote + 1)):
-                    for x in range(max(0, x1 - cote), min(ncol, x1 + cote + 1)):
-                        if raster[y, x] != nodata:
-                            somme += raster[y, x]
-                            nb += 1.0
-                
-                mean[y1, x1] = somme / nb if nb != 0 else nodata
-    
-    return mean
-
-
-def focal_stat_sum(raster, nodata, cote):
-    nline, ncol = raster.shape
-    rsomme = np.ones_like(raster, dtype=np.float32) * nodata
-    
-    for y1 in range(nline):
-        for x1 in range(ncol):
-            if raster[y1, x1] != nodata:
-                somme, y, x = 0.0, max(0, y1 - cote), max(0, x1 - cote)
-                
-                # Grille sans les bordures
-                for y in range(max(0, y1 - cote), min(nline, y1 + cote + 1)):
-                    for x in range(max(0, x1 - cote), min(ncol, x1 + cote + 1)):
-                        if raster[y, x] != nodata:
-                            somme += raster[y, x]
-                
-                rsomme[y1, x1] = somme
-    
-    return rsomme
-
-
 def focal_stat_nb(raster, nodata, cote):
     nline, ncol = raster.shape
     rnb = np.ones_like(raster, dtype=np.float32) * nodata
@@ -5933,27 +5153,6 @@ def focal_stat_nb(raster, nodata, cote):
                 rnb[y1, x1] = nb
     
     return rnb
-
-
-def focal_stat_min(raster, nodata, cote):
-    nline, ncol = raster.shape
-    rmin = np.ones_like(raster, dtype=np.float32) * nodata
-    max_value = np.max(raster[raster != nodata])
-    
-    for y1 in range(nline):
-        for x1 in range(ncol):
-            if raster[y1, x1] != nodata:
-                local_min, y, x = max_value, max(0, y1 - cote), max(0, x1 - cote)
-                
-                # Grille sans les bordures
-                for y in range(max(0, y1 - cote), min(nline, y1 + cote + 1)):
-                    for x in range(max(0, x1 - cote), min(ncol, x1 + cote + 1)):
-                        if raster[y, x] != nodata:
-                            local_min = min(local_min, raster[y, x])
-                
-                rmin[y1, x1] = local_min
-    
-    return rmin
 
 
 def focal_stat_max(raster, nodata, cote):
@@ -5977,28 +5176,6 @@ def focal_stat_max(raster, nodata, cote):
     return rmax
 
 
-def get_zone(direction, Matrice, Buffer_cote):
-    h3 = direction * (Buffer_cote + 1)
-    b3 = h3 + Buffer_cote + 1
-    return Matrice[h3:b3, :]
-
-
-def get_cadran(direction, Buffer_cote):
-    if direction <= 90:
-        h = 0
-        l = Buffer_cote
-    elif direction <= 180:
-        h = Buffer_cote
-        l = Buffer_cote
-    elif direction <= 270:
-        h = Buffer_cote
-        l = 0
-    else:
-        h = 0
-        l = 0
-    return h, h + Buffer_cote + 1, l, l + Buffer_cote + 1
-
-
 def get_npix(az, npix, coordY, coordX, ncols, nrows, Row_line, Col_line):
     for i in range(npix):
         x = Col_line[az, i] + coordX
@@ -6008,62 +5185,6 @@ def get_npix(az, npix, coordY, coordX, ncols, nrows, Row_line, Col_line):
         if y < 0 or y >= nrows:
             break
     return i
-
-
-def Check_line1(Line, Lmax, Lmin, nrows, ncols, Lsans_foret, Lslope, PropSlope):
-    indmax = 0
-    indmax2 = 0
-    npix = Line.shape[0]
-    test = 1
-    Dsansforet = 0.0
-    Dcum = 0.0
-    
-    for i in range(npix):
-        if Line[i, 5] < 0:
-            break
-        if Line[i, 5] >= ncols:
-            break
-        if Line[i, 6] < 0:
-            break
-        if Line[i, 6] >= nrows:
-            break
-        if Line[i, 7] == 1:
-            break
-        if np.sqrt(Line[i, 0] * Line[i, 0] + (Line[i, 1] - Line[0, 1]) * (Line[i, 1] - Line[0, 1])) > Lmax:
-            break
-
-        # Devers
-        if i > 0:
-            if Line[i, 8] + Line[i, 9] == 0:
-                Dcum += Line[i, 0] - Line[i - 1, 0]
-            if Dcum > Lslope:
-                break
-            if Dcum / Line[i, 0] < PropSlope:
-                indmax2 = i
-                Line[i, 9] = 1
-            else:
-                Line[i, 9] = 0
-        else:
-            Line[i, 9] = 1
-        Line[i, 8] = Dcum
-
-        # Longueur sans foret
-        if Line[i, 2] == 1:
-            indmax = i
-            Dsansforet = 0
-        else:
-            if i > 0:
-                Dsansforet += Line[i, 0] - Line[i - 1, 0]
-            if Dsansforet >= Lsans_foret:
-                break
-
-    indmax = min(indmax, indmax2)
-    Lline = Line[indmax, 0]
-
-    if Lline <= Lmin:
-        test = 0
-
-    return test, indmax + 1, Lline
 
 
 def get_line_carac_simple(coordX, coordY, az, Csize, ncols, nrows, Lline, Row_ext, Col_ext, D_ext, Forest, Rast_couv):
@@ -6212,10 +5333,6 @@ def Check_line3(coordX, coordY, az, ncols, nrows, Lline, Row_ext, Col_ext, D_ext
         Rast_couv = Rast_couv_bis
 
     return test, Rast_couv
-
-
-def Fcariage(Lo, F, q2, q3, s1, Dsupdep=0.0, Dsupend=0.0):
-    return (0.5 * ((s1 + Dsupdep) * q2 + ((Lo - s1) + Dsupend) * q3)) * g + F
 
 
 def df_dTh(Th, Tv, F, W, s1, Lo, EAo, rac1, rac2, rac3, rac4):
@@ -6475,89 +5592,6 @@ def Tabmesh(d, E, Tmax, Lmax, Fo, q1, q2, q3, Csize):
     return rastLosup, rastTh, rastTv
 
 
-def frottement(Tension, coeff_frot, tan_avant, tan_apres):
-    alpha = math.atan(tan_avant)
-    beta = math.atan(tan_apres)
-    gama = (beta + alpha) * 0.5
-    num = math.tan(coeff_frot) * math.sin(gama - beta) + math.cos(beta - gama)
-    denum = math.tan(coeff_frot) * math.sin(gama - alpha) + math.cos(alpha - gama)
-    return Tension * num / denum
-
-
-def frottement_inv(Tension, coeff_frot, tan_avant, tan_apres):
-    alpha = math.atan(tan_avant)
-    beta = math.atan(tan_apres)
-    gama = (beta + alpha) * 0.5
-    num = math.tan(coeff_frot) * math.sin(gama - beta) + math.cos(beta - gama)
-    denum = math.tan(coeff_frot) * math.sin(gama - alpha) + math.cos(alpha - gama)
-    return Tension * denum / num
-
-
-def mainline(F, tan_mainline, tan_avant, tan_apres, sens=1):
-    alpha = math.atan(abs(tan_avant))
-    beta = math.atan(abs(tan_apres))
-    lambdas = math.atan(abs(tan_mainline))
-    
-    Tchar = F * math.cos(lambdas) / (math.sin(alpha - lambdas) + math.sin(lambdas + sens * beta))
-    
-    return abs(Tchar)
-
-
-def mainline2(F, tan_mainline, tan_avant, tan_apres, sens=1):
-    alpha = math.atan(abs(tan_avant))
-    beta = math.atan(abs(tan_apres))
-    lambdas = math.atan(abs(tan_mainline))
-    
-    Tmain = F * (math.cos(beta) - math.cos(alpha)) / math.sin(alpha + sens * beta)
-    Tchar = F * math.cos(lambdas) / (math.sin(alpha - lambdas) + math.sin(lambdas + sens * beta))
-    
-    return abs(Tchar), abs(Tmain)
-
-
-def frottement_av(Tension, coeff_frot, tan_haut, tan_bas):
-    a = math.atan(tan_haut)
-    T = Tension
-    b = math.atan(tan_bas)
-    
-    if b > a and coeff_frot != 0:
-        g = (a + b) * 0.5
-        tanphi = math.tan(coeff_frot)
-        num = tanphi * math.sin(g) * math.cos(b) + math.cos(g) * math.cos(b) - math.sin(b) * tanphi * math.cos(g) + math.sin(b) * math.sin(g)
-        denum = -tanphi * math.cos(g) * math.sin(a) + math.sin(g) * math.sin(a) + math.cos(a) * tanphi * math.sin(g) + math.cos(a) * math.cos(g)
-        T = Tension * num / denum
-    
-    return T
-
-
-def frottement_ap(Tension, coeff_frot, tan_haut, tan_bas, charge_posi):
-    if coeff_frot == 0:
-        T = Tension
-    else:
-        a = math.atan(tan_bas)
-        b = math.atan(tan_haut)
-        if charge_posi >= 0:
-            if a < b:
-                T = Tension
-            else:
-                g = (a + b) * 0.5
-                tanphi = math.tan(coeff_frot)
-                num = tanphi * math.sin(b - g) + math.cos(b - g)
-                denum = tanphi * math.sin(a - g) + math.cos(a - g)
-                T = Tension * num / denum
-        else:
-            g = (a + b) * 0.5
-            tanphi = math.tan(coeff_frot)
-            if a < b:
-                num = tanphi * math.sin(g - b) + math.cos(b - g)
-                denum = tanphi * math.sin(a + g) + math.cos(a + g)
-                T = Tension * num / denum
-            else:
-                num = tanphi * math.sin(g - b) - math.cos(b + g)
-                denum = tanphi * math.sin(a - g) + math.cos(a - g)
-                T = Tension * num / denum
-    return T
-
-
 def check_droite(fact, H, D, Xup, Zup, Line, Hline_min, Hline_max, Tmax, q1, q2, q3, Fo, pg, pd, Dsupdep=0., Dsupend=0.):
     test = 1
     L = np.sqrt(H**2 + D**2)
@@ -6574,23 +5608,6 @@ def check_droite(fact, H, D, Xup, Zup, Line, Hline_min, Hline_max, Tmax, q1, q2,
             break
     
     return test
-
-
-def H_mid(Lo, F, Th, Tv, Xup, Zup, fact, Alts, Hline_min, q1, EAo):
-    W = q1 * 9.80665 * Lo
-    s1 = Lo * 0.5
-    xcoord = Xup + fact * calcul_xs(Th, Tv, Lo, EAo, W, F, s1, s1)
-    zcoord = Zup - calcul_zs(Th, Tv, Lo, EAo, W, F, s1, s1)
-    ind = int(xcoord * 2)
-    return zcoord - (Alts[ind] + Hline_min)
-
-
-def slope_H_mid(Lo, F, Th, Tv, Xup, Zup, fact, q1, EAo):
-    W = q1 * 9.80665 * Lo
-    s1 = Lo * 0.5
-    xcoord = Xup + fact * calcul_xs(Th, Tv, Lo, EAo, W, F, s1, s1)
-    zcoord = Zup - calcul_zs(Th, Tv, Lo, EAo, W, F, s1, s1)
-    return np.arctan((Zup - zcoord) / abs(Xup - xcoord))
 
 
 def check_Hlinemin(Alts, H, D, Lo, fact, Tho, Tvo, Xup, Zup, Fo, Tmax, Hline_min, Hline_max, q1, q2, q3, Csize, EAo, Dsupdep=0., Dsupend=0.):
@@ -8139,104 +7156,6 @@ def OptPyl_Down_NoH(Line, Alts, Span, Htower, Hintsup, Hend, q1, q2, q3, Fo, Hli
         Spanbis[:, 4] *= -1
 
     return Spanbis
-
-
-def mask_3(matrice, nbpixel_bis):
-    nline = matrice.shape[0]
-    ncol = matrice.shape[1]
-    top = nline
-    bottom = 0
-    left = ncol
-    right = 0
-
-    for y in range(nline):
-        for x in range(ncol):
-            if matrice[y, x] == 1:
-                if y < top:
-                    top = y
-                if y > bottom:
-                    bottom = y
-                if x < left:
-                    left = x
-                if x > right:
-                    right = x
-
-    top = max(0, top - nbpixel_bis)
-    bottom = min(nline, bottom + 1 + nbpixel_bis)
-    left = max(0, left - nbpixel_bis)
-    right = min(ncol, right + 1 + nbpixel_bis)
-
-    return top, bottom, left, right
-
-
-def Line_emprise(zone, direction, Buffer_cote, Ligne_perpendic):
-    zone_ok = zone.copy()
-    h3 = direction * (1 + 2 * Buffer_cote)
-    b3 = h3 + (1 + 2 * Buffer_cote)
-    Mask = Ligne_perpendic[h3:b3] * 1
-    nline, ncol = zone.shape
-
-    for L in range(nline):
-        for C in range(ncol):
-            if zone[L, C] == 1:
-                h = max(0, L - Buffer_cote)
-                buf_h = 0
-
-                if h == 0:
-                    buf_h = Buffer_cote - L
-
-                b = min(nline, L + 1 + Buffer_cote)
-                l = max(0, C - Buffer_cote)
-                buf_l = 0
-
-                if l == 0:
-                    buf_l = Buffer_cote - C
-
-                r = min(ncol, C + 1 + Buffer_cote)
-                y = h
-                x = l
-                y1 = buf_h
-
-                for y in range(h, b):
-                    x1 = buf_l
-
-                    for x in range(l, r):
-                        zone_ok[y, x] = min((zone_ok[y, x] + Mask[y1, x1]), 1)
-                        x1 += 1
-
-                    y1 += 1
-
-    return zone_ok
-
-
-def concatenate_int(zone, h, b, l, r, Mask):
-    y1 = 0
-
-    for y in range(h, b):
-        x1 = 0
-
-        for x in range(l, r):
-            zone[y, x] = zone[y, x] + Mask[y1, x1]
-            x1 += 1
-
-        y1 += 1
-
-    return zone
-
-
-def concatenate_float(zone, h, b, l, r, Mask):
-    y1 = 0
-
-    for y in range(h, b):
-        x1 = 0
-
-        for x in range(l, r):
-            zone[y, x] = zone[y, x] + Mask[y1, x1]
-            x1 += 1
-
-        y1 += 1
-
-    return zone
 
 
 def skid_debusq_RF(Lien_RF, MNT, Row_line, Col_line, D_line, Nbpix_line,
