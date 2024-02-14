@@ -678,6 +678,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         _prelevement = self.spinBox_48.value()
         _recalculer = self.checkBox_6.isChecked()
         _Rspace_c = getattr(self, f"lineEdit_17").text()
+        _Rspace_c += "/"
         _foret_c = getattr(self, f"lineEdit_14").text()
         _VBP_c = getattr(self, f"lineEdit_15").text()
         _VAM_c = getattr(self, f"lineEdit_16").text()
@@ -826,24 +827,11 @@ def console_info(message):
 def heures(Hdebut):
     Hfin = datetime.datetime.now()
     duree = Hfin - Hdebut
-    ts = duree.seconds
-    nb_days = int(ts/3600./24.)
-    ts -= nb_days*3600*24
-    nb_hours = int(ts/3600)
-    ts -= nb_hours*3600
-    nb_minutes = int(ts/60)
-    if nb_days>0: 
-        str_duree = str(nb_days)+'d '+str(nb_hours)+'h '+str(nb_minutes)+'min '+str(ts)+'s'
-    elif nb_hours >0:
-        str_duree = str(nb_hours)+'h '+str(nb_minutes)+'min '+str(ts)+'s'
-    elif nb_minutes>0:
-        str_duree = str(nb_minutes)+'min '+str(ts)+'s'
-    else:
-        str_duree = str(ts)+'s'        
-    str_debut = str(Hdebut.day)+'/'+str(Hdebut.month)+'/'+str(Hdebut.year)+' '+str(Hdebut.hour)+':'+str(Hdebut.minute)+':'+str(Hdebut.second)
-    str_fin = str(Hfin.day)+'/'+str(Hfin.month)+'/'+str(Hfin.year)+' '+str(Hfin.hour)+':'+str(Hfin.minute)+':'+str(Hfin.second)
+    str_duree = str(duree)
+    str_debut = Hdebut.strftime('%d/%m/%Y %H:%M:%S')
+    str_fin = Hfin.strftime('%d/%m/%Y %H:%M:%S')
 
-    return str_duree,str_fin,str_debut
+    return str_duree, str_fin, str_debut
 
 
 def save_integer_ascii(file_name,head_text,data):
@@ -884,30 +872,127 @@ def raster_get_info(in_file_name):
 
 
 def write_file():
-    Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP = Sylvaccess_UI.get_spatial_cls()
-    ski,por,cab,opti,pente = Sylvaccess_UI.get_general_cls()
-    pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,pente_amont_max,pente_aval_max,limite,bornes = Sylvaccess_UI.get_skidder_cls()
-    pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2=Sylvaccess_UI.get_Forwarder_cls()
-    type_machine,supports_inter,hauteur,longueure_max,longueure_min=Sylvaccess_UI.get_type_cable_cls()
-    type_chariot,masse,pente_min,pente_max_amont,pente_max_aval = Sylvaccess_UI.get_type_chariot_cls()
-    diamètre,masse_li,tension_rupt,elasticité = Sylvaccess_UI.get_proprietes_cable()
-    hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,masse_max,securite = Sylvaccess_UI.get_param_modelisation()
-    opti2,precision = Sylvaccess_UI.get_options()
-    prelevement,recalculer,Rspace2,foret2,VBP2,VAM2,pechage2 = Sylvaccess_UI.get_opti_cable()
-    surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids= Sylvaccess_UI.get_crit_opti()
-    var_list= [Wspace,Rspace,mnt,foret,desserte,dep_cable,ski_no_t_d, ski_no_t,por_obstacle,cab_obstacle,HA,VAM,VBP,ski,por,cab,opti,pente,pente_max,distance_max_amont,distance_max_aval,distance_max_hors_frt_dsrt,
-               pente_amont_max,pente_aval_max,limite,bornes,pente_max2,pente_max_remonant,pente_max_descendant,distance_max_pente_sup,distance_max_hors_frt,taille_grue,bornes2,type_machine,supports_inter,hauteur,
-               longueure_max,longueure_min,type_chariot,masse,pente_min,pente_max_amont,pente_max_aval,diamètre,masse_li,tension_rupt,elasticité,hauteur_sup,hauteur_mat,hauteur_min_cable,hauteur_max_cable,pechage,
-               masse_max,securite,opti2,precision,prelevement,recalculer,Rspace2,foret2,VBP2,VAM2,pechage2,surface,surface_poids,nbr_sup_int,nbr_sup_int_poids,sens_debardage,sens_debardage_poids,longueure_ligne,
-               longueure_ligne_poids,vol_ligne,vol_ligne_poids,indice_prelev,indice_prelev_poids,VAM3,VAM_poids,dist_chariot,dist_chariot_poids]
-    file_name = Rspace2+"all_param.txt"
-    text=var_list[0]
-    for var in var_list[1:]:
-        text+="\n"
-        text+= str(var)
-    fichier = open(file_name, "w")
-    fichier.write(text)
-    fichier.close()
+    # Récupération des valeurs des variables
+    Wspace, Rspace, mnt, foret, desserte, dep_cable, ski_no_t_d, ski_no_t, por_obstacle, cab_obstacle, HA, VAM, VBP = Sylvaccess_UI.get_spatial_cls()
+    spatial_data = [Wspace, Rspace, mnt, foret, desserte, dep_cable, ski_no_t_d, ski_no_t, por_obstacle, cab_obstacle, HA, VAM, VBP]
+
+    ski, por, cab, opti, pente = Sylvaccess_UI.get_general_cls()
+    pente = str(pente) + " %"
+    general_data = [ski, por, cab, opti, pente]
+
+    pente_max, distance_max_amont, distance_max_aval, distance_max_hors_frt_dsrt, pente_amont_max, pente_aval_max, limite, bornes = Sylvaccess_UI.get_skidder_cls()
+    if limite == 1:
+        limite = "1-Limit soil damages: force the skidder to proceed from the forest road network"
+    else:
+        limite = "2-Limit winching operations: force the skidder to get as close as possible from logs"
+    skidder_data = [pente_max, distance_max_amont, distance_max_aval, distance_max_hors_frt_dsrt, pente_amont_max, pente_aval_max, limite, bornes]
+    for i in (0, 4, 5):
+        skidder_data[i] = str(skidder_data[i]) + " %"
+    for i in (1, 2, 3):
+        skidder_data[i] = str(skidder_data[i]) + " m"
+
+    pente_max2, pente_max_remonant, pente_max_descendant, distance_max_pente_sup, distance_max_hors_frt, taille_grue, bornes2 = Sylvaccess_UI.get_Forwarder_cls()
+    forwarder_data = [pente_max2, pente_max_remonant, pente_max_descendant, distance_max_pente_sup, distance_max_hors_frt, taille_grue, bornes2]
+    for i in (0, 1, 2):
+        forwarder_data[i] = str(forwarder_data[i]) + " %"
+    for i in (3, 4, 5):
+        forwarder_data[i] = str(forwarder_data[i]) + " m"
+
+    type_machine, supports_inter, hauteur, longueur_max, longueur_min = Sylvaccess_UI.get_type_cable_cls()
+    type_cable_data = [type_machine, supports_inter, hauteur, longueur_max, longueur_min]
+    for i in (2, 3, 4): 
+        type_cable_data[i] = str(type_cable_data[i]) + " m"
+
+    type_chariot, masse, pente_min, pente_max_amont, pente_max_aval = Sylvaccess_UI.get_type_chariot_cls()
+    type_chariot_data = [type_chariot, masse, pente_min, pente_max_amont, pente_max_aval]
+    masse = str(masse) + " kg"
+    for i in (2, 3, 4):
+        type_chariot_data[i] = str(type_chariot_data[i]) + " %"
+
+    diamètre, masse_li, tension_rupt, elasticité = Sylvaccess_UI.get_proprietes_cable()
+    propriete_cable_data = [diamètre, masse_li, tension_rupt, elasticité]
+    diamètre = str(diamètre) + " mm"
+    masse_li = str(masse_li) + " kg/mm"
+    tension_rupt = str(tension_rupt) + " N"
+    elasticité = str(elasticité) + " N/mm²"
+
+
+    hauteur_sup, hauteur_mat, hauteur_min_cable, hauteur_max_cable, pechage, masse_max, securite = Sylvaccess_UI.get_param_modelisation()
+    param_modelisation_data = [hauteur_sup, hauteur_mat, hauteur_min_cable, hauteur_max_cable, pechage, masse_max, securite]
+    for i in (0, 1, 2, 3, 4):
+        param_modelisation_data[i] = str(param_modelisation_data[i]) + " m"
+    masse_max = str(masse_max) + " kg"
+
+    opti2, precision = Sylvaccess_UI.get_options()
+    options_data = [opti2, precision]
+
+    prelevement, recalculer, Rspace2, foret2, VBP2, VAM2, pechage2 = Sylvaccess_UI.get_opti_cable()
+    opti_cable_data = [prelevement, recalculer, Rspace2, foret2, VBP2, VAM2, pechage2]
+
+    surface, surface_poids, nbr_sup_int, nbr_sup_int_poids, sens_debardage, sens_debardage_poids, longueur_ligne, longueur_ligne_poids, vol_ligne, vol_ligne_poids, indice_prelev, indice_prelev_poids, VAM3, VAM_poids, dist_chariot, dist_chariot_poids = Sylvaccess_UI.get_crit_opti()
+    crit_opti_data = [surface, surface_poids, nbr_sup_int, nbr_sup_int_poids, sens_debardage, sens_debardage_poids, longueur_ligne, longueur_ligne_poids, vol_ligne, vol_ligne_poids, indice_prelev, indice_prelev_poids, VAM3, VAM_poids, dist_chariot, dist_chariot_poids]
+
+    file_name = Rspace + "_all_param.txt"
+    with open(file_name, 'w') as fichier:
+
+        fichier.write("General data :\n\n")
+        for var_name, var_value in zip(['skidder Analysis', 'Forwarder Analysis', 'Cable Yarding Analysis', 'Optimize Cable Lines', 'Maximum slope for manual harvesting'], general_data):
+            fichier.write(f"{var_name}: {var_value}\n")
+
+        fichier.write("\n______________________________________________________________________________________")
+        fichier.write("\nSpatial data :\n\n")
+        for var_name, var_value in zip(['Workspace', 'Result Space', 'DTM file', 'Forest area file', 'Forest road network', 'Cable Crane start point', 'Skidder, area where winching and skidding are forbidden', 'Skidder, area where skidding is forbidden', 'Forwarder, obstacles for the free movement of the machine', 'Cable yarding, obstacles for the set-up of cable line', 'Height of the trees', 'Average tree volume', 'Volume per hectare'], spatial_data):
+            if var_value == "":
+                fichier.write(f"{var_name}: No data\n")
+            else:
+                fichier.write(f"{var_name}: {var_value}\n")
+
+        fichier.write("\n______________________________________________________________________________________")
+        fichier.write("\nParameters for skidder processing:\n\n")
+        for var_name, var_value in zip(['Maximal slope outside forest network for the skidder', 'Maximum uphill winching distance', 'Maximum downhill winching distance', 'Maximal distance outside forest', 'Slope from which uphill winching reaches maximum distance', 'Slope from which downhill winching reaches maximum distance', 'Simulation option', 'Classes of skidding distance (Total distance in meters)'], skidder_data):
+            fichier.write(f"{var_name}: {var_value}\n")
+
+        fichier.write("\n______________________________________________________________________________________")
+        fichier.write("\nParameters for forwarder processing :\n\n")
+        for var_name, var_value in zip(['Maximum lateral inclination of the machine', 'Maximum slope for a uphill yarding', 'Maximum slope for a downhill yarding', 'Maximum yarding distance when slope is greater than the maximum lateral inclination of the machine', 'Maximum distance outside forest', 'Length of the hoist', 'Classes of skidding distance (Total distance in meters)'], forwarder_data):
+            fichier.write(f"{var_name}: {var_value}\n")
+
+        fichier.write("\n______________________________________________________________________________________")
+        fichier.write("\nCable machine properties :\n\n")
+        for var_name, var_value in zip(['Type of material', 'Maximum number of intermediate supports', 'Crane height', 'Maximum skyline length', 'Minimum skyline length'], type_cable_data):
+            fichier.write(f"{var_name}: {var_value}\n")
+
+        fichier.write("\n______________________________________________________________________________________")
+        fichier.write("\nCarriage properties :\n\n")
+        for var_name, var_value in zip(['Carriage type', 'Empty weigth', 'Minimum slope for a gravity descent of the carriage', 'Maximum slope of the skyline for an uphill yarding', 'Maximum slope of the skyline for an downhill yarding'], type_chariot_data):
+            fichier.write(f"{var_name}: {var_value}\n")
+
+        fichier.write("\n______________________________________________________________________________________")
+        fichier.write("\nSkyline porperties :\n\n")
+        for var_name, var_value in zip(['Diameter', 'Skyline self-weight', 'Breakdown tensile force', 'Young Modulus ( Elasticity)'], propriete_cable_data):
+            fichier.write(f"{var_name}: {var_value}\n")
+
+        fichier.write("\n______________________________________________________________________________________")
+        fichier.write("\nModeling parameters :\n\n")
+        for var_name, var_value in zip(['Intermediate supports height', 'Tailspar height', 'Skyline minimum height at any point', 'Skyline max.height at any point', 'Lateral yarding distance', 'Payload capacity', 'Security factor'], param_modelisation_data):
+            fichier.write(f"{var_name}: {var_value}\n")
+
+        fichier.write("\n______________________________________________________________________________________")
+        fichier.write("\nOptions :\n\n")
+        for var_name, var_value in zip(['Optimize skyline height at interlediate supports and tailspar', 'Precision of the modeling'], options_data):
+            fichier.write(f"{var_name}: {var_value}\n")
+
+        fichier.write("\n______________________________________________________________________________________")
+        fichier.write("\nCable yarding - Optimization of cable parameters :\n\n")
+        for var_name, var_value in zip(['Percentage of volume per hectare taken off', 'Re-compute', 'Result folder', 'Forest file', 'Volume per hectare', 'Average tree volume', 'Lateral yarding distance'], opti_cable_data):
+            fichier.write(f"{var_name}: {var_value}\n")
+
+        fichier.write("\n______________________________________________________________________________________")
+        fichier.write("\nCriteria used for optimization :\n\n")
+        for var_name, var_value in zip(['Forest area impacted', '-->Forest area impacted weight', 'Number of intermediate supports', '-->Number of intermediate supports weight', 'Prefered yarding direction', '-->Prefered yarding direction weight', 'Line leingth', '-->Line leingth weight', 'Total volume per line', '-->Total volume per line weight', 'Volume per meter of line', '-->Volume per meter of line weight', 'Average tree volume', '-->Average tree volume weight', 'Carriage average distance', '-->Carriage average distance weight'], crit_opti_data):
+            fichier.write(f"{var_name}: {var_value}\n")
+
+        fichier.close()
 
 
 def read_raster(file_name):
@@ -916,8 +1001,6 @@ def read_raster(file_name):
     Array = source_ds.GetRasterBand(1).ReadAsArray()
     Array[Array==0]=-9999
     return Array
-
-
 
 
 #############################
@@ -3347,7 +3430,7 @@ def Skidder():
     ### Genere le fichier avec le resume des parametres de simulation
     file_name = str(Rspace_s)+"Parameters_of_simulation.txt"
     resume_texte = "Sylvaccess : AUTOMATIC MAPPING OF FOREST ACCESSIBILITY WITH SKIDDER\n\n\n"
-    resume_texte = resume_texte+"Software version : 3.5.1 - 2021/12\n\n"
+    resume_texte = resume_texte+"Software version : 0.2 - 2024/02\n\n"
     resume_texte = resume_texte+"Resolution       : "+str(Csize)+" m\n\n"
     resume_texte = resume_texte+"Date and time when launching the script:              "+str_debut+"\n"
     resume_texte = resume_texte+"Date and time at the end of execution of the script:  "+str_fin+"\n"
