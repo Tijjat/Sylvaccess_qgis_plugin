@@ -827,7 +827,8 @@ def console_info(message):
 def heures(Hdebut):
     Hfin = datetime.datetime.now()
     duree = Hfin - Hdebut
-    str_duree = str(duree)
+    str_duree = str(duree).split('.')[0]
+    str_duree = str_duree.split(':')[0] + 'h ' + str_duree.split(':')[1] + 'm ' + str_duree.split(':')[2] + 's'
     str_debut = Hdebut.strftime('%d/%m/%Y %H:%M:%S')
     str_fin = Hfin.strftime('%d/%m/%Y %H:%M:%S')
 
@@ -4707,7 +4708,7 @@ def process_forwarder():
     ### Genere le fichier avec le resume des parametres de simulation
     file_name = str(Rspace_s)+"Parameters_of_simulation.txt"
     resume_texte = "Sylvaccess : AUTOMATIC MAPPING OF FOREST ACCESSIBILITY WITH FORWARDER\n\n\n"
-    resume_texte = resume_texte+"Software version : 3.5.1 - 2021/12\n\n"
+    resume_texte = resume_texte+"Software version : 0.2 - 2024/02\n\n"
     resume_texte = resume_texte+"Resolution       : "+str(Csize)+" m\n\n"
     resume_texte = resume_texte+"Date and time when launching the script:              "+str_debut+"\n"
     resume_texte = resume_texte+"Date and time at the end of execution of the script:  "+str_fin+"\n"
