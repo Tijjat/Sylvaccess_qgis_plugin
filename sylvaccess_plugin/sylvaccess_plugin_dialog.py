@@ -3508,38 +3508,37 @@ def create_new_road_network(file_shp_Desserte,Wspace):
 def make_summary_surface_vol(Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_access,Csize,Dtotal,Vtot,Vtot_non_buch,Rspace_s,modele_name):
     Skid_list = Debclass.split(";")
     nbclass = len(Skid_list)
-            
-    Table = np.empty((nbclass+7,9),dtype='|U39')
-    Table[0] = np.array(["Total yarding distance",
-                            "Surface area (ha)","Surface per class (%)","Cumulative surface (ha)","Cumulative surface (%)",
-                            "Volume (m3)","Volume per class (%)","Cumulative volume (m3)","Cumulative volume (%)"])
-    
-    Table[nbclass+2:nbclass+7,0]=["Total accessible forest","Total unaccessible forest",
-                                    "    including impossible manual felling","",
-                                    "Total area of forest"]
     file_name = str(Rspace_s)+"Summary_results_Sylvaccess_"+modele_name+".txt" 
+    vol = False
+
     #SURFACE
     Surf_Cum = 0 
-    for i in range(1,nbclass):
-        dmin,dmax = int(Skid_list[i-1]),int(Skid_list[i])
-        class_text = str(Skid_list[i-1])+" - "+str(Skid_list[i])+" m"
-        Temp = np.sum((Dtotal>=dmin)*(Dtotal<dmax)*Csize*Csize*0.0001)
-        Table[i,0:5] = np.array([class_text,str(round(Temp,1)),
-                                str(round(Temp/Surf_foret*100,1)),
-                                str(round((Temp+Surf_Cum),1)),
-                                str(round((Temp+Surf_Cum)/Surf_foret*100,1))])
+    recap_surface = []
+    totaux_surface = []
+
+    for i in range(1, nbclass):
+        dmin, dmax = int(Skid_list[i - 1]), int(Skid_list[i])
+        class_text = f"{dmin} - {dmax} m"
+        Temp = np.sum((Dtotal >= dmin) * (Dtotal < dmax) * Csize * Csize * 0.0001)
+        recap_surface.append(class_text)
+        recap_surface.append(str(round(Temp, 1)))
+        recap_surface.append(str(round(Temp / Surf_foret * 100, 1)))
+        recap_surface.append(str(round(Temp + Surf_Cum, 1)))
+        recap_surface.append(str(round((Temp + Surf_Cum) / Surf_foret * 100, 1)))
         Surf_Cum += Temp
-    #add infinite distance class 
+
+    # Ajouter la classe de distance infinie
     dmin = Skid_list[nbclass - 1]
     if dmin.isdigit():
         dmin = int(dmin)
         try:
-            Temp = np.sum((Dtotal>=dmin)*Csize*Csize*0.0001)
-            Table[nbclass,0:5] = np.array(["> "+str(dmin)+" m",str(round(Temp,1)),
-                                        str(round(Temp/Surf_foret*100,1)),
-                                        str(round((Temp+Surf_Cum),1)),
-                                        str(round((Temp+Surf_Cum)/Surf_foret*100,1))])
-            Surf_Cum += Temp  
+            Temp = np.sum((Dtotal >= dmin) * Csize * Csize * 0.0001)
+            recap_surface.append(f"> {dmin} m")
+            recap_surface.append(str(round(Temp, 1)))
+            recap_surface.append(str(round(Temp / Surf_foret * 100, 1)))
+            recap_surface.append(str(round(Temp + Surf_Cum, 1)))
+            recap_surface.append(str(round((Temp + Surf_Cum) / Surf_foret * 100, 1)))
+            Surf_Cum += Temp
         except ValueError as e:
             console_warning(f"Error converting '{dmin}' to an integer. Skid_list: {Skid_list}")
             console_warning(f"Dtotal: {Dtotal}")
@@ -3549,57 +3548,103 @@ def make_summary_surface_vol(Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_acce
         console_warning(f"Invalid literal for int() with base 10: '{dmin}'. Skid_list: {Skid_list}")
         Sylvaccess_UI.close()
         raise ValueError(f"Invalid literal for int() with base 10: '{dmin}'")
-         
-    Table[-5,1] = str(round(Surf_Cum,1))+" ha"
-    Table[-5,2] = str(round(Surf_Cum/Surf_foret*100,1))+" %"
-    Table[-4,1] = str(round(Surf_foret-Surf_Cum,1))+" ha"
-    Table[-4,2] = str(round((Surf_foret-Surf_Cum)/Surf_foret*100,1))+" %"
-    Table[-3,1] = str(round(Surf_foret_non_access,1))+" ha"
-    Table[-3,2] = str(round(Surf_foret_non_access/Surf_foret*100,1))+" %"        
-    Table[-1,1] = str(round(Surf_foret,1))+" ha"
-        
+
+    # Calcul des totaux
+    totaux_surface.append(str(round(Surf_Cum, 1)) + " ha")
+    totaux_surface.append(str(round(Surf_Cum / Surf_foret * 100, 1)) + " %")
+    totaux_surface.append(str(round(Surf_foret - Surf_Cum, 1)) + " ha")
+    totaux_surface.append(str(round((Surf_foret - Surf_Cum) / Surf_foret * 100, 1)) + " %")
+    totaux_surface.append(str(round(Surf_foret_non_access, 1)) + " ha")
+    totaux_surface.append(str(round(Surf_foret_non_access / Surf_foret * 100, 1)) + " %")
+    totaux_surface.append(str(round(Surf_foret, 1)) + " ha")
+            
     #VOLUME            
+    recap_volume = []
+    totaux_volume = []
+
     if file_Vol_ha != "":
+        vol = True
         Vol_ha = load_float_raster_simple(file_Vol_ha)
-        Vol_ha[np.isnan(Vol_ha)]=0
-                
-        #Create recap per distance class 
+        Vol_ha[np.isnan(Vol_ha)] = 0
+
+        # Créer des tableaux pour les classes de distance et les valeurs associées
+        classes_distance = []
+        valeurs_associees = []
+
+        # Create recap per distance class
         Vol_Cum = 0
-        for i in range(1,nbclass):
-            dmin,dmax = int(Skid_list[i-1]),int(Skid_list[i])            
-            Temp = ((Dtotal>=dmin)*(Dtotal<dmax)*(Vol_ha>=0))>0
-            if np.sum(Temp>0):
-                Vclass = np.mean(Vol_ha[Temp])*np.sum(Temp)*Csize*Csize*0.0001
+        for i in range(1, nbclass):
+            dmin, dmax = int(Skid_list[i - 1]), int(Skid_list[i])
+            Temp = ((Dtotal >= dmin) * (Dtotal < dmax) * (Vol_ha >= 0)) > 0
+            if np.sum(Temp > 0):
+                Vclass = np.mean(Vol_ha[Temp]) * np.sum(Temp) * Csize * Csize * 0.0001
             else:
                 Vclass = 0
-            Table[i,5:9] = np.array([str(int(Vclass+0.5)),str(round(Vclass/Vtot*100,1)),
-                                    str(int(Vclass+Vol_Cum+0.5)),
-                                    str(round(100*(Vclass+Vol_Cum)/Vtot,1))])
-            Vol_Cum +=Vclass
-        #add infinite distance class 
-        dmin = int(Skid_list[nbclass-1])
-        Temp = ((Dtotal>=dmin)*(Vol_ha>=0))>0
-        if np.sum(Temp>0):
-            Vclass = np.mean(Vol_ha[Temp])*np.sum(Temp)*Csize*Csize*0.0001
+            classes_distance.append(f"{dmin}-{dmax}")
+            valeurs_associees.append(Vclass)
+
+        # Ajouter la classe de distance infinie
+        dmin = int(Skid_list[nbclass - 1])
+        Temp = ((Dtotal >= dmin) * (Vol_ha >= 0)) > 0
+        if np.sum(Temp > 0):
+            Vclass = np.mean(Vol_ha[Temp]) * np.sum(Temp) * Csize * Csize * 0.0001
         else:
             Vclass = 0
-        Table[nbclass,5:9] = np.array([str(int(Vclass+0.5)),str(round(Vclass/Vtot*100,1)),
-                                    str(int(Vclass+Vol_Cum+0.5)),
-                                    str(round(100*(Vclass+Vol_Cum)/Vtot,1))])
-          
-        Vol_Cum +=Vclass        
-        Table[-5,5] = str(int(Vol_Cum+0.5))+" m3"
-        Table[-5,6] = str(round(100*Vol_Cum/Vtot,1))+" %"
-        Table[-4,5] = str(int(Vtot-Vol_Cum+0.5))+" m3"
-        Table[-4,6] = str(round(100*(Vtot-Vol_Cum)/Vtot,1))+" %"
-        Table[-3,5] = str(int(Vtot_non_buch+0.5))+" m3"
-        Table[-3,6] = str(round(100*(Vtot_non_buch)/Vtot,1))+" %"  
-        Table[-1,5] = str(int(Vtot+0.5))+" m3"
-      
-        np.savetxt(file_name, Table,fmt='%s', delimiter=';')
-        
-    else:
-        np.savetxt(file_name, Table[:,0:5],fmt='%s', delimiter=';')
+        classes_distance.append(f"{dmin}-inf")
+        valeurs_associees.append(Vclass)
+
+        # Enregistrer les valeurs cumulées
+        Vol_Cum = 0
+        for i in range(len(classes_distance)):
+            Vol_Cum += valeurs_associees[i]
+            recap_volume.append(classes_distance[i])
+            recap_volume.append(str(int(valeurs_associees[i] + 0.5)))
+            recap_volume.append(str(round(valeurs_associees[i] / Vtot * 100, 1)))
+            recap_volume.append(str(int(valeurs_associees[i] + Vol_Cum + 0.5)))
+            recap_volume.append(str(round(100 * (valeurs_associees[i] + Vol_Cum) / Vtot, 1)))
+
+        # Ajouter les totaux
+        totaux_volume.append(str(int(Vol_Cum + 0.5)) + " m3")
+        totaux_volume.append(str(round(100 * Vol_Cum / Vtot, 1)) + " %")
+        totaux_volume.append(str(int(Vtot - Vol_Cum + 0.5)) + " m3")
+        totaux_volume.append(str(round(100 * (Vtot - Vol_Cum) / Vtot, 1)) + " %")
+        totaux_volume.append(str(int(Vtot_non_buch + 0.5)) + " m3")
+        totaux_volume.append(str(round(100 * (Vtot_non_buch) / Vtot, 1)) + " %")
+        totaux_volume.append(str(int(Vtot + 0.5)) + " m3")
+
+    # Les en-têtes des colonnes dans le fichier texte
+    headers = "Total yarding distance |   Surface area (ha)   | Surface per class (%) |Cumulative surface (ha)|Cumulative surface (%) \n"
+    headers2= "Total yarding distance |      Volume (m3)      | Volume per class (%)  |Cumulative volume (m3) |Cumulative volume (%) \n"
+
+    # Ajouter des espaces pour que les colonnes aient la même largeur
+    recap_surface = [str(elem) for elem in recap_surface]
+    recap_surface = [elem.ljust(23) for elem in recap_surface]
+    recap_volume = [str(elem) for elem in recap_volume]
+    recap_volume = [elem.ljust(23) for elem in recap_volume]
+
+    # Données des tableaux
+    data = zip(recap_surface[::5], recap_surface[1::5], recap_surface[2::5], recap_surface[3::5], recap_surface[4::5])
+    data2 = zip(recap_volume[::5], recap_volume[1::5], recap_volume[2::5], recap_volume[3::5], recap_volume[4::5])
+    # Écriture dans le fichier
+    with open(file_name, "w") as file:
+        # Écriture des en-têtes
+        file.write(headers)
+        # Écriture des données
+        for row in data:
+            file.write("|".join(row) + "\n")
+        file.write("".join(["_" * len(headers)]))
+        file.write("\n\n")
+        file.write("Total accessible forest" + ":   " + totaux_surface[0] + ";  " + totaux_surface[1] + "\n")
+        file.write("Total unaccessible forest" + ": " + totaux_surface[2] + ";  " + totaux_surface[3] + "\n")
+        file.write("    --> including impossible manual felling" + ":   " + totaux_surface[4] + ";" + totaux_surface[5] + "\n") 
+        file.write("".join(["_" * len(headers)]))
+        file.write("\n\n")
+        file.write("Total area of forest :" + "   " + totaux_surface[6] + "\n")
+        if vol:
+            file.write(headers2)
+            for row in data2:
+                file.write("|".join(row) + "\n")
+
 
 
 def make_dif_files(Rspace, idmod):  # idmod 0 : Skidder, 1 : Forwarder
