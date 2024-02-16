@@ -1638,62 +1638,62 @@ def Cable():
         
     file_name = str(Rspace_c)+"Parametre_simulation.txt"
     resume_texte = "SYLVACCESS - CABLE\n\n\n"
-    resume_texte = resume_texte+"Plugin's verion: 1.0.0 from 02/06/2024\n"
-    resume_texte = resume_texte+"Author: Sylvain DUPIRE. Irstea\n\n"
-    resume_texte = resume_texte+"Date and time of script launch:"+str_debut+"\n"
-    resume_texte = resume_texte+"Date and time at the end of the script execution                           "+str_fin+"\n"
-    resume_texte = resume_texte+"Total execution time of the script:                                         "+str_duree+"\n\n"
-    resume_texte = resume_texte+"PROPERTIES OF THE MATERIAL:\n"
-    resume_texte = resume_texte+"   - Type of machine:                                                      "+str(cable_name)+"\n"
-    resume_texte = resume_texte+"   - Height of mat or cable Forwarder at the depot place:    "+str(Htower)+" m\n"
-    resume_texte = resume_texte+"   - Maximum number of intermediate support:                        "+str(sup_max)+"\n"
-    resume_texte = resume_texte+"   - Maximum length of the Forwarder cable:                                    "+str(Lmax)+" m\n"
-    resume_texte = resume_texte+"   - Minimum length of a line:                                        "+str(Lmin)+" m\n"
-    resume_texte = resume_texte+"   - Minimum length between two supports:                                "+str(LminSpan)+" m\n"
-    resume_texte = resume_texte+"   - Trolley type:                                                      "+str(carriage_name)+"\n"
-    resume_texte = resume_texte+"   - Empty mass of the trolley:                                              "+str(Pchar)+" kg\n"
-    resume_texte = resume_texte+"   - Maximum mass of load:                                          "+str(Load_max)+" kg\n"
+    resume_texte += "Plugin's verion: 1.0.0 from 02/06/2024\n"
+    resume_texte += "Author: Sylvain DUPIRE. Irstea\n\n"
+    resume_texte += "Date and time of script launch:"+str_debut+"\n"
+    resume_texte += "Date and time at the end of the script execution                           "+str_fin+"\n"
+    resume_texte += "Total execution time of the script:                                         "+str_duree+"\n\n"
+    resume_texte += "PROPERTIES OF THE MATERIAL:\n"
+    resume_texte += "   - Type of machine:                                                      "+str(cable_name)+"\n"
+    resume_texte += "   - Height of mat or cable Forwarder at the depot place:    "+str(Htower)+" m\n"
+    resume_texte += "   - Maximum number of intermediate support:                        "+str(sup_max)+"\n"
+    resume_texte += "   - Maximum length of the Forwarder cable:                                    "+str(Lmax)+" m\n"
+    resume_texte += "   - Minimum length of a line:                                        "+str(Lmin)+" m\n"
+    resume_texte += "   - Minimum length between two supports:                                "+str(LminSpan)+" m\n"
+    resume_texte += "   - Trolley type:                                                      "+str(carriage_name)+"\n"
+    resume_texte += "   - Empty mass of the trolley:                                              "+str(Pchar)+" kg\n"
+    resume_texte += "   - Maximum mass of load:                                          "+str(Load_max)+" kg\n"
     if Carriage_type==1:   
-        resume_texte = resume_texte+"   - Max slope of the Forwarder cable for uphill unloading:            "+str(slope_Wliner_up)+" %\n"    
-        resume_texte = resume_texte+"   - Max slope of the Forwarder cable for downhill unloading:             "+str(slope_Wliner_down)+" %\n"   
+        resume_texte += "   - Max slope of the Forwarder cable for uphill unloading:            "+str(slope_Wliner_up)+" %\n"    
+        resume_texte += "   - Max slope of the Forwarder cable for downhill unloading:             "+str(slope_Wliner_down)+" %\n"   
     else: 
-        resume_texte = resume_texte+"   - Min slope of the Forwarder cable for the trolley to climb down:  "+str(slope_grav)+" %\n"  
-    resume_texte = resume_texte+"\n"
-    resume_texte = resume_texte+"PROPERTIES OF THE FORWARDER CABLE :\n"    
-    resume_texte = resume_texte+"   - Diameter of the Forwarder cable:                                            "+str(d)+" mm\n"
-    resume_texte = resume_texte+"   - Line mass of the Forwarder cable:                                      "+str(masse_li)+" kg.m-1\n"
-    resume_texte = resume_texte+"   - Young’s Module (Elasticity):                                         "+str(E)+" N.mm-2\n"
-    resume_texte = resume_texte+"   - Breaking tension of the Forwarder cable                                   "+str(rupt_res)+" kgF\n\n"
+        resume_texte += "   - Min slope of the Forwarder cable for the trolley to climb down:  "+str(slope_grav)+" %\n"  
+    resume_texte += "\n"
+    resume_texte += "PROPERTIES OF THE FORWARDER CABLE :\n"    
+    resume_texte += "   - Diameter of the Forwarder cable:                                            "+str(d)+" mm\n"
+    resume_texte += "   - Line mass of the Forwarder cable:                                      "+str(masse_li)+" kg.m-1\n"
+    resume_texte += "   - Young’s Module (Elasticity):                                         "+str(E)+" N.mm-2\n"
+    resume_texte += "   - Breaking tension of the Forwarder cable                                   "+str(rupt_res)+" kgF\n\n"
     if Carriage_type!=1:
-        resume_texte = resume_texte+"TRACTOR AND RETURN CABLE PROPERTIES:\n"  
-        resume_texte = resume_texte+"   - Line mass of the tractor cable:                                     "+str(masse_li2)+" kg.m-1\n"
-        resume_texte = resume_texte+"   - Line mass of the return cable:                                       "+str(masse_li3)+" kg.m-1\n"
-        resume_texte = resume_texte+"\n"        
-    resume_texte = resume_texte+"MODELISATION PARAMETERS:\n"
-    resume_texte = resume_texte+"   - Lateral distance of wood pitching:                                "+str(Lhor_max)+" m\n"
-    resume_texte = resume_texte+"   - Height of Forwarder cable at intermediate pylons:          "+str(Hintsup)+" m\n"
-    resume_texte = resume_texte+"   - Forwarder cable height at end of line:                             "+str(Hend)+" m\n"
-    resume_texte = resume_texte+"   - Minimum cable height at any point (load):                  "+str(Hline_min)+" m\n"
-    resume_texte = resume_texte+"   - Maximum cable height at any point:                              "+str(Hline_max)+" m\n"
-    resume_texte = resume_texte+"   - Maximum angle of the Forwarder cable at an intermediate pylon:   "+str(Max_angle)+" degres\n"
-    resume_texte = resume_texte+"   - Security factor:                                                  "+str(safe_fact)+"\n"
-    resume_texte = resume_texte+"   - Value of the friction angle:                                      "+str(coeff_frot)+" rad\n\n"
-    resume_texte = resume_texte+"   - Resolution of the NMT uses:                                            "+str(Csize)+" m\n"
-    resume_texte = resume_texte+"   - Standing volume harvesting applied:                              "+str(prelevement*100)+" %\n"
+        resume_texte += "TRACTOR AND RETURN CABLE PROPERTIES:\n"  
+        resume_texte += "   - Line mass of the tractor cable:                                     "+str(masse_li2)+" kg.m-1\n"
+        resume_texte += "   - Line mass of the return cable:                                       "+str(masse_li3)+" kg.m-1\n"
+        resume_texte += "\n"        
+    resume_texte += "MODELISATION PARAMETERS:\n"
+    resume_texte += "   - Lateral distance of wood pitching:                                "+str(Lhor_max)+" m\n"
+    resume_texte += "   - Height of Forwarder cable at intermediate pylons:          "+str(Hintsup)+" m\n"
+    resume_texte += "   - Forwarder cable height at end of line:                             "+str(Hend)+" m\n"
+    resume_texte += "   - Minimum cable height at any point (load):                  "+str(Hline_min)+" m\n"
+    resume_texte += "   - Maximum cable height at any point:                              "+str(Hline_max)+" m\n"
+    resume_texte += "   - Maximum angle of the Forwarder cable at an intermediate pylon:   "+str(Max_angle)+" degres\n"
+    resume_texte += "   - Security factor:                                                  "+str(safe_fact)+"\n"
+    resume_texte += "   - Value of the friction angle:                                      "+str(coeff_frot)+" rad\n\n"
+    resume_texte += "   - Resolution of the NMT uses:                                            "+str(Csize)+" m\n"
+    resume_texte += "   - Standing volume harvesting applied:                              "+str(prelevement*100)+" %\n"
     try:
-        resume_texte = resume_texte+"   - Projection:                                                           "+str(proj.GetAttrValue("PROJCS", 0))+"\n"
+        resume_texte += "   - Projection:                                                           "+str(proj.GetAttrValue("PROJCS", 0))+"\n"
     except:
-        resume_texte = resume_texte+"   - Projection:                                                           unknown\n"
+        resume_texte += "   - Projection:                                                           unknown\n"
     if Dir_Obs_cable=="":
         reponse = "No"
     else:
         reponse = "Yes"
-    resume_texte = resume_texte+"   - Consideration of obstacle for the cable:                             "+str(reponse)+"\n"
+    resume_texte += "   - Consideration of obstacle for the cable:                             "+str(reponse)+"\n"
     if file_Vol_ha=="":
         reponse = "No"
     else:
         reponse = "Yes"
-    resume_texte = resume_texte+"   - Information on the volume of wood provided as input:                  "+str(reponse)+"\n"
+    resume_texte += "   - Information on the volume of wood provided as input:                  "+str(reponse)+"\n"
     
     fichier = open(file_name, "w")
     fichier.write(resume_texte)
@@ -3431,37 +3431,41 @@ def Skidder():
     ### Genere le fichier avec le resume des parametres de simulation
     file_name = str(Rspace_s)+"Parameters_of_simulation.txt"
     resume_texte = "Sylvaccess : AUTOMATIC MAPPING OF FOREST ACCESSIBILITY WITH SKIDDER\n\n\n"
-    resume_texte = resume_texte+"Software version : 0.2 - 2024/02\n\n"
-    resume_texte = resume_texte+"Resolution       : "+str(Csize)+" m\n\n"
-    resume_texte = resume_texte+"Date and time when launching the script:              "+str_debut+"\n"
-    resume_texte = resume_texte+"Date and time at the end of execution of the script:  "+str_fin+"\n"
-    resume_texte = resume_texte+"Total execution time of the script:                   "+str_duree+"\n\n"
-    resume_texte = resume_texte+"PARAMETERS USED FOR THE MODELING:\n\n"
-    resume_texte = resume_texte+"   - Maximum uphill distance for winching:                        "+str(Dtreuil_max_up)+" m\n"
-    resume_texte = resume_texte+"   - Maximum downhill distance for winching:                      "+str(Dtreuil_max_down)+" m\n"
-    resume_texte = resume_texte+"   - Maximum slope to get maximum uphill winching distance:       "+str(Pmax_amont)+" %\n"
-    resume_texte = resume_texte+"   - Maximum slope to get maximum downhill winching distance:     "+str(Pmax_aval)+" %\n\n"
-    resume_texte = resume_texte+"   - Maximum distance outside forest and forest road network:     "+str(Dmax_train_near_for)+" m\n"
-    resume_texte = resume_texte+"   - Maximum slope for a free access of the parcels with skidder: "+str(Pente_max_skidder)+" %\n"
-    resume_texte = resume_texte+"   - Maximum slope for manual felling of the trees:               "+str(Pente_max_bucheron)+" %\n\n"
-    resume_texte = resume_texte+"   - Simulation option:\n"    
+    resume_texte += "Software version : 0.2 - 2024/02\n\n"
+    resume_texte += "Resolution       : "+str(Csize)+" m\n\n"
+    resume_texte += "" .join (["_"]*80) + "\n\n"
+    resume_texte += "Date and time when launching the script:              "+str_debut+"\n"
+    resume_texte += "Date and time at the end of execution of the script:  "+str_fin+"\n"
+    resume_texte += "Total execution time of the script:                   "+str_duree+"\n\n"
+    resume_texte += "" .join (["_"]*80) + "\n\n"
+    resume_texte += "PARAMETERS USED FOR THE MODELING:\n\n"
+    resume_texte += "   - Maximum uphill distance for winching:                        "+str(Dtreuil_max_up)+" m\n"
+    resume_texte += "   - Maximum downhill distance for winching:                      "+str(Dtreuil_max_down)+" m\n"
+    resume_texte += "   - Maximum slope to get maximum uphill winching distance:       "+str(Pmax_amont)+" %\n"
+    resume_texte += "   - Maximum slope to get maximum downhill winching distance:     "+str(Pmax_aval)+" %\n\n"
+    resume_texte += "   - Maximum distance outside forest and forest road network:     "+str(Dmax_train_near_for)+" m\n"
+    resume_texte += "   - Maximum slope for a free access of the parcels with skidder: "+str(Pente_max_skidder)+" %\n"
+    resume_texte += "   - Maximum slope for manual felling of the trees:               "+str(Pente_max_bucheron)+" %\n\n"
+    resume_texte += "   - Simulation option:\n"    
     if Option_Skidder==1:
-        resume_texte = resume_texte+"      * Limit soil damages: force the skidder to process as much as possible \n"    
-        resume_texte = resume_texte+"        from the forest road network\n" 
+        resume_texte += "      * Limit soil damages: force the skidder to process as much as possible \n"    
+        resume_texte += "        from the forest road network\n" 
     else:
-        resume_texte = resume_texte+"      * Limit winching distances: force the skidder to go as close as possible\n"    
-        resume_texte = resume_texte+"        to the timber\n" 
+        resume_texte += "      * Limit winching distances: force the skidder to go as close as possible\n"    
+        resume_texte += "        to the timber\n" 
     if Dir_Full_Obs_skidder!='':
-        resume_texte = resume_texte+"      * Simulation with areas where skidder operations are forbidden (Full obstacles)\n"  
+        resume_texte += "      * Simulation with areas where skidder operations are forbidden (Full obstacles)\n"  
     if Dir_Partial_Obs_skidder!='':
-        resume_texte = resume_texte+"      * Simulation with areas where skidding is forbidden but winching possible (Partial obstacles)\n"  
+        resume_texte += "      * Simulation with areas where skidding is forbidden but winching possible (Partial obstacles)\n"  
         
     if os.path.exists(Rspace_s+"Forest_tracks_not_connected.tif"):
-        resume_texte = resume_texte+"\n\n"
-        resume_texte = resume_texte+"      !!! Warning !!! Some forest tracks are not connected to public network.\n"  
-        resume_texte = resume_texte+"      They were removed from the analysis.\n"  
+        resume_texte += "\n\n"
+        resume_texte += "".join(["_" * 80])
+        resume_texte += "      !!! Warning !!! Some forest tracks are not connected to public network.\n"  
+        resume_texte += "      They were removed from the analysis.\n"  
     if os.path.exists(Rspace_s+"Forest_road_not_connected.tif"):
-        resume_texte = resume_texte+"\n\n      !!! Warning !!! Some forest roads are not connected to public network.\n"  
+        resume_texte += "".join(["_" * 80])
+        resume_texte += "\n\n      !!! Warning !!! Some forest roads are not connected to public network.\n"  
     fichier = open(file_name, "w")
     fichier.write(resume_texte)
     fichier.close()
@@ -3644,7 +3648,6 @@ def make_summary_surface_vol(Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_acce
             file.write(headers2)
             for row in data2:
                 file.write("|".join(row) + "\n")
-
 
 
 def make_dif_files(Rspace, idmod):  # idmod 0 : Skidder, 1 : Forwarder
@@ -4753,26 +4756,30 @@ def process_forwarder():
     ### Genere le fichier avec le resume des parametres de simulation
     file_name = str(Rspace_s)+"Parameters_of_simulation.txt"
     resume_texte = "Sylvaccess : AUTOMATIC MAPPING OF FOREST ACCESSIBILITY WITH FORWARDER\n\n\n"
-    resume_texte = resume_texte+"Software version : 0.2 - 2024/02\n\n"
-    resume_texte = resume_texte+"Resolution       : "+str(Csize)+" m\n\n"
-    resume_texte = resume_texte+"Date and time when launching the script:              "+str_debut+"\n"
-    resume_texte = resume_texte+"Date and time at the end of execution of the script:  "+str_fin+"\n"
-    resume_texte = resume_texte+"Total execution time of the script:                   "+str_duree+"\n\n"
-    resume_texte = resume_texte+"PARAMETERS USED FOR THE MODELING:\n\n"
-    resume_texte = resume_texte+"   - Maximum perpendicular lateral inclination (MPLI):            "+str(Forw_angle_incl)+" %\n"
-    resume_texte = resume_texte+"   - Maximum slope for an uphill yarding:                         "+str(Forw_angle_up)+" %\n"
-    resume_texte = resume_texte+"   - Maximum slope for an downhill yarding:                       "+str(Forw_angle_down)+" %\n"
-    resume_texte = resume_texte+"   - Boom reach:                                                  "+str(Forw_portee)+" m\n"
-    resume_texte = resume_texte+"   - Maximum yarding distance when terrain slope > MPLI:          "+str(Forw_Lmax)+" m\n"
-    resume_texte = resume_texte+"   - Maximum slope for a free access of the parcels with skidder: "+str(Forw_angle_incl)+" %\n"
-    resume_texte = resume_texte+"   - Maximum slope for manual felling of the trees:               "+str(Pente_max_bucheron)+" %\n"       
+    resume_texte += "Software version : 0.2 - 2024/02\n\n"
+    resume_texte += "Resolution       : "+str(Csize)+" m\n\n"
+    resume_texte += "" .join (["_"]*80)+"\n\n"
+    resume_texte += "Date and time when launching the script:              "+str_debut+"\n"
+    resume_texte += "Date and time at the end of execution of the script:  "+str_fin+"\n"
+    resume_texte += "Total execution time of the script:                   "+str_duree+"\n\n"
+    resume_texte += "" .join (["_"]*80)+"\n\n"
+    resume_texte += "PARAMETERS USED FOR THE MODELING:\n\n"
+    resume_texte += "   - Maximum perpendicular lateral inclination (MPLI):            "+str(Forw_angle_incl)+" %\n"
+    resume_texte += "   - Maximum slope for an uphill yarding:                         "+str(Forw_angle_up)+" %\n"
+    resume_texte += "   - Maximum slope for an downhill yarding:                       "+str(Forw_angle_down)+" %\n"
+    resume_texte += "   - Boom reach:                                                  "+str(Forw_portee)+" m\n"
+    resume_texte += "   - Maximum yarding distance when terrain slope > MPLI:          "+str(Forw_Lmax)+" m\n"
+    resume_texte += "   - Maximum slope for a free access of the parcels with skidder: "+str(Forw_angle_incl)+" %\n"
+    resume_texte += "   - Maximum slope for manual felling of the trees:               "+str(Pente_max_bucheron)+" %\n"       
     
     if os.path.exists(Rspace_s+"Forest_tracks_not_connected.tif"):
-        resume_texte = resume_texte+"\n\n"
-        resume_texte = resume_texte+"      !!! Warning !!! Some forest tracks are not connected to public network.\n"  
-        resume_texte = resume_texte+"      They were removed from the analysis.\n"  
+        resume_texte += "\n\n"
+        resume_texte += "" .join (["-"]*80)+"\n\n"
+        resume_texte += "      !!! Warning !!! Some forest tracks are not connected to public network.\n"  
+        resume_texte += "      They were removed from the analysis.\n"  
     if os.path.exists(Rspace_s+"Forest_road_not_connected.tif"):
-        resume_texte = resume_texte+"\n\n      !!! Warning !!! Some forest roads are not connected to public network.\n"      
+        resume_texte += "" .join (["-"]*80)
+        resume_texte += "\n\n      !!! Warning !!! Some forest roads are not connected to public network.\n"      
     
     fichier = open(file_name, "w")
     fichier.write(resume_texte)
