@@ -172,7 +172,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             if checkbox_number == 2:
                 self.cable.setEnabled(True)
             if checkbox_number == 3:
-                self.porteur.setEnabled(True)
+                self.Forwarder.setEnabled(True)
             if checkbox_number == 4:
                 self.skidder.setEnabled(True)
         elif not checkbox_state:
@@ -513,10 +513,10 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                         msg+=" -   "+name[i]+": No value of NoData definie\n" 
                     if not values[4]==values2[4]:
                         verif=False
-                        msg+=" -   "+name[i]+": Raster cell size should be the same as NTM\n" 
+                        msg+=" -   "+name[i]+": Raster cell size should be the same as DTM\n" 
                     if not np.all(Extent==Extent2):
                         verif=False
-                        msg+=" -   "+name[i]+": The extent of the raster must be the same as that of the NTM\n" 
+                        msg+=" -   "+name[i]+": The extent of the raster must be the same as that of the DTM\n" 
                 except:
                     verif=False
                     msg += " -   " + name[i] + ": The access path is incorrect\n"
@@ -565,9 +565,13 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         _desserte = getattr(self, f"lineEdit_5").text()
         _dep_cable = getattr(self, f"lineEdit_6").text()
         _ski_no_t_d = getattr(self, f"lineEdit_7").text()
+        _ski_no_t_d += "/"
         _ski_no_t = getattr(self, f"lineEdit_8").text()
+        _ski_no_t += "/"
         _por_obstacle = getattr(self, f"lineEdit_9").text()
+        _por_obstacle += "/"
         _cab_obstacle = getattr(self, f"lineEdit_10").text()
+        _cab_obstacle += "/"
         _HA = getattr(self, f"lineEdit_11").text()
         _VAM = getattr(self, f"lineEdit_12").text()
         _VBP = getattr(self, f"lineEdit_13").text()
@@ -1169,6 +1173,10 @@ def shapefile_obs_to_np_array(file_list,Extent,Csize):
     for shp in file_list:        
         # Get shapefile info
         source_ds = ogr.Open(shp)
+        ## test
+        console_info(f"file_list: {file_list}")
+        console_info(f"source_ds: {source_ds}")
+        ##
         source_layer = source_ds.GetLayer()    
         source_srs = source_layer.GetSpatialRef()
         source_type = source_layer.GetGeomType()
@@ -1211,7 +1219,7 @@ def shapefile_obs_to_np_array(file_list,Extent,Csize):
         else:
             target_ds.FlushCache()
             mask_arr = target_ds.GetRasterBand(1).ReadAsArray()
-        Obstacle = Obstacle + mask_arr
+        Obstacle =+ mask_arr
         target_ds1.Destroy()
         source_ds.Destroy()
     Obstacle = np.int8(Obstacle>0)

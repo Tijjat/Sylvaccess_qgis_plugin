@@ -1840,7 +1840,7 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="porteur">
+   <widget class="QWidget" name="Forwarder">
     <property name="enabled">
      <bool>false</bool>
     </property>
