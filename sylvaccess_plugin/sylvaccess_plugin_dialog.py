@@ -424,11 +424,47 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             shutil.rmtree(Wspace+"Temp")
         except:
             pass
+        Sylvaccess_UI.close()
 
 
-    # Fonction qui vérifie que tous les fichiers nécessaires sont bien présents
+    def crop_to_main_dtm_size(raster_file, main_dtm_extent):
+        try:
+            # Open the raster file
+            dataset = gdal.Open(raster_file, gdal.GA_Update)
+            if dataset is None:
+                print("Error: Could not open the raster file")
+                return
+
+            # Get the raster's geotransform
+            geotransform = dataset.GetGeoTransform()
+            if geotransform is None:
+                print("Error: Could not get the geotransform of the raster")
+                return
+
+            # Calculate the pixel and line offset for the cropping
+            px1 = int((main_dtm_extent[0] - geotransform[0]) / geotransform[1])
+            px2 = int((main_dtm_extent[1] - geotransform[0]) / geotransform[1])
+            line1 = int((main_dtm_extent[3] - geotransform[3]) / geotransform[5])
+            line2 = int((main_dtm_extent[2] - geotransform[3]) / geotransform[5])
+
+            # Crop the raster
+            cropped_dataset = gdal.Translate("cropped_" + raster_file, dataset, srcWin=[px1, line1, px2-px1, line2-line1])
+            if cropped_dataset is None:
+                print("Error: Could not crop the raster")
+                return
+
+            # Close the datasets
+            dataset = None
+            cropped_dataset = None
+
+            print("Raster cropped successfully to the extent of the main DTM")
+
+        except Exception as e:
+            print("Error:", e)
+
+
     def check_files(self):
-        verif=True
+        verif = True
         test_Skidder = self.checkBox_4.isChecked()
         test_Forwarder = self.checkBox_3.isChecked()
         test_cable_optim = self.checkBox_1.isChecked()
@@ -442,95 +478,102 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         new_calc = self.checkBox_6.isChecked()
         file_shp_Cable_dep = getattr(self, f"lineEdit_6").text()
 
-        msg="\nTHE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY: \n"
-        #Check MNT
-        if test_Skidder+test_Forwarder+test_Cable>0:
+        msg = "\nTHE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY: \n"
+        # Check MNT
+        if test_Skidder + test_Forwarder + test_Cable > 0:
             try:
-                _,values,_,Extent = raster_get_info(file_MNT)   
-                if values[5]==None:
-                    verif=False
-                    msg+=" -   Raster MNT: No value of NoData definie\n" 
+                _, values, _, Extent = raster_get_info(file_MNT)
+                if values[5] is None:
+                    verif = False
+                    msg += " -   Raster MNT: No value of NoData defined\n"
             except:
-                msg += " -   Raster MNT:  Path is missing or incorrect. This raster is required to run Sylvaccess\n" 
+                msg += " -   Raster MNT:  Path is missing or incorrect. This raster is required to run Sylvaccess\n"
                 verif = False
-                
-        #Check file_shp_Desserte   
-        if test_Skidder+test_Forwarder>0:
-            try:    
-                if not check_field(file_shp_Desserte,"CL_SVAC"):
-                    verif=False
-                    msg+=" -   Service layer: The 'CL_SVAC' field is missing\n"  
-            except:
-                verif=False
-                msg += " -   Service layer: Path is missing or incorrect. This layer is required for skidder and forwarder modules\n" 
-            
 
-        #Check file_shp_Cable_Dep    
-        if test_Cable:   
-            try: 
-                if not check_field(file_shp_Cable_dep,"CABLE"):
-                    verif=False
-                    msg+=" -   Service layer: The 'CABLE' field is missing\n"  
+        # Check file_shp_Desserte
+        if test_Skidder + test_Forwarder > 0:
+            try:
+                if not check_field(file_shp_Desserte, "CL_SVAC"):
+                    verif = False
+                    msg += " -   Service layer: The 'CL_SVAC' field is missing\n"
             except:
-                verif=False
+                verif = False
+                msg += " -   Service layer: Path is missing or incorrect. This layer is required for skidder and forwarder modules\n"
+
+        # Check file_shp_Cable_Dep
+        if test_Cable:
+            try:
+                if not check_field(file_shp_Cable_dep, "CABLE"):
+                    verif = False
+                    msg += " -   Service layer: The 'CABLE' field is missing\n"
+            except:
+                verif = False
                 msg += " -   Potential cable departures layer: The access path is missing or incorrect. This layer is mandatory for the cable module\n"
 
-            
-        #Check file_shp_Foret   
-        if test_Skidder+test_Forwarder+test_Cable>0:    
-            try:     
-                if not check_field(file_shp_Foret,"FORET"):
-                    verif=False
-                    msg+=" -   Forest layer: The 'FOREST' field is missing\n" 
+        # Check file_shp_Foret
+        if test_Skidder + test_Forwarder + test_Cable > 0:
+            try:
+                if not check_field(file_shp_Foret, "FORET"):
+                    verif = False
+                    msg += " -   Forest layer: The 'FOREST' field is missing\n"
             except:
-                verif=False
+                verif = False
                 msg += " -   Forest layer: Path is missing or incorrect. This layer is required to run Sylvaccess\n"
             if not file_shp_Foret.endswith(".shp") or not file_shp_Foret.endswith(".gpkg"):
                 verif = False
-                msg += " -   Forest layer: The file must be a shapefile or a geopackage\n"     
-                    
-        #Check file_shp_Foret for cable optim
-        if not test_Cable and test_cable_optim and new_calc and file_shp_Foret!="":
-            try:     
-                if not check_field(file_shp_Foret,"FORET"):
-                    verif=False
-                    msg+=" -   Forest layer (optimization cable tab): The 'FOREST' field is missing\n" 
+                msg += " -   Forest layer: The file must be a shapefile or a geopackage\n"
+
+        # Check file_shp_Foret for cable optim
+        if not test_Cable and test_cable_optim and new_calc and file_shp_Foret != "":
+            try:
+                if not check_field(file_shp_Foret, "FORET"):
+                    verif = False
+                    msg += " -   Forest layer (optimization cable tab): The 'FOREST' field is missing\n"
             except:
-                verif=False
+                verif = False
                 msg += " -   Forest layer (optimization cable tab): The path is missing or incorrect. \n"
             if not file_shp_Foret.endswith(".shp") or not file_shp_Foret.endswith(".gpkg"):
                 verif = False
-                msg += " -   Forest layer (optimization cable tab): The file must be a shapefile or a geopackage\n"     
-            
-        #Check file_vol_BP,file_vol_AM,file_HA
-        name = ["Raster Volume/ha","Raster medium tree volume","Raster tree height"]
-        for i,f in enumerate([file_vol_BP,file_vol_AM,file_HA]):
-            if f!="":
+                msg += " -   Forest layer (optimization cable tab): The file must be a shapefile or a geopackage\n"
+
+        # Check file_vol_BP, file_vol_AM, file_HA
+        name = ["Raster Volume/ha", "Raster medium tree volume", "Raster tree height"]
+        for i, f in enumerate([file_vol_BP, file_vol_AM, file_HA]):
+            if f != "":
                 try:
-                    _,values2,_,Extent2 = raster_get_info(f)    
-                    if values2[5]==None:
-                        verif=False
-                        msg+=" -   "+name[i]+": No value of NoData definie\n" 
-                    if not values[4]==values2[4]:
-                        verif=False
-                        msg+=" -   "+name[i]+": Raster cell size should be the same as DTM\n" 
-                    if not np.all(Extent==Extent2):
-                        verif=False
-                        msg+=" -   "+name[i]+": The extent of the raster must be the same as that of the DTM\n" 
+                    _, values2, _, Extent2 = raster_get_info(f)
+                    if values2[5] is None:
+                        verif = False
+                        msg += " -   " + name[i] + ": No value of NoData defined\n"
+                    if not values[4] == values2[4]:
+                        verif = False
+                        msg += " -   " + name[i] + ": Raster cell size should be the same as DTM\n"
+                    if not np.all(Extent == Extent2):
+                        verif = False
+                        msg += " -   " + name[i] + ": The extent of the raster must be the same as that of the DTM\n"
+                        
+                    # Check if the additional raster is oversized compared to the main DTM
+                    if (Extent2[2] > Extent[2]) or (Extent2[3] > Extent[3]):
+                        # Crop the additional raster to the extent of the main DTM
+                        # Assuming you have a function crop_to_main_dtm_size defined
+                        crop_to_main_dtm_size(f, Extent)
+                    elif (Extent2[2] < Extent[2]) or (Extent2[3] < Extent[3]):
+                        verif = False
+                        msg += " -   " + name[i] + ": The raster size is undersized compared to the main DTM\n"
+                        
                 except:
-                    verif=False
+                    verif = False
                     msg += " -   " + name[i] + ": The access path is incorrect\n"
                 if not f.endswith(".tif") or not f.endswith(".asc") or not f.endswith(".txt"):
                     verif = False
-                    msg += " -   " + name[i] + ": The file must be a tif, asc or txt file\n"     
+                    msg += " -   " + name[i] + ": The file must be a tif, asc or txt file\n"
 
         if not verif:
-            msg+="\n"
-            msg+="PLEASE CORRECT BEFORE RELAUNCHING SYLVACCESS\n"
+            msg += "\n"
+            msg += "PLEASE CORRECT BEFORE RELAUNCHING SYLVACCESS\n"
             console_warning(msg)
             Sylvaccess_UI.close()
         return verif
-
 
 #####################################################################################################################
 #  _______  _______ .___________.   ____    ____  ___      .______    __       ___      .______    __       _______ #
@@ -571,7 +614,6 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         _por_obstacle = getattr(self, f"lineEdit_9").text()
         _por_obstacle += "/"
         _cab_obstacle = getattr(self, f"lineEdit_10").text()
-        _cab_obstacle += "/"
         _HA = getattr(self, f"lineEdit_11").text()
         _VAM = getattr(self, f"lineEdit_12").text()
         _VBP = getattr(self, f"lineEdit_13").text()
@@ -3038,6 +3080,7 @@ def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,
 
 def Skidder():
     Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,_,Dir_Full_Obs_skidder,Dir_Partial_Obs_skidder,_,_,file_Vol_ha,_,_ = Sylvaccess_UI.get_spatial_cls()
+    file_Vol_ha = Sylvaccess_UI.crop_to_main_dtm_size(file_MNT,file_Vol_ha)
     _,_,_,_,Pente_max_bucheron = Sylvaccess_UI.get_general_cls()
     Pente_max_skidder,Dtreuil_max_up,Dtreuil_max_down,Dmax_train_near_for,Pmax_amont,Pmax_aval,Option_Skidder,Skid_Debclass=Sylvaccess_UI.get_skidder_cls()
     console_info("Debut du modele skidder")
