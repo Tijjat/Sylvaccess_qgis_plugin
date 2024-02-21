@@ -6,116 +6,128 @@
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="200"/>
         <source>Cable crane mounted on agricultural tractor</source>
-        <translation type="unfinished"></translation>
+        <translation>Grue à câble montée sur un tracteur agricole</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="209"/>
         <source>Cable crane mounted on trailer</source>
-        <translation type="unfinished"></translation>
+        <translation>Grue à câble montée sur remorque</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="218"/>
         <source>Cable crane mounted on truck</source>
-        <translation type="unfinished"></translation>
+        <translation>Grue à câble montée sur camion</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="227"/>
         <source>Long cable</source>
-        <translation type="unfinished"></translation>
+        <translation>Câble long</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="240"/>
         <source>Classical carriage</source>
-        <translation type="unfinished"></translation>
+        <translation>remorque classique</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="249"/>
         <source>self-motorized carriage</source>
-        <translation type="unfinished"></translation>
+        <translation>remorque automotrice</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="341"/>
         <source>Please fill in all required fields</source>
-        <translation type="unfinished"></translation>
+        <translation>Veuillez remplir tous les champs obligatoires</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="442"/>
         <source>
 THE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY: 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>LES PROBLÈMES SUIVANTS ONT ÉTÉ IDENTIFIÉS EN CE QUI CONCERNE L’ENTRÉE SPATIALE :</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="449"/>
         <source> -   Raster MNT: No value of NoData defined
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> -   Raster MNT: No value of NoData defined
+</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="451"/>
         <source> -   Raster MNT:  Path is missing or incorrect. This raster is required to run Sylvaccess
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> -   Raster MNT:  Path is missing or incorrect. This raster is required to run Sylvaccess
+</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="459"/>
         <source> -   Service layer: The &apos;CL_SVAC&apos; field is missing
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> -   Service layer: The &apos;CL_SVAC&apos; field is missing
+</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="462"/>
         <source> -   Service layer: Path is missing or incorrect. This layer is required for skidder and forwarder modules
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> -   Service layer: Path is missing or incorrect. This layer is required for skidder and forwarder modules
+</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="469"/>
         <source> -   Service layer: The &apos;CABLE&apos; field is missing
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> -   Service layer: The &apos;CABLE&apos; field is missing
+</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="472"/>
         <source> -   Potential cable departures layer: The access path is missing or incorrect. This layer is mandatory for the cable module
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> -   Potential cable departures layer: The access path is missing or incorrect. This layer is mandatory for the cable module
+</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="479"/>
         <source> -   Forest layer: The &apos;FOREST&apos; field is missing
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> -   Forest layer: The &apos;FOREST&apos; field is missing
+</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="482"/>
         <source> -   Forest layer: Path is missing or incorrect. This layer is required to run Sylvaccess
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> -   Forest layer: Path is missing or incorrect. This layer is required to run Sylvaccess
+</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="485"/>
         <source> -   Forest layer: The file must be a shapefile or a geopackage
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> -   Forest layer: The file must be a shapefile or a geopackage
+</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="492"/>
         <source> -   Forest layer (optimization cable tab): The &apos;FOREST&apos; field is missing
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> -   Forest layer (optimization cable tab): The &apos;FOREST&apos; field is missing
+</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="495"/>
         <source> -   Forest layer (optimization cable tab): The path is missing or incorrect. 
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> -   Forest layer (optimization cable tab): The path is missing or incorrect. 
+</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="498"/>
         <source> -   Forest layer (optimization cable tab): The file must be a shapefile or a geopackage
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> -   Forest layer (optimization cable tab): The file must be a shapefile or a geopackage
+</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="501"/>
@@ -135,7 +147,7 @@ THE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY:
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="523"/>
         <source> -   </source>
-        <translation type="unfinished"></translation>
+        <translation>-</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="508"/>
@@ -572,12 +584,12 @@ Criteria used for optimization :
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1754"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>Non</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1756"/>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>Oui</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1752"/>
@@ -659,11 +671,11 @@ All possible lines have been tested.
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="2616"/>
         <source>                                                         </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="2617"/>
-        <source>From all cable starts<byte value="x9"/><byte value="x9"/></source>
+        <source>From all cable starts		</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -877,12 +889,12 @@ Cable input data processing achieved
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="3068"/>
         <source>Forest.npy</source>
-        <translation type="unfinished"></translation>
+        <translation>Forest.npy</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="2973"/>
         <source>Pente.npy</source>
-        <translation type="unfinished"></translation>
+        <translation>Pente.npy</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="3017"/>
@@ -932,7 +944,7 @@ Cable input data processing achieved
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="3056"/>
         <source>CableLines_Optimization_</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="3057"/>
@@ -947,17 +959,17 @@ Cable input data processing achieved
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="3062"/>
         <source>info_proj.shp</source>
-        <translation type="unfinished"></translation>
+        <translation>info_proj.shp</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="3070"/>
         <source>Vol_ha.npy</source>
-        <translation type="unfinished"></translation>
+        <translation>Vol_ha.npy</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="3074"/>
         <source>Vol_AM.npy</source>
-        <translation type="unfinished"></translation>
+        <translation>Vol_AM.npy</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="3082"/>
@@ -1430,7 +1442,7 @@ Cable input data processing achieved
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="3917"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="279"/>
@@ -1480,7 +1492,7 @@ Cable input data processing achieved
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="1205"/>
         <source>(.tif, .asc)</source>
-        <translation type="unfinished"></translation>
+        <translation>(.tif, .asc)</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="577"/>
@@ -1490,7 +1502,7 @@ Cable input data processing achieved
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="738"/>
         <source>(.shp, .gbkg)</source>
-        <translation type="unfinished"></translation>
+        <translation>(.shp, .gbkg)</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="725"/>
@@ -1575,7 +1587,7 @@ Cable input data processing achieved
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4505"/>
         <source>m</source>
-        <translation type="unfinished"></translation>
+        <translation>m</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="1625"/>
@@ -1630,7 +1642,7 @@ Cable input data processing achieved
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="2329"/>
         <source>0;500;1000;1500</source>
-        <translation type="unfinished"></translation>
+        <translation>0;500;1000;1500</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="2354"/>
@@ -1955,7 +1967,7 @@ Cable input data processing achieved
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4052"/>
         <source>ha</source>
-        <translation type="unfinished"></translation>
+        <translation>ha</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4522"/>
@@ -1975,7 +1987,7 @@ Cable input data processing achieved
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4370"/>
         <source>m^3</source>
-        <translation type="unfinished"></translation>
+        <translation>m^3</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4146"/>
@@ -1985,7 +1997,7 @@ Cable input data processing achieved
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4397"/>
         <source>/</source>
-        <translation type="unfinished"></translation>
+        <translation>/</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4165"/>
@@ -2025,7 +2037,7 @@ Cable input data processing achieved
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4335"/>
         <source>m^3/m</source>
-        <translation type="unfinished"></translation>
+        <translation>m^3/m</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4363"/>
