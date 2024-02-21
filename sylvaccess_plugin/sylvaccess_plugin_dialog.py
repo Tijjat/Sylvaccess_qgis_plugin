@@ -25,6 +25,7 @@
 # Importation des bibliothèques 
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtCore import QCoreApplication, QObject
 import os
 from qgis.core import QgsMessageLog, Qgis
 from scipy import spatial
@@ -196,7 +197,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def comboBox_1_changed(self):
         value = self.comboBox_1.currentText()
-        if value == "Cable crane mounted on agricultural tractor":
+        if value == QCoreApplication.translate("MainWindow", "Cable crane mounted on agricultural tractor"):
             self.spinBox_14.setValue(2)
             self.doubleSpinBox_2.setValue(8.5)
             self.spinBox_16.setValue(500)
@@ -205,7 +206,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             self.doubleSpinBox_4.setValue(1.4)
             self.spinBox_26.setValue(25000)
             self.spinBox_40.setValue(35)
-        elif value == "Cable crane mounted on trailer":
+        elif value == QCoreApplication.translate("MainWindow", "Cable crane mounted on trailer"):
             self.spinBox_14.setValue(3)
             self.doubleSpinBox_2.setValue(10.5)
             self.spinBox_16.setValue(780)
@@ -214,7 +215,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             self.doubleSpinBox_4.setValue(1.9)
             self.spinBox_26.setValue(35000)
             self.spinBox_40.setValue(35)
-        elif value == "Cable crane mounted on truck":
+        elif value == QCoreApplication.translate("MainWindow", "Cable crane mounted on truck"):
             self.spinBox_14.setValue(3)
             self.doubleSpinBox_2.setValue(14)
             self.spinBox_16.setValue(1200)
@@ -223,7 +224,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             self.doubleSpinBox_4.setValue(2.6)
             self.spinBox_26.setValue(48000)
             self.spinBox_40.setValue(40)
-        elif value == "Long cable":
+        elif value == QCoreApplication.translate("MainWindow", "Long cable"):
             self.spinBox_14.setValue(3)
             self.doubleSpinBox_2.setValue(8.0)
             self.spinBox_16.setValue(1500)
@@ -231,12 +232,12 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             self.doubleSpinBox_3.setValue(22.0)
             self.doubleSpinBox_4.setValue(2.6)
             self.spinBox_26.setValue(48000)
-            self.spinBox_40.setValue(40)    
+            self.spinBox_40.setValue(40)
 
 
     def comboBox_3_changed(self):
         value = self.comboBox_3.currentText()
-        if value == "Classical carriage":
+        if value == QCoreApplication.translate("MainWindow", "Classical carriage"):
             self.spinBox_22.setValue(500)
             self.spinBox_23.setValue(15)
             self.spinBox_24.setValue(15)
@@ -245,7 +246,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             self.spinBox_23.setEnabled(True)
             self.spinBox_24.setEnabled(False)
             self.spinBox_25.setEnabled(False)
-        elif value == "self-motorized carriage":
+        elif value == QCoreApplication.translate("MainWindow", "self-motorized carriage"):
             self.spinBox_22.setValue(1200)
             self.spinBox_23.setValue(15)
             self.spinBox_24.setValue(15)
@@ -322,12 +323,11 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 ###############################################################################################  
 
 
-    # Fonction appelée lorsqu'on clique sur le bouton OK
     def launch(self):
         ##testing
         console_info("launch")
         ##
-         
+        
         Wspace,Rspace,_,_,file_shp_Desserte,_,_,_,_,_,_,_,_ = Sylvaccess_UI.get_spatial()
         test_Skidder,test_Forwarder,test_Cable,test_cable_optimise,pente = Sylvaccess_UI.get_general()
         prelevement,recalculer,_,foret2,VBP2,VAM2,pechage2 = Sylvaccess_UI.get_opti_cable()
@@ -338,17 +338,18 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         except:pass
         for i in range (1,5):   
             if not getattr(self, f"lineEdit_{i}").text():
-                console_warning("Please fill in all required fields")
+                txt = QCoreApplication.translate("MainWindow", "Please fill in all required fields")
+                console_warning(txt)
                 Sylvaccess_UI.close()
                 return
         Sylvaccess_UI.check_files()
         write_file()
         if (test_Skidder + test_Forwarder) > 0:
-            # Verifie si une partie de la desserte correspond a un projet
+            # Check if part of the service corresponds to a project
             testExist = check_field_EXIST(file_shp_Desserte,"EXIST") 
-                    
+            
             ###################################################################################################################
-            ### Si pas de projet desserte
+            ### If no service project
             ###################################################################################################################
             if not testExist: 
                 if test_Skidder:  
@@ -359,14 +360,13 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                     process_forwarder()
                     gc.collect()
             
-                ###################################################################################################################
-                ### Si projet desserte
-                ###################################################################################################################
+            ###################################################################################################################
+            ### If service project exists
+            ###################################################################################################################
             else:                        
                 file_shp_Desserte_Exist = create_new_road_network(file_shp_Desserte,Wspace)
                 
-                #Premiere simu sans projet
-    
+                # First simulation without project
                 console_info("\nSIMULATION FROM EXISTING SERVICE")
                 if test_Skidder:   
                     try:os.mkdir(Rspace+"Skidder/")
@@ -374,8 +374,6 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                     Skidder(file_shp_Desserte_Exist)                    
                     gc.collect()
                     projdir = Rspace+"Skidder/1_Existant/"
-
-                    
                     os.rename(Rspace+"Skidder/Skidder/",projdir)
                 
                 if test_Forwarder:
@@ -394,13 +392,12 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 os.remove(Wspace+"Temp/Road_for.npy")
                 os.remove(Wspace+"Temp/Track.npy")
                 
-                #Deuxieme simu avec projet
+                # Second simulation with project
                 console_info("\nSIMULATION INCLUDING THE SERVICE PROJECT")
                 if test_Skidder: 
                     Skidder()                    
                     gc.collect()
                     projdir = Rspace+"Skidder/2_Project/"
-                    
                     os.rename(Rspace+"Skidder/Skidder/",projdir)
                     make_dif_files(Rspace,0)     
                     
@@ -427,42 +424,6 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         Sylvaccess_UI.close()
 
 
-    def crop_to_main_dtm_size(raster_file, main_dtm_extent):
-        try:
-            # Open the raster file
-            dataset = gdal.Open(raster_file, gdal.GA_Update)
-            if dataset is None:
-                print("Error: Could not open the raster file")
-                return
-
-            # Get the raster's geotransform
-            geotransform = dataset.GetGeoTransform()
-            if geotransform is None:
-                print("Error: Could not get the geotransform of the raster")
-                return
-
-            # Calculate the pixel and line offset for the cropping
-            px1 = int((main_dtm_extent[0] - geotransform[0]) / geotransform[1])
-            px2 = int((main_dtm_extent[1] - geotransform[0]) / geotransform[1])
-            line1 = int((main_dtm_extent[3] - geotransform[3]) / geotransform[5])
-            line2 = int((main_dtm_extent[2] - geotransform[3]) / geotransform[5])
-
-            # Crop the raster
-            cropped_dataset = gdal.Translate("cropped_" + raster_file, dataset, srcWin=[px1, line1, px2-px1, line2-line1])
-            if cropped_dataset is None:
-                print("Error: Could not crop the raster")
-                return
-
-            # Close the datasets
-            dataset = None
-            cropped_dataset = None
-
-            print("Raster cropped successfully to the extent of the main DTM")
-
-        except Exception as e:
-            print("Error:", e)
-
-
     def check_files(self):
         verif = True
         test_Skidder = self.checkBox_4.isChecked()
@@ -478,16 +439,16 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         new_calc = self.checkBox_6.isChecked()
         file_shp_Cable_dep = getattr(self, f"lineEdit_6").text()
 
-        msg = "\nTHE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY: \n"
+        msg = QCoreApplication.translate("MainWindow", "\nTHE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY: \n")
         # Check MNT
         if test_Skidder + test_Forwarder + test_Cable > 0:
             try:
                 _, values, _, Extent = raster_get_info(file_MNT)
                 if values[5] is None:
                     verif = False
-                    msg += " -   Raster MNT: No value of NoData defined\n"
+                    msg += QCoreApplication.translate("MainWindow", " -   Raster MNT: No value of NoData defined\n")
             except:
-                msg += " -   Raster MNT:  Path is missing or incorrect. This raster is required to run Sylvaccess\n"
+                msg += QCoreApplication.translate("MainWindow", " -   Raster MNT:  Path is missing or incorrect. This raster is required to run Sylvaccess\n")
                 verif = False
 
         # Check file_shp_Desserte
@@ -495,62 +456,62 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             try:
                 if not check_field(file_shp_Desserte, "CL_SVAC"):
                     verif = False
-                    msg += " -   Service layer: The 'CL_SVAC' field is missing\n"
+                    msg += QCoreApplication.translate("MainWindow", " -   Service layer: The 'CL_SVAC' field is missing\n")
             except:
                 verif = False
-                msg += " -   Service layer: Path is missing or incorrect. This layer is required for skidder and forwarder modules\n"
+                msg += QCoreApplication.translate("MainWindow", " -   Service layer: Path is missing or incorrect. This layer is required for skidder and forwarder modules\n")
 
         # Check file_shp_Cable_Dep
         if test_Cable:
             try:
                 if not check_field(file_shp_Cable_dep, "CABLE"):
                     verif = False
-                    msg += " -   Service layer: The 'CABLE' field is missing\n"
+                    msg += QCoreApplication.translate("MainWindow", " -   Service layer: The 'CABLE' field is missing\n")
             except:
                 verif = False
-                msg += " -   Potential cable departures layer: The access path is missing or incorrect. This layer is mandatory for the cable module\n"
+                msg += QCoreApplication.translate("MainWindow", " -   Potential cable departures layer: The access path is missing or incorrect. This layer is mandatory for the cable module\n")
 
         # Check file_shp_Foret
         if test_Skidder + test_Forwarder + test_Cable > 0:
             try:
                 if not check_field(file_shp_Foret, "FORET"):
                     verif = False
-                    msg += " -   Forest layer: The 'FOREST' field is missing\n"
+                    msg += QCoreApplication.translate("MainWindow", " -   Forest layer: The 'FOREST' field is missing\n")
             except:
                 verif = False
-                msg += " -   Forest layer: Path is missing or incorrect. This layer is required to run Sylvaccess\n"
+                msg += QCoreApplication.translate("MainWindow", " -   Forest layer: Path is missing or incorrect. This layer is required to run Sylvaccess\n")
             if not file_shp_Foret.endswith(".shp") or not file_shp_Foret.endswith(".gpkg"):
                 verif = False
-                msg += " -   Forest layer: The file must be a shapefile or a geopackage\n"
+                msg += QCoreApplication.translate("MainWindow", " -   Forest layer: The file must be a shapefile or a geopackage\n")
 
         # Check file_shp_Foret for cable optim
         if not test_Cable and test_cable_optim and new_calc and file_shp_Foret != "":
             try:
                 if not check_field(file_shp_Foret, "FORET"):
                     verif = False
-                    msg += " -   Forest layer (optimization cable tab): The 'FOREST' field is missing\n"
+                    msg += QCoreApplication.translate("MainWindow", " -   Forest layer (optimization cable tab): The 'FOREST' field is missing\n")
             except:
                 verif = False
-                msg += " -   Forest layer (optimization cable tab): The path is missing or incorrect. \n"
+                msg += QCoreApplication.translate("MainWindow", " -   Forest layer (optimization cable tab): The path is missing or incorrect. \n")
             if not file_shp_Foret.endswith(".shp") or not file_shp_Foret.endswith(".gpkg"):
                 verif = False
-                msg += " -   Forest layer (optimization cable tab): The file must be a shapefile or a geopackage\n"
+                msg += QCoreApplication.translate("MainWindow", " -   Forest layer (optimization cable tab): The file must be a shapefile or a geopackage\n")
 
         # Check file_vol_BP, file_vol_AM, file_HA
-        name = ["Raster Volume/ha", "Raster medium tree volume", "Raster tree height"]
+        name = [QCoreApplication.translate("MainWindow", "Raster Volume/ha"), QCoreApplication.translate("MainWindow", "Raster medium tree volume"), QCoreApplication.translate("MainWindow", "Raster tree height")]
         for i, f in enumerate([file_vol_BP, file_vol_AM, file_HA]):
             if f != "":
                 try:
                     _, values2, _, Extent2 = raster_get_info(f)
                     if values2[5] is None:
                         verif = False
-                        msg += " -   " + name[i] + ": No value of NoData defined\n"
+                        msg += QCoreApplication.translate("MainWindow", " -   ") + name[i] + QCoreApplication.translate("MainWindow", ": No value of NoData defined\n")
                     if not values[4] == values2[4]:
                         verif = False
-                        msg += " -   " + name[i] + ": Raster cell size should be the same as DTM\n"
+                        msg += QCoreApplication.translate("MainWindow", " -   ") + name[i] + QCoreApplication.translate("MainWindow", ": Raster cell size should be the same as DTM\n")
                     if not np.all(Extent == Extent2):
                         verif = False
-                        msg += " -   " + name[i] + ": The extent of the raster must be the same as that of the DTM\n"
+                        msg += QCoreApplication.translate("MainWindow", " -   ") + name[i] + QCoreApplication.translate("MainWindow", ": The extent of the raster must be the same as that of the DTM\n")
                         
                     # Check if the additional raster is oversized compared to the main DTM
                     if (Extent2[2] > Extent[2]) or (Extent2[3] > Extent[3]):
@@ -559,21 +520,21 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                         crop_to_main_dtm_size(f, Extent)
                     elif (Extent2[2] < Extent[2]) or (Extent2[3] < Extent[3]):
                         verif = False
-                        msg += " -   " + name[i] + ": The raster size is undersized compared to the main DTM\n"
+                        msg += QCoreApplication.translate("MainWindow", " -   ") + name[i] + QCoreApplication.translate("MainWindow", ": The raster size is undersized compared to the main DTM\n")
                         
                 except:
                     verif = False
-                    msg += " -   " + name[i] + ": The access path is incorrect\n"
+                    msg +=  " -   " + name[i] + QCoreApplication.translate("MainWindow", ": The access path is incorrect\n")
                 if not f.endswith(".tif") or not f.endswith(".asc") or not f.endswith(".txt"):
                     verif = False
-                    msg += " -   " + name[i] + ": The file must be a tif, asc or txt file\n"
+                    msg +=  " -   " + name[i] + QCoreApplication.translate("MainWindow", ": The file must be a tif, asc or txt file\n")
 
         if not verif:
-            msg += "\n"
-            msg += "PLEASE CORRECT BEFORE RELAUNCHING SYLVACCESS\n"
+            msg += QCoreApplication.translate("MainWindow", "\nPLEASE CORRECT BEFORE RELAUNCHING SYLVACCESS\n")
             console_warning(msg)
             Sylvaccess_UI.close()
         return verif
+
 
 #####################################################################################################################
 #  _______  _______ .___________.   ____    ____  ___      .______    __       ___      .______    __       _______ #
@@ -918,6 +879,14 @@ def raster_get_info(in_file_name):
     return names,values,src_proj,Extent
 
 
+def read_raster(file_name):
+    source_ds = gdal.Open(file_name)
+    source_ds.FlushCache() # Flush 
+    Array = source_ds.GetRasterBand(1).ReadAsArray()
+    Array[Array==0]=-9999
+    return Array
+
+
 def write_file():
     # Récupération des valeurs des variables
     Wspace, Rspace, mnt, foret, desserte, dep_cable, ski_no_t_d, ski_no_t, por_obstacle, cab_obstacle, HA, VAM, VBP = Sylvaccess_UI.get_spatial_cls()
@@ -929,9 +898,9 @@ def write_file():
 
     pente_max, distance_max_amont, distance_max_aval, distance_max_hors_frt_dsrt, pente_amont_max, pente_aval_max, limite, bornes = Sylvaccess_UI.get_skidder_cls()
     if limite == 1:
-        limite = "1-Limit soil damages: force the skidder to proceed from the forest road network"
+        limite = QCoreApplication.translate("MainWindow","1-Limit soil damages: force the skidder to proceed from the forest road network")
     else:
-        limite = "2-Limit winching operations: force the skidder to get as close as possible from logs"
+        limite = QCoreApplication.translate("MainWindow","2-Limit winching operations: force the skidder to get as close as possible from logs")
     skidder_data = [pente_max, distance_max_amont, distance_max_aval, distance_max_hors_frt_dsrt, pente_amont_max, pente_aval_max, limite, bornes]
     for i in (0, 4, 5):
         skidder_data[i] = str(skidder_data[i]) + " %"
@@ -963,7 +932,6 @@ def write_file():
     tension_rupt = str(tension_rupt) + " N"
     elasticité = str(elasticité) + " N/mm²"
 
-
     hauteur_sup, hauteur_mat, hauteur_min_cable, hauteur_max_cable, pechage, masse_max, securite = Sylvaccess_UI.get_param_modelisation()
     param_modelisation_data = [hauteur_sup, hauteur_mat, hauteur_min_cable, hauteur_max_cable, pechage, masse_max, securite]
     for i in (0, 1, 2, 3, 4):
@@ -979,75 +947,79 @@ def write_file():
     surface, surface_poids, nbr_sup_int, nbr_sup_int_poids, sens_debardage, sens_debardage_poids, longueur_ligne, longueur_ligne_poids, vol_ligne, vol_ligne_poids, indice_prelev, indice_prelev_poids, VAM3, VAM_poids, dist_chariot, dist_chariot_poids = Sylvaccess_UI.get_crit_opti()
     crit_opti_data = [surface, surface_poids, nbr_sup_int, nbr_sup_int_poids, sens_debardage, sens_debardage_poids, longueur_ligne, longueur_ligne_poids, vol_ligne, vol_ligne_poids, indice_prelev, indice_prelev_poids, VAM3, VAM_poids, dist_chariot, dist_chariot_poids]
 
+    # Wrap all strings with tr() function
     file_name = Rspace + "_all_param.txt"
     with open(file_name, 'w') as fichier:
 
-        fichier.write("General data :\n\n")
-        for var_name, var_value in zip(['skidder Analysis', 'Forwarder Analysis', 'Cable Yarding Analysis', 'Optimize Cable Lines', 'Maximum slope for manual harvesting'], general_data):
+        fichier.write(QCoreApplication.translate("MainWindow","General data :\n\n"))
+        zip1 = QCoreApplication.translate("MainWindow", ['skidder Analysis', 'Forwarder Analysis', 'Cable Yarding Analysis', 'Optimize Cable Lines', 'Maximum slope for manual harvesting'])
+        for var_name, var_value in zip(zip1, general_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
-        fichier.write("\nSpatial data :\n\n")
-        for var_name, var_value in zip(['Workspace', 'Result Space', 'DTM file', 'Forest area file', 'Forest road network', 'Cable Crane start point', 'Skidder, area where winching and skidding are forbidden', 'Skidder, area where skidding is forbidden', 'Forwarder, obstacles for the free movement of the machine', 'Cable yarding, obstacles for the set-up of cable line', 'Height of the trees', 'Average tree volume', 'Volume per hectare'], spatial_data):
+        fichier.write(QCoreApplication.translate("MainWindow","\nSpatial data :\n\n"))
+        zip1 = QCoreApplication.translate("MainWindow", ['Workspace', 'Result Space', 'DTM file', 'Forest area file', 'Forest road network', 'Cable Crane start point', 'Skidder, area where winching and skidding are forbidden', 'Skidder, area where skidding is forbidden', 'Forwarder, obstacles for the free movement of the machine', 'Cable yarding, obstacles for the set-up of cable line', 'Height of the trees', 'Average tree volume', 'Volume per hectare'])
+        for var_name, var_value in zip(zip1, spatial_data):
             if var_value == "":
-                fichier.write(f"{var_name}: No data\n")
+                fichier.write(f"{var_name}: {QCoreApplication.translate("MainWindow",'No data')}\n")
             else:
                 fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
-        fichier.write("\nParameters for skidder processing:\n\n")
-        for var_name, var_value in zip(['Maximal slope outside forest network for the skidder', 'Maximum uphill winching distance', 'Maximum downhill winching distance', 'Maximal distance outside forest', 'Slope from which uphill winching reaches maximum distance', 'Slope from which downhill winching reaches maximum distance', 'Simulation option', 'Classes of skidding distance (Total distance in meters)'], skidder_data):
+        fichier.write(QCoreApplication.translate("MainWindow","\nParameters for skidder processing:\n\n"))
+        zip1 = QCoreApplication.translate("MainWindow", ['Maximal slope outside forest network for the skidder', 'Maximum uphill winching distance', 'Maximum downhill winching distance', 'Maximal distance outside forest', 'Slope from which uphill winching reaches maximum distance', 'Slope from which downhill winching reaches maximum distance', 'Simulation option', 'Classes of skidding distance (Total distance in meters)'])
+        for var_name, var_value in zip(zip1, skidder_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
-        fichier.write("\nParameters for forwarder processing :\n\n")
-        for var_name, var_value in zip(['Maximum lateral inclination of the machine', 'Maximum slope for a uphill yarding', 'Maximum slope for a downhill yarding', 'Maximum yarding distance when slope is greater than the maximum lateral inclination of the machine', 'Maximum distance outside forest', 'Length of the hoist', 'Classes of skidding distance (Total distance in meters)'], forwarder_data):
+        fichier.write(QCoreApplication.translate("MainWindow","\nParameters for forwarder processing :\n\n"))
+        zip1 = QCoreApplication.translate("MainWindow", ['Maximum lateral inclination of the machine', 'Maximum slope for a uphill yarding', 'Maximum slope for a downhill yarding', 'Maximum yarding distance when slope is greater than the maximum lateral inclination of the machine', 'Maximum distance outside forest', 'Length of the hoist', 'Classes of skidding distance (Total distance in meters)'])
+        for var_name, var_value in zip(zip1, forwarder_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
-        fichier.write("\nCable machine properties :\n\n")
-        for var_name, var_value in zip(['Type of material', 'Maximum number of intermediate supports', 'Crane height', 'Maximum skyline length', 'Minimum skyline length'], type_cable_data):
+        fichier.write(QCoreApplication.translate("MainWindow","\nCable machine properties :\n\n"))
+        zip1 = QCoreApplication.translate("MainWindow", ['Type of material', 'Maximum number of intermediate supports', 'Crane height', 'Maximum skyline length', 'Minimum skyline length'])
+        for var_name, var_value in zip(zip1, type_cable_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
-        fichier.write("\nCarriage properties :\n\n")
-        for var_name, var_value in zip(['Carriage type', 'Empty weigth', 'Minimum slope for a gravity descent of the carriage', 'Maximum slope of the skyline for an uphill yarding', 'Maximum slope of the skyline for an downhill yarding'], type_chariot_data):
+        fichier.write(QCoreApplication.translate("MainWindow","\nCarriage properties :\n\n"))
+        zip1 = QCoreApplication.translate("MainWindow", ['Carriage type', 'Empty weigth', 'Minimum slope for a gravity descent of the carriage', 'Maximum slope of the skyline for an uphill yarding', 'Maximum slope of the skyline for an downhill yarding'])
+        for var_name, var_value in zip(zip1, type_chariot_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
-        fichier.write("\nSkyline porperties :\n\n")
-        for var_name, var_value in zip(['Diameter', 'Skyline self-weight', 'Breakdown tensile force', 'Young Modulus ( Elasticity)'], propriete_cable_data):
+        fichier.write(QCoreApplication.translate("MainWindow","\nSkyline porperties :\n\n"))
+        zip1 = QCoreApplication.translate("MainWindow", ['Diameter', 'Skyline self-weight', 'Breakdown tensile force', 'Young Modulus ( Elasticity)'])
+        for var_name, var_value in zip(zip1, propriete_cable_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
-        fichier.write("\nModeling parameters :\n\n")
-        for var_name, var_value in zip(['Intermediate supports height', 'Tailspar height', 'Skyline minimum height at any point', 'Skyline max.height at any point', 'Lateral yarding distance', 'Payload capacity', 'Security factor'], param_modelisation_data):
+        zip1 = QCoreApplication.translate("MainWindow", ['Modeling parameters', 'Options', 'Cable yarding - Optimization of cable parameters', 'Criteria used for optimization'])
+        fichier.write(QCoreApplication.translate("MainWindow","\nModeling parameters :\n\n"))
+        for var_name, var_value in zip(zip1, param_modelisation_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
-        fichier.write("\nOptions :\n\n")
-        for var_name, var_value in zip(['Optimize skyline height at interlediate supports and tailspar', 'Precision of the modeling'], options_data):
+        fichier.write(QCoreApplication.translate("MainWindow","\nOptions :\n\n"))
+        zip1 = QCoreApplication.translate("MainWindow", ['Optimize skyline height at interlediate supports and tailspar', 'Precision of the modeling'])
+        for var_name, var_value in zip(zip1, options_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
-        fichier.write("\nCable yarding - Optimization of cable parameters :\n\n")
-        for var_name, var_value in zip(['Percentage of volume per hectare taken off', 'Re-compute', 'Result folder', 'Forest file', 'Volume per hectare', 'Average tree volume', 'Lateral yarding distance'], opti_cable_data):
+        fichier.write(QCoreApplication.translate("MainWindow","\nCable yarding - Optimization of cable parameters :\n\n"))
+        zip1 = QCoreApplication.translate("MainWindow", ['Percentage of volume per hectare taken off', 'Re-compute', 'Result folder', 'Forest file', 'Volume per hectare', 'Average tree volume', 'Lateral yarding distance'])
+        for var_name, var_value in zip(zip1, opti_cable_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
-        fichier.write("\nCriteria used for optimization :\n\n")
-        for var_name, var_value in zip(['Forest area impacted', '-->Forest area impacted weight', 'Number of intermediate supports', '-->Number of intermediate supports weight', 'Prefered yarding direction', '-->Prefered yarding direction weight', 'Line leingth', '-->Line leingth weight', 'Total volume per line', '-->Total volume per line weight', 'Volume per meter of line', '-->Volume per meter of line weight', 'Average tree volume', '-->Average tree volume weight', 'Carriage average distance', '-->Carriage average distance weight'], crit_opti_data):
+        fichier.write(QCoreApplication.translate("MainWindow","\nCriteria used for optimization :\n\n"))
+        zip1 = QCoreApplication.translate("MainWindow", ['Forest area impacted', '-->Forest area impacted weight', 'Number of intermediate supports', '-->Number of intermediate supports weight', 'Prefered yarding direction', '-->Prefered yarding direction weight', 'Line leingth', '-->Line leingth weight', 'Total volume per line', '-->Total volume per line weight', 'Volume per meter of line', '-->Volume per meter of line weight', 'Average tree volume', '-->Average tree volume weight', 'Carriage average distance', '-->Carriage average distance weight'])
+        for var_name, var_value in zip(zip1, crit_opti_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.close()
-
-
-def read_raster(file_name):
-    source_ds = gdal.Open(file_name)
-    source_ds.FlushCache() # Flush 
-    Array = source_ds.GetRasterBand(1).ReadAsArray()
-    Array[Array==0]=-9999
-    return Array
 
 
 #############################
@@ -1307,6 +1279,41 @@ def ArrayToGtiff(Array,file_name,Extent,nrows,ncols,road_network_proj,nodata_val
     target_ds.FlushCache()
 
 
+def crop_to_main_dtm_size(raster_file, main_dtm_extent):
+    try:
+        # Open the raster file
+        dataset = gdal.Open(raster_file, gdal.GA_Update)
+        if dataset is None:
+            console_info(QCoreApplication.translate("MainWindow","Error: Could not open the raster file"))
+            return
+
+        # Get the raster's geotransform
+        geotransform = dataset.GetGeoTransform()
+        if geotransform is None:
+            console_info(QCoreApplication.translate("MainWindow","Error: Could not get the geotransform of the raster"))
+            return
+
+        # Calculate the pixel and line offset for the cropping
+        px1 = int((main_dtm_extent[0] - geotransform[0]) / geotransform[1])
+        px2 = int((main_dtm_extent[1] - geotransform[0]) / geotransform[1])
+        line1 = int((main_dtm_extent[3] - geotransform[3]) / geotransform[5])
+        line2 = int((main_dtm_extent[2] - geotransform[3]) / geotransform[5])
+
+        # Crop the raster
+        cropped_dataset = gdal.Translate("cropped_" + raster_file, dataset, srcWin=[px1, line1, px2-px1, line2-line1])
+        if cropped_dataset is None:
+            console_info(QCoreApplication.translate("MainWindow","Error: Could not crop the raster"))
+            return
+
+        # Close the datasets
+        dataset = None
+        cropped_dataset = None
+
+        console_info(QCoreApplication.translate("MainWindow","Raster cropped successfully to the extent of the main DTM"))
+
+    except Exception as e:
+        console_info(QCoreApplication.translate("MainWindow","Error:", e))
+
 ####################################################
 #  ______     ___      .______    __       _______ #
 # /      |   /   \     |   _  \  |  |     |   ____|#
@@ -1319,7 +1326,9 @@ def ArrayToGtiff(Array,file_name,Extent,nrows,ncols,road_network_proj,nodata_val
                                                   
 # Fonctions qui gère les calculs liés au cable
 def Cable():
+    ##test
     console_info("Cable")
+    ##
     Wspace,_,file_MNT,file_shp_Foret,_,file_shp_Cable_dep,_,_,_,Dir_Obs_cable,file_Htree,file_Vol_AM,file_Vol_ha = Sylvaccess_UI.get_spatial_cls()
     _,_,_,_,Pente_max_bucheron = Sylvaccess_UI.get_general_cls()
     Cable_type,sup_max,Htower,Lmax,Lmin=Sylvaccess_UI.get_type_cable_cls()
@@ -1351,7 +1360,8 @@ def Cable():
         _,values,proj,Extent = raster_get_info(file_MNT)
         Csize,ncols,nrows = values[4],int(values[0]),int(values[1])    
     except:
-        console_warning("Error: please define a projection for MNT raster")
+        txt = QCoreApplication.translate("MainWindow", "Error: please define a projection for MNT raster")
+        console_warning(txt)
         Sylvaccess_UI.close()
         return ""
     try: 
@@ -1465,8 +1475,9 @@ def Cable():
     
     Fin_ligne_forcee = np.int8(np.greater(Aerian_obs+(MNT<0),0))
     
-    console_info("    - Initialisation achevee, debut de traitement...")
-    str_nb_pixel_route=  " / "+str(nb_pixel_route-1)+ " pixels traites"
+    txt = QCoreApplication.translate("MainWindow", "    -Initialization performed, start of processing...")
+    console_info("\n" + txt)
+    str_nb_pixel_route=  " / "+str(nb_pixel_route-1)+ " processed pixels"
     
     Tab = np.zeros((min(1000000,int(nb_pixel_route*(360)/step_route)),18+5*sup_max),dtype=np.int16)
     File_Tab = []
@@ -1607,7 +1618,7 @@ def Cable():
                         id_line=0
                         Tab = np.zeros((1000000,18+5*sup_max),dtype=np.int16)
 
-   
+    txt = QCoreApplication.translate("MainWindow", "    -Processing completed, start of results saving...")
     console_info("\n    - Saving of results")
    
     ### Save Forest,Vol_ha,VolAm,Pente
@@ -1653,12 +1664,12 @@ def Cable():
         pass
     
     #Save Global res        
-    header = 'ID_pixel Azimuth X_debut Y_debut Alt_debut Hcable_debut X_fin Y_fin Alt_fin Hcable_fin '
-    header += 'Etat_RoadeFor Length_real Configuration '
-    header +='Forest_surface Distance_moy_chariot Volume_total VAM NB_int_sup'
+    header = QCoreApplication.translate("MainWindow",'ID_pixel Azimuth X_debut Y_debut Alt_debut Hcable_debut X_fin Y_fin Alt_fin Hcable_fin ',)
+    header += QCoreApplication.translate("MainWindow",'Etat_RoadeFor Length_real Configuration ')
+    header += QCoreApplication.translate("MainWindow",'Forest_surface Distance_moy_chariot Volume_total VAM NB_int_sup')
     for num in range(1, sup_max + 1):
-        header +=' '+'Xcoord_intsup'+str(num)+' Ycoord_intsup'+str(num)+' Alt_intsup'+str(num)
-        header +=' '+'Hcable_intsup'+str(num)+' Pression_intsup'+str(num)
+        header += ' ' + QCoreApplication.translate("MainWindow",'Xcoord_intsup') + str(num) + ' ' + QCoreApplication.translate("MainWindow",'Ycoord_intsup') + str(num) + ' ' + QCoreApplication.translate("MainWindow",'Alt_intsup') + str(num)
+        header += ' ' + QCoreApplication.translate("MainWindow",'Hcable_intsup') + str(num) + ' ' + QCoreApplication.translate("MainWindow",'Pression_intsup') + str(num)
     filename=Rspace_c+"Database_all_lines.gzip"
     shape_name = Rspace_c+"All_the_lines.shp"
     rast_name = Rspace_c+'Zone_accessible'
@@ -1677,85 +1688,84 @@ def Cable():
     ##############################################################################################################################################
     str_duree,str_fin,str_debut=heures(Hdebut)
     
-    if Carriage_type==1:
-        carriage_name = 'self-propelled'
+    if Carriage_type == 1:
+        carriage_name = QCoreApplication.translate("MainWindow",'self-propelled')
     else:
-        carriage_name = 'Classic'
+        carriage_name = QCoreApplication.translate("MainWindow",'Classic')
     if Cable_type < 3:
-        cable_name= 'Cable mat'
+        cable_name = QCoreApplication.translate("MainWindow",'Cable mat')
     else:
-        cable_name= 'Long/conventional cable'
-        
-    file_name = str(Rspace_c)+"Parametre_simulation.txt"
-    resume_texte = "SYLVACCESS - CABLE\n\n\n"
-    resume_texte += "Plugin's verion: 1.0.0 from 02/06/2024\n"
-    resume_texte += "Author: Sylvain DUPIRE. Irstea\n\n"
-    resume_texte += "Date and time of script launch:"+str_debut+"\n"
-    resume_texte += "Date and time at the end of the script execution                           "+str_fin+"\n"
-    resume_texte += "Total execution time of the script:                                         "+str_duree+"\n\n"
-    resume_texte += "PROPERTIES OF THE MATERIAL:\n"
-    resume_texte += "   - Type of machine:                                                      "+str(cable_name)+"\n"
-    resume_texte += "   - Height of mat or cable Forwarder at the depot place:    "+str(Htower)+" m\n"
-    resume_texte += "   - Maximum number of intermediate support:                        "+str(sup_max)+"\n"
-    resume_texte += "   - Maximum length of the Forwarder cable:                                    "+str(Lmax)+" m\n"
-    resume_texte += "   - Minimum length of a line:                                        "+str(Lmin)+" m\n"
-    resume_texte += "   - Minimum length between two supports:                                "+str(LminSpan)+" m\n"
-    resume_texte += "   - Trolley type:                                                      "+str(carriage_name)+"\n"
-    resume_texte += "   - Empty mass of the trolley:                                              "+str(Pchar)+" kg\n"
-    resume_texte += "   - Maximum mass of load:                                          "+str(Load_max)+" kg\n"
-    if Carriage_type==1:   
-        resume_texte += "   - Max slope of the Forwarder cable for uphill unloading:            "+str(slope_Wliner_up)+" %\n"    
-        resume_texte += "   - Max slope of the Forwarder cable for downhill unloading:             "+str(slope_Wliner_down)+" %\n"   
-    else: 
-        resume_texte += "   - Min slope of the Forwarder cable for the trolley to climb down:  "+str(slope_grav)+" %\n"  
-    resume_texte += "\n"
-    resume_texte += "PROPERTIES OF THE FORWARDER CABLE :\n"    
-    resume_texte += "   - Diameter of the Forwarder cable:                                            "+str(d)+" mm\n"
-    resume_texte += "   - Line mass of the Forwarder cable:                                      "+str(masse_li)+" kg.m-1\n"
-    resume_texte += "   - Young’s Module (Elasticity):                                         "+str(E)+" N.mm-2\n"
-    resume_texte += "   - Breaking tension of the Forwarder cable                                   "+str(rupt_res)+" kgF\n\n"
-    if Carriage_type!=1:
-        resume_texte += "TRACTOR AND RETURN CABLE PROPERTIES:\n"  
-        resume_texte += "   - Line mass of the tractor cable:                                     "+str(masse_li2)+" kg.m-1\n"
-        resume_texte += "   - Line mass of the return cable:                                       "+str(masse_li3)+" kg.m-1\n"
-        resume_texte += "\n"        
-    resume_texte += "MODELISATION PARAMETERS:\n"
-    resume_texte += "   - Lateral distance of wood pitching:                                "+str(Lhor_max)+" m\n"
-    resume_texte += "   - Height of Forwarder cable at intermediate pylons:          "+str(Hintsup)+" m\n"
-    resume_texte += "   - Forwarder cable height at end of line:                             "+str(Hend)+" m\n"
-    resume_texte += "   - Minimum cable height at any point (load):                  "+str(Hline_min)+" m\n"
-    resume_texte += "   - Maximum cable height at any point:                              "+str(Hline_max)+" m\n"
-    resume_texte += "   - Maximum angle of the Forwarder cable at an intermediate pylon:   "+str(Max_angle)+" degres\n"
-    resume_texte += "   - Security factor:                                                  "+str(safe_fact)+"\n"
-    resume_texte += "   - Value of the friction angle:                                      "+str(coeff_frot)+" rad\n\n"
-    resume_texte += "   - Resolution of the NMT uses:                                            "+str(Csize)+" m\n"
-    resume_texte += "   - Standing volume harvesting applied:                              "+str(prelevement*100)+" %\n"
+        cable_name = QCoreApplication.translate("MainWindow",'Long/conventional cable')
+
+    file_name = str(Rspace_c) + QCoreApplication.translate("MainWindow",'Parametre_simulation.txt')
+    resume_texte = QCoreApplication.translate("MainWindow",'SYLVACCESS - CABLE\n\n\n')
+    resume_texte += QCoreApplication.translate("MainWindow","Plugin's version: 1.0.0 from 02/06/2024\n")
+    resume_texte += QCoreApplication.translate("MainWindow",'Author: Sylvain DUPIRE. Irstea\n\n')
+    resume_texte += QCoreApplication.translate("MainWindow",'Date and time of script launch:') + str_debut + '\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'Date and time at the end of the script execution                           ') + str_fin + '\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'Total execution time of the script:                                         ') + str_duree + '\n\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'PROPERTIES OF THE MATERIAL:\n')
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Type of machine:                                                      ') + str(cable_name) + '\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Height of mat or cable Forwarder at the depot place:    ') + str(Htower) + ' m\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Maximum number of intermediate support:                        ') + str(sup_max) + '\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Maximum length of the Forwarder cable:                                    ') + str(Lmax) + ' m\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Minimum length of a line:                                        ') + str(Lmin) + ' m\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Minimum length between two supports:                                ') + str(LminSpan) + ' m\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Trolley type:                                                      ') + str(carriage_name) + '\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Empty mass of the trolley:                                              ') + str(Pchar) + ' kg\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Maximum mass of load:                                          ') + str(Load_max) + ' kg\n'
+    if Carriage_type == 1:
+        resume_texte += QCoreApplication.translate("MainWindow",'   - Max slope of the Forwarder cable for uphill unloading:            ') + str(slope_Wliner_up) + ' %\n'
+        resume_texte += QCoreApplication.translate("MainWindow",'   - Max slope of the Forwarder cable for downhill unloading:             ') + str(slope_Wliner_down) + ' %\n'
+    else:
+        resume_texte += QCoreApplication.translate("MainWindow",'   - Min slope of the Forwarder cable for the trolley to climb down:  ') + str(slope_grav) + ' %\n'
+    resume_texte += '\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'PROPERTIES OF THE FORWARDER CABLE :\n')
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Diameter of the Forwarder cable:                                            ') + str(d) + ' mm\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Line mass of the Forwarder cable:                                      ') + str(masse_li) + ' kg.m-1\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Young’s Module (Elasticity):                                         ') + str(E) + ' N.mm-2\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Breaking tension of the Forwarder cable                                   ') + str(rupt_res) + ' kgF\n\n'
+    if Carriage_type != 1:
+        resume_texte += QCoreApplication.translate("MainWindow",'TRACTOR AND RETURN CABLE PROPERTIES:\n')
+        resume_texte += QCoreApplication.translate("MainWindow",'   - Line mass of the tractor cable:                                     ') + str(masse_li2) + ' kg.m-1\n'
+        resume_texte += QCoreApplication.translate("MainWindow",'   - Line mass of the return cable:                                       ') + str(masse_li3) + ' kg.m-1\n'
+        resume_texte += '\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'MODELISATION PARAMETERS:\n')
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Lateral distance of wood pitching:                                ') + str(Lhor_max) + ' m\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Height of Forwarder cable at intermediate pylons:          ') + str(Hintsup) + ' m\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Forwarder cable height at end of line:                             ') + str(Hend) + ' m\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Minimum cable height at any point (load):                  ') + str(Hline_min) + ' m\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Maximum cable height at any point:                              ') + str(Hline_max) + ' m\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Maximum angle of the Forwarder cable at an intermediate pylon:   ') + str(Max_angle) + ' degres\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Security factor:                                                  ') + str(safe_fact) + '\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Value of the friction angle:                                      ') + str(coeff_frot) + ' rad\n\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Resolution of the NMT uses:                                            ') + str(Csize) + ' m\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Standing volume harvesting applied:                              ') + str(prelevement * 100) + ' %\n'
     try:
-        resume_texte += "   - Projection:                                                           "+str(proj.GetAttrValue("PROJCS", 0))+"\n"
+        resume_texte += QCoreApplication.translate("MainWindow",'   - Projection:                                                           ') + str(proj.GetAttrValue("PROJCS", 0)) + '\n'
     except:
-        resume_texte += "   - Projection:                                                           unknown\n"
-    if Dir_Obs_cable=="":
-        reponse = "No"
+        resume_texte += QCoreApplication.translate("MainWindow",'   - Projection:                                                           unknown\n')
+    if Dir_Obs_cable == "":
+        reponse = QCoreApplication.translate("MainWindow",'No')
     else:
-        reponse = "Yes"
-    resume_texte += "   - Consideration of obstacle for the cable:                             "+str(reponse)+"\n"
-    if file_Vol_ha=="":
-        reponse = "No"
+        reponse = QCoreApplication.translate("MainWindow",'Yes')
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Consideration of obstacle for the cable:                             ') + str(reponse) + '\n'
+    if file_Vol_ha == "":
+        reponse = QCoreApplication.translate("MainWindow",'No')
     else:
-        reponse = "Yes"
-    resume_texte += "   - Information on the volume of wood provided as input:                  "+str(reponse)+"\n"
-    
+        reponse = QCoreApplication.translate("MainWindow",'Yes')
+    resume_texte += QCoreApplication.translate("MainWindow",'   - Information on the volume of wood provided as input:                  ') + str(reponse) + '\n'
+
     fichier = open(file_name, "w")
     fichier.write(resume_texte)
     fichier.close()
-    
-    file_name = Rspace_sel+"info_Lhormax.txt"
+
+    file_name = Rspace_sel + QCoreApplication.translate("MainWindow",'info_Lhormax.txt')
     fichier = open(file_name, "w")
     fichier.write(str(Lhor_max))
     fichier.close()
-    
-    
-    console_info("\nAll possible lines have been tested.\n")     
+
+    console_info(QCoreApplication.translate("MainWindow",'\nAll possible lines have been tested.\n'))  
     ##############################################################################################################################################
     ### 4. SELECTION OF BEST LINE IF CHECKED
     ##############################################################################################################################################
@@ -2529,18 +2539,18 @@ def select_best_lines(w_list,lim_list,Tab2,nrows,ncols,Csize,Row_ext,Col_ext,D_e
 
 
 def return_crit_text(w_list,lim_list,):    
-    name = ["Forest area impacted [ha] (maximize)                 Minimum: ",
-               "Number of intermediate supports (minimize)           Maximum: ",
-               "Favour ", 
-               "Line length [m] (maximize)                           Minimum: ",
-               "Total volume per line [m3] (maximize)                Minimum: ",
-               "Volume per meter of line  [m3/ml] (maximize)         Minimum: ", 
-               "Average tree volume [m3] (maximize)                  Minimum: ",
-               "Carriage average distance [m] (minimize)             Maximum: ", 
-               "Yarding cost [€/ml] (minimize)                       Maximum: "]                   
-    units = ["ha","","","m","m3","m3/ml","m3","m","€/m3"]
-    namelist=name
-    pname = "(Weight: "              
+    name = [QCoreApplication.translate("MainWindow","Forest area impacted [ha] (maximize)                 Minimum: "),
+            QCoreApplication.translate("MainWindow","Number of intermediate supports (minimize)           Maximum: "),
+            QCoreApplication.translate("MainWindow","Favour "),
+            QCoreApplication.translate("MainWindow","Line length [m] (maximize)                           Minimum: "),
+            QCoreApplication.translate("MainWindow","Total volume per line [m3] (maximize)                Minimum: "),
+            QCoreApplication.translate("MainWindow","Volume per meter of line  [m3/ml] (maximize)         Minimum: "),
+            QCoreApplication.translate("MainWindow","Average tree volume [m3] (maximize)                  Minimum: "),
+            QCoreApplication.translate("MainWindow","Carriage average distance [m] (minimize)             Maximum: "),
+            QCoreApplication.translate("MainWindow","Yarding cost [€/ml] (minimize)                       Maximum: ")]
+    units = ["ha", "", "", "m", "m3", "m3/ml", "m3", "m", "€/m3"]
+    namelist = name
+    pname = QCoreApplication.translate("MainWindow","(Weight: ")           
     Tab = np.empty((np.sum(np.array(w_list)>0),2),dtype='|U73')
     j=-1
     for i,w in enumerate(w_list):
@@ -2562,203 +2572,205 @@ def return_crit_text(w_list,lim_list,):
     return Tab
 
 
-def generate_info_ligne(Dir_result,w_list,lim_list,Tab,Rast_couv,Vol_ha,Vol_AM,Csize,prelevement,Lhor_max):
-    filename = Dir_result+"Summary_selection.txt"
-    pix_area = Csize*Csize/10000.
+def generate_info_ligne(Dir_result, w_list, lim_list, Tab, Rast_couv, Vol_ha, Vol_AM, Csize, prelevement, Lhor_max):
+    filename = Dir_result + "Summary_selection.txt"
+    pix_area = Csize * Csize / 10000.
     Proj = np.copy(Rast_couv)
-    Proj[Rast_couv==2]=0
-    Rast_couv[Rast_couv==2]=1
-    Surface = round(np.sum(Rast_couv)*pix_area,1)
-    Surface_proj = round(np.sum(Proj)*pix_area,1)
-    if Surface_proj>0:
-        testProj=1
+    Proj[Rast_couv == 2] = 0
+    Rast_couv[Rast_couv == 2] = 1
+    Surface = round(np.sum(Rast_couv) * pix_area, 1)
+    Surface_proj = round(np.sum(Proj) * pix_area, 1)
+    if Surface_proj > 0:
+        testProj = 1
     else:
-        testProj=0
+        testProj = 0
     nb_ligne = Tab.shape[0]
-    nb_ligne_amont = int(np.sum(Tab[:,12]>0))
+    nb_ligne_amont = int(np.sum(Tab[:, 12] > 0))
     try:
-        nb_moy_pyl = round(np.sum(Tab[:,17])/nb_ligne,1)
-        long_moy_ligne = int(np.sum(Tab[:,11])/nb_ligne)
+        nb_moy_pyl = round(np.sum(Tab[:, 17]) / nb_ligne, 1)
+        long_moy_ligne = int(np.sum(Tab[:, 11]) / nb_ligne)
     except:
         console_info("No cable line selected")
-    Vol_ha[np.isnan(Vol_ha)]=0
-    Vol_AM[np.isnan(Vol_AM)]=0
-    tp =   Vol_ha>0
-    if np.sum(tp)>0:      
-        vtot = np.sum(Rast_couv[tp]*Vol_ha[tp])*pix_area*prelevement
+    Vol_ha[np.isnan(Vol_ha)] = 0
+    Vol_AM[np.isnan(Vol_AM)] = 0
+    tp = Vol_ha > 0
+    if np.sum(tp) > 0:
+        vtot = np.sum(Rast_couv[tp] * Vol_ha[tp]) * pix_area * prelevement
     else:
-        vtot=0
-    tp =   Vol_AM>0 
-    if np.sum(tp)>0:
-        vam = round(np.mean(Rast_couv[tp]*Vol_AM[tp]),1)
+        vtot = 0
+    tp = Vol_AM > 0
+    if np.sum(tp) > 0:
+        vam = round(np.mean(Rast_couv[tp] * Vol_AM[tp]), 1)
     else:
-        vam=0
-    if np.sum(Tab[:,11])!=0:
-        ipc_moy = round(float(vtot)/np.sum(Tab[:,11]),2)
+        vam = 0
+    if np.sum(Tab[:, 11]) != 0:
+        ipc_moy = round(float(vtot) / np.sum(Tab[:, 11]), 2)
     else:
         console_info("No cable line selected")
     vtot = int(vtot)
-    lim_list[4]=lim_list[4]*prelevement
-    
-    Table = np.empty((19+np.sum(np.array(w_list)>0),2+testProj),dtype='|U73')
-    
-    Table[1,0]= "SUMMARY OF THE LINE SELECTION"
-    Table[3,0]= "                                                         "
-    Table[3,1]= "From all cable starts\t\t"
+    lim_list[4] = lim_list[4] * prelevement
+
+    Table = np.empty((19 + np.sum(np.array(w_list) > 0), 2 + testProj), dtype='|U73')
+
+    Table[1, 0] = QCoreApplication.translate("MainWindow","SUMMARY OF THE LINE SELECTION")
+    Table[3, 0] = QCoreApplication.translate("MainWindow","                                                         ")
+    Table[3, 1] = QCoreApplication.translate("MainWindow","From all cable starts\t\t")
     if testProj:
-        Table[3,2]="Only from projects"
-    Table[4,0]= "   - Total forest area impacted [ha]:                    "
-    Table[5,0]= "   - Total number of lines:                              "
-    Table[6,0]= "         + With uphill yarding:                          "
-    Table[7,0]= "         + With downhill yarding:                        "
-    Table[8,0]= "   - Average number of intermediate support per line:    "
-    Table[9,0]= "   - Average length of the line [m]:                     "
-    Table[10,0]="   - Total harvested volume (estimate) [m3]:             "
-    Table[11,0]="   - Average volume per meter of line (estimate) [m3/m]: "
-    Table[12,0]="   - Average tree volume (estimate) [m3]                 "
-    Table[18,0]="Criteria taken into account for the selection:           "
-    Table[17,0]="Lateral yarding distance                             "
-    Table[18,0]="Proportion of stand volume removed                   "
-    
-    Table[4,1]= str(Surface)
-    Table[5,1]= str(nb_ligne)
-    Table[6,1]= str(nb_ligne_amont)
-    Table[7,1]= str(nb_ligne-nb_ligne_amont)
-    Table[8,1]= str(nb_moy_pyl)
-    Table[9,1]= str(long_moy_ligne)
-    Table[10,1]=str(vtot)
-    Table[11,1]=str(ipc_moy)
-    Table[12,1]=str(vam)
-    Table[17,1]=str(int(Lhor_max))+" m"
-    Table[18,1]=str(int(prelevement*100))+" %"
-    
-    Tabcrit = return_crit_text(w_list,lim_list)
-    
-    for i,crit in enumerate(Tabcrit):
-        Table[19+i,0]=crit[0]
-        Table[19+i,1]=crit[1]
-        
-    
+        Table[3, 2] = QCoreApplication.translate("MainWindow","Only from projects")
+    Table[4, 0] = QCoreApplication.translate("MainWindow","   - Total forest area impacted [ha]:                    ")
+    Table[5, 0] = QCoreApplication.translate("MainWindow","   - Total number of lines:                              ")
+    Table[6, 0] = QCoreApplication.translate("MainWindow","         + With uphill yarding:                          ")
+    Table[7, 0] = QCoreApplication.translate("MainWindow","         + With downhill yarding:                        ")
+    Table[8, 0] = QCoreApplication.translate("MainWindow","   - Average number of intermediate support per line:    ")
+    Table[9, 0] = QCoreApplication.translate("MainWindow","   - Average length of the line [m]:                     ")
+    Table[10, 0] = QCoreApplication.translate("MainWindow","   - Total harvested volume (estimate) [m3]:             ")
+    Table[11, 0] = QCoreApplication.translate("MainWindow","   - Average volume per meter of line (estimate) [m3/m]: ")
+    Table[12, 0] = QCoreApplication.translate("MainWindow","   - Average tree volume (estimate) [m3]                 ")
+    Table[18, 0] = QCoreApplication.translate("MainWindow","Criteria taken into account for the selection:           ")
+    Table[17, 0] = QCoreApplication.translate("MainWindow","Lateral yarding distance                             ")
+    Table[18, 0] = QCoreApplication.translate("MainWindow","Proportion of stand volume removed                   ")
+
+    Table[4, 1] = str(Surface)
+    Table[5, 1] = str(nb_ligne)
+    Table[6, 1] = str(nb_ligne_amont)
+    Table[7, 1] = str(nb_ligne - nb_ligne_amont)
+    Table[8, 1] = str(nb_moy_pyl)
+    Table[9, 1] = str(long_moy_ligne)
+    Table[10, 1] = str(vtot)
+    Table[11, 1] = str(ipc_moy)
+    Table[12, 1] = str(vam)
+    Table[17, 1] = str(int(Lhor_max)) + " m"
+    Table[18, 1] = str(int(prelevement * 100)) + " %"
+
+    Tabcrit = return_crit_text(w_list, lim_list)
+
+    for i, crit in enumerate(Tabcrit):
+        Table[19 + i, 0] = crit[0]
+        Table[19 + i, 1] = crit[1]
+
     if testProj:
-        Tab= Tab[Tab[:,10]==1]
+        Tab = Tab[Tab[:, 10] == 1]
         Rast_couv = Proj
         nb_ligne = Tab.shape[0]
-        nb_ligne_amont = int(np.sum(Tab[:,12]>0))
+        nb_ligne_amont = int(np.sum(Tab[:, 12] > 0))
         try:
-            nb_moy_pyl = round(np.sum(Tab[:,17])/nb_ligne,1)
-            long_moy_ligne = int(np.sum(Tab[:,11])/nb_ligne)
+            nb_moy_pyl = round(np.sum(Tab[:, 17]) / nb_ligne, 1)
+            long_moy_ligne = int(np.sum(Tab[:, 11]) / nb_ligne)
         except:
             console_info("No cable line selected")
-        tp =   Vol_ha>0
-        if np.sum(tp)>0:      
-            vtot = np.sum(Rast_couv[tp]*Vol_ha[tp])*pix_area*prelevement
+        tp = Vol_ha > 0
+        if np.sum(tp) > 0:
+            vtot = np.sum(Rast_couv[tp] * Vol_ha[tp]) * pix_area * prelevement
         else:
-            vtot=0
-        tp =   Vol_AM>0 
-        if np.sum(tp)>0:
-            vam = round(np.mean(Rast_couv[tp]*Vol_AM[tp]),1)
+            vtot = 0
+        tp = Vol_AM > 0
+        if np.sum(tp) > 0:
+            vam = round(np.mean(Rast_couv[tp] * Vol_AM[tp]), 1)
         else:
-            vam=0
-        if np.sum(Tab[:,11])!=0:
-            ipc_moy = round(float(vtot)/np.sum(Tab[:,11]),2)
+            vam = 0
+        if np.sum(Tab[:, 11]) != 0:
+            ipc_moy = round(float(vtot) / np.sum(Tab[:, 11]), 2)
         else:
             console_info("No cable line selected")
         vtot = int(vtot)
-        
-        Table[4,2]= "\t\t\t\t"+str(Surface_proj)
-        Table[5,2]= "\t\t\t\t"+str(nb_ligne)
-        Table[6,2]= "\t\t\t\t"+str(nb_ligne_amont)
-        Table[7,2]= "\t\t\t\t"+str(nb_ligne-nb_ligne_amont)
-        Table[8,2]= "\t\t\t\t"+str(nb_moy_pyl)
-        Table[9,2]= "\t\t\t\t"+str(long_moy_ligne)
-        Table[10,2]="\t\t\t\t"+str(vtot)
-        Table[11,2]="\t\t\t\t"+str(ipc_moy)
-        Table[12,2]="\t\t\t\t"+str(vam)
-           
-    np.savetxt(filename, Table,fmt='%s', delimiter='')
+
+        Table[4, 2] = "\t\t\t\t" + str(Surface_proj)
+        Table[5, 2] = "\t\t\t\t" + str(nb_ligne)
+        Table[6, 2] = "\t\t\t\t" + str(nb_ligne_amont)
+        Table[7, 2] = "\t\t\t\t" + str(nb_ligne - nb_ligne_amont)
+        Table[8, 2] = "\t\t\t\t" + str(nb_moy_pyl)
+        Table[9, 2] = "\t\t\t\t" + str(long_moy_ligne)
+        Table[10, 2] = "\t\t\t\t" + str(vtot)
+        Table[11, 2] = "\t\t\t\t" + str(ipc_moy)
+        Table[12, 2] = "\t\t\t\t" + str(vam)
+
+    np.savetxt(filename, Table, fmt='%s', delimiter='')
 
 
-def generate_info_cable_simu(Dir_result,Tab,Rast_couv,Vol_ha,Csize,Forest,Pente,Pente_max_bucheron):
-    filename = Dir_result+"Summary_results_sylvaccess_cable.txt"
-    Pente_max = focal_stat_max(np.float_(Pente),-9999,1)
-    Manual_harvesting = np.int8((Pente_max<=Pente_max_bucheron))
+def generate_info_cable_simu(Dir_result, Tab, Rast_couv, Vol_ha, Csize, Forest, Pente, Pente_max_bucheron):
+    filename = Dir_result + "Summary_results_sylvaccess_cable.txt"
+    Pente_max = focal_stat_max(np.float_(Pente), -9999, 1)
+    Manual_harvesting = np.int8((Pente_max <= Pente_max_bucheron))
     del Pente_max
-    gc.collect()    
-    pix_area = Csize*Csize/10000.
-    Rast_couv[Forest==0]=0
-    Surface_exis = round(np.sum(Rast_couv==2)*pix_area,1)
-    Surface_proj = round(np.sum(Rast_couv==1)*pix_area,1)
-    Surface_foret = round(np.sum(Forest==1)*pix_area,1)    
-    Surface_nonbuch = round(np.sum((Forest==1)*(Manual_harvesting==0))*pix_area,1)
-        
-    Vol_ha[np.isnan(Vol_ha)]=0
-    Vol_ha[Forest==0]=0
-    tp =  Vol_ha>0
-    if np.sum(tp)>0:   
-        tp2 = (tp*(Rast_couv==2))>0
-        vtot_exis = int(np.sum(Vol_ha[tp2])*pix_area+0.5)
-        tp2 = (tp*(Rast_couv==1))>0
-        vtot_proj = int(np.sum(Vol_ha[tp2])*pix_area+0.5)     
-        tp2 = (tp*(Forest==1))>0
-        vtot_forest = int(np.sum(Vol_ha[tp2])*pix_area+0.5)   
-        tp2 = (tp*(Forest==1)*(Pente>Pente_max_bucheron))>0
-        vtot_nonbuch = int(np.sum(Vol_ha[tp2])*pix_area+0.5)   
+    gc.collect()
+    pix_area = Csize * Csize / 10000.
+    Rast_couv[Forest == 0] = 0
+    Surface_exis = round(np.sum(Rast_couv == 2) * pix_area, 1)
+    Surface_proj = round(np.sum(Rast_couv == 1) * pix_area, 1)
+    Surface_foret = round(np.sum(Forest == 1) * pix_area, 1)
+    Surface_nonbuch = round(np.sum((Forest == 1) * (Manual_harvesting == 0)) * pix_area, 1)
+
+    Vol_ha[np.isnan(Vol_ha)] = 0
+    Vol_ha[Forest == 0] = 0
+    tp = Vol_ha > 0
+    if np.sum(tp) > 0:
+        tp2 = (tp * (Rast_couv == 2)) > 0
+        vtot_exis = int(np.sum(Vol_ha[tp2]) * pix_area + 0.5)
+        tp2 = (tp * (Rast_couv == 1)) > 0
+        vtot_proj = int(np.sum(Vol_ha[tp2]) * pix_area + 0.5)
+        tp2 = (tp * (Forest == 1)) > 0
+        vtot_forest = int(np.sum(Vol_ha[tp2]) * pix_area + 0.5)
+        tp2 = (tp * (Forest == 1) * (Pente > Pente_max_bucheron)) > 0
+        vtot_nonbuch = int(np.sum(Vol_ha[tp2]) * pix_area + 0.5)
     else:
-        vtot_exis = 0  
+        vtot_exis = 0
         vtot_proj = 0
         vtot_forest = 0
         vtot_nonbuch = 0
-        
+
     nb_ligne = Tab.shape[0]
-    nb_ligne_amont = int(np.sum(Tab[:,12]>0))
-    nb_moy_pyl = round(np.sum(Tab[:,17])/nb_ligne,1)
-    long_moy_ligne = int(np.sum(Tab[:,11])/nb_ligne)    
-                
-    Table = np.empty((17,5),dtype='|U39')
-    Table[0] = np.array(["","Surface area (ha)","Surface (%)","Volume (m3)","Volume (%)"])
-    Table[1,0] = "From existing cable starts"
-    Table[2,0] = "From potential cable start"
-    Table[4,0] = "Total accessible forest"
-    Table[5,0] = "Total unaccessible forest"
-    Table[6,0] = "    including impossible manual felling"
-    Table[8,0] = "Total forest area"
-    Table[11,0] = "Total number of lines"
-    Table[12,0] = "    + With uphill yarding"
-    Table[13,0] = "    + With downhill yarding"
-    Table[15,0] = "Average length of the line (m)"
-    Table[16,0] = "Average number of intermediate support"
-        
-    #Create recap per distance class 
-    if vtot_forest>0:
-        Table[1,1:] = np.array([str(Surface_exis),str(int(Surface_exis/Surface_foret*100+0.5)),
-                                str(vtot_exis),str(int(vtot_exis/vtot_forest*100+0.5))])
-        Table[2,1:] = np.array([str(Surface_proj),str(int(Surface_proj/Surface_foret*100+0.5)),
-                                str(vtot_proj),str(int(vtot_proj/vtot_forest*100+0.5))])
-        
-        Table[4,1:] = np.array([str(Surface_exis+Surface_proj),str(int((Surface_proj+Surface_exis)/Surface_foret*100+0.5)),
-                                str(vtot_proj+vtot_exis),str(int((vtot_exis+vtot_proj)/vtot_forest*100+0.5))])
-        Table[5,1:] = np.array([str(round(Surface_foret-(Surface_exis+Surface_proj),1)),str(int((Surface_foret-(Surface_proj+Surface_exis))/Surface_foret*100+0.5)),
-                                str(vtot_forest-(vtot_proj+vtot_exis)),str(int((vtot_forest-(vtot_exis+vtot_proj))/vtot_forest*100+0.5))])
-        Table[6,1:] = np.array([str(Surface_nonbuch),str(int(Surface_nonbuch/Surface_foret*100+0.5)),
-                                str(vtot_nonbuch),str(int(vtot_nonbuch/vtot_forest*100+0.5))])
+    nb_ligne_amont = int(np.sum(Tab[:, 12] > 0))
+    nb_moy_pyl = round(np.sum(Tab[:, 17]) / nb_ligne, 1)
+    long_moy_ligne = int(np.sum(Tab[:, 11]) / nb_ligne)
+
+    Table = np.empty((17, 5), dtype='|U39')
+    Table[0] = np.array(["", "Surface area (ha)", "Surface (%)", "Volume (m3)", "Volume (%)"])
+    Table[1, 0] = QCoreApplication.translate("MainWindow","From existing cable starts")
+    Table[2, 0] = QCoreApplication.translate("MainWindow","From potential cable start")
+    Table[4, 0] = QCoreApplication.translate("MainWindow","Total accessible forest")
+    Table[5, 0] = QCoreApplication.translate("MainWindow","Total unaccessible forest")
+    Table[6, 0] = QCoreApplication.translate("MainWindow","    including impossible manual felling")
+    Table[8, 0] = QCoreApplication.translate("MainWindow","Total forest area")
+    Table[11, 0] = QCoreApplication.translate("MainWindow","Total number of lines")
+    Table[12, 0] = QCoreApplication.translate("MainWindow","    + With uphill yarding")
+    Table[13, 0] = QCoreApplication.translate("MainWindow","    + With downhill yarding")
+    Table[15, 0] = QCoreApplication.translate("MainWindow","Average length of the line (m)")
+    Table[16, 0] = QCoreApplication.translate("MainWindow","Average number of intermediate support")
+
+    if vtot_forest > 0:
+        Table[1, 1:] = np.array([str(Surface_exis), str(int(Surface_exis / Surface_foret * 100 + 0.5)),
+                                 str(vtot_exis), str(int(vtot_exis / vtot_forest * 100 + 0.5))])
+        Table[2, 1:] = np.array([str(Surface_proj), str(int(Surface_proj / Surface_foret * 100 + 0.5)),
+                                 str(vtot_proj), str(int(vtot_proj / vtot_forest * 100 + 0.5))])
+
+        Table[4, 1:] = np.array([str(Surface_exis + Surface_proj), str(int((Surface_proj + Surface_exis) / Surface_foret * 100 + 0.5)),
+                                 str(vtot_proj + vtot_exis), str(int((vtot_exis + vtot_proj) / vtot_forest * 100 + 0.5))])
+        Table[5, 1:] = np.array([str(round(Surface_foret - (Surface_exis + Surface_proj), 1)),
+                                 str(int((Surface_foret - (Surface_proj + Surface_exis)) / Surface_foret * 100 + 0.5)),
+                                 str(vtot_forest - (vtot_proj + vtot_exis)),
+                                 str(int((vtot_forest - (vtot_exis + vtot_proj)) / vtot_forest * 100 + 0.5))])
+        Table[6, 1:] = np.array([str(Surface_nonbuch), str(int(Surface_nonbuch / Surface_foret * 100 + 0.5)),
+                                 str(vtot_nonbuch), str(int(vtot_nonbuch / vtot_forest * 100 + 0.5))])
     else:
-        Table[1,1:] = np.array([str(Surface_exis),str(int(Surface_exis/Surface_foret*100+0.5)),'0','0'])
-        Table[2,1:] = np.array([str(Surface_proj),str(int(Surface_proj/Surface_foret*100+0.5)),'0','0'])
-                            
-        
-        Table[4,1:] = np.array([str(Surface_exis+Surface_proj),str(int((Surface_proj+Surface_exis)/Surface_foret*100+0.5)),'0','0'])
-        Table[5,1:] = np.array([str(round(Surface_foret-(Surface_exis+Surface_proj),1)),str(int((Surface_foret-(Surface_proj+Surface_exis))/Surface_foret*100+0.5)),'0','0'])
-        Table[6,1:] = np.array([str(Surface_nonbuch),str(int(Surface_nonbuch/Surface_foret*100+0.5)),'0','0'])
-    
-    Table[8,1:] = np.array([str(Surface_foret),"",str(vtot_forest),""])
-    
-    Table[11,1] = str(nb_ligne)
-    Table[12,1] = str(nb_ligne_amont)
-    Table[13,1] = str(nb_ligne-nb_ligne_amont)
-    Table[15,1] = str(long_moy_ligne)
-    Table[16,1] = str(nb_moy_pyl)
-    
-    np.savetxt(filename, Table,fmt='%s', delimiter=';')
+        Table[1, 1:] = np.array([str(Surface_exis), str(int(Surface_exis / Surface_foret * 100 + 0.5)), '0', '0'])
+        Table[2, 1:] = np.array([str(Surface_proj), str(int(Surface_proj / Surface_foret * 100 + 0.5)), '0', '0'])
+
+        Table[4, 1:] = np.array([str(Surface_exis + Surface_proj),
+                                 str(int((Surface_proj + Surface_exis) / Surface_foret * 100 + 0.5)), '0', '0'])
+        Table[5, 1:] = np.array([str(round(Surface_foret - (Surface_exis + Surface_proj), 1)),
+                                 str(int((Surface_foret - (Surface_proj + Surface_exis)) / Surface_foret * 100 + 0.5)),
+                                 '0', '0'])
+        Table[6, 1:] = np.array([str(Surface_nonbuch), str(int(Surface_nonbuch / Surface_foret * 100 + 0.5)), '0', '0'])
+
+    Table[8, 1:] = np.array([str(Surface_foret), "", str(vtot_forest), ""])
+
+    Table[11, 1] = str(nb_ligne)
+    Table[12, 1] = str(nb_ligne_amont)
+    Table[13, 1] = str(nb_ligne - nb_ligne_amont)
+    Table[15, 1] = str(long_moy_ligne)
+    Table[16, 1] = str(nb_moy_pyl)
+
+    np.savetxt(filename, Table, fmt='%s', delimiter=';')
 
 
 def calculate_azimut(x1,y1,x2,y2):
@@ -2807,41 +2819,43 @@ def create_rast_couv(Tab_result,Dir_result,source_src,Extent,Csize,Lhor_max):
     return Rast_couv
 
 
-def prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_Dep,Dir_Obs_cable):
-    console_info("Pre-processing of the inputs for cable model\n")
+def prepa_data_cable(Wspace, file_MNT, file_shp_Foret, file_shp_Cable_Dep, Dir_Obs_cable):
+    console_info(QCoreApplication.translate("MainWindow","Pre-processing of the inputs for cable model\n"))
     ### Make directory for temporary files
-    Dir_temp = Wspace+"Temp/"
-    try:os.mkdir(Dir_temp)
-    except:pass     
+    Dir_temp = Wspace + "Temp/"
+    try:
+        os.mkdir(Dir_temp)
+    except:
+        pass
     ###########################################################################
-    ### __         __ __   __         __ __               __   __              
+    ### __         __ __   __         __ __               __   __
     ###|__|.-----.|__|  |_|__|.---.-.|  |__|.-----.---.-.|  |_|__|.-----.-----.
     ###|  ||     ||  |   _|  ||  _  ||  |  ||__ --|  _  ||   _|  ||  _  |     |
     ###|__||__|__||__|____|__||___._||__|__||_____|___._||____|__||_____|__|__|
-                                                                        
-    MNT,Extent,Csize,_ = load_float_raster(file_MNT,Dir_temp)
-    np.save(Dir_temp+"MNT",MNT)
-    
+    ###
+    MNT, Extent, Csize, _ = load_float_raster(file_MNT, Dir_temp)
+    np.save(Dir_temp + "MNT", MNT)
+
     #############################################################################################################
-    ###        __                       ___ __ __             __                                __              
+    ###        __                       ___ __ __             __                                __
     ###.-----.|  |--.---.-.-----.-----.'  _|__|  |.-----.    |  |_.-----.    .----.---.-.-----.|  |_.-----.----.
     ###|__ --||     |  _  |  _  |  -__|   _|  |  ||  -__|    |   _|  _  |    |   _|  _  |__ --||   _|  -__|   _|
-    ###|_____||__|__|___._|   __|_____|__| |__|__||_____|    |____|_____|    |__| |___._|_____||____|_____|__|  
-    ###                   |__|                                                                                  
-    Foret = shapefile_to_np_array(file_shp_Foret,Extent,Csize,"FORET")
-    np.save(Dir_temp+"Foret",np.int8(Foret))    
+    ###|_____||__|__|___._|   __|_____|__| |__|__||_____|    |____|_____|    |__| |___._|_____||____|_____|__|
+    ###                   |__|
+    Foret = shapefile_to_np_array(file_shp_Foret, Extent, Csize, QCoreApplication.translate("MainWindow","FORET"))
+    np.save(Dir_temp + "Foret", np.int8(Foret))
     del Foret
-    console_info("    - Forest raster processed")    
-    ### Forest : shapefile to raster 
-    Exposition = exposition(MNT,Csize,-9999)
-    np.save(Dir_temp+"Aspect",np.uint16(Exposition+0.5))
-    Pente = prepa_obstacle_cable(Dir_Obs_cable,file_MNT,Dir_temp)
-    np.save(Dir_temp+"Pente",Pente)    
-    Pond_pente = np.sqrt((Pente*0.01*Csize)**2+Csize**2)/float(Csize)
-    Pond_pente[Pente==-9999] = 10000
-    np.save(Dir_temp+"Pond_pente",Pond_pente)
-    del Pente,MNT  
-    console_info("    - Cable obstacles processed")
+    console_info(QCoreApplication.translate("MainWindow","    - Forest raster processed"))
+    ### Forest : shapefile to raster
+    Exposition = exposition(MNT, Csize, -9999)
+    np.save(Dir_temp + "Aspect", np.uint16(Exposition + 0.5))
+    Pente = prepa_obstacle_cable(Dir_Obs_cable, file_MNT, Dir_temp)
+    np.save(Dir_temp + "Pente", Pente)
+    Pond_pente = np.sqrt((Pente * 0.01 * Csize) ** 2 + Csize ** 2) / float(Csize)
+    Pond_pente[Pente == -9999] = 10000
+    np.save(Dir_temp + "Pond_pente", Pond_pente)
+    del Pente, MNT
+    console_info(QCoreApplication.translate("MainWindow","    - Cable obstacles processed"))
 
     #################################################################################################################################
     ###             __     __                    __               __                                                 __              
@@ -2849,10 +2863,10 @@ def prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_Dep,Dir_Obs_c
     ###|  __|  _  ||  _  ||  ||  -__|    |__ --||   _|  _  |   _||   _|    |  _  |   _|  _  |  __|  -__|__ --|__ --||  ||     |  _  |
     ###|____|___._||_____||__||_____|    |_____||____|___._|__|  |____|    |   __|__| |_____|____|_____|_____|_____||__||__|__|___  |
     ###                                                                    |__|                                               |_____|
-    Cable_start = shapefile_to_np_array(file_shp_Cable_Dep,Extent,Csize,"CABLE","CABLE",'ASC') 
-    testExist = check_field(file_shp_Cable_Dep,"EXIST") 
+    Cable_start = shapefile_to_np_array(file_shp_Cable_Dep,Extent,Csize,QCoreApplication.translate("MainWindow","CABLE"),"CABLE",'ASC') 
+    testExist = check_field(file_shp_Cable_Dep,QCoreApplication.translate("MainWindow","EXIST")) 
     if testExist:    
-        Existing = shapefile_to_np_array(file_shp_Cable_Dep,Extent,Csize,"EXIST","EXIST",'ASC') 
+        Existing = shapefile_to_np_array(file_shp_Cable_Dep,Extent,Csize,QCoreApplication.translate("MainWindow","EXIST"),"EXIST",'ASC') 
     else:
         Existing = np.ones_like(Cable_start,dtype=np.int8)*2
 
@@ -2869,202 +2883,204 @@ def prepa_data_cable(Wspace,file_MNT,file_shp_Foret,file_shp_Cable_Dep,Dir_Obs_c
             Lien_RF[ID,2]=Existing[pixel[0],pixel[1]]
         ID +=1         
     # Link RF with res_pub and calculate transportation distance
-#    Lien_RF=Link_RF_res_pub(Tab_res_pub,Pond_pente,Route_for, Lien_RF,Csize) 
-#    Lien_RF=Lien_RF[Lien_RF[:,4]>0]
+    # Lien_RF=Link_RF_res_pub(Tab_res_pub,Pond_pente,Route_for, Lien_RF,Csize) 
+    # Lien_RF=Lien_RF[Lien_RF[:,4]>0]
     Lien_RF=Lien_RF[Lien_RF[:,2]>-1]
-    np.save(Dir_temp+"Lien_RF_c",Lien_RF)    
-    console_info("    - Potential cable yarding starts processed")    
+    np.save(Dir_temp+QCoreApplication.translate("MainWindow","Lien_RF_c"),Lien_RF)    
+    console_info(QCoreApplication.translate("MainWindow","    - Potential cable yarding starts processed"))    
 
     ###################################################################################################################################################################################
     ###                                 __                                     __                      __                                      __                                      
     ###.----.----.-----.-----.----.    |  |.-----.-----.    .----.---.-.-----.|  |_.-----.----.    .--|  |.-----.    .----.-----.-----.----.--|  |.-----.-----.-----.-----.-----.-----.
     ###|  __|   _|  -__|  -__|   _|    |  ||  -__|__ --|    |   _|  _  |__ --||   _|  -__|   _|    |  _  ||  -__|    |  __|  _  |  _  |   _|  _  ||  _  |     |     |  -__|  -__|__ --|
     ###|____|__| |_____|_____|__|      |__||_____|_____|    |__| |___._|_____||____|_____|__|      |_____||_____|    |____|_____|_____|__| |_____||_____|__|__|__|__|_____|_____|_____|
-                                                                                                                                                                                
-    _,values,_,Extent = raster_get_info(file_MNT)
-    Csize,ncols,nrows = values[4],int(values[0]),int(values[1])  
-    TableX,TableY=create_coord_pixel_center_raster(values,nrows,ncols,Csize,Dir_temp)
-    CoordRoute = np.zeros((Lien_RF.shape[0],2),dtype=np.float32)
-    for i,pixel in enumerate(Lien_RF):
-        CoordRoute[i,0]=TableX[pixel[1]]
-        CoordRoute[i,1]=TableY[pixel[0]] 
-    np.save(Dir_temp+"CoordRoute.npy",CoordRoute)  
-    console_info("    - Table of coordinates created")  
+    ###                                                                                                                                                                                
+    _, values, _, Extent = raster_get_info(file_MNT)
+    Csize, ncols, nrows = values[4], int(values[0]), int(values[1])  
+    TableX, TableY=create_coord_pixel_center_raster(values, nrows, ncols, Csize, Dir_temp)
+    CoordRoute = np.zeros((Lien_RF.shape[0], 2), dtype=np.float32)
+    for i, pixel in enumerate(Lien_RF):
+        CoordRoute[i, 0]=TableX[pixel[1]]
+        CoordRoute[i, 1]=TableY[pixel[0]] 
+    np.save(Dir_temp+QCoreApplication.translate("MainWindow","CoordRoute.npy"), CoordRoute)  
+    console_info(QCoreApplication.translate("MainWindow","    - Table of coordinates created"))  
     ##############################################################################################################################################
     ###       __                         __   __                                __         __   
     ###.----.|  |.-----.-----.-----.    |  |_|  |--.-----.    .-----.----.----.|__|.-----.|  |_ 
     ###|  __||  ||  _  |__ --|  -__|    |   _|     |  -__|    |__ --|  __|   _||  ||  _  ||   _|
     ###|____||__||_____|_____|_____|    |____|__|__|_____|    |_____|____|__|  |__||   __||____|
     ###                                                                            |__|         
-    console_info("\nCable input data processing achieved\n")
+    console_info(QCoreApplication.translate("MainWindow","\nCable input data processing achieved\n"))
     clear_big_nparray()
 
 
-def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,file_Vol_AM,Lhor_max,prelevement,Pente_max_bucheron):
-    console_info("Selection des meilleures lignes en fonction des criteres de l'utilisateur.")
+def line_selection(Rspace_c, w_list, lim_list, new_calc, file_shp_Foret, file_Vol_ha, file_Vol_AM, Lhor_max, prelevement, Pente_max_bucheron):
+    console_info(QCoreApplication.translate("MainWindow","Selection of the best lines based on user criteria."))
     ### Check if temporary files have been generated and have the same extent
-    Rspace_sel = Rspace_c+"FilesForOptimisation/"
+    Rspace_sel = Rspace_c + QCoreApplication.translate("MainWindow","FilesForOptimization/")
     try: 
-        Tab = np.load(Rspace_sel+"Tab_all_lines.npy") 
+        Tab = np.load(Rspace_sel + QCoreApplication.translate("MainWindow","Tab_all_lines.npy")) 
     except:
-        console_info("Start of the best lines selection according to user criteria.")
+        console_info(QCoreApplication.translate("MainWindow","Starting the selection of the best lines according to user criteria."))
         return ""
-    Lmax = np.max(Tab[:,11])    
-    _,values,Extent=loadrasterinfo_from_file(Rspace_sel)
-    Csize,nrows,ncols=values[4],int(values[1]),int(values[0]) 
+    Lmax = np.max(Tab[:, 11])    
+    _, values, Extent = loadrasterinfo_from_file(Rspace_sel)
+    Csize, nrows, ncols = values[4], int(values[1]), int(values[0]) 
     if not new_calc:
-        f = open(Rspace_sel+"info_Lhormax.txt","r")
-        Lhor_max=f.readlines(0)
+        f = open(Rspace_sel + QCoreApplication.translate("MainWindow","info_Lhormax.txt"), "r")
+        Lhor_max = f.readlines(0)
         f.close()
-        Lhor_max= float(Lhor_max[0])
+        Lhor_max = float(Lhor_max[0])
     
-    _,_,_,_,Row_ext,Col_ext,D_ext,D_lat,_=create_buffer2(Csize,Lmax,Lhor_max)        
-    Lien_RF = np.load(Rspace_sel+"Lien_RF_c.npy")
+    _, _, _, _, Row_ext, Col_ext, D_ext, D_lat, _ = create_buffer2(Csize, Lmax, Lhor_max)        
+    Lien_RF = np.load(Rspace_sel + QCoreApplication.translate("MainWindow","Lien_RF_c.npy"))
     ############################################
     ### Recompute cable line stats if necessary
     ############################################
     if new_calc:
-        console_info("    - Processing new line characteristics with new input data...") 
+        console_info(QCoreApplication.translate("MainWindow","Processing new line characteristics with new input data...")) 
         #Couche foret
         if file_shp_Foret != "":
-            Forest = np.int8(shapefile_to_np_array(file_shp_Foret,Extent,Csize,"FORET"))
+            Forest = np.int8(shapefile_to_np_array(file_shp_Foret, Extent, Csize, QCoreApplication.translate("MainWindow","FORET")))
         else:
-            Forest=np.load(Rspace_sel+"Forest.npy")
+            Forest = np.load(Rspace_sel + QCoreApplication.translate("MainWindow","Forest.npy"))
         #Couche vol_ha
         if file_Vol_ha != "":
             Vol_ha = load_float_raster_simple(file_Vol_ha) 
-            Vol_ha[Vol_ha<0]=0
-            Vol_ha[np.isnan(Vol_ha)]=0
+            Vol_ha[Vol_ha < 0] = 0
+            Vol_ha[np.isnan(Vol_ha)] = 0
             test_vp = True
         else:
             test_vp = False            
             if file_Vol_AM != "":
-                Vol_ha = np.zeros((Forest.shape),dtype=np.float32)
+                Vol_ha = np.zeros_like(Forest, dtype=np.float32)
             else:
-                Vol_ha = np.zeros_like(Forest,dtype=np.int8)
+                Vol_ha = np.zeros_like(Forest, dtype=np.int8)
         #Couche vol_am
         if file_Vol_AM != "":
             Vol_AM = load_float_raster_simple(file_Vol_AM) 
-            Vol_AM[Vol_AM<0]=0
-            Vol_AM[np.isnan(Vol_AM)]=0
+            Vol_AM[Vol_AM < 0] = 0
+            Vol_AM[np.isnan(Vol_AM)] = 0
             test_vam = True
         else:
             test_vam = False  
             if file_Vol_ha != "":
-                Vol_AM = np.zeros((Forest.shape),dtype=np.float32)   
+                Vol_AM = np.zeros_like(Forest, dtype=np.float32)   
             else:
-                Vol_AM = np.zeros_like(Forest,dtype=np.int8)   
+                Vol_AM = np.zeros_like(Forest, dtype=np.int8)   
        
         if test_vp or test_vam:             
-            Pente = np.load(Rspace_sel+"Pente.npy")
-            Vol_AM[Pente>Pente_max_bucheron]=0
-            Vol_ha[Pente>Pente_max_bucheron]=0
+            Pente = np.load(Rspace_sel + QCoreApplication.translate("MainWindow","Pente.npy"))
+            Vol_AM[Pente > Pente_max_bucheron] = 0
+            Vol_ha[Pente > Pente_max_bucheron] = 0
         nbline = Tab.shape[0]        
-        Rast_couv = np.zeros_like(Forest,dtype=np.int8)
-        for i in range(0,nbline):
-            coordX=Lien_RF[Tab[i,0],1]
-            coordY=Lien_RF[Tab[i,0],0]       
-            az=Tab[i,1]
-            Lline=sqrt((Tab[i,2]-Tab[i,6])**2+(Tab[i,3]-Tab[i,7])**2)                                                      
+        Rast_couv = np.zeros_like(Forest, dtype=np.int8)
+        for i in range(0, nbline):
+            coordX = Lien_RF[Tab[i, 0], 1]
+            coordY = Lien_RF[Tab[i, 0], 0]       
+            az = Tab[i, 1]
+            Lline = sqrt((Tab[i, 2] - Tab[i, 6]) ** 2 + (Tab[i, 3] - Tab[i, 7]) ** 2)                                                      
             if test_vp or test_vam:
-                Distance_moyenne,Surface,Vtot,VAM,Rast_couv = get_line_carac_vol(coordX,coordY,az,Csize,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Forest,Rast_couv,Vol_ha,Vol_AM)
+                Distance_moyenne, Surface, Vtot, VAM, Rast_couv = get_line_carac_vol(coordX, coordY, az, Csize, ncols, nrows, Lline, Row_ext, Col_ext, D_ext, Forest, Rast_couv, Vol_ha, Vol_AM)
             else:
-                Distance_moyenne,Surface,Rast_couv = get_line_carac_simple(coordX,coordY,az,Csize,ncols,nrows,Lline,Row_ext,Col_ext,D_ext,Forest,Rast_couv)
+                Distance_moyenne, Surface, Rast_couv = get_line_carac_simple(coordX, coordY, az, Csize, ncols, nrows, Lline, Row_ext, Col_ext, D_ext, Forest, Rast_couv)
             #Surface foret Dmoy chariot
-            Tab[i,13],Tab[i,14]=Surface,Distance_moyenne
+            Tab[i, 13], Tab[i, 14] = Surface, Distance_moyenne
             #Vtot IPC
             if test_vp:
-                Tab[i,15]=Vtot
+                Tab[i, 15] = Vtot
             #VAM               
             if test_vam:
-                Tab[i,16]=VAM*10
+                Tab[i, 16] = VAM * 10
    
     
     ############################################
     ### Calc IPC according to prelevement
     ############################################
     
-    Tab2 = np.zeros((Tab.shape[0],Tab.shape[1]+4),dtype=np.int16)
-    Tab2[:,0:-4]=Tab
-    Tab2[:,-4]=np.int_(100.0*Tab[:,15]*prelevement/Tab[:,11])
+    Tab2 = np.zeros((Tab.shape[0], Tab.shape[1] + 4), dtype=np.int16)
+    Tab2[:, 0:-4] = Tab
+    Tab2[:, -4] = np.int_(100.0 * Tab[:, 15] * prelevement / Tab[:, 11])
     del Tab
     gc.collect()    
-    Tab2[:,-1]= Lien_RF[Tab2[:,0],0]
-    Tab2[:,-2]= Lien_RF[Tab2[:,0],1]     
+    Tab2[:, -1] = Lien_RF[Tab2[:, 0], 0]
+    Tab2[:, -2] = Lien_RF[Tab2[:, 0], 1]     
     del Lien_RF
     gc.collect()
-    sup_max=np.max(Tab2[:,17])    
+    sup_max = np.max(Tab2[:, 17])    
     
-    
-    lim_list[4]=lim_list[4]/prelevement #in order to account for prelevement in line selection
+    lim_list[4] = lim_list[4] / prelevement  # in order to account for prelevement in line selection
     
     #Modify selection criteria in case of no volume or vam        
-    if np.max(Tab2[:,15])==0:        
-        if w_list[4]>0:
-            console_info("Impossible optimization on volum/ipc criteria (no information available).")   
-        w_list[4],lim_list[4]=0,0
-        w_list[5],lim_list[5]=0,0
+    if np.max(Tab2[:, 15]) == 0:        
+        if w_list[4] > 0:
+            console_info(QCoreApplication.translate("MainWindow","Impossible optimization on volume/ipc criteria (no information available)."))   
+        w_list[4], lim_list[4] = 0, 0
+        w_list[5], lim_list[5] = 0, 0
         
-    if np.max(Tab2[:,16])==0:
-        if w_list[6]>0:
-            console_info("Impossible optimization on average tree volume criteria (no information available).")
-        w_list[6],lim_list[6]=0,0
+    if np.max(Tab2[:, 16]) == 0:
+        if w_list[6] > 0:
+            console_info(QCoreApplication.translate("MainWindow","Impossible optimization on average tree volume criteria (no information available)."))
+        w_list[6], lim_list[6] = 0, 0
         
-    Rast_couv,Tab_result,Tab_name=select_best_lines(w_list,lim_list,Tab2,
-                                                                   nrows,ncols,Csize,
-                                                                   Row_ext,Col_ext,D_ext,
-                                                                   D_lat,Lhor_max,sup_max)
+    Rast_couv, Tab_result, Tab_name = select_best_lines(w_list, lim_list, Tab2,
+                                                                   nrows, ncols, Csize,
+                                                                   Row_ext, Col_ext, D_ext,
+                                                                   D_lat, Lhor_max, sup_max)
     del Tab2  
     gc.collect()
     #Get folder
     dirs = [d for d in os.listdir(Rspace_c) if os.path.isdir(os.path.join(Rspace_c, d))]
     list_dir = []
     for dire in dirs:
-        if dire[:12]=='Optimisation':
+        if dire[:12] == QCoreApplication.translate("MainWindow","Optimization"):
             list_dir.append(dire)
-    optnum = len(list_dir)+1
-    Dir_result = Rspace_c+'Optimisation'+str(optnum) 
+    optnum = len(list_dir) + 1
+    Dir_result = Rspace_c + QCoreApplication.translate("MainWindow","Optimization") + str(optnum) 
     ### Get best volume
-    header = 'ID_pixel Azimuth_deg X_Start Y_Start Elevation_Start Hcable_Start X_End Y_End Elevation_End Hcable_End '
-    header +='Existing_road Cable_length Configuration '
-    header +='Forest_area Carriage_average_distance Volume_total ATV NB_int_sup'
-    for num in range(1,sup_max+1):
-        header +=' '+'Xcoord_intsup'+str(num)+' Ycoord_intsup'+str(num)+' Elevation_intsup'+str(num)
-        header +=' '+'Hcable_intsup'+str(num)+' Pression_intsup'+str(num)
-    header +='IPC cost' 
-    Dir_result +=Tab_name  
-    header +='\n'
-    try:os.mkdir(Dir_result)
-    except:pass
-    Dir_result+="/"
-    filename = Dir_result+"Database_Optim_"+str(optnum)+".gzip" 
-    shape_name = Dir_result+"CableLines_Optim_"+str(optnum)+".shp"
-    rast_name = Dir_result+"CableArea_Optim_"+str(optnum)
-    pyl_name = Dir_result+"Int_sup_Optim_"+str(optnum)+".shp"
+    header = QCoreApplication.translate("MainWindow","ID_pixel Azimuth_deg X_Start Y_Start Elevation_Start Hcable_Start X_End Y_End Elevation_End Hcable_End ")
+    header += QCoreApplication.translate("MainWindow","Existing_road Cable_length Configuration ")
+    header += QCoreApplication.translate("MainWindow","Forest_area Carriage_average_distance Volume_total ATV NB_int_sup")
+    for num in range(1, sup_max + 1):
+        header += ' ' + QCoreApplication.translate("MainWindow","Xcoord_intsup") + str(num) + ' ' + QCoreApplication.translate("MainWindow","Ycoord_intsup") + str(num) + ' ' + QCoreApplication.translate("MainWindow","Elevation_intsup") + str(num)
+        header += ' ' + QCoreApplication.translate("MainWindow","Hcable_intsup") + str(num) + ' ' + QCoreApplication.translate("MainWindow","Pression_intsup") + str(num)
+    header += QCoreApplication.translate("MainWindow","IPC cost") 
+    Dir_result += Tab_name  
+    header += '\n'
+    try:
+        os.mkdir(Dir_result)
+    except:
+        pass
+    Dir_result += "/"
+    filename = Dir_result + QCoreApplication.translate("MainWindow","Database_Optimization_") + str(optnum) + ".gzip" 
+    shape_name = Dir_result + QCoreApplication.translate("MainWindow","CableLines_Optimization_") + str(optnum) + ".shp"
+    rast_name = Dir_result + QCoreApplication.translate("MainWindow","CableArea_Optimization_") + str(optnum)
+    pyl_name = Dir_result + QCoreApplication.translate("MainWindow","Int_sup_Optimization_") + str(optnum) + ".shp"
     
-    save_integer_ascii(filename,header,Tab_result)
-    source_src=get_source_src(Rspace_sel+"info_proj.shp")  
-    road_network_proj=get_proj_from_road_network(Rspace_sel+"info_proj.shp")
-    Line_to_shapefile(Tab_result,shape_name,source_src,prelevement) 
+    save_integer_ascii(filename, header, Tab_result)
+    source_src = get_source_src(Rspace_sel + QCoreApplication.translate("MainWindow","info_proj.shp"))  
+    road_network_proj = get_proj_from_road_network(Rspace_sel + QCoreApplication.translate("MainWindow","info_proj.shp"))
+    Line_to_shapefile(Tab_result, shape_name, source_src, prelevement) 
     #New rast_couv to take into account project of cable start
-    Rast_couv=create_rast_couv(Tab_result,Dir_result,source_src,Extent,Csize,Lhor_max)
+    Rast_couv = create_rast_couv(Tab_result, Dir_result, source_src, Extent, Csize, Lhor_max)
     #Rast_couv[Rast_couv>0]=1
     if not new_calc:
-        Forest=np.load(Rspace_sel+"Forest.npy")
+        Forest = np.load(Rspace_sel + QCoreApplication.translate("MainWindow","Forest.npy"))
         try:         
-            Vol_ha=np.load(Rspace_sel+"Vol_ha.npy")
+            Vol_ha = np.load(Rspace_sel + QCoreApplication.translate("MainWindow","Vol_ha.npy"))
         except:
-            Vol_ha=np.zeros_like(Forest)
+            Vol_ha = np.zeros_like(Forest)
         try:
-            Vol_AM=np.load(Rspace_sel+"Vol_AM.npy")
+            Vol_AM = np.load(Rspace_sel + QCoreApplication.translate("MainWindow","Vol_AM.npy"))
         except:
-            Vol_AM=np.zeros_like(Forest)    
-    Rast_couv[Forest==0]=0
-    ArrayToGtiff(Rast_couv,rast_name,Extent,nrows,ncols,road_network_proj,0,'UINT8')    
-    Pylone_in_shapefile(Tab_result,pyl_name,source_src)
+            Vol_AM = np.zeros_like(Forest)    
+    Rast_couv[Forest == 0] = 0
+    ArrayToGtiff(Rast_couv, rast_name, Extent, nrows, ncols, road_network_proj, 0, 'UINT8')    
+    Pylone_in_shapefile(Tab_result, pyl_name, source_src)
     ### Summary of the choice
-    generate_info_ligne(Dir_result,w_list,lim_list,Tab_result,Rast_couv,Vol_ha,Vol_AM,Csize,prelevement,Lhor_max) 
-    console_info("Selection of the best cable lines achieved.")
+    generate_info_ligne(Dir_result, w_list, lim_list, Tab_result, Rast_couv, Vol_ha, Vol_AM, Csize, prelevement, Lhor_max) 
+    console_info(QCoreApplication.translate("MainWindow","Selection of the best cable lines achieved."))
+
  
 
 #####################################################################
@@ -3079,102 +3095,108 @@ def line_selection(Rspace_c,w_list,lim_list,new_calc,file_shp_Foret,file_Vol_ha,
 # Fonctions qui gère les calculs liés au skidder
 
 def Skidder():
-    Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,_,Dir_Full_Obs_skidder,Dir_Partial_Obs_skidder,_,_,file_Vol_ha,_,_ = Sylvaccess_UI.get_spatial_cls()
-    file_Vol_ha = Sylvaccess_UI.crop_to_main_dtm_size(file_MNT,file_Vol_ha)
-    _,_,_,_,Pente_max_bucheron = Sylvaccess_UI.get_general_cls()
-    Pente_max_skidder,Dtreuil_max_up,Dtreuil_max_down,Dmax_train_near_for,Pmax_amont,Pmax_aval,Option_Skidder,Skid_Debclass=Sylvaccess_UI.get_skidder_cls()
-    console_info("Debut du modele skidder")
-    
+    Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Desserte, _, Dir_Full_Obs_skidder, Dir_Partial_Obs_skidder, _, _, file_Vol_ha, _, _ = Sylvaccess_UI.get_spatial_cls()
+    file_Vol_ha = Sylvaccess_UI.crop_to_main_dtm_size(file_MNT, file_Vol_ha)
+    _, _, _, _, Pente_max_bucheron = Sylvaccess_UI.get_general_cls()
+    Pente_max_skidder, Dtreuil_max_up, Dtreuil_max_down, Dmax_train_near_for, Pmax_amont, Pmax_aval, Option_Skidder, Skid_Debclass = Sylvaccess_UI.get_skidder_cls()
+    ##test
+    console_info(QCoreApplication.translate("MainWindow","Starting the skidder model"))
+    ##
+
     Hdebut = datetime.datetime.now()
-    
+
     # Create a folder for process results
-    Rspace_s = Rspace+"Skidder/"
-    try:os.mkdir(Rspace_s)
-    except:pass
-    Dir_temp = Wspace+"Temp/"
-    
+    Rspace_s = Rspace + "Skidder/"
+    try:
+        os.mkdir(Rspace_s)
+    except:
+        pass
+    Dir_temp = Wspace + "Temp/"
+
     # Check if temporary files have been generated and have the same extent
     try:
-        _,values,_,Extent = raster_get_info(file_MNT)
+        _, values, _, Extent = raster_get_info(file_MNT)
     except:
-        return "Erreur: veuillez definir une projection pour le raster MNT"
-    try: 
-        _,v1=read_info(Dir_temp+'info_extent.txt')
-        for i,item in enumerate(values):
-            if v1[i]!=round(item,2):
-                prep_data_skidder(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Full_Obs_skidder,Dir_Partial_Obs_skidder)
-            if i+1>4:break
+        return QCoreApplication.translate("MainWindow","Error: Please define a projection for the MNT raster.")
+    try:
+        _, v1 = read_info(Dir_temp + 'info_extent.txt')
+        for i, item in enumerate(values):
+            if v1[i] != round(item, 2):
+                prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Desserte, Dir_Full_Obs_skidder, Dir_Partial_Obs_skidder)
+            if i + 1 > 4:
+                break
     except:
-        prep_data_skidder(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Full_Obs_skidder,Dir_Partial_Obs_skidder)
-    
+        prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Desserte, Dir_Full_Obs_skidder, Dir_Partial_Obs_skidder)
+
     # Inputs
     try:
-        Foret = np.int8(np.load(Dir_temp+"Foret.npy"))
-        Piste = np.int8(np.load(Dir_temp+"Piste.npy"))
-        Route_for = np.int8(np.load(Dir_temp+"Route_for.npy"))    
-        Res_pub = np.int8(np.load(Dir_temp+"Res_pub.npy"))    
-        Lien_piste = np.load(Dir_temp+"Lien_piste.npy")
-        Lien_RF = np.load(Dir_temp+"Lien_RF.npy")
-        Pente = np.load(Dir_temp+"Pente.npy")
-        Pond_pente = np.load(Dir_temp+"Pond_pente.npy")
-        MNT = np.load(Dir_temp+"MNT.npy")
-        Full_Obstacles_skidder = np.int8(np.load(Dir_temp+"Full_Obstacles_skidder.npy"))
-        Partial_Obstacles_skidder = np.int8(np.load(Dir_temp+"Partial_Obstacles_skidder.npy"))
-    except: 
-        prep_data_skidder(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Full_Obs_skidder,Dir_Partial_Obs_skidder)
-        Foret = np.int8(np.load(Dir_temp+"Foret.npy"))
-        Piste = np.int8(np.load(Dir_temp+"Piste.npy"))
-        Route_for = np.int8(np.load(Dir_temp+"Route_for.npy"))   
-        Res_pub = np.int8(np.load(Dir_temp+"Res_pub.npy")) 
-        Lien_piste = np.load(Dir_temp+"Lien_piste.npy")
-        Lien_RF = np.load(Dir_temp+"Lien_RF.npy")
-        Pente = np.load(Dir_temp+"Pente.npy")
-        Pond_pente = np.load(Dir_temp+"Pond_pente.npy")
-        MNT = np.load(Dir_temp+"MNT.npy")
-        Full_Obstacles_skidder = np.int8(np.load(Dir_temp+"Full_Obstacles_skidder.npy"))
-        Partial_Obstacles_skidder = np.int8(np.load(Dir_temp+"Partial_Obstacles_skidder.npy"))
+        Foret = np.int8(np.load(Dir_temp + "Foret.npy"))
+        Piste = np.int8(np.load(Dir_temp + "Piste.npy"))
+        Route_for = np.int8(np.load(Dir_temp + "Route_for.npy"))
+        Res_pub = np.int8(np.load(Dir_temp + "Res_pub.npy"))
+        Lien_piste = np.load(Dir_temp + "Lien_piste.npy")
+        Lien_RF = np.load(Dir_temp + "Lien_RF.npy")
+        Pente = np.load(Dir_temp + "Pente.npy")
+        Pond_pente = np.load(Dir_temp + "Pond_pente.npy")
+        MNT = np.load(Dir_temp + "MNT.npy")
+        Full_Obstacles_skidder = np.int8(np.load(Dir_temp + "Full_Obstacles_skidder.npy"))
+        Partial_Obstacles_skidder = np.int8(np.load(Dir_temp + "Partial_Obstacles_skidder.npy"))
+    except:
+        prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Desserte, Dir_Full_Obs_skidder, Dir_Partial_Obs_skidder)
+        Foret = np.int8(np.load(Dir_temp + "Foret.npy"))
+        Piste = np.int8(np.load(Dir_temp + "Piste.npy"))
+        Route_for = np.int8(np.load(Dir_temp + "Route_for.npy"))
+        Res_pub = np.int8(np.load(Dir_temp + "Res_pub.npy"))
+        Lien_piste = np.load(Dir_temp + "Lien_piste.npy")
+        Lien_RF = np.load(Dir_temp + "Lien_RF.npy")
+        Pente = np.load(Dir_temp + "Pente.npy")
+        Pond_pente = np.load(Dir_temp + "Pond_pente.npy")
+        MNT = np.load(Dir_temp + "MNT.npy")
+        Full_Obstacles_skidder = np.int8(np.load(Dir_temp + "Full_Obstacles_skidder.npy"))
+        Partial_Obstacles_skidder = np.int8(np.load(Dir_temp + "Partial_Obstacles_skidder.npy"))
+
+    nrows, ncols = MNT.shape[0], MNT.shape[1]
+    road_network_proj = get_proj_from_road_network(file_shp_Desserte)
     
-    nrows,ncols = MNT.shape[0],MNT.shape[1]
-    road_network_proj=get_proj_from_road_network(file_shp_Desserte)
-    
-    # Calculation of useful variable for the model process
-    Pmax_up = float(abs(Pmax_amont))/100.0
-    Pmax_down = -float(abs(Pmax_aval))/100.0
-    deniv_up = math.sqrt(float(Dtreuil_max_up*Dtreuil_max_up)/float(1+1.0/float(Pmax_up*Pmax_up)))
-    deniv_down = -math.sqrt(float(Dtreuil_max_down*Dtreuil_max_down)/float(1+1.0/float(Pmax_down*Pmax_down)))
-    coeff = float(Dtreuil_max_up-Dtreuil_max_down)/float(deniv_up-deniv_down)
-    orig = Dtreuil_max_up - coeff*deniv_up
+    # Calculation of useful variables for the model process
+    Pmax_up = float(abs(Pmax_amont)) / 100.0
+    Pmax_down = -float(abs(Pmax_aval)) / 100.0
+    deniv_up = math.sqrt(float(Dtreuil_max_up * Dtreuil_max_up) / float(1 + 1.0 / float(Pmax_up * Pmax_up)))
+    deniv_down = -math.sqrt(float(Dtreuil_max_down * Dtreuil_max_down) / float(1 + 1.0 / float(Pmax_down * Pmax_down)))
+    coeff = float(Dtreuil_max_up - Dtreuil_max_down) / float(deniv_up - deniv_down)
+    orig = Dtreuil_max_up - coeff * deniv_up
     Csize = values[4]
-    Pond_pente[Full_Obstacles_skidder==1] = 1000
-    Pente_max = focal_stat_max(np.float_(Pente),-9999,1)
-    Manual_harvesting = np.int8((Pente_max<=Pente_max_bucheron))
+    Pond_pente[Full_Obstacles_skidder == 1] = 1000
+    Pente_max = focal_stat_max(np.float_(Pente), -9999, 1)
+    Manual_harvesting = np.int8((Pente_max <= Pente_max_bucheron))
     del Pente_max
     gc.collect()
-    Pente_ok_skid = np.int8((Pente <= Pente_max_skidder)*(Pente > -9999))
-    MNT_OK = np.int8((MNT!=values[5]))
-    Zone_OK = np.int8(MNT_OK*(Foret==1)*(Full_Obstacles_skidder==0)*Manual_harvesting==1)
-    
-    Surf_foret = np.sum((Foret==1)*MNT_OK)*Csize*Csize*0.0001
-    Surf_foret_non_access = int(np.sum((Manual_harvesting==0)*(Foret==1)*MNT_OK*Csize*Csize*0.0001)+0.5)
-    
-    Row_line,Col_line,D_line,Nbpix_line=create_buffer_skidder(Csize,Dtreuil_max_up,Dtreuil_max_down)
-            
+    Pente_ok_skid = np.int8((Pente <= Pente_max_skidder) * (Pente > -9999))
+    MNT_OK = np.int8((MNT != values[5]))
+    Zone_OK = np.int8(MNT_OK * (Foret == 1) * (Full_Obstacles_skidder == 0) * Manual_harvesting == 1)
+
+    Surf_foret = np.sum((Foret == 1) * MNT_OK) * Csize * Csize * 0.0001
+    Surf_foret_non_access = int(np.sum((Manual_harvesting == 0) * (Foret == 1) * MNT_OK * Csize * Csize * 0.0001) + 0.5)
+
+    Row_line, Col_line, D_line, Nbpix_line = create_buffer_skidder(Csize, Dtreuil_max_up, Dtreuil_max_down)
+
     if file_Vol_ha != "":
         Vol_ha = load_float_raster_simple(file_Vol_ha)
-        Vol_ha[np.isnan(Vol_ha)]=0
-        Temp = ((Vol_ha>0)*(Foret==1)*MNT_OK)>0
-        Vtot = np.mean(Vol_ha[Temp])*np.sum(Temp)*Csize*Csize*0.0001
-        Temp = ((Vol_ha>0)*(Manual_harvesting==0)*(Foret==1)*MNT_OK)>0
-        Vtot_non_buch = np.mean(Vol_ha[Temp])*np.sum(Temp)*Csize*Csize*0.0001
-        del Vol_ha,Temp
+        Vol_ha[np.isnan(Vol_ha)] = 0
+        Temp = ((Vol_ha > 0) * (Foret == 1) * MNT_OK) > 0
+        Vtot = np.mean(Vol_ha[Temp]) * np.sum(Temp) * Csize * Csize * 0.0001
+        Temp = ((Vol_ha > 0) * (Manual_harvesting == 0) * (Foret == 1) * MNT_OK) > 0
+        Vtot_non_buch = np.mean(Vol_ha[Temp]) * np.sum(Temp) * Csize * Csize * 0.0001
+        del Vol_ha, Temp
     else:
-        Vtot=0    
-        Vtot_non_buch =0
-       
-    ArrayToGtiff(Manual_harvesting,Rspace_s+'Manual_harvesting',Extent,nrows,ncols,road_network_proj,0,'UINT8')   
-    console_info("    - Initialization complete")  
-    del Pente,Manual_harvesting
-    gc.collect()     
+        Vtot = 0
+        Vtot_non_buch = 0
+
+    ArrayToGtiff(Manual_harvesting, Rspace_s + 'Manual_harvesting', Extent, nrows, ncols, road_network_proj, 0, 'UINT8')
+    console_info(QCoreApplication.translate("MainWindow","Initialization complete"))
+    del Pente, Manual_harvesting
+    gc.collect()
+
     
     ###############################################################################################################################################    
     ### Calculation of skidding distance inside the forest stands
@@ -3225,32 +3247,30 @@ def Skidder():
     D_foret_piste,L_Piste,D_piste=Dfwd_flat_forest_tracks(Lien_piste, Pond_pente, Pente_ok_skidder*(Route_for==0)*1, Csize)    
     D_foret_RF,L_RF = Dfwd_flat_forest_road(Lien_RF,Pond_pente,Pente_ok_skidder*1*(Piste==0),Csize)
     
-    del Pente_ok_skidder,Pond_pente
-    gc.collect()          
-    console_info("    - Distance de trainage depuis la desserte forestieres calculee")  
-    
-    ###############################################################################################################################################
-    ### Calculation of winching distance from forest roads
-    ###############################################################################################################################################
-    
-    DebRF_D,DebRF_LRF=skid_debusq_RF(Lien_RF,MNT,Row_line,Col_line,D_line,Nbpix_line,coeff,orig,Pmax_up,Pmax_down,
-                                        Dtreuil_max_up,Dtreuil_max_down,nrows,ncols,Zone_OK*(Route_for==0)*1*(Piste==0))
-    
-
-    console_info("    - Distance de debusquage depuis les routes forestieres calculee")  
-
-    
-    ###############################################################################################################################################
-    #### Calculation of winching distance from forest tracks
-    ###############################################################################################################################################                 
-    
-    Debp_D,Debp_LP,Debp_Dtrpiste=skid_debusq_Piste(Lien_piste,MNT,Row_line,Col_line,D_line,Nbpix_line,coeff,orig,Pmax_up,Pmax_down,
-                                                      Dtreuil_max_up,Dtreuil_max_down,nrows,ncols,Zone_OK*(Piste==0)*1*(Route_for==0))
-
-
-    console_info("    - Distance de debusquage depuis les pistes forestieres calculee")  
+    del Pente_ok_skidder, Pond_pente
     gc.collect()
-    
+    console_info(QCoreApplication.translate("MainWindow","Skidding distance from forest access routes calculated"))
+
+    ###############################################################################################################################################
+    ### Calculation of skidding distance from forest roads
+    ###############################################################################################################################################
+
+    DebRF_D, DebRF_LRF = skid_debusq_RF(Lien_RF, MNT, Row_line, Col_line, D_line, Nbpix_line, coeff, orig, Pmax_up, Pmax_down,
+                                        Dtreuil_max_up, Dtreuil_max_down, nrows, ncols, Zone_OK * (Route_for == 0) * 1 * (Piste == 0))
+
+    console_info(QCoreApplication.translate("MainWindow","Skidding distance from forest roads calculated"))
+
+    ###############################################################################################################################################
+    #### Calculation of skidding distance from forest tracks
+    ###############################################################################################################################################                 
+
+    Debp_D, Debp_LP, Debp_Dtrpiste = skid_debusq_Piste(Lien_piste, MNT, Row_line, Col_line, D_line, Nbpix_line, coeff, orig, Pmax_up, Pmax_down,
+                                                    Dtreuil_max_up, Dtreuil_max_down, nrows, ncols, Zone_OK * (Piste == 0) * 1 * (Route_for == 0))
+
+    console_info(QCoreApplication.translate("MainWindow","Skidding distance from forest tracks calculated"))
+    gc.collect()
+
+        
     ###############################################################################################################################################    
     ### Concatenation of the resultats (1)
     ###############################################################################################################################################
@@ -3357,7 +3377,7 @@ def Skidder():
     zone_tracteur[((D_foret_RF>=0)*(Foret==1))>0]=1    
     
     ArrayToGtiff(zone_tracteur,Rspace_s+'Free_access_of_the_skidder',Extent,nrows,ncols,road_network_proj,0,'UINT8')
-    console_info("    - First concatenation done")  
+    console_info(QCoreApplication.translate("MainWindow","    - First concatenation done"))  
     del DebRF_D,DebRF_LRF,Debp_D,Debp_LP,Debp_Dtrpiste
     gc.collect() 
     
@@ -3403,7 +3423,7 @@ def Skidder():
                                                       
     del Lien_contour,pixels,MNT
     gc.collect()
-    console_info("    - Distance de debusquage depuis le contour de la zone parcourable calculee")      
+    console_info(QCoreApplication.translate("MainWindow","    - Distance de debusquage depuis le contour de la zone parcourable calculee"))      
     
     ################################################################################################################################################  
     ### Concatenation (2)
@@ -3452,7 +3472,7 @@ def Skidder():
    
     del Temp
     gc.collect()
-    console_info("    - Concatenation des resultats terminee. Sauvegarde en cours...")             
+    console_info(QCoreApplication.translate("MainWindow","    - Concatenation des resultats terminee. Sauvegarde en cours..."))             
         
     
     ### Saving all rasters
@@ -3481,42 +3501,42 @@ def Skidder():
     
     ### Genere le fichier avec le resume des parametres de simulation
     file_name = str(Rspace_s)+"Parameters_of_simulation.txt"
-    resume_texte = "Sylvaccess : AUTOMATIC MAPPING OF FOREST ACCESSIBILITY WITH SKIDDER\n\n\n"
-    resume_texte += "Software version : 0.2 - 2024/02\n\n"
-    resume_texte += "Resolution       : "+str(Csize)+" m\n\n"
+    resume_texte = QCoreApplication.translate("MainWindow","Sylvaccess : AUTOMATIC MAPPING OF FOREST ACCESSIBILITY WITH SKIDDER\n\n\n")
+    resume_texte += QCoreApplication.translate("MainWindow","Software version : 0.2 - 2024/02\n\n")
+    resume_texte += QCoreApplication.translate("MainWindow","Resolution       : "+str(Csize)+" m\n\n")
     resume_texte += "" .join (["_"]*80) + "\n\n"
-    resume_texte += "Date and time when launching the script:              "+str_debut+"\n"
-    resume_texte += "Date and time at the end of execution of the script:  "+str_fin+"\n"
-    resume_texte += "Total execution time of the script:                   "+str_duree+"\n\n"
+    resume_texte += QCoreApplication.translate("MainWindow","Date and time when launching the script:              ")+str_debut+"\n"
+    resume_texte += QCoreApplication.translate("MainWindow","Date and time at the end of execution of the script:  ")+str_fin+"\n"
+    resume_texte += QCoreApplication.translate("MainWindow","Total execution time of the script:                   ")+str_duree+"\n\n"
     resume_texte += "" .join (["_"]*80) + "\n\n"
-    resume_texte += "PARAMETERS USED FOR THE MODELING:\n\n"
-    resume_texte += "   - Maximum uphill distance for winching:                        "+str(Dtreuil_max_up)+" m\n"
-    resume_texte += "   - Maximum downhill distance for winching:                      "+str(Dtreuil_max_down)+" m\n"
-    resume_texte += "   - Maximum slope to get maximum uphill winching distance:       "+str(Pmax_amont)+" %\n"
-    resume_texte += "   - Maximum slope to get maximum downhill winching distance:     "+str(Pmax_aval)+" %\n\n"
-    resume_texte += "   - Maximum distance outside forest and forest road network:     "+str(Dmax_train_near_for)+" m\n"
-    resume_texte += "   - Maximum slope for a free access of the parcels with skidder: "+str(Pente_max_skidder)+" %\n"
-    resume_texte += "   - Maximum slope for manual felling of the trees:               "+str(Pente_max_bucheron)+" %\n\n"
-    resume_texte += "   - Simulation option:\n"    
+    resume_texte += QCoreApplication.translate("MainWindow","PARAMETERS USED FOR THE MODELING:\n\n")
+    resume_texte += QCoreApplication.translate("MainWindow","   - Maximum uphill distance for winching:                        ")+str(Dtreuil_max_up)+" m\n"
+    resume_texte += QCoreApplication.translate("MainWindow","   - Maximum downhill distance for winching:                      ")+str(Dtreuil_max_down)+" m\n"
+    resume_texte += QCoreApplication.translate("MainWindow","   - Maximum slope to get maximum uphill winching distance:       ")+str(Pmax_amont)+" %\n"
+    resume_texte += QCoreApplication.translate("MainWindow","   - Maximum slope to get maximum downhill winching distance:     ")+str(Pmax_aval)+" %\n\n"
+    resume_texte += QCoreApplication.translate("MainWindow","   - Maximum distance outside forest and forest road network:     ")+str(Dmax_train_near_for)+" m\n"
+    resume_texte += QCoreApplication.translate("MainWindow","   - Maximum slope for a free access of the parcels with skidder: ")+str(Pente_max_skidder)+" %\n"
+    resume_texte += QCoreApplication.translate("MainWindow","   - Maximum slope for manual felling of the trees:               ")+str(Pente_max_bucheron)+" %\n\n"
+    resume_texte += QCoreApplication.translate("MainWindow","   - Simulation option:\n"  )  
     if Option_Skidder==1:
-        resume_texte += "      * Limit soil damages: force the skidder to process as much as possible \n"    
-        resume_texte += "        from the forest road network\n" 
+        resume_texte += QCoreApplication.translate("MainWindow","      * Limit soil damages: force the skidder to process as much as possible \n")    
+        resume_texte += QCoreApplication.translate("MainWindow","        from the forest road network\n" )
     else:
-        resume_texte += "      * Limit winching distances: force the skidder to go as close as possible\n"    
-        resume_texte += "        to the timber\n" 
+        resume_texte += QCoreApplication.translate("MainWindow","      * Limit winching distances: force the skidder to go as close as possible\n")    
+        resume_texte += QCoreApplication.translate("MainWindow","        to the timber\n" )
     if Dir_Full_Obs_skidder!='':
-        resume_texte += "      * Simulation with areas where skidder operations are forbidden (Full obstacles)\n"  
+        resume_texte += QCoreApplication.translate("MainWindow","      * Simulation with areas where skidder operations are forbidden (Full obstacles)\n" ) 
     if Dir_Partial_Obs_skidder!='':
-        resume_texte += "      * Simulation with areas where skidding is forbidden but winching possible (Partial obstacles)\n"  
+        resume_texte += QCoreApplication.translate("MainWindow","      * Simulation with areas where skidding is forbidden but winching possible (Partial obstacles)\n" ) 
         
     if os.path.exists(Rspace_s+"Forest_tracks_not_connected.tif"):
         resume_texte += "\n\n"
         resume_texte += "".join(["_" * 80])
-        resume_texte += "      !!! Warning !!! Some forest tracks are not connected to public network.\n"  
-        resume_texte += "      They were removed from the analysis.\n"  
+        resume_texte += QCoreApplication.translate("MainWindow","      !!! Warning !!! Some forest tracks are not connected to public network.\n")  
+        resume_texte += QCoreApplication.translate("MainWindow","      They were removed from the analysis.\n")  
     if os.path.exists(Rspace_s+"Forest_road_not_connected.tif"):
         resume_texte += "".join(["_" * 80])
-        resume_texte += "\n\n      !!! Warning !!! Some forest roads are not connected to public network.\n"  
+        resume_texte += "\n\n" + QCoreApplication.translate("MainWindow","      !!! Warning !!! Some forest roads are not connected to public network.\n")  
     fichier = open(file_name, "w")
     fichier.write(resume_texte)
     fichier.close()
@@ -3526,7 +3546,7 @@ def Skidder():
     fichier = open(file_name, "w")
     fichier.write(resume_texte)
     fichier.close()
-    console_info("Skidder model finished")
+    console_info(QCoreApplication.translate("MainWindow","Skidder model finished"))
     clear_big_nparray()
     gc.collect()
     
@@ -3595,14 +3615,15 @@ def make_summary_surface_vol(Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_acce
             recap_surface.append(str(round((Temp + Surf_Cum) / Surf_foret * 100, 1)))
             Surf_Cum += Temp
         except ValueError as e:
-            console_warning(f"Error converting '{dmin}' to an integer. Skid_list: {Skid_list}")
-            console_warning(f"Dtotal: {Dtotal}")
+            console_warning(QCoreApplication.translate("MainWindow","Error converting '{dmin}' to an integer. Skid_list: {Skid_list}", dmin=dmin, Skid_list=Skid_list))
+            console_warning(QCoreApplication.translate("MainWindow","Dtotal: {Dtotal}", Dtotal=Dtotal))
             Sylvaccess_UI.close()
             raise e
     else:
-        console_warning(f"Invalid literal for int() with base 10: '{dmin}'. Skid_list: {Skid_list}")
+        console_warning(QCoreApplication.translate("MainWindow","Invalid literal for int() with base 10: '{dmin}'. Skid_list: {Skid_list}", dmin=dmin, Skid_list=Skid_list))
         Sylvaccess_UI.close()
-        raise ValueError(f"Invalid literal for int() with base 10: '{dmin}'")
+        raise ValueError(QCoreApplication.translate("MainWindow","Invalid literal for int() with base 10: '{dmin}'", dmin=dmin))
+
 
     # Calcul des totaux
     totaux_surface.append(str(round(Surf_Cum, 1)) + " ha")
@@ -3668,14 +3689,14 @@ def make_summary_surface_vol(Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_acce
         totaux_volume.append(str(int(Vtot + 0.5)) + " m3")
 
     # Les en-têtes des colonnes dans le fichier texte
-    headers = "Total yarding distance |   Surface area (ha)   | Surface per class (%) |Cumulative surface (ha)|Cumulative surface (%) \n"
-    headers2= "Total yarding distance |      Volume (m3)      | Volume per class (%)  |Cumulative volume (m3) |Cumulative volume (%) \n"
+    headers =QCoreApplication.translate("MainWindow", "Total yarding distance |   Surface area (ha)   | Surface per class (%) |Cumulative surface (ha)|Cumulative surface (%) \n")
+    headers2= QCoreApplication.translate("MainWindow","Total yarding distance |      Volume (m3)      | Volume per class (%)  |Cumulative volume (m3) |Cumulative volume (%) \n")
 
     # Ajouter des espaces pour que les colonnes aient la même largeur
     recap_surface = [str(elem) for elem in recap_surface]
-    recap_surface = [elem.ljust(23) for elem in recap_surface]
+    recap_surface = [elem.ljust(30) for elem in recap_surface]
     recap_volume = [str(elem) for elem in recap_volume]
-    recap_volume = [elem.ljust(23) for elem in recap_volume]
+    recap_volume = [elem.ljust(30) for elem in recap_volume]
 
     # Données des tableaux
     data = zip(recap_surface[::5], recap_surface[1::5], recap_surface[2::5], recap_surface[3::5], recap_surface[4::5])
@@ -3689,12 +3710,12 @@ def make_summary_surface_vol(Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_acce
             file.write("|".join(row) + "\n")
         file.write("".join(["_" * len(headers)]))
         file.write("\n\n")
-        file.write("Total accessible forest" + ":   " + totaux_surface[0] + ";  " + totaux_surface[1] + "\n")
-        file.write("Total unaccessible forest" + ": " + totaux_surface[2] + ";  " + totaux_surface[3] + "\n")
-        file.write("    --> including impossible manual felling" + ":   " + totaux_surface[4] + ";" + totaux_surface[5] + "\n") 
+        file.write(QCoreApplication.translate("MainWindow","Total accessible forest") + ":   " + totaux_surface[0] + ";  " + totaux_surface[1] + "\n")
+        file.write(QCoreApplication.translate("MainWindow","Total unaccessible forest") + ": " + totaux_surface[2] + ";  " + totaux_surface[3] + "\n")
+        file.write(QCoreApplication.translate("MainWindow","    --> including impossible manual felling") + ":   " + totaux_surface[4] + ";" + totaux_surface[5] + "\n") 
         file.write("".join(["_" * len(headers)]))
         file.write("\n\n")
-        file.write("Total area of forest :" + "   " + totaux_surface[6] + "\n")
+        file.write(QCoreApplication.translate("MainWindow","Total area of forest :") + "   " + totaux_surface[6] + "\n")
         if vol:
             file.write(headers2)
             for row in data2:
@@ -3736,9 +3757,9 @@ def make_dif_files(Rspace, idmod):  # idmod 0 : Skidder, 1 : Forwarder
     del DExist,DProj,Diff2,Diff
     gc.collect()
     
-    label =  ["","0_New accessible area","4_Shortened distance from 1 to 500m",
+    label =  QCoreApplication.translate("MainWindow",["","0_New accessible area","4_Shortened distance from 1 to 500m",
                "3_Shortened distance from 500 to 999m", "2_Shortened distance from 1000 to 1499m",
-               "1_Shortened distance of at least 1500m"]
+               "1_Shortened distance of at least 1500m"])
 
     
     ds = gdal.Open(Rspace_s+"Recap.tif")
@@ -3780,8 +3801,8 @@ def make_dif_files(Rspace, idmod):  # idmod 0 : Skidder, 1 : Forwarder
         for j in range(1,Table.shape[1]):
             Table[i,j]=round(float(TabProj[i,j])-float(TabExist[i,j]),1)
     
-        Table[-2,0]="Total supplementary forest area"
-        Table[-1,0]="Impacted forest area"
+        Table[-2,0]=QCoreApplication.translate("MainWindow","Total supplementary forest area")
+        Table[-1,0]=QCoreApplication.translate("MainWindow","Impacted forest area")
             
     for i in colrecap:
         Table[-2,i]=round(np.sum(np.float32(Table[1:-3,i])),1)
@@ -3837,16 +3858,16 @@ def create_access_shapefile(Dtotal,Rspace_s,Foret,HarvClass_list,road_network_pr
     #1: inaccessible forest
     #2: Non_buch
     #Then harvesting classes
-    label = ["Non-forest area","Inaccessible forest","Non harvestable (too steep slope)"]
+    label = [QCoreApplication.translate("MainWindow","Non-forest area"),QCoreApplication.translate("MainWindow","Inaccessible forest"),QCoreApplication.translate("MainWindow","Non harvestable (too steep slope)")]
     nbclass = len(HarvClass_list)    
     for i in range(1,nbclass):
         dmin,dmax = int(HarvClass_list[i-1]),int(HarvClass_list[i])
-        label.append("Accessible - Skidding class "+str(i)+': '+str(HarvClass_list[i-1])+" - "+str(HarvClass_list[i])+" m")
+        label.append(QCoreApplication.translate("MainWindow","Accessible - Skidding class ")+str(i)+': '+str(HarvClass_list[i-1])+" - "+str(HarvClass_list[i])+" m")
         Temp = ((Dtotal>=dmin)*(Dtotal<dmax)*(Foret==1))>0
         Recap[Temp]=2+i
     #add infinite distance class 
     dmin = int(HarvClass_list[nbclass-1])
-    label.append("Accessible - Skidding class "+str(nbclass)+" : > "+str(dmin)+" m")
+    label.append(QCoreApplication.translate("MainWindow","Accessible - Skidding class ")+str(nbclass)+" : > "+str(dmin)+" m")
     Temp = ((Dtotal>=dmin)*(Foret==1))>0
     Recap[Temp]=2+nbclass
     #Get area too slopy for harvesting
@@ -4054,7 +4075,7 @@ def create_arrays_from_roads(source_shapefile,Extent,Csize):
 
 
 def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Desserte, Dir_Full_Obs_skidder, Dir_Partial_Obs_skidder):
-    console_info("Pre-processing of the inputs for skidder model")
+    console_info(QCoreApplication.translate("MainWindow","Pre-processing of the inputs for skidder model"))
     ### Make directory for temporary files
     Dir_temp = Wspace+"Temp/"
     try:os.mkdir(Dir_temp)
@@ -4075,7 +4096,7 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
     np.save(Dir_temp+"Foret",np.int8(Foret))    
     del Foret
     gc.collect()
-    console_info("    - Forest raster processed")
+    console_info(QCoreApplication.translate("MainWindow","    - Forest raster processed"))
         
     ##############################################################################################################################################
     ### Calculation of a slope raster and a cost raster of slope
@@ -4092,7 +4113,7 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
     # Report a success message   
     del Pente,MNT
     gc.collect()
-    console_info("    - Slope raster processed")  
+    console_info(QCoreApplication.translate("MainWindow","    - Slope raster processed")  )
     ##############################################################################################################################################
     ### Road network processing
     ##############################################################################################################################################
@@ -4136,9 +4157,9 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
             ind = pixel[0]            
             RF_bad[Lien_RF[ind,0],Lien_RF[ind,1]]=1        
         ArrayToGtiff(RF_bad,Rspace_s+'Forest_road_not_connected',Extent,nrows,ncols,road_network_proj,0,'UINT8')
-        console_info("    - Some forest road are not connected to public network. To see where, check raster "+Rspace_s+"Forest_road_not_connected.tif")
+        console_info(QCoreApplication.translate("MainWindow","    - Some forest road are not connected to public network. To see where, check raster "+Rspace_s+"Forest_road_not_connected.tif"))
     else:
-        console_info("    - Forest road processed") 
+        console_info(QCoreApplication.translate("MainWindow","    - Forest road processed") )
             
     ##############################################################################################################################################
     ### Forest tracks network processing
@@ -4172,11 +4193,11 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
             RF_bad[Lien_piste[ind,0],Lien_piste[ind,1]]=1   
             Piste[Lien_piste[ind,0],Lien_piste[ind,1]]=0
             ArrayToGtiff(RF_bad,Rspace_s+'Forest_tracks_not_connected',Extent,nrows,ncols,road_network_proj,0,'UINT8')
-            console_info("    - Some forest tracks are not connected to public network or forest road.")
-            console_info("      To see where, check raster "+Rspace_s+"Forest_tracks_not_connected.tif")
-            console_info("      These linears will be removed from the analysis.")
+            console_info(QCoreApplication.translate("MainWindow","    - Some forest tracks are not connected to public network or forest road."))
+            console_info(QCoreApplication.translate("MainWindow","      To see where, check raster "+Rspace_s+"Forest_tracks_not_connected.tif"))
+            console_info(QCoreApplication.translate("MainWindow","      These linears will be removed from the analysis."))
     else:
-        console_info("    - Forest tracks processed")  
+        console_info(QCoreApplication.translate("MainWindow","    - Forest tracks processed"))  
     Route_for[Res_pub==1]=0
     Piste[Res_pub==1]=0
     np.save(Dir_temp+"Route_for",Route_for) 
@@ -4191,7 +4212,7 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
     else:
         Full_Obstacles_skidder = np.zeros((nrows,ncols),dtype=np.int8)
     np.save(Dir_temp+"Full_Obstacles_skidder",np.int8(Full_Obstacles_skidder))  
-    console_info("    - Skidder total obstacle raster processed")
+    console_info(QCoreApplication.translate("MainWindow","    - Skidder total obstacle raster processed"))
     ##############################################################################################################################################
     ### Create a raster of partial obstacle for skidder
     ##############################################################################################################################################
@@ -4200,8 +4221,8 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
     else:
         Partial_Obstacles_skidder = np.zeros((nrows,ncols),dtype=np.int8)
     np.save(Dir_temp+"Partial_Obstacles_skidder",np.int8(Partial_Obstacles_skidder))  
-    console_info("    - Skidder partial obstacle raster processed")
-    console_info("Input data processing achieved")
+    console_info(QCoreApplication.translate("MainWindow","    - Skidder partial obstacle raster processed"))
+    console_info(QCoreApplication.translate("MainWindow","Input data processing achieved"))
     ##############################################################################################################################################
     ### Close the script
     ##############################################################################################################################################
@@ -4220,7 +4241,7 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
 
   
 def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_Obs_forwarder):
-    console_info("Pre-processing of the inputs for forwarder model")
+    console_info(QCoreApplication.translate("MainWindow","Pre-processing of the inputs for forwarder model"))
     ### Make directory for temporary files
     Dir_temp = Wspace+"Temp/"
     try:os.mkdir(Dir_temp)
@@ -4240,7 +4261,7 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
     Foret = shapefile_to_np_array(file_shp_Foret,Extent,Csize,"FORET")
     np.save(Dir_temp+"Foret",np.int8(Foret))    
     del Foret
-    console_info("    - Forest raster processe")
+    console_info(QCoreApplication.translate("MainWindow","    - Forest raster processe"))
     ##############################################################################################################################################
     ### Calculation of a slope raster and a cost raster of slope
     ##############################################################################################################################################
@@ -4258,7 +4279,7 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
     np.save(Dir_temp+"Pond_pente",np.float32(Pond_pente))
     # Report a success message   
     del Pente,MNT,Exposition
-    console_info("    - Slope and aspects rasters processed")  
+    console_info(QCoreApplication.translate("MainWindow","    - Slope and aspects rasters processed"))  
     ##############################################################################################################################################
     ### Road network processing
     ##############################################################################################################################################
@@ -4302,9 +4323,9 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
             ind = pixel[0]            
             RF_bad[Lien_RF[ind,0],Lien_RF[ind,1]]=1        
         ArrayToGtiff(RF_bad,Rspace_f+'Forest_road_not_connected',Extent,nrows,ncols,road_network_proj,0,'UINT8')
-        console_info("    - Some forest road are not connected to public network. To see where, check raster "+Rspace_f+"Forest_road_not_connected.tif")
+        console_info(QCoreApplication.translate("MainWindow","    - Some forest road are not connected to public network. To see where, check raster ")+Rspace_f+"Forest_road_not_connected.tif")
     else:
-        console_info("    - Forest road processed") 
+        console_info(QCoreApplication.translate("MainWindow","    - Forest road processed")) 
              
     ##############################################################################################################################################
     ### Forest tracks network processing
@@ -4337,11 +4358,11 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
             RF_bad[Lien_piste[ind,0],Lien_piste[ind,1]]=1   
             Piste[Lien_piste[ind,0],Lien_piste[ind,1]]=0
             ArrayToGtiff(RF_bad,Rspace_f+'Forest_tracks_not_connected',Extent,nrows,ncols,Csize,road_network_proj,0,'UINT8')
-            console_info("    - Some forest tracks are not connected to public network or forest road.")
-            console_info("      To see where, check raster "+Rspace_f+"Forest_tracks_not_connected.tif")
-            console_info("      These linears will be removed from the analysis.")
+            console_info(QCoreApplication.translate("MainWindow","    - Some forest tracks are not connected to public network or forest road."))
+            console_info(QCoreApplication.translate("MainWindow","      To see where, check raster "+Rspace_f+"Forest_tracks_not_connected.tif"))
+            console_info(QCoreApplication.translate("MainWindow","      These linears will be removed from the analysis."))
     else:
-        console_info("    - Forest road processed")  
+        console_info(QCoreApplication.translate("MainWindow","    - Forest road processed"))  
     Route_for[Res_pub==1]=0
     Piste[Res_pub==1]=0
     np.save(Dir_temp+"Route_for",Route_for) 
@@ -4356,8 +4377,8 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
     else:
         Obstacles_forwarder = np.zeros((nrows,ncols),dtype=np.int8)
     np.save(Dir_temp+"Obstacles_forwarder",np.int8(Obstacles_forwarder))    
-    console_info("    - Forwarder obstacles raster processed")  
-    console_info("Input data processing achieved")
+    console_info(QCoreApplication.translate("MainWindow","    - Forwarder obstacles raster processed")) 
+    console_info(QCoreApplication.translate("MainWindow","Input data processing achieved"))
     ##############################################################################################################################################
     ### Close the script
     ##############################################################################################################################################
@@ -4369,7 +4390,7 @@ def process_forwarder():
     _,_,_,_,Pente_max_bucheron = Sylvaccess_UI.get_general_cls()
     Forw_angle_incl,Forw_angle_up,Forw_angle_down,Forw_Lmax,Forw_Dmax_out_for,Forw_portee,Forw_Debclass=Sylvaccess_UI.get_Forwarder_cls()
 
-    console_info("Sylvaccess - Forwarder starts")
+    console_info(QCoreApplication.translate("MainWindow","Sylvaccess - Forwarder starts"))
 
     ###############################################################################################################################################
     ### Initialisation
@@ -4386,7 +4407,7 @@ def process_forwarder():
     try:
         _,values,_,Extent = raster_get_info(file_MNT)
     except:
-        console_info("Error: please define a projection for the DTM raster")
+        console_info(QCoreApplication.translate("MainWindow","Error: please define a projection for the DTM raster"))
         return ""    
     try: 
         _,v1=read_info(Dir_temp+'info_extent.txt')
@@ -4470,7 +4491,7 @@ def process_forwarder():
         Vtot_non_buch =0
        
         ArrayToGtiff(Manual_harvesting,Rspace_s+'Manual_harvesting',Extent,nrows,ncols,road_network_proj,0,'UINT8')
-        console_info("    - Initialization achieved")   
+        console_info(QCoreApplication.translate("MainWindow","    - Initialization achieved"))   
     del Pente
     gc.collect()     
     
@@ -4655,7 +4676,7 @@ def process_forwarder():
     del RF_D,RF_L_forRF,Temp,D_foret,L_Piste,D_piste
     gc.collect()    
     
-    console_info("    - Directly passable area identified") 
+    console_info(QCoreApplication.translate("MainWindow","    - Directly passable area identified")) 
     
     ###############################################################################################################################################
     ### Get contour of passable area (check forwarder inclination and terrain slope conditions)
@@ -4709,7 +4730,7 @@ def process_forwarder():
     del Dpente,Dfor,L_pis,Dpis,Temp,Lien_contour,pixels,L_RF,zone_rast
     gc.collect()    
     
-    console_info("    - Accessible area in slope identified") 
+    console_info(QCoreApplication.translate("MainWindow","    - Accessible area in slope identified")) 
     
     ################################################################################################################################################
     ### Calculation of area reachable with the grap
@@ -4774,8 +4795,8 @@ def process_forwarder():
     
     del Keep,Piste,Route_for
     gc.collect()    
-    console_info("    - Area reachable with the boom added") 
-    model_name = "Forwarder"
+    console_info(QCoreApplication.translate("MainWindow","    - Area reachable with the boom added")) 
+    model_name = QCoreApplication.translate("MainWindow","Forwarder")
     
     
     ###############################################################################################################################################                                                                                    
@@ -4806,36 +4827,36 @@ def process_forwarder():
     str_duree,str_fin,str_debut=heures(Hdebut)
     ### Genere le fichier avec le resume des parametres de simulation
     file_name = str(Rspace_s)+"Parameters_of_simulation.txt"
-    resume_texte = "Sylvaccess : AUTOMATIC MAPPING OF FOREST ACCESSIBILITY WITH FORWARDER\n\n\n"
-    resume_texte += "Software version : 0.2 - 2024/02\n\n"
-    resume_texte += "Resolution       : "+str(Csize)+" m\n\n"
+    resume_texte = QCoreApplication.translate("MainWindow","Sylvaccess : AUTOMATIC MAPPING OF FOREST ACCESSIBILITY WITH FORWARDER\n\n\n")
+    resume_texte += QCoreApplication.translate("MainWindow","Software version : 0.2 - 2024/02\n\n")
+    resume_texte += QCoreApplication.translate("MainWindow","Resolution       : ")+str(Csize)+" m\n\n"
     resume_texte += "" .join (["_"]*80)+"\n\n"
-    resume_texte += "Date and time when launching the script:              "+str_debut+"\n"
-    resume_texte += "Date and time at the end of execution of the script:  "+str_fin+"\n"
-    resume_texte += "Total execution time of the script:                   "+str_duree+"\n\n"
+    resume_texte += QCoreApplication.translate("MainWindow","Date and time when launching the script:              ")+str_debut+"\n"
+    resume_texte += QCoreApplication.translate("MainWindow","Date and time at the end of execution of the script:  ")+str_fin+"\n"
+    resume_texte += QCoreApplication.translate("MainWindow","Total execution time of the script:                   ")+str_duree+"\n\n"
     resume_texte += "" .join (["_"]*80)+"\n\n"
-    resume_texte += "PARAMETERS USED FOR THE MODELING:\n\n"
-    resume_texte += "   - Maximum perpendicular lateral inclination (MPLI):            "+str(Forw_angle_incl)+" %\n"
-    resume_texte += "   - Maximum slope for an uphill yarding:                         "+str(Forw_angle_up)+" %\n"
-    resume_texte += "   - Maximum slope for an downhill yarding:                       "+str(Forw_angle_down)+" %\n"
-    resume_texte += "   - Boom reach:                                                  "+str(Forw_portee)+" m\n"
-    resume_texte += "   - Maximum yarding distance when terrain slope > MPLI:          "+str(Forw_Lmax)+" m\n"
-    resume_texte += "   - Maximum slope for a free access of the parcels with skidder: "+str(Forw_angle_incl)+" %\n"
-    resume_texte += "   - Maximum slope for manual felling of the trees:               "+str(Pente_max_bucheron)+" %\n"       
+    resume_texte += QCoreApplication.translate("MainWindow","PARAMETERS USED FOR THE MODELING:\n\n")
+    resume_texte += QCoreApplication.translate("MainWindow","   - Maximum perpendicular lateral inclination (MPLI):            ")+str(Forw_angle_incl)+" %\n"
+    resume_texte += QCoreApplication.translate("MainWindow","   - Maximum slope for an uphill yarding:                         ")+str(Forw_angle_up)+" %\n"
+    resume_texte += QCoreApplication.translate("MainWindow","   - Maximum slope for an downhill yarding:                       ")+str(Forw_angle_down)+" %\n"
+    resume_texte += QCoreApplication.translate("MainWindow","   - Boom reach:                                                  ")+str(Forw_portee)+" m\n"
+    resume_texte += QCoreApplication.translate("MainWindow","   - Maximum yarding distance when terrain slope > MPLI:          ")+str(Forw_Lmax)+" m\n"
+    resume_texte += QCoreApplication.translate("MainWindow","   - Maximum slope for a free access of the parcels with skidder: ")+str(Forw_angle_incl)+" %\n"
+    resume_texte += QCoreApplication.translate("MainWindow","   - Maximum slope for manual felling of the trees:               ")+str(Pente_max_bucheron)+" %\n"       
     
     if os.path.exists(Rspace_s+"Forest_tracks_not_connected.tif"):
         resume_texte += "\n\n"
         resume_texte += "" .join (["-"]*80)+"\n\n"
-        resume_texte += "      !!! Warning !!! Some forest tracks are not connected to public network.\n"  
-        resume_texte += "      They were removed from the analysis.\n"  
+        resume_texte += QCoreApplication.translate("MainWindow","      !!! Warning !!! Some forest tracks are not connected to public network.\n" ) 
+        resume_texte += QCoreApplication.translate("MainWindow","      They were removed from the analysis.\n")  
     if os.path.exists(Rspace_s+"Forest_road_not_connected.tif"):
         resume_texte += "" .join (["-"]*80)
-        resume_texte += "\n\n      !!! Warning !!! Some forest roads are not connected to public network.\n"      
+        resume_texte += QCoreApplication.translate("MainWindow","\n\n      !!! Warning !!! Some forest roads are not connected to public network.\n")      
     
     fichier = open(file_name, "w")
     fichier.write(resume_texte)
     fichier.close()
-    print("Forwarder accessibility processed")
+    console_info(QCoreApplication.translate("MainWindow","Forwarder accessibility processed"))
 
     ##############################################################################################################################################
     ### Close the script
