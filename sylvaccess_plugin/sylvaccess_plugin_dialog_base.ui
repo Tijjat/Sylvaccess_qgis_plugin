@@ -3794,7 +3794,7 @@
              </font>
             </property>
             <property name="text">
-             <string>interlediate supports and tailspar</string>
+             <string>intermediate supports and tailspar</string>
             </property>
            </widget>
           </item>
@@ -4360,7 +4360,7 @@
         <item row="4" column="0">
          <widget class="QCheckBox" name="checkBox_104">
           <property name="text">
-           <string>Line leingth</string>
+           <string>Line length</string>
           </property>
          </widget>
         </item>
@@ -4519,7 +4519,7 @@
         <item row="8" column="2">
          <widget class="QLabel" name="label_136">
           <property name="text">
-           <string>Maximize</string>
+           <string>Minimiser</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>

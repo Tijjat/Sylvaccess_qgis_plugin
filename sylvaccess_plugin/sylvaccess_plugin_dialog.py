@@ -446,9 +446,9 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 _, values, _, Extent = raster_get_info(file_MNT)
                 if values[5] is None:
                     verif = False
-                    msg += QCoreApplication.translate("MainWindow", " -   Raster MNT: No value of NoData defined\n")
+                    msg += QCoreApplication.translate("MainWindow", " -   Raster DTM: No value of NoData defined\n")
             except:
-                msg += QCoreApplication.translate("MainWindow", " -   Raster MNT:  Path is missing or incorrect. This raster is required to run Sylvaccess\n")
+                msg += QCoreApplication.translate("MainWindow", " -   Raster DTM:  Path is missing or incorrect. This raster is required to run Sylvaccess\n")
                 verif = False
 
         # Check file_shp_Desserte
@@ -505,13 +505,13 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                     _, values2, _, Extent2 = raster_get_info(f)
                     if values2[5] is None:
                         verif = False
-                        msg += QCoreApplication.translate("MainWindow", " -   ") + name[i] + QCoreApplication.translate("MainWindow", ": No value of NoData defined\n")
+                        msg +=  " -   " + name[i] + QCoreApplication.translate("MainWindow", ": No value of NoData defined\n")
                     if not values[4] == values2[4]:
                         verif = False
-                        msg += QCoreApplication.translate("MainWindow", " -   ") + name[i] + QCoreApplication.translate("MainWindow", ": Raster cell size should be the same as DTM\n")
+                        msg += " -   " + name[i] + QCoreApplication.translate("MainWindow", ": Raster cell size should be the same as DTM\n")
                     if not np.all(Extent == Extent2):
                         verif = False
-                        msg += QCoreApplication.translate("MainWindow", " -   ") + name[i] + QCoreApplication.translate("MainWindow", ": The extent of the raster must be the same as that of the DTM\n")
+                        msg +=  " -   " + name[i] + QCoreApplication.translate("MainWindow", ": The extent of the raster must be the same as that of the DTM\n")
                         
                     # Check if the additional raster is oversized compared to the main DTM
                     if (Extent2[2] > Extent[2]) or (Extent2[3] > Extent[3]):
@@ -520,7 +520,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                         crop_to_main_dtm_size(f, Extent)
                     elif (Extent2[2] < Extent[2]) or (Extent2[3] < Extent[3]):
                         verif = False
-                        msg += QCoreApplication.translate("MainWindow", " -   ") + name[i] + QCoreApplication.translate("MainWindow", ": The raster size is undersized compared to the main DTM\n")
+                        msg +=  " -   " + name[i] + QCoreApplication.translate("MainWindow", ": The raster size is undersized compared to the main DTM\n")
                         
                 except:
                     verif = False
@@ -952,13 +952,13 @@ def write_file():
     with open(file_name, 'w') as fichier:
 
         fichier.write(QCoreApplication.translate("MainWindow","General data :\n\n"))
-        zip1 = QCoreApplication.translate("MainWindow", ['skidder Analysis', 'Forwarder Analysis', 'Cable Yarding Analysis', 'Optimize Cable Lines', 'Maximum slope for manual harvesting'])
+        zip1 = [QCoreApplication.translate("MainWindow", "skidder Analysis"), QCoreApplication.translate("MainWindow", "Forwarder Analysis"), QCoreApplication.translate("MainWindow", "Cable Yarding Analysis"), QCoreApplication.translate("MainWindow", "Optimize Cable Line"), QCoreApplication.translate("MainWindow", "Maximum slope for manual harvesting")]
         for var_name, var_value in zip(zip1, general_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
         fichier.write(QCoreApplication.translate("MainWindow","\nSpatial data :\n\n"))
-        zip1 = QCoreApplication.translate("MainWindow", ['Workspace', 'Result Space', 'DTM file', 'Forest area file', 'Forest road network', 'Cable Crane start point', 'Skidder, area where winching and skidding are forbidden', 'Skidder, area where skidding is forbidden', 'Forwarder, obstacles for the free movement of the machine', 'Cable yarding, obstacles for the set-up of cable line', 'Height of the trees', 'Average tree volume', 'Volume per hectare'])
+        zip1 = [QCoreApplication.translate("MainWindow", "Workspace"), QCoreApplication.translate("MainWindow", "Result Space"), QCoreApplication.translate("MainWindow", "DTM file"), QCoreApplication.translate("MainWindow", "Forest area file"), QCoreApplication.translate("MainWindow", "Forest road network"), QCoreApplication.translate("MainWindow", "Cable Crane start point"), QCoreApplication.translate("MainWindow", "Skidder, area where winching and skidding are forbidden"), QCoreApplication.translate("MainWindow", "Skidder, area where skidding is forbidden"), QCoreApplication.translate("MainWindow", "Forwarder, obstacles for the free movement of the machine"), QCoreApplication.translate("MainWindow", "Cable yarding, obstacles for the set-up of cable line"), QCoreApplication.translate("MainWindow", "Height of the trees"), QCoreApplication.translate("MainWindow", "Average tree volume"), QCoreApplication.translate("MainWindow", "Volume per hectare")]
         for var_name, var_value in zip(zip1, spatial_data):
             if var_value == "":
                 fichier.write(f"{var_name}: {QCoreApplication.translate("MainWindow",'No data')}\n")
@@ -967,55 +967,55 @@ def write_file():
 
         fichier.write("\n______________________________________________________________________________________")
         fichier.write(QCoreApplication.translate("MainWindow","\nParameters for skidder processing:\n\n"))
-        zip1 = QCoreApplication.translate("MainWindow", ['Maximal slope outside forest network for the skidder', 'Maximum uphill winching distance', 'Maximum downhill winching distance', 'Maximal distance outside forest', 'Slope from which uphill winching reaches maximum distance', 'Slope from which downhill winching reaches maximum distance', 'Simulation option', 'Classes of skidding distance (Total distance in meters)'])
+        zip1 =  [QCoreApplication.translate("MainWindow", "Maximal slope outside forest network for the skidder"), QCoreApplication.translate("MainWindow", "Maximum uphill winching distance"), QCoreApplication.translate("MainWindow", "Maximum downhill winching distance"), QCoreApplication.translate("MainWindow", "Maximal distance outside forest"), QCoreApplication.translate("MainWindow", "Slope from which uphill winching reaches maximum distance"), QCoreApplication.translate("MainWindow", "Slope from which downhill winching reaches maximum distance"), QCoreApplication.translate("MainWindow", "Simulation option"), QCoreApplication.translate("MainWindow", "Classes of skidding distance (Total distance in meters)")]
         for var_name, var_value in zip(zip1, skidder_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
         fichier.write(QCoreApplication.translate("MainWindow","\nParameters for forwarder processing :\n\n"))
-        zip1 = QCoreApplication.translate("MainWindow", ['Maximum lateral inclination of the machine', 'Maximum slope for a uphill yarding', 'Maximum slope for a downhill yarding', 'Maximum yarding distance when slope is greater than the maximum lateral inclination of the machine', 'Maximum distance outside forest', 'Length of the hoist', 'Classes of skidding distance (Total distance in meters)'])
+        zip1 =  [QCoreApplication.translate("MainWindow", "Maximum lateral inclination of the machine"), QCoreApplication.translate("MainWindow", "Maximum slope for a uphill yarding"), QCoreApplication.translate("MainWindow", "Maximum slope for a downhill yarding"), QCoreApplication.translate("MainWindow", "Maximum yarding distance when slope is greater than the maximum lateral inclination of the machine"), QCoreApplication.translate("MainWindow", "Maximum distance outside forest"), QCoreApplication.translate("MainWindow", "Length of the hoist"), QCoreApplication.translate("MainWindow", "Classes of skidding distance (Total distance in meters)")]
         for var_name, var_value in zip(zip1, forwarder_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
         fichier.write(QCoreApplication.translate("MainWindow","\nCable machine properties :\n\n"))
-        zip1 = QCoreApplication.translate("MainWindow", ['Type of material', 'Maximum number of intermediate supports', 'Crane height', 'Maximum skyline length', 'Minimum skyline length'])
+        zip1 =  [QCoreApplication.translate("MainWindow", "Type of material"), QCoreApplication.translate("MainWindow", "Maximum number of intermediate supports"), QCoreApplication.translate("MainWindow", "Crane height"), QCoreApplication.translate("MainWindow", "Maximum skyline length"), QCoreApplication.translate("MainWindow", "Minimum skyline length")]
         for var_name, var_value in zip(zip1, type_cable_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
         fichier.write(QCoreApplication.translate("MainWindow","\nCarriage properties :\n\n"))
-        zip1 = QCoreApplication.translate("MainWindow", ['Carriage type', 'Empty weigth', 'Minimum slope for a gravity descent of the carriage', 'Maximum slope of the skyline for an uphill yarding', 'Maximum slope of the skyline for an downhill yarding'])
+        zip1 =  [QCoreApplication.translate("MainWindow", "Carriage type"), QCoreApplication.translate("MainWindow", "Empty weigth"), QCoreApplication.translate("MainWindow", "Minimum slope for a gravity descent of the carriage"), QCoreApplication.translate("MainWindow", "Maximum slope of the skyline for an uphill yarding"), QCoreApplication.translate("MainWindow", "Maximum slope of the skyline for an downhill yarding")]
         for var_name, var_value in zip(zip1, type_chariot_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
         fichier.write(QCoreApplication.translate("MainWindow","\nSkyline porperties :\n\n"))
-        zip1 = QCoreApplication.translate("MainWindow", ['Diameter', 'Skyline self-weight', 'Breakdown tensile force', 'Young Modulus ( Elasticity)'])
+        zip1 = [QCoreApplication.translate("MainWindow", "Diameter"), QCoreApplication.translate("MainWindow", "Skyline self-weight"), QCoreApplication.translate("MainWindow", "Breakdown tensile force"), QCoreApplication.translate("MainWindow", "Young Modulus ( Elasticity)")]
         for var_name, var_value in zip(zip1, propriete_cable_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
-        zip1 = QCoreApplication.translate("MainWindow", ['Modeling parameters', 'Options', 'Cable yarding - Optimization of cable parameters', 'Criteria used for optimization'])
+        zip1 =  [QCoreApplication.translate("MainWindow", "Modeling parameters"), QCoreApplication.translate("MainWindow", "Options"), QCoreApplication.translate("MainWindow", "Cable yarding - Optimization of cable parameters"), QCoreApplication.translate("MainWindow", "Criteria used for optimization")]
         fichier.write(QCoreApplication.translate("MainWindow","\nModeling parameters :\n\n"))
         for var_name, var_value in zip(zip1, param_modelisation_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
         fichier.write(QCoreApplication.translate("MainWindow","\nOptions :\n\n"))
-        zip1 = QCoreApplication.translate("MainWindow", ['Optimize skyline height at interlediate supports and tailspar', 'Precision of the modeling'])
+        zip1 = [QCoreApplication.translate("MainWindow", "Optimize skyline height at intermediate supports and tailspar"), QCoreApplication.translate("MainWindow", "Precision of the modeling")]
         for var_name, var_value in zip(zip1, options_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
         fichier.write(QCoreApplication.translate("MainWindow","\nCable yarding - Optimization of cable parameters :\n\n"))
-        zip1 = QCoreApplication.translate("MainWindow", ['Percentage of volume per hectare taken off', 'Re-compute', 'Result folder', 'Forest file', 'Volume per hectare', 'Average tree volume', 'Lateral yarding distance'])
+        zip1 = [QCoreApplication.translate("MainWindow", "Percentage of volume per hectare taken off"), QCoreApplication.translate("MainWindow", "Re-compute"), QCoreApplication.translate("MainWindow", "Result folder"), QCoreApplication.translate("MainWindow", "Forest file"), QCoreApplication.translate("MainWindow", "Volume per hectare"), QCoreApplication.translate("MainWindow", "Average tree volume"), QCoreApplication.translate("MainWindow", "Lateral yarding distance")]
         for var_name, var_value in zip(zip1, opti_cable_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
         fichier.write("\n______________________________________________________________________________________")
         fichier.write(QCoreApplication.translate("MainWindow","\nCriteria used for optimization :\n\n"))
-        zip1 = QCoreApplication.translate("MainWindow", ['Forest area impacted', '-->Forest area impacted weight', 'Number of intermediate supports', '-->Number of intermediate supports weight', 'Prefered yarding direction', '-->Prefered yarding direction weight', 'Line leingth', '-->Line leingth weight', 'Total volume per line', '-->Total volume per line weight', 'Volume per meter of line', '-->Volume per meter of line weight', 'Average tree volume', '-->Average tree volume weight', 'Carriage average distance', '-->Carriage average distance weight'])
+        zip1 = [QCoreApplication.translate("MainWindow", "Forest area impacted"), QCoreApplication.translate("MainWindow", "-->Forest area impacted weight"), QCoreApplication.translate("MainWindow", "Number of intermediate supports"), QCoreApplication.translate("MainWindow", "-->Number of intermediate supports weight"), QCoreApplication.translate("MainWindow", "Prefered yarding direction"), QCoreApplication.translate("MainWindow", "-->Prefered yarding direction weight"), QCoreApplication.translate("MainWindow", "Line length"), QCoreApplication.translate("MainWindow", "-->Line length weight"), QCoreApplication.translate("MainWindow", "Total volume per line"), QCoreApplication.translate("MainWindow", "-->Total volume per line weight"), QCoreApplication.translate("MainWindow", "Volume per meter of line"), QCoreApplication.translate("MainWindow", "-->Volume per meter of line weight"), QCoreApplication.translate("MainWindow", "Average tree volume"), QCoreApplication.translate("MainWindow", "-->Average tree volume weight"), QCoreApplication.translate("MainWindow", "Carriage average distance"), QCoreApplication.translate("MainWindow", "-->Carriage average distance weight")]
         for var_name, var_value in zip(zip1, crit_opti_data):
             fichier.write(f"{var_name}: {var_value}\n")
 
@@ -1360,7 +1360,7 @@ def Cable():
         _,values,proj,Extent = raster_get_info(file_MNT)
         Csize,ncols,nrows = values[4],int(values[0]),int(values[1])    
     except:
-        txt = QCoreApplication.translate("MainWindow", "Error: please define a projection for MNT raster")
+        txt = QCoreApplication.translate("MainWindow", "Error: please define a projection for DTM raster")
         console_warning(txt)
         Sylvaccess_UI.close()
         return ""
@@ -1697,9 +1697,11 @@ def Cable():
     else:
         cable_name = QCoreApplication.translate("MainWindow",'Long/conventional cable')
 
-    file_name = str(Rspace_c) + QCoreApplication.translate("MainWindow",'Parametre_simulation.txt')
+    file_name = str(Rspace_c) + 'Parametre_simulation.txt'
     resume_texte = QCoreApplication.translate("MainWindow",'SYLVACCESS - CABLE\n\n\n')
-    resume_texte += QCoreApplication.translate("MainWindow","Plugin's version: 1.0.0 from 02/06/2024\n")
+    version = "1.0.0"
+    date = "02/06/2024"
+    resume_texte += QCoreApplication.translate("MainWindow","Plugin's version: ") + version + QCoreApplication.translate("MainWindow","from ") + date + "\n"
     resume_texte += QCoreApplication.translate("MainWindow",'Author: Sylvain DUPIRE. Irstea\n\n')
     resume_texte += QCoreApplication.translate("MainWindow",'Date and time of script launch:') + str_debut + '\n'
     resume_texte += QCoreApplication.translate("MainWindow",'Date and time at the end of the script execution                           ') + str_fin + '\n'
@@ -1760,7 +1762,7 @@ def Cable():
     fichier.write(resume_texte)
     fichier.close()
 
-    file_name = Rspace_sel + QCoreApplication.translate("MainWindow",'info_Lhormax.txt')
+    file_name = Rspace_sel + 'info_Lhormax.txt'
     fichier = open(file_name, "w")
     fichier.write(str(Lhor_max))
     fichier.close()
@@ -2613,7 +2615,7 @@ def generate_info_ligne(Dir_result, w_list, lim_list, Tab, Rast_couv, Vol_ha, Vo
     Table = np.empty((19 + np.sum(np.array(w_list) > 0), 2 + testProj), dtype='|U73')
 
     Table[1, 0] = QCoreApplication.translate("MainWindow","SUMMARY OF THE LINE SELECTION")
-    Table[3, 0] = QCoreApplication.translate("MainWindow","                                                         ")
+    Table[3, 0] = "                                                         "
     Table[3, 1] = QCoreApplication.translate("MainWindow","From all cable starts\t\t")
     if testProj:
         Table[3, 2] = QCoreApplication.translate("MainWindow","Only from projects")
@@ -2842,7 +2844,7 @@ def prepa_data_cable(Wspace, file_MNT, file_shp_Foret, file_shp_Cable_Dep, Dir_O
     ###|__ --||     |  _  |  _  |  -__|   _|  |  ||  -__|    |   _|  _  |    |   _|  _  |__ --||   _|  -__|   _|
     ###|_____||__|__|___._|   __|_____|__| |__|__||_____|    |____|_____|    |__| |___._|_____||____|_____|__|
     ###                   |__|
-    Foret = shapefile_to_np_array(file_shp_Foret, Extent, Csize, QCoreApplication.translate("MainWindow","FORET"))
+    Foret = shapefile_to_np_array(file_shp_Foret, Extent, Csize, "FORET")
     np.save(Dir_temp + "Foret", np.int8(Foret))
     del Foret
     console_info(QCoreApplication.translate("MainWindow","    - Forest raster processed"))
@@ -2863,10 +2865,10 @@ def prepa_data_cable(Wspace, file_MNT, file_shp_Foret, file_shp_Cable_Dep, Dir_O
     ###|  __|  _  ||  _  ||  ||  -__|    |__ --||   _|  _  |   _||   _|    |  _  |   _|  _  |  __|  -__|__ --|__ --||  ||     |  _  |
     ###|____|___._||_____||__||_____|    |_____||____|___._|__|  |____|    |   __|__| |_____|____|_____|_____|_____||__||__|__|___  |
     ###                                                                    |__|                                               |_____|
-    Cable_start = shapefile_to_np_array(file_shp_Cable_Dep,Extent,Csize,QCoreApplication.translate("MainWindow","CABLE"),"CABLE",'ASC') 
-    testExist = check_field(file_shp_Cable_Dep,QCoreApplication.translate("MainWindow","EXIST")) 
+    Cable_start = shapefile_to_np_array(file_shp_Cable_Dep,Extent,Csize,"CABLE","CABLE",'ASC') 
+    testExist = check_field(file_shp_Cable_Dep,"EXIST")
     if testExist:    
-        Existing = shapefile_to_np_array(file_shp_Cable_Dep,Extent,Csize,QCoreApplication.translate("MainWindow","EXIST"),"EXIST",'ASC') 
+        Existing = shapefile_to_np_array(file_shp_Cable_Dep,Extent,Csize,"EXIST","EXIST",'ASC') 
     else:
         Existing = np.ones_like(Cable_start,dtype=np.int8)*2
 
@@ -2886,7 +2888,7 @@ def prepa_data_cable(Wspace, file_MNT, file_shp_Foret, file_shp_Cable_Dep, Dir_O
     # Lien_RF=Link_RF_res_pub(Tab_res_pub,Pond_pente,Route_for, Lien_RF,Csize) 
     # Lien_RF=Lien_RF[Lien_RF[:,4]>0]
     Lien_RF=Lien_RF[Lien_RF[:,2]>-1]
-    np.save(Dir_temp+QCoreApplication.translate("MainWindow","Lien_RF_c"),Lien_RF)    
+    np.save(Dir_temp+"Lien_RF_c",Lien_RF)  
     console_info(QCoreApplication.translate("MainWindow","    - Potential cable yarding starts processed"))    
 
     ###################################################################################################################################################################################
@@ -2902,7 +2904,7 @@ def prepa_data_cable(Wspace, file_MNT, file_shp_Foret, file_shp_Cable_Dep, Dir_O
     for i, pixel in enumerate(Lien_RF):
         CoordRoute[i, 0]=TableX[pixel[1]]
         CoordRoute[i, 1]=TableY[pixel[0]] 
-    np.save(Dir_temp+QCoreApplication.translate("MainWindow","CoordRoute.npy"), CoordRoute)  
+    np.save(Dir_temp+"CoordRoute.npy", CoordRoute)  
     console_info(QCoreApplication.translate("MainWindow","    - Table of coordinates created"))  
     ##############################################################################################################################################
     ###       __                         __   __                                __         __   
@@ -2919,7 +2921,7 @@ def line_selection(Rspace_c, w_list, lim_list, new_calc, file_shp_Foret, file_Vo
     ### Check if temporary files have been generated and have the same extent
     Rspace_sel = Rspace_c + QCoreApplication.translate("MainWindow","FilesForOptimization/")
     try: 
-        Tab = np.load(Rspace_sel + QCoreApplication.translate("MainWindow","Tab_all_lines.npy")) 
+        Tab = np.load(Rspace_sel + "Tab_all_lines.npy") 
     except:
         console_info(QCoreApplication.translate("MainWindow","Starting the selection of the best lines according to user criteria."))
         return ""
@@ -2927,13 +2929,13 @@ def line_selection(Rspace_c, w_list, lim_list, new_calc, file_shp_Foret, file_Vo
     _, values, Extent = loadrasterinfo_from_file(Rspace_sel)
     Csize, nrows, ncols = values[4], int(values[1]), int(values[0]) 
     if not new_calc:
-        f = open(Rspace_sel + QCoreApplication.translate("MainWindow","info_Lhormax.txt"), "r")
+        f = open(Rspace_sel + "info_Lhormax.txt", "r")
         Lhor_max = f.readlines(0)
         f.close()
         Lhor_max = float(Lhor_max[0])
     
     _, _, _, _, Row_ext, Col_ext, D_ext, D_lat, _ = create_buffer2(Csize, Lmax, Lhor_max)        
-    Lien_RF = np.load(Rspace_sel + QCoreApplication.translate("MainWindow","Lien_RF_c.npy"))
+    Lien_RF = np.load(Rspace_sel + "Lien_RF_c.npy")
     ############################################
     ### Recompute cable line stats if necessary
     ############################################
@@ -2941,9 +2943,9 @@ def line_selection(Rspace_c, w_list, lim_list, new_calc, file_shp_Foret, file_Vo
         console_info(QCoreApplication.translate("MainWindow","Processing new line characteristics with new input data...")) 
         #Couche foret
         if file_shp_Foret != "":
-            Forest = np.int8(shapefile_to_np_array(file_shp_Foret, Extent, Csize, QCoreApplication.translate("MainWindow","FORET")))
+            Forest = np.int8(shapefile_to_np_array(file_shp_Foret, Extent, Csize, "FORET"))
         else:
-            Forest = np.load(Rspace_sel + QCoreApplication.translate("MainWindow","Forest.npy"))
+            Forest = np.load(Rspace_sel + "Forest.npy")
         #Couche vol_ha
         if file_Vol_ha != "":
             Vol_ha = load_float_raster_simple(file_Vol_ha) 
@@ -2970,7 +2972,7 @@ def line_selection(Rspace_c, w_list, lim_list, new_calc, file_shp_Foret, file_Vo
                 Vol_AM = np.zeros_like(Forest, dtype=np.int8)   
        
         if test_vp or test_vam:             
-            Pente = np.load(Rspace_sel + QCoreApplication.translate("MainWindow","Pente.npy"))
+            Pente = np.load(Rspace_sel + "Pente.npy")
             Vol_AM[Pente > Pente_max_bucheron] = 0
             Vol_ha[Pente > Pente_max_bucheron] = 0
         nbline = Tab.shape[0]        
@@ -3058,20 +3060,20 @@ def line_selection(Rspace_c, w_list, lim_list, new_calc, file_shp_Foret, file_Vo
     pyl_name = Dir_result + QCoreApplication.translate("MainWindow","Int_sup_Optimization_") + str(optnum) + ".shp"
     
     save_integer_ascii(filename, header, Tab_result)
-    source_src = get_source_src(Rspace_sel + QCoreApplication.translate("MainWindow","info_proj.shp"))  
-    road_network_proj = get_proj_from_road_network(Rspace_sel + QCoreApplication.translate("MainWindow","info_proj.shp"))
+    source_src = get_source_src(Rspace_sel + "info_proj.shp") 
+    road_network_proj = get_proj_from_road_network(Rspace_sel + "info_proj.shp")
     Line_to_shapefile(Tab_result, shape_name, source_src, prelevement) 
     #New rast_couv to take into account project of cable start
     Rast_couv = create_rast_couv(Tab_result, Dir_result, source_src, Extent, Csize, Lhor_max)
     #Rast_couv[Rast_couv>0]=1
     if not new_calc:
-        Forest = np.load(Rspace_sel + QCoreApplication.translate("MainWindow","Forest.npy"))
+        Forest = np.load(Rspace_sel + "Forest.npy")
         try:         
-            Vol_ha = np.load(Rspace_sel + QCoreApplication.translate("MainWindow","Vol_ha.npy"))
+            Vol_ha = np.load(Rspace_sel + "MainWindow","Vol_ha.npy")
         except:
             Vol_ha = np.zeros_like(Forest)
         try:
-            Vol_AM = np.load(Rspace_sel + QCoreApplication.translate("MainWindow","Vol_AM.npy"))
+            Vol_AM = np.load(Rspace_sel + "MainWindow","Vol_AM.npy")
         except:
             Vol_AM = np.zeros_like(Forest)    
     Rast_couv[Forest == 0] = 0
@@ -3117,7 +3119,7 @@ def Skidder():
     try:
         _, values, _, Extent = raster_get_info(file_MNT)
     except:
-        return QCoreApplication.translate("MainWindow","Error: Please define a projection for the MNT raster.")
+        return QCoreApplication.translate("MainWindow","Error: Please define a projection for the DTM raster.")
     try:
         _, v1 = read_info(Dir_temp + 'info_extent.txt')
         for i, item in enumerate(values):
