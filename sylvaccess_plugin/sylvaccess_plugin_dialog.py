@@ -961,9 +961,9 @@ def write_file():
         zip1 = [QCoreApplication.translate("MainWindow", "Workspace"), QCoreApplication.translate("MainWindow", "Result Space"), QCoreApplication.translate("MainWindow", "DTM file"), QCoreApplication.translate("MainWindow", "Forest area file"), QCoreApplication.translate("MainWindow", "Forest road network"), QCoreApplication.translate("MainWindow", "Cable Crane start point"), QCoreApplication.translate("MainWindow", "Skidder, area where winching and skidding are forbidden"), QCoreApplication.translate("MainWindow", "Skidder, area where skidding is forbidden"), QCoreApplication.translate("MainWindow", "Forwarder, obstacles for the free movement of the machine"), QCoreApplication.translate("MainWindow", "Cable yarding, obstacles for the set-up of cable line"), QCoreApplication.translate("MainWindow", "Height of the trees"), QCoreApplication.translate("MainWindow", "Average tree volume"), QCoreApplication.translate("MainWindow", "Volume per hectare")]
         for var_name, var_value in zip(zip1, spatial_data):
             if var_value == "":
-                fichier.write(f"{var_name}: {QCoreApplication.translate("MainWindow",'No data')}\n")
+                fichier.write(f"{var_name}: {QCoreApplication.translate("MainWindow",'No data \n')}")
             else:
-                fichier.write(f"{var_name}: {var_value}\n")
+                fichier.write(f"{var_name}: {var_value} + '\n'")
 
         fichier.write("\n______________________________________________________________________________________")
         fichier.write(QCoreApplication.translate("MainWindow","\nParameters for skidder processing:\n\n"))
@@ -1664,9 +1664,9 @@ def Cable():
         pass
     
     #Save Global res        
-    header = QCoreApplication.translate("MainWindow",'ID_pixel Azimuth X_debut Y_debut Alt_debut Hcable_debut X_fin Y_fin Alt_fin Hcable_fin ',)
-    header += QCoreApplication.translate("MainWindow",'Etat_RoadeFor Length_real Configuration ')
-    header += QCoreApplication.translate("MainWindow",'Forest_surface Distance_moy_chariot Volume_total VAM NB_int_sup')
+    header = QCoreApplication.translate("MainWindow",'ID_pixel Azimuth X_Start Y_Start Elevation_Start Hcable_Start X_End Y_End Elevation_End Hcable_End ',)
+    header += QCoreApplication.translate("MainWindow",'Existing_road Cable_length Configuration ')
+    header += QCoreApplication.translate("MainWindow",'Forest_area Carriage_average_distance Volume_total ATV NB_int_sup')
     for num in range(1, sup_max + 1):
         header += ' ' + QCoreApplication.translate("MainWindow",'Xcoord_intsup') + str(num) + ' ' + QCoreApplication.translate("MainWindow",'Ycoord_intsup') + str(num) + ' ' + QCoreApplication.translate("MainWindow",'Alt_intsup') + str(num)
         header += ' ' + QCoreApplication.translate("MainWindow",'Hcable_intsup') + str(num) + ' ' + QCoreApplication.translate("MainWindow",'Pression_intsup') + str(num)
@@ -1703,7 +1703,7 @@ def Cable():
     date = "02/06/2024"
     resume_texte += QCoreApplication.translate("MainWindow","Plugin's version: ") + version + QCoreApplication.translate("MainWindow","from ") + date + "\n"
     resume_texte += QCoreApplication.translate("MainWindow",'Author: Sylvain DUPIRE. Irstea\n\n')
-    resume_texte += QCoreApplication.translate("MainWindow",'Date and time of script launch:') + str_debut + '\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'Date and time when launching the script:                          ') + str_debut + '\n'
     resume_texte += QCoreApplication.translate("MainWindow",'Date and time at the end of the script execution                           ') + str_fin + '\n'
     resume_texte += QCoreApplication.translate("MainWindow",'Total execution time of the script:                                         ') + str_duree + '\n\n'
     resume_texte += QCoreApplication.translate("MainWindow",'PROPERTIES OF THE MATERIAL:\n')
@@ -1741,7 +1741,7 @@ def Cable():
     resume_texte += QCoreApplication.translate("MainWindow",'   - Maximum angle of the Forwarder cable at an intermediate pylon:   ') + str(Max_angle) + ' degres\n'
     resume_texte += QCoreApplication.translate("MainWindow",'   - Security factor:                                                  ') + str(safe_fact) + '\n'
     resume_texte += QCoreApplication.translate("MainWindow",'   - Value of the friction angle:                                      ') + str(coeff_frot) + ' rad\n\n'
-    resume_texte += QCoreApplication.translate("MainWindow",'   - Resolution of the NMT uses:                                            ') + str(Csize) + ' m\n'
+    resume_texte += QCoreApplication.translate("MainWindow",'   - DTM resolution:                                              ') + str(Csize) + ' m\n'
     resume_texte += QCoreApplication.translate("MainWindow",'   - Standing volume harvesting applied:                              ') + str(prelevement * 100) + ' %\n'
     try:
         resume_texte += QCoreApplication.translate("MainWindow",'   - Projection:                                                           ') + str(proj.GetAttrValue("PROJCS", 0)) + '\n'
@@ -2726,7 +2726,7 @@ def generate_info_cable_simu(Dir_result, Tab, Rast_couv, Vol_ha, Csize, Forest, 
     long_moy_ligne = int(np.sum(Tab[:, 11]) / nb_ligne)
 
     Table = np.empty((17, 5), dtype='|U39')
-    Table[0] = np.array(["", "Surface area (ha)", "Surface (%)", "Volume (m3)", "Volume (%)"])
+    Table[0] = np.array(["", QCoreApplication.translate("MainWindow","Surface area (ha)"), QCoreApplication.translate("MainWindow","Surface (%)"), QCoreApplication.translate("MainWindow","Volume (m3)"), QCoreApplication.translate("MainWindow","Volume (%)")])
     Table[1, 0] = QCoreApplication.translate("MainWindow","From existing cable starts")
     Table[2, 0] = QCoreApplication.translate("MainWindow","From potential cable start")
     Table[4, 0] = QCoreApplication.translate("MainWindow","Total accessible forest")
@@ -2919,11 +2919,12 @@ def prepa_data_cable(Wspace, file_MNT, file_shp_Foret, file_shp_Cable_Dep, Dir_O
 def line_selection(Rspace_c, w_list, lim_list, new_calc, file_shp_Foret, file_Vol_ha, file_Vol_AM, Lhor_max, prelevement, Pente_max_bucheron):
     console_info(QCoreApplication.translate("MainWindow","Selection of the best lines based on user criteria."))
     ### Check if temporary files have been generated and have the same extent
-    Rspace_sel = Rspace_c + QCoreApplication.translate("MainWindow","FilesForOptimization/")
+    Rspace_sel = Rspace_c + "FilesForOptimization/"
+    console_info(QCoreApplication.translate("MainWindow","Start of the best lines selection according to user criteria."))
     try: 
         Tab = np.load(Rspace_sel + "Tab_all_lines.npy") 
     except:
-        console_info(QCoreApplication.translate("MainWindow","Starting the selection of the best lines according to user criteria."))
+        console_warning(QCoreApplication.translate("MainWindow","Please run first the Sylvaccess cable."))
         return ""
     Lmax = np.max(Tab[:, 11])    
     _, values, Extent = loadrasterinfo_from_file(Rspace_sel)
@@ -2940,7 +2941,7 @@ def line_selection(Rspace_c, w_list, lim_list, new_calc, file_shp_Foret, file_Vo
     ### Recompute cable line stats if necessary
     ############################################
     if new_calc:
-        console_info(QCoreApplication.translate("MainWindow","Processing new line characteristics with new input data...")) 
+        console_info(QCoreApplication.translate("MainWindow","    - Processing new line characteristics with new input data...")) 
         #Couche foret
         if file_shp_Foret != "":
             Forest = np.int8(shapefile_to_np_array(file_shp_Foret, Extent, Csize, "FORET"))
@@ -3038,7 +3039,7 @@ def line_selection(Rspace_c, w_list, lim_list, new_calc, file_shp_Foret, file_Vo
         if dire[:12] == QCoreApplication.translate("MainWindow","Optimization"):
             list_dir.append(dire)
     optnum = len(list_dir) + 1
-    Dir_result = Rspace_c + QCoreApplication.translate("MainWindow","Optimization") + str(optnum) 
+    Dir_result = Rspace_c + "Optimization" + str(optnum) 
     ### Get best volume
     header = QCoreApplication.translate("MainWindow","ID_pixel Azimuth_deg X_Start Y_Start Elevation_Start Hcable_Start X_End Y_End Elevation_End Hcable_End ")
     header += QCoreApplication.translate("MainWindow","Existing_road Cable_length Configuration ")
@@ -3054,10 +3055,10 @@ def line_selection(Rspace_c, w_list, lim_list, new_calc, file_shp_Foret, file_Vo
     except:
         pass
     Dir_result += "/"
-    filename = Dir_result + QCoreApplication.translate("MainWindow","Database_Optimization_") + str(optnum) + ".gzip" 
-    shape_name = Dir_result + QCoreApplication.translate("MainWindow","CableLines_Optimization_") + str(optnum) + ".shp"
-    rast_name = Dir_result + QCoreApplication.translate("MainWindow","CableArea_Optimization_") + str(optnum)
-    pyl_name = Dir_result + QCoreApplication.translate("MainWindow","Int_sup_Optimization_") + str(optnum) + ".shp"
+    filename = Dir_result + "Database_Optimization_" + str(optnum) + ".gzip" 
+    shape_name = Dir_result + "CableLines_Optimization_" + str(optnum) + ".shp"
+    rast_name = Dir_result + "CableArea_Optimization_" + str(optnum)
+    pyl_name = Dir_result + "Int_sup_Optimization_" + str(optnum) + ".shp"
     
     save_integer_ascii(filename, header, Tab_result)
     source_src = get_source_src(Rspace_sel + "info_proj.shp") 
@@ -3195,7 +3196,7 @@ def Skidder():
         Vtot_non_buch = 0
 
     ArrayToGtiff(Manual_harvesting, Rspace_s + 'Manual_harvesting', Extent, nrows, ncols, road_network_proj, 0, 'UINT8')
-    console_info(QCoreApplication.translate("MainWindow","Initialization complete"))
+    console_info(QCoreApplication.translate("MainWindow","    - Initialization achieved, processing..."))
     del Pente, Manual_harvesting
     gc.collect()
 
@@ -3251,7 +3252,7 @@ def Skidder():
     
     del Pente_ok_skidder, Pond_pente
     gc.collect()
-    console_info(QCoreApplication.translate("MainWindow","Skidding distance from forest access routes calculated"))
+    console_info(QCoreApplication.translate("MainWindow","    - Skidding distance from forest roads network calculated"))
 
     ###############################################################################################################################################
     ### Calculation of skidding distance from forest roads
@@ -3260,7 +3261,7 @@ def Skidder():
     DebRF_D, DebRF_LRF = skid_debusq_RF(Lien_RF, MNT, Row_line, Col_line, D_line, Nbpix_line, coeff, orig, Pmax_up, Pmax_down,
                                         Dtreuil_max_up, Dtreuil_max_down, nrows, ncols, Zone_OK * (Route_for == 0) * 1 * (Piste == 0))
 
-    console_info(QCoreApplication.translate("MainWindow","Skidding distance from forest roads calculated"))
+    console_info(QCoreApplication.translate("MainWindow","    - Winching distance from forest roads calculated"))
 
     ###############################################################################################################################################
     #### Calculation of skidding distance from forest tracks
@@ -3269,7 +3270,7 @@ def Skidder():
     Debp_D, Debp_LP, Debp_Dtrpiste = skid_debusq_Piste(Lien_piste, MNT, Row_line, Col_line, D_line, Nbpix_line, coeff, orig, Pmax_up, Pmax_down,
                                                     Dtreuil_max_up, Dtreuil_max_down, nrows, ncols, Zone_OK * (Piste == 0) * 1 * (Route_for == 0))
 
-    console_info(QCoreApplication.translate("MainWindow","Skidding distance from forest tracks calculated"))
+    console_info(QCoreApplication.translate("MainWindow","    - Winching distance from forest tracks calculated"))
     gc.collect()
 
         
@@ -3504,8 +3505,10 @@ def Skidder():
     ### Genere le fichier avec le resume des parametres de simulation
     file_name = str(Rspace_s)+"Parameters_of_simulation.txt"
     resume_texte = QCoreApplication.translate("MainWindow","Sylvaccess : AUTOMATIC MAPPING OF FOREST ACCESSIBILITY WITH SKIDDER\n\n\n")
-    resume_texte += QCoreApplication.translate("MainWindow","Software version : 0.2 - 2024/02\n\n")
-    resume_texte += QCoreApplication.translate("MainWindow","Resolution       : "+str(Csize)+" m\n\n")
+    ver = "0.2"
+    date = "2024/02"
+    resume_texte += QCoreApplication.translate("MainWindow","Software version :") + ver + QCoreApplication.translate("MainWindow"," - ", "skidder_results") + date + "\n\n"
+    resume_texte += QCoreApplication.translate("MainWindow","Resolution       : " + str(Csize) + QCoreApplication.translate("MainWindow"," m ") + "\n\n")
     resume_texte += "" .join (["_"]*80) + "\n\n"
     resume_texte += QCoreApplication.translate("MainWindow","Date and time when launching the script:              ")+str_debut+"\n"
     resume_texte += QCoreApplication.translate("MainWindow","Date and time at the end of execution of the script:  ")+str_fin+"\n"
@@ -3691,8 +3694,8 @@ def make_summary_surface_vol(Debclass,file_Vol_ha,Surf_foret,Surf_foret_non_acce
         totaux_volume.append(str(int(Vtot + 0.5)) + " m3")
 
     # Les en-têtes des colonnes dans le fichier texte
-    headers =QCoreApplication.translate("MainWindow", "Total yarding distance |   Surface area (ha)   | Surface per class (%) |Cumulative surface (ha)|Cumulative surface (%) \n")
-    headers2= QCoreApplication.translate("MainWindow","Total yarding distance |      Volume (m3)      | Volume per class (%)  |Cumulative volume (m3) |Cumulative volume (%) \n")
+    headers =QCoreApplication.translate("MainWindow", "Total yarding distance |   Surface area (ha)   | Surface per class (%) |Cumulative surface (ha)|Cumulative surface (%) \n", " each section between | has to be 23 character wide to retain the layout")
+    headers2= QCoreApplication.translate("MainWindow","Total yarding distance |      Volume (m3)      | Volume per class (%)  |Cumulative volume (m3) |Cumulative volume (%) \n" , " each section between | has to be 23 character wide to retain the layout")
 
     # Ajouter des espaces pour que les colonnes aient la même largeur
     recap_surface = [str(elem) for elem in recap_surface]
@@ -4197,7 +4200,6 @@ def prep_data_skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Dessert
             ArrayToGtiff(RF_bad,Rspace_s+'Forest_tracks_not_connected',Extent,nrows,ncols,road_network_proj,0,'UINT8')
             console_info(QCoreApplication.translate("MainWindow","    - Some forest tracks are not connected to public network or forest road."))
             console_info(QCoreApplication.translate("MainWindow","      To see where, check raster "+Rspace_s+"Forest_tracks_not_connected.tif"))
-            console_info(QCoreApplication.translate("MainWindow","      These linears will be removed from the analysis."))
     else:
         console_info(QCoreApplication.translate("MainWindow","    - Forest tracks processed"))  
     Route_for[Res_pub==1]=0
@@ -4362,7 +4364,6 @@ def prepa_data_fwd(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,Dir_O
             ArrayToGtiff(RF_bad,Rspace_f+'Forest_tracks_not_connected',Extent,nrows,ncols,Csize,road_network_proj,0,'UINT8')
             console_info(QCoreApplication.translate("MainWindow","    - Some forest tracks are not connected to public network or forest road."))
             console_info(QCoreApplication.translate("MainWindow","      To see where, check raster "+Rspace_f+"Forest_tracks_not_connected.tif"))
-            console_info(QCoreApplication.translate("MainWindow","      These linears will be removed from the analysis."))
     else:
         console_info(QCoreApplication.translate("MainWindow","    - Forest road processed"))  
     Route_for[Res_pub==1]=0
@@ -4830,7 +4831,9 @@ def process_forwarder():
     ### Genere le fichier avec le resume des parametres de simulation
     file_name = str(Rspace_s)+"Parameters_of_simulation.txt"
     resume_texte = QCoreApplication.translate("MainWindow","Sylvaccess : AUTOMATIC MAPPING OF FOREST ACCESSIBILITY WITH FORWARDER\n\n\n")
-    resume_texte += QCoreApplication.translate("MainWindow","Software version : 0.2 - 2024/02\n\n")
+    ver = "0.2"
+    date = "2024/02"
+    resume_texte += QCoreApplication.translate("MainWindow","Software version :") + ver + QCoreApplication.translate("MainWindow"," - ", "skidder_results") + date + "\n\n"
     resume_texte += QCoreApplication.translate("MainWindow","Resolution       : ")+str(Csize)+" m\n\n"
     resume_texte += "" .join (["_"]*80)+"\n\n"
     resume_texte += QCoreApplication.translate("MainWindow","Date and time when launching the script:              ")+str_debut+"\n"

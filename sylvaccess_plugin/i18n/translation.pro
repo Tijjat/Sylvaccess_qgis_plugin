@@ -5,6 +5,4 @@ SOURCES += ../sylvaccess_plugin_dialog.py
 FORMS += ../sylvaccess_plugin_dialog_base.ui
 
 TRANSLATIONS += sylvaccess_plugin_dialog_FR.ts \ 
-                sylvaccess_plugin_dialog_EN.ts \
-                sylvaccess_plugin_dialog_ES.ts \
-                sylvaccess_plugin_dialog_DE.ts
+                sylvaccess_plugin_dialog_EN.ts 
