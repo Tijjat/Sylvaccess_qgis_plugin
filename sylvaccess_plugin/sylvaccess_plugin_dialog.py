@@ -39,6 +39,7 @@ import gc
 import datetime
 from scipy.interpolate import InterpolatedUnivariateSpline
 import sys
+from PyQt5.QtGui import QPixmap
 
 
 # variables globales
@@ -325,7 +326,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def launch(self):
         ##testing
-        console_info("launch")
+        #console_info("launch")
         ##
         
         Wspace,Rspace,_,_,file_shp_Desserte,_,_,_,_,_,_,_,_ = Sylvaccess_UI.get_spatial()
@@ -340,7 +341,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             if not getattr(self, f"lineEdit_{i}").text():
                 txt = QCoreApplication.translate("MainWindow", "Please fill in all required fields")
                 console_warning(txt)
-                Sylvaccess_UI.close()
+                Sylvaccess_UI.abort()
                 return
         Sylvaccess_UI.check_files()
         write_file()
@@ -367,7 +368,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 file_shp_Desserte_Exist = create_new_road_network(file_shp_Desserte,Wspace)
                 
                 # First simulation without project
-                console_info("\nSIMULATION FROM EXISTING SERVICE")
+                console_info(QCoreApplication.translate("MainWindow","\nSIMULATION FROM EXISTING SERVICE"))
                 if test_Skidder:   
                     try:os.mkdir(Rspace+"Skidder/")
                     except:pass
@@ -393,7 +394,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 os.remove(Wspace+"Temp/Track.npy")
                 
                 # Second simulation with project
-                console_info("\nSIMULATION INCLUDING THE SERVICE PROJECT")
+                console_info(QCoreApplication.translate("MainWindow","\nSIMULATION INCLUDING THE SERVICE PROJECT"))
                 if test_Skidder: 
                     Skidder()                    
                     gc.collect()
@@ -426,18 +427,9 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def check_files(self):
         verif = True
-        test_Skidder = self.checkBox_4.isChecked()
-        test_Forwarder = self.checkBox_3.isChecked()
-        test_cable_optim = self.checkBox_1.isChecked()
-        test_Cable = self.checkBox_2.isChecked()
-        file_MNT = getattr(self, f"lineEdit_3").text()
-        file_shp_Desserte = getattr(self, f"lineEdit_5").text()
-        file_shp_Foret = getattr(self, f"lineEdit_4").text()
-        file_vol_BP = getattr(self, f"lineEdit_13").text()
-        file_vol_AM = getattr(self, f"lineEdit_12").text()
-        file_HA = getattr(self, f"lineEdit_14").text()
-        new_calc = self.checkBox_6.isChecked()
-        file_shp_Cable_dep = getattr(self, f"lineEdit_6").text()
+        test_Skidder,test_Forwarder,test_Cable,test_cable_optim,_ = self.get_general()
+        _,_,file_MNT, file_shp_Foret, file_shp_Desserte, file_shp_Cable_dep,_,_,_,_, file_vol_AM, file_HA, file_vol_BP = Sylvaccess_UI.get_spatial_cls()
+        _,new_calc,_,_,_,_,_ = self.get_opti_cable()
 
         msg = QCoreApplication.translate("MainWindow", "\nTHE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY: \n")
         # Check MNT
@@ -482,7 +474,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 msg += QCoreApplication.translate("MainWindow", " -   Forest layer: Path is missing or incorrect. This layer is required to run Sylvaccess\n")
             if not file_shp_Foret.endswith(".shp") or not file_shp_Foret.endswith(".gpkg"):
                 verif = False
-                msg += QCoreApplication.translate("MainWindow", " -   Forest layer: The file must be a shapefile or a geopackage\n")
+                msg += QCoreApplication.translate("MainWindow", " -   Forest layer: The file must be a shapefile or a geopackage !NOT ALWAYS TRUE,KINDA BUGGED\n")
 
         # Check file_shp_Foret for cable optim
         if not test_Cable and test_cable_optim and new_calc and file_shp_Foret != "":
@@ -513,12 +505,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                         verif = False
                         msg +=  " -   " + name[i] + QCoreApplication.translate("MainWindow", ": The extent of the raster must be the same as that of the DTM\n")
                         
-                    # Check if the additional raster is oversized compared to the main DTM
-                    if (Extent2[2] > Extent[2]) or (Extent2[3] > Extent[3]):
-                        # Crop the additional raster to the extent of the main DTM
-                        # Assuming you have a function crop_to_main_dtm_size defined
-                        crop_to_main_dtm_size(f, Extent)
-                    elif (Extent2[2] < Extent[2]) or (Extent2[3] < Extent[3]):
+                    if (Extent2[2] < Extent[2]) or (Extent2[3] < Extent[3]):
                         verif = False
                         msg +=  " -   " + name[i] + QCoreApplication.translate("MainWindow", ": The raster size is undersized compared to the main DTM\n")
                         
@@ -532,7 +519,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         if not verif:
             msg += QCoreApplication.translate("MainWindow", "\nPLEASE CORRECT BEFORE RELAUNCHING SYLVACCESS\n")
             console_warning(msg)
-            Sylvaccess_UI.close()
+            Sylvaccess_UI.abort()
         return verif
 
 
@@ -554,7 +541,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         _opti = self.checkBox_1.isChecked()
         _pente = self.spinBox_1.value()
     ##testing:
-        console_info(f"get_general: ski={_ski}, por={_por}, cab={_cab}, opti={_opti}, pente={_pente}")
+        #console_info(f"get_general: ski={_ski}, por={_por}, cab={_cab}, opti={_opti}, pente={_pente}")
         return _ski, _por, _cab, _opti, _pente
 
 
@@ -579,7 +566,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         _VAM = getattr(self, f"lineEdit_12").text()
         _VBP = getattr(self, f"lineEdit_13").text()
     ##testing:
-        console_info(f"get_spatial: Wspace={_Wspace}, Rspace={_Rspace}, mnt={_mnt}, foret={_foret}, desserte={_desserte}, dep_cable={_dep_cable}, ski_no_t_d={_ski_no_t_d}, ski_no_t={_ski_no_t}, por_obstacle={_por_obstacle}, cab_obstacle={_cab_obstacle}, HA={_HA}, VAM={_VAM}, VBP={_VBP}")
+       # console_info(f"get_spatial: Wspace={_Wspace}, Rspace={_Rspace}, mnt={_mnt}, foret={_foret}, desserte={_desserte}, dep_cable={_dep_cable}, ski_no_t_d={_ski_no_t_d}, ski_no_t={_ski_no_t}, por_obstacle={_por_obstacle}, cab_obstacle={_cab_obstacle}, HA={_HA}, VAM={_VAM}, VBP={_VBP}")
 
         return _Wspace, _Rspace, _mnt, _foret, _desserte, _dep_cable, _ski_no_t_d, _ski_no_t, _por_obstacle, _cab_obstacle, _HA, _VAM, _VBP
 
@@ -598,7 +585,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
             _limite = 2
         _bornes_s = self.plainTextEdit_1.toPlainText()
     ##testing:
-        console_info(f"get_skidder: pente_max={_pente_max}, distance_max_amont={_distance_max_amont}, distance_max_aval={_distance_max_aval}, distance_max_hors_frt_dsrt={_distance_max_hors_frt_dsrt}, pente_amont_max={_pente_amont_max}, pente_aval_max={_pente_aval_max}, limite={_limite}, bornes_s={_bornes_s}")
+        #console_info(f"get_skidder: pente_max={_pente_max}, distance_max_amont={_distance_max_amont}, distance_max_aval={_distance_max_aval}, distance_max_hors_frt_dsrt={_distance_max_hors_frt_dsrt}, pente_amont_max={_pente_amont_max}, pente_aval_max={_pente_aval_max}, limite={_limite}, bornes_s={_bornes_s}")
         return _pente_max, _distance_max_amont, _distance_max_aval, _distance_max_hors_frt_dsrt, _pente_amont_max, _pente_aval_max, _limite, _bornes_s
   
 
@@ -612,7 +599,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         _taille_grue = self.doubleSpinBox_1.value()
         _bornes_p = self.plainTextEdit_2.toPlainText()
     ##testing:
-        console_info(f"get_Forwarder: pente_max={_pente_max}, pente_max_remonant={_pente_max_remonant}, pente_max_descendant={_pente_max_descendant}, distance_max_pente_sup={_distance_max_pente_sup}, distance_max_hors_frt={_distance_max_hors_frt}, taille_grue={_taille_grue}, bornes_p={_bornes_p}")
+        #console_info(f"get_Forwarder: pente_max={_pente_max}, pente_max_remonant={_pente_max_remonant}, pente_max_descendant={_pente_max_descendant}, distance_max_pente_sup={_distance_max_pente_sup}, distance_max_hors_frt={_distance_max_hors_frt}, taille_grue={_taille_grue}, bornes_p={_bornes_p}")
 
         return _pente_max, _pente_max_remonant, _pente_max_descendant, _distance_max_pente_sup, _distance_max_hors_frt, _taille_grue, _bornes_p
 
@@ -625,7 +612,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         _longueur_max = self.spinBox_16.value()
         _longueur_min = self.spinBox_17.value()
     ##testing:
-        console_info(f"get_type_cable: type_machine={_type_machine}, supports_inter={_supports_inter}, hauteur={_hauteur}, longueur_max={_longueur_max}, longueur_min={_longueur_min}")
+        #console_info(f"get_type_cable: type_machine={_type_machine}, supports_inter={_supports_inter}, hauteur={_hauteur}, longueur_max={_longueur_max}, longueur_min={_longueur_min}")
 
         return _type_machine, _supports_inter, _hauteur, _longueur_max, _longueur_min
 
@@ -638,7 +625,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         _pente_max_amont = self.spinBox_24.value()
         _pente_max_aval = self.spinBox_25.value()
     ##testing:
-        console_info(f"get_type_chariot: type_chariot={_type_chariot}, masse={_masse}, pente_min={_pente_min}, pente_max_amont={_pente_max_amont}, pente_max_aval={_pente_max_aval}")
+        #console_info(f"get_type_chariot: type_chariot={_type_chariot}, masse={_masse}, pente_min={_pente_min}, pente_max_amont={_pente_max_amont}, pente_max_aval={_pente_max_aval}")
 
         return _type_chariot, _masse, _pente_min, _pente_max_amont, _pente_max_aval
 
@@ -650,7 +637,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         _tension_rupt = self.spinBox_26.value()
         _elasticite = self.spinBox_27.value()
     ##testing:
-        console_info(f"get_proprietes_cable: diametre={_diametre}, masse_li={_masse_li}, tension_rupt={_tension_rupt}, elasticite={_elasticite}")
+       # console_info(f"get_proprietes_cable: diametre={_diametre}, masse_li={_masse_li}, tension_rupt={_tension_rupt}, elasticite={_elasticite}")
 
         return _diametre, _masse_li, _tension_rupt, _elasticite
 
@@ -665,7 +652,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         _masse_max = self.spinBox_39.value()
         _securite = self.doubleSpinBox_10.value()
     ##testing:
-        console_info(f"get_param_modelisation: hauteur_sup={_hauteur_sup}, hauteur_mat={_hauteur_mat}, hauteur_min_cable={_hauteur_min_cable}, hauteur_max_cable={_hauteur_max_cable}, pechage={_pechage}, masse_max={_masse_max}, securite={_securite}")
+        #console_info(f"get_param_modelisation: hauteur_sup={_hauteur_sup}, hauteur_mat={_hauteur_mat}, hauteur_min_cable={_hauteur_min_cable}, hauteur_max_cable={_hauteur_max_cable}, pechage={_pechage}, masse_max={_masse_max}, securite={_securite}")
 
         return _hauteur_sup, _hauteur_mat, _hauteur_min_cable, _hauteur_max_cable, _pechage, _masse_max, _securite
 
@@ -675,7 +662,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         _opti = self.checkBox_5.isChecked()
         _precision = self.spinBox_41.value()
     ##testing:
-        console_info(f"get_options: opti={_opti}, precision={_precision}")
+        #console_info(f"get_options: opti={_opti}, precision={_precision}")
 
         return _opti, _precision
 
@@ -691,7 +678,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         _VAM_c = getattr(self, f"lineEdit_16").text()
         _pechage_c = self.spinBox_49.value()
     ##testing:
-        console_info(f"get_opti_cable: prelevement={_prelevement}, recalculer={_recalculer}, Rspace_c={_Rspace_c}, foret_c={_foret_c}, VBP_c={_VBP_c}, VAM_c={_VAM_c}, pechage_c={_pechage_c}")
+        #console_info(f"get_opti_cable: prelevement={_prelevement}, recalculer={_recalculer}, Rspace_c={_Rspace_c}, foret_c={_foret_c}, VBP_c={_VBP_c}, VAM_c={_VAM_c}, pechage_c={_pechage_c}")
 
         return _prelevement, _recalculer, _Rspace_c, _foret_c, _VBP_c, _VAM_c, _pechage_c
 
@@ -740,8 +727,8 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         else:
             _dist_chariot = 0
     ##testing:
-        console_info(f"get_crit_opti: surface={_surface}, nbr_sup_int={_nbr_sup_int}, sens_debardage={_sens_debardage}, longueure_ligne={_longueure_ligne}, vol_ligne={_vol_ligne}, indice_prelev={_indice_prelev}, VAM={_VAM}, dist_chariot={_dist_chariot}")
-        console_info(f"get_crit_opti_poids : surface_poids={surface_poids}, nbr_sup_int_poids={nbr_sup_int_poids}, sens_debardage_poids={sens_debardage_poids}, longueure_ligne_poids={longueure_ligne_poids}, vol_ligne_poids={vol_ligne_poids}, indice_prelev_poids={indice_prelev_poids}, VAM_poids={VAM_poids}, dist_chariot_poids={dist_chariot_poids}")
+        #console_info(f"get_crit_opti: surface={_surface}, nbr_sup_int={_nbr_sup_int}, sens_debardage={_sens_debardage}, longueure_ligne={_longueure_ligne}, vol_ligne={_vol_ligne}, indice_prelev={_indice_prelev}, VAM={_VAM}, dist_chariot={_dist_chariot}")
+        #console_info(f"get_crit_opti_poids : surface_poids={surface_poids}, nbr_sup_int_poids={nbr_sup_int_poids}, sens_debardage_poids={sens_debardage_poids}, longueure_ligne_poids={longueure_ligne_poids}, vol_ligne_poids={vol_ligne_poids}, indice_prelev_poids={indice_prelev_poids}, VAM_poids={VAM_poids}, dist_chariot_poids={dist_chariot_poids}")
         return _surface,surface_poids,_nbr_sup_int,nbr_sup_int_poids,_sens_debardage,sens_debardage_poids,_longueure_ligne,longueure_ligne_poids,_vol_ligne,vol_ligne_poids,_indice_prelev,indice_prelev_poids,_VAM,VAM_poids,_dist_chariot,dist_chariot_poids
 
     @classmethod
@@ -950,7 +937,7 @@ def write_file():
     # Wrap all strings with tr() function
     file_name = Rspace + "_all_param.txt"
     with open(file_name, 'w') as fichier:
-
+        
         fichier.write(QCoreApplication.translate("MainWindow","General data :\n\n"))
         zip1 = [QCoreApplication.translate("MainWindow", "skidder Analysis"), QCoreApplication.translate("MainWindow", "Forwarder Analysis"), QCoreApplication.translate("MainWindow", "Cable Yarding Analysis"), QCoreApplication.translate("MainWindow", "Optimize Cable Line"), QCoreApplication.translate("MainWindow", "Maximum slope for manual harvesting")]
         for var_name, var_value in zip(zip1, general_data):
@@ -961,9 +948,10 @@ def write_file():
         zip1 = [QCoreApplication.translate("MainWindow", "Workspace"), QCoreApplication.translate("MainWindow", "Result Space"), QCoreApplication.translate("MainWindow", "DTM file"), QCoreApplication.translate("MainWindow", "Forest area file"), QCoreApplication.translate("MainWindow", "Forest road network"), QCoreApplication.translate("MainWindow", "Cable Crane start point"), QCoreApplication.translate("MainWindow", "Skidder, area where winching and skidding are forbidden"), QCoreApplication.translate("MainWindow", "Skidder, area where skidding is forbidden"), QCoreApplication.translate("MainWindow", "Forwarder, obstacles for the free movement of the machine"), QCoreApplication.translate("MainWindow", "Cable yarding, obstacles for the set-up of cable line"), QCoreApplication.translate("MainWindow", "Height of the trees"), QCoreApplication.translate("MainWindow", "Average tree volume"), QCoreApplication.translate("MainWindow", "Volume per hectare")]
         for var_name, var_value in zip(zip1, spatial_data):
             if var_value == "":
-                fichier.write(f"{var_name}: {QCoreApplication.translate("MainWindow",'No data \n')}")
+                print = QCoreApplication.translate("MainWindow", "No data")
+                fichier.write(f"{var_name}: {print} \n")
             else:
-                fichier.write(f"{var_name}: {var_value} + '\n'")
+                fichier.write(f"{var_name}: {var_value}  \n")
 
         fichier.write("\n______________________________________________________________________________________")
         fichier.write(QCoreApplication.translate("MainWindow","\nParameters for skidder processing:\n\n"))
@@ -1279,8 +1267,31 @@ def ArrayToGtiff(Array,file_name,Extent,nrows,ncols,road_network_proj,nodata_val
     target_ds.FlushCache()
 
 
-def crop_to_main_dtm_size(raster_file, main_dtm_extent):
+def crop_to_main_dtm_size(raster_file, main_raster_file):
     try:
+        # Open the main raster file to get its extent
+        main_dataset = gdal.Open(main_raster_file)
+        console_info("main_dataset: " + str(main_dataset))
+        if main_dataset is None:
+            console_info(QCoreApplication.translate("MainWindow","Error: Could not open the main raster file"))
+            return
+
+        # Get the main raster's geotransform
+        main_geotransform = main_dataset.GetGeoTransform()
+        if main_geotransform is None:
+            console_info(QCoreApplication.translate("MainWindow","Error: Could not get the geotransform of the main raster"))
+            return
+
+        # Calculate main raster's extent
+        main_raster_width = main_dataset.RasterXSize
+        main_raster_height = main_dataset.RasterYSize
+        main_raster_extent = [
+            main_geotransform[0],
+            main_geotransform[0] + main_raster_width * main_geotransform[1],
+            main_geotransform[3] + main_raster_height * main_geotransform[5],
+            main_geotransform[3]
+        ]
+
         # Open the raster file
         dataset = gdal.Open(raster_file, gdal.GA_Update)
         if dataset is None:
@@ -1293,11 +1304,21 @@ def crop_to_main_dtm_size(raster_file, main_dtm_extent):
             console_info(QCoreApplication.translate("MainWindow","Error: Could not get the geotransform of the raster"))
             return
 
+        # Check if the raster is larger than the main one
+        raster_width = dataset.RasterXSize
+        raster_height = dataset.RasterYSize
+        main_dtm_width = main_raster_extent[1] - main_raster_extent[0]
+        main_dtm_height = main_raster_extent[3] - main_raster_extent[2]
+
+        if raster_width < main_dtm_width or raster_height < main_dtm_height:
+            console_info(QCoreApplication.translate("MainWindow","Error: The raster is smaller than the main DTM. Please resize the raster manually."))
+            return
+
         # Calculate the pixel and line offset for the cropping
-        px1 = int((main_dtm_extent[0] - geotransform[0]) / geotransform[1])
-        px2 = int((main_dtm_extent[1] - geotransform[0]) / geotransform[1])
-        line1 = int((main_dtm_extent[3] - geotransform[3]) / geotransform[5])
-        line2 = int((main_dtm_extent[2] - geotransform[3]) / geotransform[5])
+        px1 = int((main_raster_extent[0] - geotransform[0]) / geotransform[1])
+        px2 = int((main_raster_extent[1] - geotransform[0]) / geotransform[1])
+        line1 = int((main_raster_extent[3] - geotransform[3]) / geotransform[5])
+        line2 = int((main_raster_extent[2] - geotransform[3]) / geotransform[5])
 
         # Crop the raster
         cropped_dataset = gdal.Translate("cropped_" + raster_file, dataset, srcWin=[px1, line1, px2-px1, line2-line1])
@@ -1312,7 +1333,8 @@ def crop_to_main_dtm_size(raster_file, main_dtm_extent):
         console_info(QCoreApplication.translate("MainWindow","Raster cropped successfully to the extent of the main DTM"))
 
     except Exception as e:
-        console_info(QCoreApplication.translate("MainWindow","Error:", e))
+        err = QCoreApplication.translate("MainWindow","Error: ") + str(e)
+        console_info(err)
 
 ####################################################
 #  ______     ___      .______    __       _______ #
@@ -3099,7 +3121,8 @@ def line_selection(Rspace_c, w_list, lim_list, new_calc, file_shp_Foret, file_Vo
 
 def Skidder():
     Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Desserte, _, Dir_Full_Obs_skidder, Dir_Partial_Obs_skidder, _, _, file_Vol_ha, _, _ = Sylvaccess_UI.get_spatial_cls()
-    file_Vol_ha = Sylvaccess_UI.crop_to_main_dtm_size(file_MNT, file_Vol_ha)
+    #if file_Vol_ha == "":
+     #   file_Vol_ha = crop_to_main_dtm_size(file_Vol_ha, file_MNT)
     _, _, _, _, Pente_max_bucheron = Sylvaccess_UI.get_general_cls()
     Pente_max_skidder, Dtreuil_max_up, Dtreuil_max_down, Dmax_train_near_for, Pmax_amont, Pmax_aval, Option_Skidder, Skid_Debclass = Sylvaccess_UI.get_skidder_cls()
     ##test
