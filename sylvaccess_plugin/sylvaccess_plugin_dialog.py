@@ -25,9 +25,9 @@
 # Importation des bibliothèques 
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtCore import QCoreApplication, QObject
+from PyQt5.QtCore import QCoreApplication, QSettings , QTranslator, pyqtSignal
 import os
-from qgis.core import QgsMessageLog, Qgis
+from qgis.core import QgsMessageLog, Qgis , QgsProject, QgsVectorLayer, QgsRasterLayer, QgsField, QgsFeature, QgsGeometry, QgsPointXY, QgsWkbTypes, QgsFeatureRequest, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsRaster
 from scipy import spatial
 import numpy as np
 from osgeo import gdal, osr, ogr
@@ -39,7 +39,12 @@ import gc
 import datetime
 from scipy.interpolate import InterpolatedUnivariateSpline
 import sys
-from PyQt5.QtGui import QPixmap
+import matplotlib.pyplot as plt
+import rioxarray as rxr
+import earthpy as et
+from PyQt.QtGui import QIcon
+from PyQt5.QtWidgets import QAction, QWathsThis, QMessageBox
+
 
 
 # variables globales
@@ -1269,6 +1274,7 @@ def ArrayToGtiff(Array,file_name,Extent,nrows,ncols,road_network_proj,nodata_val
 
 def crop_to_main_dtm_size(raster_file, main_raster_file):
     try:
+        
         # Open the main raster file to get its extent
         main_dataset = gdal.Open(main_raster_file)
         console_info("main_dataset: " + str(main_dataset))
@@ -1292,49 +1298,15 @@ def crop_to_main_dtm_size(raster_file, main_raster_file):
             main_geotransform[3]
         ]
 
-        # Open the raster file
-        dataset = gdal.Open(raster_file, gdal.GA_Update)
-        if dataset is None:
-            console_info(QCoreApplication.translate("MainWindow","Error: Could not open the raster file"))
-            return
-
-        # Get the raster's geotransform
-        geotransform = dataset.GetGeoTransform()
-        if geotransform is None:
-            console_info(QCoreApplication.translate("MainWindow","Error: Could not get the geotransform of the raster"))
-            return
-
-        # Check if the raster is larger than the main one
-        raster_width = dataset.RasterXSize
-        raster_height = dataset.RasterYSize
-        main_dtm_width = main_raster_extent[1] - main_raster_extent[0]
-        main_dtm_height = main_raster_extent[3] - main_raster_extent[2]
-
-        if raster_width < main_dtm_width or raster_height < main_dtm_height:
-            console_info(QCoreApplication.translate("MainWindow","Error: The raster is smaller than the main DTM. Please resize the raster manually."))
-            return
-
-        # Calculate the pixel and line offset for the cropping
-        px1 = int((main_raster_extent[0] - geotransform[0]) / geotransform[1])
-        px2 = int((main_raster_extent[1] - geotransform[0]) / geotransform[1])
-        line1 = int((main_raster_extent[3] - geotransform[3]) / geotransform[5])
-        line2 = int((main_raster_extent[2] - geotransform[3]) / geotransform[5])
-
-        # Crop the raster
-        cropped_dataset = gdal.Translate("cropped_" + raster_file, dataset, srcWin=[px1, line1, px2-px1, line2-line1])
-        if cropped_dataset is None:
-            console_info(QCoreApplication.translate("MainWindow","Error: Could not crop the raster"))
-            return
-
-        # Close the datasets
-        dataset = None
-        cropped_dataset = None
-
-        console_info(QCoreApplication.translate("MainWindow","Raster cropped successfully to the extent of the main DTM"))
-
+        src_proj = rxr.open_rasterio(raster_file).rio.crs
+        main_src_proj = rxr.open_rasterio(main_raster_file).rio.crs
+        cropped = crop(raster_file,src_proj,main_raster_extent,main_src_proj,'near')
+        return cropped
     except Exception as e:
         err = QCoreApplication.translate("MainWindow","Error: ") + str(e)
         console_info(err)
+
+
 
 ####################################################
 #  ______     ___      .______    __       _______ #
