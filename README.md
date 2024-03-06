@@ -9,7 +9,7 @@ Copyright: Sylvain DUPIRE 2022 (*sylvain.dupire@inrae.fr*) &nbsp;&nbsp;&nbsp;&nb
   
 &nbsp;  
 
-![Logo_FR](./Source_code/FR.png?raw=true) 
+![Logo_FR](./img/FR.png?raw=true) 
 Sylvaccess est un logiciel permettant de cartographier automatiquement l’accessibilité des forêts en fonction de différents modes d’exploitation : tracteur forestier, porteur forestier et débardage par câble.
 
 Le modèle s’appuie sur des sources d’information spatiale [a minima : modèle numérique de terrain (MNT), couche de desserte forestière, contours des forêts] et des paramètres techniques propres à
@@ -28,7 +28,7 @@ Tags = ___accessibilité___, ___forêt___, ___exploitation___, ___mnt___, ___lid
 &nbsp;  
 ------------------------------------
 
-![Logo_EN](./Source_code/UK.png?raw=true) Sylvaccess is a model allowing automatic mapping of forest accessibility for the following forest operation systems : skidder, forwarder and cable yarding.
+![Logo_EN](./sylvaccess_plugin/img/UK.png?raw=true) Sylvaccess is a model allowing automatic mapping of forest accessibility for the following forest operation systems : skidder, forwarder and cable yarding.
 
 The model is based on spatial information [Compulsory: digital terrain model (DTM), shapefile of forest road network, shapefile of forest contours] and specific parameters of each logging technique.
 
@@ -50,9 +50,9 @@ __Les développements successifs de Sylvaccess ont été financés par :__
 
 | Source de financement | Financeur | 
 | :----------------------------------------------------------------- | :---------------: |  
-| Projet Interreg Espace Alpin NEWFOR (2007-2013) | ![NEWFOR](./img/logo_project.png?raw=true)  |
-| Convention de recherche et développement ONF-Irstea (2017 - 2020)  | ![ONF](./img/Logo-ONF.png?raw=true) &nbsp;&nbsp; ![Irstea](./img/logo_irstea.png?raw=true)  |
-| Autofinancement Sylvain Dupire - SylvaLab (2020-2021)  | ![SylvaLab](./img/icon2.png?raw=true)  |
+| Projet Interreg Espace Alpin NEWFOR (2007-2013) | ![NEWFOR](./sylvaccess_plugin/img/logo_project.png?raw=true)  |
+| Convention de recherche et développement ONF-Irstea (2017 - 2020)  | ![ONF](./sylvaccess_plugin/img/Logo-ONF.png?raw=true) &nbsp;&nbsp; ![Irstea](./sylvaccess_plugin/img/logo_irstea.png?raw=true)  |
+| Autofinancement Sylvain Dupire - SylvaLab (2020-2021)  | ![SylvaLab](./sylvaccess_plugin/img/icon2.png?raw=true)  |
 
 &nbsp;  
 
