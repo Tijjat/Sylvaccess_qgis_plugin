@@ -49,15 +49,8 @@ from PyQt5.QtWidgets import QAction, QWathsThis, QMessageBox
 
 # variables globales
 global g,intsup,best,nblineTabis,h,b,l,r  
-Sylvaccess_UI = None
-g = 9.80665
-intsup = 0 
-best = 0
-nblineTabis = 1
-h = 0
-b = 0
-l = 0
-r = 0
+h,b,l,r,intsup,best,g,nblinetabis,Sylvaccess_UI = 0,0,0,0,0,0,9.80665,1,None
+
 
 
 # Chargement de l'interface utilisateur depuis le fichier .ui
@@ -119,13 +112,13 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         # Affiche le dialogue de sélection de fichier avec les filtres appropriés
         if button_number in [4, 5, 6]:
             selected_file, _ = QFileDialog.getOpenFileName(
-                None, "Select a file", filter=shapefile_filter, options=options)
+                None, QCoreApplication.translate("MainWindow","Select a file"), filter=shapefile_filter, options=options)
         elif button_number in [3, 11, 12, 13]:
             selected_file, _ = QFileDialog.getOpenFileName(
-                None, "Select a file", filter=raster_filter, options=options)
+                None, QCoreApplication.translate("MainWindow","Select a file"), filter=raster_filter, options=options)
         elif button_number in [1, 2, 7, 8, 9, 10]:  # Pour le bouton qui doit ouvrir un dossier
             selected_file = QFileDialog.getExistingDirectory(
-                None, "Select a folder", options=options)
+                None, QCoreApplication.translate("MainWindow","Select a folder"), options=options)
 
         if selected_file:
             # Mise à jour du champ de texte approprié
