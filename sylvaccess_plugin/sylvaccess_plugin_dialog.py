@@ -25,9 +25,9 @@
 # Importation des bibliothèques 
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtCore import QCoreApplication, QSettings , QTranslator, pyqtSignal
+from PyQt5.QtCore import QCoreApplication
 import os
-from qgis.core import QgsMessageLog, Qgis , QgsProject, QgsVectorLayer, QgsRasterLayer, QgsField, QgsFeature, QgsGeometry, QgsPointXY, QgsWkbTypes, QgsFeatureRequest, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsRaster
+from qgis.core import QgsMessageLog, Qgis
 from scipy import spatial
 import numpy as np
 from osgeo import gdal, osr, ogr
@@ -39,11 +39,9 @@ import gc
 import datetime
 from scipy.interpolate import InterpolatedUnivariateSpline
 import sys
-import matplotlib.pyplot as plt
-import rioxarray as rxr
-import earthpy as et
-from PyQt.QtGui import QIcon
-from PyQt5.QtWidgets import QAction, QWathsThis, QMessageBox
+import rpy2.robjects as robjects
+from rpy2.robjects import pandas2ri
+pandas2ri.activate()
 
 
 
@@ -51,7 +49,7 @@ from PyQt5.QtWidgets import QAction, QWathsThis, QMessageBox
 global g,intsup,best,nblineTabis,h,b,l,r  
 h,b,l,r,intsup,best,g,nblinetabis,Sylvaccess_UI = 0,0,0,0,0,0,9.80665,1,None
 
-
+robjects.r.source("path/to/your/R/script.R")
 
 # Chargement de l'interface utilisateur depuis le fichier .ui
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'sylvaccess_plugin_dialog_base.ui'))
@@ -1267,34 +1265,16 @@ def ArrayToGtiff(Array,file_name,Extent,nrows,ncols,road_network_proj,nodata_val
 
 def crop_to_main_dtm_size(raster_file, main_raster_file):
     try:
+        # Call the R function
+        cropped_raster = robjects.r.crop_to_main_dtm_size(raster_file, main_raster_file)
         
-        # Open the main raster file to get its extent
-        main_dataset = gdal.Open(main_raster_file)
-        console_info("main_dataset: " + str(main_dataset))
-        if main_dataset is None:
-            console_info(QCoreApplication.translate("MainWindow","Error: Could not open the main raster file"))
-            return
-
-        # Get the main raster's geotransform
-        main_geotransform = main_dataset.GetGeoTransform()
-        if main_geotransform is None:
-            console_info(QCoreApplication.translate("MainWindow","Error: Could not get the geotransform of the main raster"))
-            return
-
-        # Calculate main raster's extent
-        main_raster_width = main_dataset.RasterXSize
-        main_raster_height = main_dataset.RasterYSize
-        main_raster_extent = [
-            main_geotransform[0],
-            main_geotransform[0] + main_raster_width * main_geotransform[1],
-            main_geotransform[3] + main_raster_height * main_geotransform[5],
-            main_geotransform[3]
-        ]
-
-        src_proj = rxr.open_rasterio(raster_file).rio.crs
-        main_src_proj = rxr.open_rasterio(main_raster_file).rio.crs
-        cropped = crop(raster_file,src_proj,main_raster_extent,main_src_proj,'near')
-        return cropped
+        # Convert the output to a DataFrame
+        cropped_df = pandas2ri.ri2py_dataframe(cropped_raster)
+        
+        # Pass the output through console_info
+        console_info(str(cropped_df))
+        
+        return cropped_df
     except Exception as e:
         err = QCoreApplication.translate("MainWindow","Error: ") + str(e)
         console_info(err)

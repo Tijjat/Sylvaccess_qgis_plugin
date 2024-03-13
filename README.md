@@ -9,7 +9,7 @@ Copyright: Sylvain DUPIRE 2022 (*sylvain.dupire@inrae.fr*) &nbsp;&nbsp;&nbsp;&nb
   
 &nbsp;  
 
-![Logo_FR](./img/FR.png?raw=true) 
+![Logo_FR](./sylvaccess_plugin/img/FR.png?raw=true) 
 Sylvaccess est un logiciel permettant de cartographier automatiquement l’accessibilité des forêts en fonction de différents modes d’exploitation : tracteur forestier, porteur forestier et débardage par câble.
 
 Le modèle s’appuie sur des sources d’information spatiale [a minima : modèle numérique de terrain (MNT), couche de desserte forestière, contours des forêts] et des paramètres techniques propres à

@@ -65,7 +65,7 @@ THE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY:
         <location filename="../sylvaccess_plugin_dialog.py" line="449"/>
         <source> -   Service layer: The &apos;CL_SVAC&apos; field is missing
 </source>
-        <translation> -   Service layer: The 'CL_SVAC' field is missing
+        <translation> -   Service layer: The &apos;CL_SVAC&apos; field is missing
 </translation>
     </message>
     <message>
@@ -79,7 +79,7 @@ THE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY:
         <location filename="../sylvaccess_plugin_dialog.py" line="459"/>
         <source> -   Service layer: The &apos;CABLE&apos; field is missing
 </source>
-        <translation> -   Service layer: The 'CABLE' field is missing
+        <translation> -   Service layer: The &apos;CABLE&apos; field is missing
 </translation>
     </message>
     <message>
@@ -93,7 +93,7 @@ THE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY:
         <location filename="../sylvaccess_plugin_dialog.py" line="469"/>
         <source> -   Forest layer: The &apos;FOREST&apos; field is missing
 </source>
-        <translation> -   Forest layer: The 'FOREST' field is missing
+        <translation> -   Forest layer: The &apos;FOREST&apos; field is missing
 </translation>
     </message>
     <message>
@@ -114,7 +114,7 @@ THE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY:
         <location filename="../sylvaccess_plugin_dialog.py" line="482"/>
         <source> -   Forest layer (optimization cable tab): The &apos;FOREST&apos; field is missing
 </source>
-        <translation> -   Forest layer (optimization cable tab): The 'FOREST' field is missing
+        <translation> -   Forest layer (optimization cable tab): The &apos;FOREST&apos; field is missing
 </translation>
     </message>
     <message>
@@ -418,13 +418,16 @@ Criteria used for optimization :
 
 
 </source>
-        <translation>SYLVACCESS - CABLE</translation>
+        <translation>SYLVACCESS - CABLE
+
+
+</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1702"/>
         <source>Plugin&apos;s version: 1.0.0 from 02/06/2024
 </source>
-        <translation type="obsolete">Plugin's version: 1.0.0 from 02/06/2024
+        <translation type="obsolete">Plugin&apos;s version: 1.0.0 from 02/06/2024
 </translation>
     </message>
     <message>
@@ -439,7 +442,7 @@ Criteria used for optimization :
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1693"/>
         <source>Date and time when launching the script:                          </source>
-        <translation>Date and time when launching the script:              </translation>
+        <translation>Date and time when launching the script:                          </translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1694"/>
@@ -727,7 +730,7 @@ All possible lines have been tested.
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="2606"/>
-        <source>From all cable starts<byte value="x9"/><byte value="x9"/></source>
+        <source>From all cable starts		</source>
         <translation>From all cable starts		</translation>
     </message>
     <message>
@@ -1750,7 +1753,7 @@ Cable input data processing achieved
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1691"/>
         <source>Plugin&apos;s version: </source>
-        <translation>Plugin's version: </translation>
+        <translation>Plugin&apos;s version: </translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1691"/>
@@ -1928,12 +1931,12 @@ SIMULATION INCLUDING THE SERVICE PROJECT</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="117"/>
         <source>Select a file</source>
-        <translation type="unfinished"></translation>
+        <translation>Select a file</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="120"/>
         <source>Select a folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Select a folder</translation>
     </message>
 </context>
 <context>
@@ -2491,8 +2494,7 @@ SIMULATION INCLUDING THE SERVICE PROJECT</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="3962"/>
         <source>Volume per hectare (raster)</source>
-        <translation>
-Volume per hectare (raster)</translation>
+        <translation>Volume per hectare (raster)</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="3969"/>
