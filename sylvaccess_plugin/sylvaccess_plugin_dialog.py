@@ -26,22 +26,14 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtCore import QCoreApplication
-import os
+import os, sys, shutil, gc, datetime, math
 from qgis.core import QgsMessageLog, Qgis
 from scipy import spatial
 import numpy as np
 from osgeo import gdal, osr, ogr
-import math
 from .resources import *
 from math import sqrt,degrees,atan,cos,sin,radians,pi,atan2,ceil,floor,fabs
-import shutil
-import gc
-import datetime
 from scipy.interpolate import InterpolatedUnivariateSpline
-import sys
-import rpy2.robjects as robjects
-from rpy2.robjects import pandas2ri
-pandas2ri.activate()
 
 
 
@@ -49,7 +41,6 @@ pandas2ri.activate()
 global g,intsup,best,nblineTabis,h,b,l,r  
 h,b,l,r,intsup,best,g,nblinetabis,Sylvaccess_UI = 0,0,0,0,0,0,9.80665,1,None
 
-robjects.r.source("path/to/your/R/script.R")
 
 # Chargement de l'interface utilisateur depuis le fichier .ui
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'sylvaccess_plugin_dialog_base.ui'))
@@ -154,6 +145,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
         self.lineEdit_4.setText("C:/Users/yoann/Downloads/meisenthal2/frt.shp")
         self.lineEdit_5.setText("C:/Users/yoann/Downloads/meisenthal2/desserte.shp")
         self.lineEdit_6.setText("C:/Users/yoann/Downloads/meisenthal2/piste.shp")
+        self.lineEdit_11.setText("C:/Users/yoann/Downloads/meisenthal2/plugin_arbremoy.tif")
         ##
         checkbox = getattr(self, f"checkBox_{checkbox_number}")
         checkbox_state = checkbox.isChecked()
@@ -321,9 +313,6 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
 
 
     def launch(self):
-        ##testing
-        #console_info("launch")
-        ##
         
         Wspace,Rspace,_,_,file_shp_Desserte,_,_,_,_,_,_,_,_ = Sylvaccess_UI.get_spatial()
         test_Skidder,test_Forwarder,test_Cable,test_cable_optimise,pente = Sylvaccess_UI.get_general()
@@ -450,7 +439,6 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                 msg += QCoreApplication.translate("MainWindow", " -   Service layer: Path is missing or incorrect. This layer is required for skidder and forwarder modules\n")
 
         # Check file_shp_Cable_Dep
-        if test_Cable:
             try:
                 if not check_field(file_shp_Cable_dep, "CABLE"):
                     verif = False
@@ -498,12 +486,13 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                         verif = False
                         msg += " -   " + name[i] + QCoreApplication.translate("MainWindow", ": Raster cell size should be the same as DTM\n")
                     if not np.all(Extent == Extent2):
-                        verif = False
                         msg +=  " -   " + name[i] + QCoreApplication.translate("MainWindow", ": The extent of the raster must be the same as that of the DTM\n")
-                        
-                    if (Extent2[2] < Extent[2]) or (Extent2[3] < Extent[3]):
-                        verif = False
-                        msg +=  " -   " + name[i] + QCoreApplication.translate("MainWindow", ": The raster size is undersized compared to the main DTM\n")
+                        try : 
+                            crop_to_main_dtm_size(f, file_MNT)
+                            msg +=  " -   " + name[i] + QCoreApplication.translate("MainWindow", ": The raster was oversized but it was cropped to the right side \n")
+                        except:
+                            verif = False
+                            msg +=  " -   " + name[i] + QCoreApplication.translate("MainWindow", ": The raster size is undersized compared to the main DTM\n")
                         
                 except:
                     verif = False
@@ -1264,21 +1253,29 @@ def ArrayToGtiff(Array,file_name,Extent,nrows,ncols,road_network_proj,nodata_val
 
 
 def crop_to_main_dtm_size(raster_file, main_raster_file):
+    main = gdal.Open(main_raster_file, gdal.GA_ReadOnly)
+    console_info("trying to crop")
     try:
-        # Call the R function
-        cropped_raster = robjects.r.crop_to_main_dtm_size(raster_file, main_raster_file)
-        
-        # Convert the output to a DataFrame
-        cropped_df = pandas2ri.ri2py_dataframe(cropped_raster)
-        
-        # Pass the output through console_info
-        console_info(str(cropped_df))
-        
-        return cropped_df
-    except Exception as e:
-        err = QCoreApplication.translate("MainWindow","Error: ") + str(e)
-        console_info(err)
+        main_gt = main.GetGeoTransform()
+        main_x_origin = main_gt[0]
+        main_y_origin = main_gt[3]
+        main_pixel_width = main_gt[1]
+        main_pixel_height = main_gt[5]
+        main_width = main.RasterXSize
+        main_height = main.RasterYSize
 
+        # Calculate the coordinates for cropping
+        lx = main_x_origin
+        ly = main_y_origin
+        rx = main_x_origin + main_width * main_pixel_width
+        ry = main_y_origin - main_height * main_pixel_height
+
+        window = (lx, ly, rx, ry)
+        gdal.Translate(raster_file, main_raster_file, projWin=window)
+
+    except Exception as e:
+        err = QCoreApplication.translate("MainWindow", "Error: ") + str(e)
+        console_info(err)
 
 
 ####################################################
@@ -3066,8 +3063,6 @@ def line_selection(Rspace_c, w_list, lim_list, new_calc, file_shp_Foret, file_Vo
 
 def Skidder():
     Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Desserte, _, Dir_Full_Obs_skidder, Dir_Partial_Obs_skidder, _, _, file_Vol_ha, _, _ = Sylvaccess_UI.get_spatial_cls()
-    #if file_Vol_ha == "":
-     #   file_Vol_ha = crop_to_main_dtm_size(file_Vol_ha, file_MNT)
     _, _, _, _, Pente_max_bucheron = Sylvaccess_UI.get_general_cls()
     Pente_max_skidder, Dtreuil_max_up, Dtreuil_max_down, Dmax_train_near_for, Pmax_amont, Pmax_aval, Option_Skidder, Skid_Debclass = Sylvaccess_UI.get_skidder_cls()
     ##test

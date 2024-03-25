@@ -4,42 +4,42 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="199"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="189"/>
         <source>Cable crane mounted on agricultural tractor</source>
         <translation>Grue à câble montée sur un tracteur agricole</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="208"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="198"/>
         <source>Cable crane mounted on trailer</source>
         <translation>Grue à câble montée sur remorque</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="217"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="207"/>
         <source>Cable crane mounted on truck</source>
         <translation>Grue à câble montée sur camion</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="226"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="216"/>
         <source>Long cable</source>
         <translation>Câble long</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="239"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="229"/>
         <source>Classical carriage</source>
         <translation>remorque classique</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="248"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="238"/>
         <source>self-motorized carriage</source>
         <translation>remorque automotrice</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="340"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="327"/>
         <source>Please fill in all required fields</source>
         <translation>Veuillez remplir tous les champs obligatoires</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="432"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="419"/>
         <source>
 THE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY: 
 </source>
@@ -48,56 +48,56 @@ LES PROBLÈMES SUIVANTS ONT ÉTÉ IDENTIFIÉS EN CE QUI CONCERNE L’ENTRÉE SPA
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="439"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="426"/>
         <source> -   Raster DTM: No value of NoData defined
 </source>
-        <translation> -   MNT raster&#xa0;: aucune valeur de NoData définie
+        <translation> -   MNT raster : aucune valeur de NoData définie
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="441"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="428"/>
         <source> -   Raster DTM:  Path is missing or incorrect. This raster is required to run Sylvaccess
 </source>
-        <translation> -   Raster MNT&#xa0;: Chemin manquant ou incorrect. Ce raster est nécessaire pour exécuter Sylvaccess
+        <translation> -   Raster MNT : Chemin manquant ou incorrect. Ce raster est nécessaire pour exécuter Sylvaccess
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="449"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="436"/>
         <source> -   Service layer: The &apos;CL_SVAC&apos; field is missing
 </source>
-        <translation> -   Couche de service&#xa0;: le champ «&#xa0;CL_SVAC&#xa0;» est manquant
+        <translation> -   Couche de service : le champ « CL_SVAC » est manquant
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="452"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="439"/>
         <source> -   Service layer: Path is missing or incorrect. This layer is required for skidder and forwarder modules
 </source>
-        <translation> -   Couche de service&#xa0;: Le chemin est manquant ou incorrect. Cette couche est requise pour les modules de débardeur et de transporteur
+        <translation> -   Couche de service : Le chemin est manquant ou incorrect. Cette couche est requise pour les modules de débardeur et de transporteur
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="459"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="445"/>
         <source> -   Service layer: The &apos;CABLE&apos; field is missing
 </source>
-        <translation> -   Couche de service&#xa0;: le champ «&#xa0;CABLE&#xa0;» est manquant
+        <translation> -   Couche de service : le champ « CABLE » est manquant
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="462"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="448"/>
         <source> -   Potential cable departures layer: The access path is missing or incorrect. This layer is mandatory for the cable module
 </source>
-        <translation> -   Couche de départs de câbles potentiels&#xa0;: Le chemin d’accès est manquant ou incorrect. Cette couche est obligatoire pour le module de câbles
+        <translation> -   Couche de départs de câbles potentiels : Le chemin d’accès est manquant ou incorrect. Cette couche est obligatoire pour le module de câbles
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="469"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="455"/>
         <source> -   Forest layer: The &apos;FOREST&apos; field is missing
 </source>
-        <translation> -   Couche forêt&#xa0;: le champ «&#xa0;FORÊT&#xa0;» est manquant
+        <translation> -   Couche forêt : le champ « FORÊT » est manquant
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="472"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="458"/>
         <source> -   Forest layer: Path is missing or incorrect. This layer is required to run Sylvaccess
 </source>
         <translation> -   Couche forêt: Le chemin est manquant ou incorrect. Cette couche est obligatoire pour le module de câbles
@@ -107,42 +107,42 @@ LES PROBLÈMES SUIVANTS ONT ÉTÉ IDENTIFIÉS EN CE QUI CONCERNE L’ENTRÉE SPA
         <location filename="../sylvaccess_plugin_dialog.py" line="486"/>
         <source> -   Forest layer: The file must be a shapefile or a geopackage
 </source>
-        <translation type="obsolete"> -   Couche forêt&#xa0;: Le fichier doit être un fichier shapefile ou un géopackage
+        <translation type="obsolete"> -   Couche forêt : Le fichier doit être un fichier shapefile ou un géopackage
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="482"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="468"/>
         <source> -   Forest layer (optimization cable tab): The &apos;FOREST&apos; field is missing
 </source>
-        <translation> -   Couche forêt (tab optimisation câble): le champ «&#xa0;FORÊT&#xa0;» est manquant
+        <translation> -   Couche forêt (tab optimisation câble): le champ « FORÊT » est manquant
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="485"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="471"/>
         <source> -   Forest layer (optimization cable tab): The path is missing or incorrect. 
 </source>
         <translation> -   Couche forêt (tab optimisation câble): Le chemin est manquant ou incorrect. 
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="488"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="474"/>
         <source> -   Forest layer (optimization cable tab): The file must be a shapefile or a geopackage
 </source>
         <translation> -   Couche forêt (tab optimisation câble): Le fichierdoit être un  fichier shapefile ou un géopackage
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="491"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="477"/>
         <source>Raster Volume/ha</source>
         <translation>Raster Volume de bois sur pieds</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="491"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="477"/>
         <source>Raster medium tree volume</source>
-        <translation>Raster volume de l&apos;arbre moyen</translation>
+        <translation>Raster volume de l'arbre moyen</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="491"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="477"/>
         <source>Raster tree height</source>
         <translation>Raster hauteur des arbres</translation>
     </message>
@@ -152,49 +152,49 @@ LES PROBLÈMES SUIVANTS ONT ÉTÉ IDENTIFIÉS EN CE QUI CONCERNE L’ENTRÉE SPA
         <translation type="obsolete"> -   </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="498"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="484"/>
         <source>: No value of NoData defined
 </source>
         <translation>: aucune valeur de NoData définie
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="501"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="487"/>
         <source>: Raster cell size should be the same as DTM
 </source>
         <translation>: La taille de cellules du raster doit être la même que celle du MNT
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="504"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="489"/>
         <source>: The extent of the raster must be the same as that of the DTM
 </source>
         <translation>: La taille du raster doit être la même que celle du MNT
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="508"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="495"/>
         <source>: The raster size is undersized compared to the main DTM
 </source>
         <translation>: Le raster est plus petit que le MNT
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="512"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="499"/>
         <source>: The access path is incorrect
 </source>
-        <translation>: Le chemin d&apos;accès est incorrect
+        <translation>: Le chemin d'accès est incorrect
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="515"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="502"/>
         <source>: The file must be a tif, asc or txt file
 </source>
         <translation>: Le fichier doit être au format tif, asc ou txt
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="518"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="505"/>
         <source>
 PLEASE CORRECT BEFORE RELAUNCHING SYLVACCESS
 </source>
@@ -203,32 +203,32 @@ MERCI DE CORRIGER LES PROBLÈMES AVANT DE RELANCER SYLVACCESS
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1350"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1327"/>
         <source>Error: please define a projection for DTM raster</source>
         <translation>Erreur: Merci de définir une projection pour le MNT</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1465"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1442"/>
         <source>    -Initialization performed, start of processing...</source>
         <translation>    -Initialisation terminé, début des calculs...</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1608"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1585"/>
         <source>    -Processing completed, start of results saving...</source>
-        <translation>    -Calculs terminé, début de l&apos;enregistrement des résultats...</translation>
+        <translation>    -Calculs terminé, début de l'enregistrement des résultats...</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="886"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="873"/>
         <source>1-Limit soil damages: force the skidder to proceed from the forest road network</source>
-        <translation>1-Limiter l&apos;impact sur les sols : forcer le skidder à procéder autant que possible depuis le réseau de desserte forestière</translation>
+        <translation>1-Limiter l'impact sur les sols : forcer le skidder à procéder autant que possible depuis le réseau de desserte forestière</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="888"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="875"/>
         <source>2-Limit winching operations: force the skidder to get as close as possible from logs</source>
         <translation>2-Limiter le débusquage des bois : forcer le skidder à se rapprocher autant que possible des grumes de bois</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="939"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="926"/>
         <source>General data :
 
 </source>
@@ -237,7 +237,7 @@ MERCI DE CORRIGER LES PROBLÈMES AVANT DE RELANCER SYLVACCESS
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="945"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="932"/>
         <source>
 Spatial data :
 
@@ -248,7 +248,7 @@ Données spatiales :
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="955"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="942"/>
         <source>
 Parameters for skidder processing:
 
@@ -259,7 +259,7 @@ Paramètres pour les calculs liés au skidder:
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="961"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="948"/>
         <source>
 Parameters for forwarder processing :
 
@@ -270,7 +270,7 @@ Paramètres pour les calculs liés au porteur :
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="967"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="954"/>
         <source>
 Cable machine properties :
 
@@ -281,7 +281,7 @@ Propriétés du type de câble :
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="973"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="960"/>
         <source>
 Carriage properties :
 
@@ -292,7 +292,7 @@ Propriétés du chariot :
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="979"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="966"/>
         <source>
 Skyline porperties :
 
@@ -303,7 +303,7 @@ Propriétés du câble porteur :
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="986"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="973"/>
         <source>
 Modeling parameters :
 
@@ -314,7 +314,7 @@ Paramètres de modélisation :
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="978"/>
         <source>
 Options :
 
@@ -325,7 +325,7 @@ Options :
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="997"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="984"/>
         <source>
 Cable yarding - Optimization of cable parameters :
 
@@ -336,63 +336,63 @@ Câble - Optimisation des lignes :
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1003"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="990"/>
         <source>
 Criteria used for optimization :
 
 </source>
         <translation>
-Critères utilisés pour l&apos;optimisation :
+Critères utilisés pour l'optimisation :
 
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3035"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3012"/>
         <source>Xcoord_intsup</source>
         <translation>Xcoord_intsup</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3035"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3012"/>
         <source>Ycoord_intsup</source>
         <translation>Ycoord_intsup</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1658"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1635"/>
         <source>Alt_intsup</source>
         <translation>Alt_intsup</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3036"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3013"/>
         <source>Hcable_intsup</source>
         <translation>Hcable_intsup</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3036"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3013"/>
         <source>Pression_intsup</source>
         <translation>Pression_intsup</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1679"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1656"/>
         <source>self-propelled</source>
         <translation>automoteur</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1681"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1658"/>
         <source>Classic</source>
         <translation>Classique</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1683"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1660"/>
         <source>Cable mat</source>
         <translation>Câble mât</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1685"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1662"/>
         <source>Long/conventional cable</source>
         <translation>Câble long/conventionnel</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1688"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1665"/>
         <source>SYLVACCESS - CABLE
 
 
@@ -403,7 +403,7 @@ Critères utilisés pour l&apos;optimisation :
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1692"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1669"/>
         <source>Author: Sylvain DUPIRE. Irstea
 
 </source>
@@ -412,222 +412,222 @@ Critères utilisés pour l&apos;optimisation :
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1693"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1670"/>
         <source>Date and time when launching the script:                          </source>
         <translation>Date et heure de lancement du script:                          </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1694"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1671"/>
         <source>Date and time at the end of the script execution                           </source>
-        <translation>Date et heure a la fin de l&apos;execution du script                           </translation>
+        <translation>Date et heure a la fin de l'execution du script                           </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1695"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1672"/>
         <source>Total execution time of the script:                                         </source>
-        <translation>Temps total d&apos;execution du script:                                         </translation>
+        <translation>Temps total d'execution du script:                                         </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1696"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1673"/>
         <source>PROPERTIES OF THE MATERIAL:
 </source>
         <translation>PROPRIETES DU MATERIEL MODELISE:
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1697"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1674"/>
         <source>   - Type of machine:                                                      </source>
         <translation>   - Type de machine:                                                      </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1698"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1675"/>
         <source>   - Height of mat or cable Forwarder at the depot place:    </source>
         <translation>   - Hauteur du mat ou du cable porteur au niveau de la place de depot:    </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1699"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1676"/>
         <source>   - Maximum number of intermediate support:                        </source>
         <translation>   - Nombre maximum de support(s) intermediaire(s):                        </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1700"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1677"/>
         <source>   - Maximum length of the Forwarder cable:                                    </source>
         <translation>   - Longueur maximale du cable porteur:                                    </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1701"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1678"/>
         <source>   - Minimum length of a line:                                        </source>
-        <translation>   - Longueur minimale d&apos;une ligne:                                        </translation>
+        <translation>   - Longueur minimale d'une ligne:                                        </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1702"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1679"/>
         <source>   - Minimum length between two supports:                                </source>
         <translation>   - Longueur minimale entre deux supports:                                </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1703"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1680"/>
         <source>   - Trolley type:                                                      </source>
         <translation>   - Type de chariot:                                                      </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1704"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1681"/>
         <source>   - Empty mass of the trolley:                                              </source>
         <translation>   - Masse a vide du chariot:                                              </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1705"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1682"/>
         <source>   - Maximum mass of load:                                          </source>
         <translation>   - Masse maximale de la charge:                                          </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1707"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1684"/>
         <source>   - Max slope of the Forwarder cable for uphill unloading:            </source>
-        <translation>   - Pente max du cable porteur pour un debardage vers l&apos;amont:            </translation>
+        <translation>   - Pente max du cable porteur pour un debardage vers l'amont:            </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1708"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1685"/>
         <source>   - Max slope of the Forwarder cable for downhill unloading:             </source>
-        <translation>   - Pente max du cable porteur pour un debardage vers l&apos;aval:             </translation>
+        <translation>   - Pente max du cable porteur pour un debardage vers l'aval:             </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1710"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1687"/>
         <source>   - Min slope of the Forwarder cable for the trolley to climb down:  </source>
         <translation>   - Pente min du cable porteur pour que le chariot descende par gravite:  </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1712"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1689"/>
         <source>PROPERTIES OF THE FORWARDER CABLE :
 </source>
         <translation>PROPRIETES DU CABLE PORTEUR:
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1713"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1690"/>
         <source>   - Diameter of the Forwarder cable:                                            </source>
         <translation>   - Diametre du cable porteur:                                            </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1714"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1691"/>
         <source>   - Line mass of the Forwarder cable:                                      </source>
         <translation>   - Masse lineique du cable porteur:                                      </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1715"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1692"/>
         <source>   - Young’s Module (Elasticity):                                         </source>
         <translation>   - Module de Young (Elasticite):                                         </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1716"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1693"/>
         <source>   - Breaking tension of the Forwarder cable                                   </source>
         <translation>   - Tension de rupture du cable porteur                                   </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1718"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1695"/>
         <source>TRACTOR AND RETURN CABLE PROPERTIES:
 </source>
         <translation>PROPRIETES DES CABLES TRACTEUR ET RETOUR:
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1719"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1696"/>
         <source>   - Line mass of the tractor cable:                                     </source>
         <translation>   - Masse lineique du cable tracteur:                                     </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1720"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1697"/>
         <source>   - Line mass of the return cable:                                       </source>
         <translation>   - Masse lineique du cable retour:                                       </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1722"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1699"/>
         <source>MODELISATION PARAMETERS:
 </source>
         <translation>PARAMETRES DE MODELISATION:
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1723"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1700"/>
         <source>   - Lateral distance of wood pitching:                                </source>
         <translation>   - Distance laterale de pechage des bois:                                </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1724"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1701"/>
         <source>   - Height of Forwarder cable at intermediate pylons:          </source>
         <translation>   - Hauteur du cable porteur au niveau des pylone intermediaire:          </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1725"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1702"/>
         <source>   - Forwarder cable height at end of line:                             </source>
         <translation>   - Hauteur du cable porteur en fin de ligne:                             </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1726"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1703"/>
         <source>   - Minimum cable height at any point (load):                  </source>
         <translation>   - Hauteur minimale du cable en tout point (en charge):                  </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1727"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1704"/>
         <source>   - Maximum cable height at any point:                              </source>
         <translation>   - Hauteur maximale du cable en tout point:                              </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1728"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1705"/>
         <source>   - Maximum angle of the Forwarder cable at an intermediate pylon:   </source>
-        <translation>   - Angle maximum du cable porteur au niveau d&apos;un pylone intermediaire:   </translation>
+        <translation>   - Angle maximum du cable porteur au niveau d'un pylone intermediaire:   </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1729"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1706"/>
         <source>   - Security factor:                                                  </source>
         <translation>   - Facteur de securite:                                                  </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1730"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1707"/>
         <source>   - Value of the friction angle:                                      </source>
-        <translation>   - Valeur de l&apos;angle de frottement:                                      </translation>
+        <translation>   - Valeur de l'angle de frottement:                                      </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1731"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1708"/>
         <source>   - DTM resolution:                                              </source>
         <translation>   - Resolution du MNT utilise:                                              </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1732"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1709"/>
         <source>   - Standing volume harvesting applied:                              </source>
         <translation>   - Prelevement du volume sur pied applique:                              </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1734"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1711"/>
         <source>   - Projection:                                                           </source>
         <translation>   - Projection:                                                           </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1736"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1713"/>
         <source>   - Projection:                                                           unknown
 </source>
         <translation>   - Projection:                                                           inconnue
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1743"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1720"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1745"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1722"/>
         <source>Yes</source>
         <translation>Oui</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1741"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1718"/>
         <source>   - Consideration of obstacle for the cable:                             </source>
-        <translation>   - Prise en compte d&apos;obstacle pour le cable:                             </translation>
+        <translation>   - Prise en compte d'obstacle pour le cable:                             </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1746"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1723"/>
         <source>   - Information on the volume of wood provided as input:                  </source>
         <translation>   - Information sur le volume de bois fournie en entree:                  </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1757"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1734"/>
         <source>
 All possible lines have been tested.
 </source>
@@ -636,214 +636,214 @@ Toutes les lignes possibles ont ete testees.
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2531"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2508"/>
         <source>Forest area impacted [ha] (maximize)                 Minimum: </source>
         <translation>Surface de forêt impactée [ha] (maximiser)                  Minimum : </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2532"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2509"/>
         <source>Number of intermediate supports (minimize)           Maximum: </source>
         <translation>Nombre de support intermédiaires (minimiser)                Maximum : </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2533"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2510"/>
         <source>Favour </source>
         <translation>Privilégier le débardage vers </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2534"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2511"/>
         <source>Line length [m] (maximize)                           Minimum: </source>
         <translation>Longueur de ligne [m] (maximiser)                           Minimum : </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2535"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2512"/>
         <source>Total volume per line [m3] (maximize)                Minimum: </source>
         <translation>Volume total par ligne [m3] (maximiser)                     Minimum : </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2536"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2513"/>
         <source>Volume per meter of line  [m3/ml] (maximize)         Minimum: </source>
         <translation>Indice de prélèvement câble [m3/ml] (maximiser)             Minimum : </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2537"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2514"/>
         <source>Average tree volume [m3] (maximize)                  Minimum: </source>
-        <translation>Volume de l&apos;arbre moyen [m3] (maximiser)                   Minimum : </translation>
+        <translation>Volume de l'arbre moyen [m3] (maximiser)                   Minimum : </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2538"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2515"/>
         <source>Carriage average distance [m] (minimize)             Maximum: </source>
         <translation>Longueur moyenne parcourue par le charriot [m] (minimiser)  Maximum : </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2539"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2516"/>
         <source>Yarding cost [€/ml] (minimize)                       Maximum: </source>
         <translation>Coût du débardage [€/m3] (minimiser)                        Maximum : </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2542"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2519"/>
         <source>(Weight: </source>
         <translation>(Poids: </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2604"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2581"/>
         <source>SUMMARY OF THE LINE SELECTION</source>
         <translation>BILAN DE LA SELECTION DE LIGNE</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2606"/>
-        <source>From all cable starts		</source>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2583"/>
+        <source>From all cable starts<byte value="x9"/><byte value="x9"/></source>
         <translation>Depuis tous les départs		</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2608"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2585"/>
         <source>Only from projects</source>
         <translation>Seulement depuis les projets</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2609"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2586"/>
         <source>   - Total forest area impacted [ha]:                    </source>
         <translation>   - Surface totale de forêt traitée [ha]:                    </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2610"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2587"/>
         <source>   - Total number of lines:                              </source>
         <translation>   - Nombre total de ligne:                              </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2611"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2588"/>
         <source>         + With uphill yarding:                          </source>
-        <translation>         + Dont ligne avec débardage vers l&apos;amont:                          </translation>
+        <translation>         + Dont ligne avec débardage vers l'amont:                          </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2612"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2589"/>
         <source>         + With downhill yarding:                        </source>
-        <translation>         + Dont ligne avec débardage vers l&apos;aval:                        </translation>
+        <translation>         + Dont ligne avec débardage vers l'aval:                        </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2613"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2590"/>
         <source>   - Average number of intermediate support per line:    </source>
         <translation>   - Nombre moyen de pylône intermédiaire par ligne:    </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2614"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2591"/>
         <source>   - Average length of the line [m]:                     </source>
         <translation>   - Longueur moyenne des lignes [m]:                     </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2615"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2592"/>
         <source>   - Total harvested volume (estimate) [m3]:             </source>
         <translation>   - Volume total prélevé (estimation) [m3]:             </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2616"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2593"/>
         <source>   - Average volume per meter of line (estimate) [m3/m]: </source>
         <translation>   - Indice de prélevement câble moyen (estimation) [m3/m]: </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2617"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2594"/>
         <source>   - Average tree volume (estimate) [m3]                 </source>
-        <translation>   - Volume de l&apos;arbre moyen (estimation) [m3]                 </translation>
+        <translation>   - Volume de l'arbre moyen (estimation) [m3]                 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2618"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2595"/>
         <source>Criteria taken into account for the selection:           </source>
         <translation>Critère(s) pris en compte dans la sélection des lignes:           </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2619"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2596"/>
         <source>Lateral yarding distance                             </source>
         <translation>Distance laterale de pechage des bois                             </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2620"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2597"/>
         <source>Proportion of stand volume removed                   </source>
         <translation>Taux de prelevement du volume sur pied                   </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2717"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2694"/>
         <source>From existing cable starts</source>
         <translation>Depuis les departs de cable existant</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2718"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2695"/>
         <source>From potential cable start</source>
         <translation>Depuis les departs de cable en projet</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3706"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3681"/>
         <source>Total accessible forest</source>
         <translation>Total foret accessible</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3707"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3682"/>
         <source>Total unaccessible forest</source>
         <translation>Total foret inaccessible</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2721"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2698"/>
         <source>    including impossible manual felling</source>
         <translation>    dont non bucheronnable</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2722"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2699"/>
         <source>Total forest area</source>
         <translation>Superficie totale de la foret</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2723"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2700"/>
         <source>Total number of lines</source>
         <translation>Nombre total de ligne</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2724"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2701"/>
         <source>    + With uphill yarding</source>
-        <translation>    + Dont debardage vers l&apos;amont</translation>
+        <translation>    + Dont debardage vers l'amont</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2725"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2702"/>
         <source>    + With downhill yarding</source>
-        <translation>    + Dont debardage vers l&apos;aval</translation>
+        <translation>    + Dont debardage vers l'aval</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2726"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2703"/>
         <source>Average length of the line (m)</source>
         <translation>Longueur moyenne des lignes (m)</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2727"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2704"/>
         <source>Average number of intermediate support</source>
         <translation>Nombre moyen de pylone intermediaire</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2812"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2789"/>
         <source>Pre-processing of the inputs for cable model
 </source>
         <translation>Pre-traitement des entrees pour le modele cable
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4092"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4067"/>
         <source>    - Forest raster processed</source>
         <translation>    - Raster de foret termine</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2847"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2824"/>
         <source>    - Cable obstacles processed</source>
         <translation>    - Obstacles pour le cable traites</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2879"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2856"/>
         <source>    - Potential cable yarding starts processed</source>
         <translation>    - Departs de cables potentiels identifies</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2895"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2872"/>
         <source>    - Table of coordinates created</source>
         <translation>    - Table des coordonnees creee</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2902"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2879"/>
         <source>
 Cable input data processing achieved
 </source>
@@ -852,17 +852,17 @@ Pre-traitement des entrees pour le cable termine
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2907"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2884"/>
         <source>Selection of the best lines based on user criteria.</source>
-        <translation>Selection des meilleures lignes en fonction des criteres de l&apos;utilisateur.</translation>
+        <translation>Selection des meilleures lignes en fonction des criteres de l'utilisateur.</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2910"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2887"/>
         <source>Start of the best lines selection according to user criteria.</source>
-        <translation>Selection des meilleures lignes en fonction des criteres de l&apos;utilisateur.</translation>
+        <translation>Selection des meilleures lignes en fonction des criteres de l'utilisateur.</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2931"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2908"/>
         <source>    - Processing new line characteristics with new input data...</source>
         <translation>    - Recalcule les caracteristiques des lignes avec les nouvelles couches...</translation>
     </message>
@@ -877,42 +877,42 @@ Pre-traitement des entrees pour le cable termine
         <translation type="obsolete">Pente.npy</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3007"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2984"/>
         <source>Impossible optimization on volume/ipc criteria (no information available).</source>
         <translation>Optimisation impossible sur le volume/ipc car aucune information disponible.</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3013"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2990"/>
         <source>Impossible optimization on average tree volume criteria (no information available).</source>
-        <translation>Optimisation impossible sur le volume de l&apos;arbre moyen car aucune information disponible.</translation>
+        <translation>Optimisation impossible sur le volume de l'arbre moyen car aucune information disponible.</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3026"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3003"/>
         <source>Optimization</source>
         <translation>Optimisation</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3031"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3008"/>
         <source>ID_pixel Azimuth_deg X_Start Y_Start Elevation_Start Hcable_Start X_End Y_End Elevation_End Hcable_End </source>
         <translation>ID_pixel Azimuth_deg X_debut Y_debut Alt_debut Hcable_debut X_fin Y_fin Alt_fin Hcable_fin </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3032"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3009"/>
         <source>Existing_road Cable_length Configuration </source>
         <translation>Etat_RouteFor Longueur_reelle Configuration </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3033"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3010"/>
         <source>Forest_area Carriage_average_distance Volume_total ATV NB_int_sup</source>
         <translation>Surface_foret Distance_moy_chariot Volume_total VAM NB_int_sup</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3035"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3012"/>
         <source>Elevation_intsup</source>
         <translation>Alt_intsup</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3037"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3014"/>
         <source>IPC cost</source>
         <translation>IPC cout</translation>
     </message>
@@ -932,57 +932,57 @@ Pre-traitement des entrees pour le cable termine
         <translation type="obsolete">Vol_AM.npy</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3072"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3049"/>
         <source>Selection of the best cable lines achieved.</source>
         <translation>Selection des meilleures lignes de cable terminee.</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3094"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3069"/>
         <source>Starting the skidder model</source>
         <translation>Debut de Sylvaccess-Cable</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3111"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3086"/>
         <source>Error: Please define a projection for the DTM raster.</source>
         <translation>Erreur: veuillez definir une projection pour le raster MNT.</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3187"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3162"/>
         <source>    - Initialization achieved, processing...</source>
         <translation>    - Initialisation achevee, debut de traitement...</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3243"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3218"/>
         <source>    - Skidding distance from forest roads network calculated</source>
         <translation>    - Distance de trainage depuis la desserte forestieres calculee</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3252"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3227"/>
         <source>    - Winching distance from forest roads calculated</source>
         <translation>    - Distance de debusquage depuis les routes forestieres calculee</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3261"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3236"/>
         <source>    - Winching distance from forest tracks calculated</source>
         <translation>    - Distance de debusquage depuis les pistes forestieres calculee</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3371"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3346"/>
         <source>    - First concatenation done</source>
         <translation>    - Concatenation 1 terminee</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3417"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3392"/>
         <source>    - Distance de debusquage depuis le contour de la zone parcourable calculee</source>
         <translation>    - Distance de debusquage depuis le contour de la zone parcourable calculee</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3466"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3441"/>
         <source>    - Concatenation des resultats terminee. Sauvegarde en cours...</source>
         <translation>    - Concatenation des resultats terminee. Sauvegarde en cours...</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3495"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3470"/>
         <source>Sylvaccess : AUTOMATIC MAPPING OF FOREST ACCESSIBILITY WITH SKIDDER
 
 
@@ -993,22 +993,22 @@ Pre-traitement des entrees pour le cable termine
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4827"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4802"/>
         <source>Date and time when launching the script:              </source>
         <translation>Date et heure de lancement du script:              </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4828"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4803"/>
         <source>Date and time at the end of execution of the script:  </source>
-        <translation>Date et heure a la fin de l&apos;execution du script:  </translation>
+        <translation>Date et heure a la fin de l'execution du script:  </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4829"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4804"/>
         <source>Total execution time of the script:                   </source>
-        <translation>Temps total d&apos;execution du script:                   </translation>
+        <translation>Temps total d'execution du script:                   </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4831"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4806"/>
         <source>PARAMETERS USED FOR THE MODELING:
 
 </source>
@@ -1017,105 +1017,105 @@ Pre-traitement des entrees pour le cable termine
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3506"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3481"/>
         <source>   - Maximum uphill distance for winching:                        </source>
         <translation>   - Distance maximale de debusquage en amont de la desserte :                        </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3507"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3482"/>
         <source>   - Maximum downhill distance for winching:                      </source>
         <translation>   - Distance maximale de debusquage en aval de la desserte  :       </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3508"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3483"/>
         <source>   - Maximum slope to get maximum uphill winching distance:       </source>
         <translation>   - Pente au-dela de laquelle le debusquage amont = distance max :  </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3509"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3484"/>
         <source>   - Maximum slope to get maximum downhill winching distance:     </source>
         <translation>   - Pente au-dela de laquelle le debusquage aval  = distance max :  </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3510"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3485"/>
         <source>   - Maximum distance outside forest and forest road network:     </source>
         <translation>   - Distance maximale parcourable hors foret et hors desserte :     </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4837"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4812"/>
         <source>   - Maximum slope for a free access of the parcels with skidder: </source>
         <translation>   - Pente maximale pour parcourir le terrain en skidder :           </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4838"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4813"/>
         <source>   - Maximum slope for manual felling of the trees:               </source>
-        <translation>   - Pente maximale pour l&apos;abattage manuel des arbres :              </translation>
+        <translation>   - Pente maximale pour l'abattage manuel des arbres :              </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3513"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3488"/>
         <source>   - Simulation option:
 </source>
         <translation>   - Option de simulation :
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3515"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3490"/>
         <source>      * Limit soil damages: force the skidder to process as much as possible 
 </source>
-        <translation>      * Limiter l&apos;impact sur les sols : forcer le skidder a proceder autant que possible
+        <translation>      * Limiter l'impact sur les sols : forcer le skidder a proceder autant que possible
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3516"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3491"/>
         <source>        from the forest road network
 </source>
         <translation>        depuis le reseau de desserte forestiere
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3518"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3493"/>
         <source>      * Limit winching distances: force the skidder to go as close as possible
 </source>
         <translation>      * Limiter le débusquage des bois : forcer le skidder à se rapprocher autant
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3519"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3494"/>
         <source>        to the timber
 </source>
         <translation>        que possible des grumes de bois
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3521"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3496"/>
         <source>      * Simulation with areas where skidder operations are forbidden (Full obstacles)
 </source>
-        <translation>      * Prise en compte de zones totalement interdites a l&apos;exploitation par skidder
+        <translation>      * Prise en compte de zones totalement interdites a l'exploitation par skidder
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3523"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3498"/>
         <source>      * Simulation with areas where skidding is forbidden but winching possible (Partial obstacles)
 </source>
         <translation>      * Prise en compte de zones ou le trainage des bois est interdit
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4843"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4818"/>
         <source>      !!! Warning !!! Some forest tracks are not connected to public network.
 </source>
         <translation>      !!! Attention !!! Certaines pistes forestières ne sont pas connectée.
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4844"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4819"/>
         <source>      They were removed from the analysis.
 </source>
-        <translation>      Elles ont été exclues de l&apos;analyse.
+        <translation>      Elles ont été exclues de l'analyse.
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3532"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3507"/>
         <source>      !!! Warning !!! Some forest roads are not connected to public network.
 </source>
         <translation>
@@ -1124,7 +1124,7 @@ Pre-traitement des entrees pour le cable termine
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3542"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3517"/>
         <source>Skidder model finished</source>
         <translation>Modele skidder termine</translation>
     </message>
@@ -1143,147 +1143,147 @@ Pre-traitement des entrees pour le cable termine
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3708"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3683"/>
         <source>    --&gt; including impossible manual felling</source>
         <translation>    --&gt;dont non bucheronnable</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3711"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3686"/>
         <source>Total area of forest :</source>
         <translation>Surface total de forêt :</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3797"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3772"/>
         <source>Total supplementary forest area</source>
         <translation>Total foret accessible supplementaire</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3798"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3773"/>
         <source>Impacted forest area</source>
         <translation>Surface de forêt impactée</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3854"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3829"/>
         <source>Non-forest area</source>
         <translation>Zone hors foret</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3854"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3829"/>
         <source>Inaccessible forest</source>
         <translation>Inaccessible</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3854"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3829"/>
         <source>Non harvestable (too steep slope)</source>
         <translation>Zone non exploitable (pente trop elevee)</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3863"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3838"/>
         <source>Accessible - Skidding class </source>
         <translation>Accessible - Classe de debardage </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4071"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4046"/>
         <source>Pre-processing of the inputs for skidder model</source>
         <translation>Preparation des entrees pour le modele skidder</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4109"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4084"/>
         <source>    - Slope raster processed</source>
         <translation>    - Raster de foret cree</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4356"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4331"/>
         <source>    - Forest road processed</source>
         <translation>    - Raster de pente cree</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4353"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4328"/>
         <source>    - Some forest tracks are not connected to public network or forest road.</source>
         <translation>    - Certaines routes forestieres ne sont pas connectees au reseau public. Pour voir ou elles se trouvent, ouvrir le raster.</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4192"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4167"/>
         <source>    - Forest tracks processed</source>
         <translation>    - Routes forestieres traitees</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4207"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4182"/>
         <source>    - Skidder total obstacle raster processed</source>
-        <translation>    - Raster d&apos;obstacles complet cree</translation>
+        <translation>    - Raster d'obstacles complet cree</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4216"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4191"/>
         <source>    - Skidder partial obstacle raster processed</source>
-        <translation>    - Raster d&apos;obstacles partiels cree</translation>
+        <translation>    - Raster d'obstacles partiels cree</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4372"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4347"/>
         <source>Input data processing achieved</source>
-        <translation>Pre-traitement des donnees d&apos;entree termine</translation>
+        <translation>Pre-traitement des donnees d'entree termine</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4236"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4211"/>
         <source>Pre-processing of the inputs for forwarder model</source>
         <translation>Preparation des entrees pour le modele porteur</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4256"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4231"/>
         <source>    - Forest raster processe</source>
         <translation>    - Raster de foret cree</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4274"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4249"/>
         <source>    - Slope and aspects rasters processed</source>
-        <translation>    - Rasters de pente et d&apos;exposition crees</translation>
+        <translation>    - Rasters de pente et d'exposition crees</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4318"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4293"/>
         <source>    - Some forest road are not connected to public network. To see where, check raster </source>
         <translation>    - Certaines routes forestieres ne sont pas connectees au reseau public. Pour voir ou elles se trouvent, ouvrir le raster </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4371"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4346"/>
         <source>    - Forwarder obstacles raster processed</source>
-        <translation>    - Raster d&apos;obstacles cree</translation>
+        <translation>    - Raster d'obstacles cree</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4384"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4359"/>
         <source>Sylvaccess - Forwarder starts</source>
         <translation>Debut de Sylvaccess - Porteur</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4401"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4376"/>
         <source>Error: please define a projection for the DTM raster</source>
         <translation>Erreur: veuillez definir une projection pour le raster MNT</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4485"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4460"/>
         <source>    - Initialization achieved</source>
         <translation>    - Initialisation terminee</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4670"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4645"/>
         <source>    - Directly passable area identified</source>
         <translation>    - Surface directement parcourable identifiee</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4724"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4699"/>
         <source>    - Accessible area in slope identified</source>
         <translation>    - Surface en pente accessible identifiee</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4789"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4764"/>
         <source>    - Area reachable with the boom added</source>
         <translation>    - Surface accessible avec la grue ajoutee</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4790"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4765"/>
         <source>Forwarder</source>
         <translation>Porteur</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4821"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4796"/>
         <source>Sylvaccess : AUTOMATIC MAPPING OF FOREST ACCESSIBILITY WITH FORWARDER
 
 
@@ -1294,37 +1294,37 @@ Pre-traitement des entrees pour le cable termine
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4825"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4800"/>
         <source>Resolution       : </source>
         <translation>Resolution           : </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4832"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4807"/>
         <source>   - Maximum perpendicular lateral inclination (MPLI):            </source>
         <translation>   - Pente en travers maximale :            </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4833"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4808"/>
         <source>   - Maximum slope for an uphill yarding:                         </source>
         <translation>   - Pente maximale en remontant les bois  :                         </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4834"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4809"/>
         <source>   - Maximum slope for an downhill yarding:                       </source>
         <translation>   - Pente maximale en descendant les bois :                       </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4835"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4810"/>
         <source>   - Boom reach:                                                  </source>
         <translation>   - Portee de la grue:                                                  </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4836"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4811"/>
         <source>   - Maximum yarding distance when terrain slope &gt; MPLI:          </source>
         <translation>   - Distance maximale quand pente &gt; pente en travers max :          </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4847"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4822"/>
         <source>
 
       !!! Warning !!! Some forest roads are not connected to public network.
@@ -1335,24 +1335,24 @@ Pre-traitement des entrees pour le cable termine
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4852"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4827"/>
         <source>Forwarder accessibility processed</source>
         <translation>Accessibilite avec porteur terminee</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1298"/>
         <source>Error: Could not open the raster file</source>
-        <translation type="obsolete">Erreur&#xa0;: Impossible d’ouvrir le fichier raster</translation>
+        <translation type="obsolete">Erreur : Impossible d’ouvrir le fichier raster</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1304"/>
         <source>Error: Could not get the geotransform of the raster</source>
-        <translation type="obsolete">Erreur&#xa0;: Impossible d’obtenir la géotransformation du raster</translation>
+        <translation type="obsolete">Erreur : Impossible d’obtenir la géotransformation du raster</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1326"/>
         <source>Error: Could not crop the raster</source>
-        <translation type="obsolete">Erreur&#xa0;: Impossible de redécouper le raster</translation>
+        <translation type="obsolete">Erreur : Impossible de redécouper le raster</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1333"/>
@@ -1360,317 +1360,317 @@ Pre-traitement des entrees pour le cable termine
         <translation type="obsolete">Redimmensionnement du raster à la taille du MNT réussi</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="940"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="927"/>
         <source>skidder Analysis</source>
         <translation>Analyse pour le skidder</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="940"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="927"/>
         <source>Forwarder Analysis</source>
         <translation>Analyse pour le porteur</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="940"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="927"/>
         <source>Cable Yarding Analysis</source>
         <translation>Analyse pour le cable</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="940"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="927"/>
         <source>Optimize Cable Line</source>
         <translation>Optimisation des lignes de câble</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="940"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="927"/>
         <source>Maximum slope for manual harvesting</source>
         <translation>Pente maximale pour le bûcheronnage manuel</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="946"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="933"/>
         <source>Workspace</source>
         <translation>Espace de travail</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="946"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="933"/>
         <source>Result Space</source>
         <translation>Dossier de résultats</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="946"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="933"/>
         <source>DTM file</source>
         <translation>Fichier MNT</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="946"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="933"/>
         <source>Forest area file</source>
         <translation>Raster Forêt</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="946"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="933"/>
         <source>Forest road network</source>
         <translation>Desserte ( Skidder et porteur )</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="946"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="933"/>
         <source>Cable Crane start point</source>
         <translation>Départs potentiels de câble</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="946"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="933"/>
         <source>Skidder, area where winching and skidding are forbidden</source>
         <translation>Skidder : zone où le trainage et le débusquage sont impossible</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="946"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="933"/>
         <source>Skidder, area where skidding is forbidden</source>
         <translation>Skidder : zone où seul le trainage est immposible</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="946"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="933"/>
         <source>Forwarder, obstacles for the free movement of the machine</source>
-        <translation>Porteur : obstacles pour la circulation de l&apos;engin</translation>
+        <translation>Porteur : obstacles pour la circulation de l'engin</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="946"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="933"/>
         <source>Cable yarding, obstacles for the set-up of cable line</source>
         <translation>Câble : obstacles pour la mise en place des lignes</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="946"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="933"/>
         <source>Height of the trees</source>
         <translation>Hauteur des arbres</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>Average tree volume</source>
-        <translation>volume de l&apos;arbre moyen</translation>
+        <translation>volume de l'arbre moyen</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="998"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="985"/>
         <source>Volume per hectare</source>
         <translation>Volume de bois sur pieds</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="956"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="943"/>
         <source>Maximal slope outside forest network for the skidder</source>
         <translation>Pente maximale hors desserte pour le skidder</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="956"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="943"/>
         <source>Maximum uphill winching distance</source>
         <translation>Distance maximale de débusquage en amont de la desserte</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="956"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="943"/>
         <source>Maximum downhill winching distance</source>
         <translation>Distance maximale de débusquage en aval de la desserte</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="956"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="943"/>
         <source>Maximal distance outside forest</source>
         <translation>Distance maximale autorisée hors desserte et hors forêt</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="956"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="943"/>
         <source>Slope from which uphill winching reaches maximum distance</source>
         <translation>Pente à partir de laquelle le débusquage amont atteint la distance maximale</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="956"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="943"/>
         <source>Slope from which downhill winching reaches maximum distance</source>
         <translation>Pente à partir de laquelle le débusquage aval atteint la distance maximale</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="956"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="943"/>
         <source>Simulation option</source>
         <translation>Option de simulation</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="962"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="949"/>
         <source>Classes of skidding distance (Total distance in meters)</source>
         <translation>Classes de facilité du débardage (Distance totale de débardage)</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="962"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="949"/>
         <source>Maximum lateral inclination of the machine</source>
         <translation>Pente en travers maximale</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="962"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="949"/>
         <source>Maximum slope for a uphill yarding</source>
         <translation>Pente maximale en remontant les bois</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="962"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="949"/>
         <source>Maximum slope for a downhill yarding</source>
         <translation>Pente maximale en descendant les bois</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="962"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="949"/>
         <source>Maximum yarding distance when slope is greater than the maximum lateral inclination of the machine</source>
         <translation>Distance maximale de portage quand la pente est supérieure à la pente en travers maximale</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="962"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="949"/>
         <source>Maximum distance outside forest</source>
         <translation>Distance maximale hors forêt</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="962"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="949"/>
         <source>Length of the hoist</source>
         <translation>Longueur de la grue</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="968"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="955"/>
         <source>Type of material</source>
         <translation>Type de machine</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="968"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="955"/>
         <source>Maximum number of intermediate supports</source>
         <translation>Nombre max de supports intermédiaires</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="968"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="955"/>
         <source>Crane height</source>
         <translation>Hauteur du mât</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="968"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="955"/>
         <source>Maximum skyline length</source>
         <translation>Longueur max du câble porteur</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="968"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="955"/>
         <source>Minimum skyline length</source>
         <translation>Longueur min du câble porteur</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="974"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="961"/>
         <source>Carriage type</source>
         <translation>Type de chariot</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="974"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="961"/>
         <source>Empty weigth</source>
         <translation>Masse à vide</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="974"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="961"/>
         <source>Minimum slope for a gravity descent of the carriage</source>
         <translation>Pente min. pour descente du chariot par gravité</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="974"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="961"/>
         <source>Maximum slope of the skyline for an uphill yarding</source>
         <translation>Pente maximale en remontant les bois</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="974"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="961"/>
         <source>Maximum slope of the skyline for an downhill yarding</source>
         <translation>Pente maximale en descendant les bois</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="980"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="967"/>
         <source>Diameter</source>
         <translation>Diamètre</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="980"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="967"/>
         <source>Skyline self-weight</source>
         <translation>Masse linéique</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="980"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="967"/>
         <source>Breakdown tensile force</source>
         <translation>Tension de rupture</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="980"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="967"/>
         <source>Young Modulus ( Elasticity)</source>
         <translation>Module de Young (Elasticité)</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="985"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="972"/>
         <source>Modeling parameters</source>
         <translation>Paramètres de modélisation</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="985"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="972"/>
         <source>Options</source>
         <translation>Options</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="985"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="972"/>
         <source>Cable yarding - Optimization of cable parameters</source>
         <translation>Câble - Optimisation des lignes</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="985"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="972"/>
         <source>Criteria used for optimization</source>
-        <translation>Critères utilisés pour l&apos;optimisation</translation>
+        <translation>Critères utilisés pour l'optimisation</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="992"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="979"/>
         <source>Optimize skyline height at intermediate supports and tailspar</source>
-        <translation>Optimiser la hauteur de fixation du câble aux pylônes intermédiaires et à l&apos;ancrage</translation>
+        <translation>Optimiser la hauteur de fixation du câble aux pylônes intermédiaires et à l'ancrage</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="992"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="979"/>
         <source>Precision of the modeling</source>
         <translation>Précision de la modélisation câble</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="998"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="985"/>
         <source>Percentage of volume per hectare taken off</source>
         <translation>Prélevement (% du volume sur pied)</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="998"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="985"/>
         <source>Re-compute</source>
         <translation>Recalculer</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="998"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="985"/>
         <source>Result folder</source>
         <translation>Dossier de résultats</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="998"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="985"/>
         <source>Forest file</source>
         <translation>Raster forêt</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="998"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="985"/>
         <source>Lateral yarding distance</source>
         <translation>Distance latérale de pêchage</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>Forest area impacted</source>
         <translation>Surface de forêt impactée</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>--&gt;Forest area impacted weight</source>
         <translation>--&gt; Poids surface de forêt impactée</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>Number of intermediate supports</source>
         <translation>Nombre de support(s) intermédiaire(s)</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>--&gt;Number of intermediate supports weight</source>
         <translation>--&gt; Poids nombre max de supports intermédiaires</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>Prefered yarding direction</source>
         <translation>Sens de débardage à privilégier</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>--&gt;Prefered yarding direction weight</source>
         <translation>--&gt; Poids sens de débardage à privilégier</translation>
     </message>
@@ -1680,98 +1680,98 @@ Pre-traitement des entrees pour le cable termine
         <translation type="obsolete">Longueur total de la ligne</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>--&gt;Average tree volume weight</source>
-        <translation>--&gt; Poids vol. de l&apos;arbre moyen (raster)</translation>
+        <translation>--&gt; Poids vol. de l'arbre moyen (raster)</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>Total volume per line</source>
         <translation>Volume total de la ligne</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>--&gt;Total volume per line weight</source>
         <translation>--&gt; Poids volume total de la ligne</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>Volume per meter of line</source>
         <translation>Indice de prélèvement câble</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>--&gt;Volume per meter of line weight</source>
         <translation>--&gt; Poids indice de prélèvement câble</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>Carriage average distance</source>
         <translation>Distance moyenne du chariot</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>--&gt;Carriage average distance weight</source>
         <translation>--&gt; Poids distance moyenne du chariot</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>Line length</source>
         <translation>Longueur total de la ligne</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1691"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1668"/>
         <source>Plugin&apos;s version: </source>
         <translation>version du plugun: </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1691"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1668"/>
         <source>from </source>
         <translation>du </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2716"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2693"/>
         <source>Surface area (ha)</source>
         <translation>Surface (ha)</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2716"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2693"/>
         <source>Surface (%)</source>
         <translation>Surface (%)</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2716"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2693"/>
         <source>Volume (m3)</source>
         <translation>Volume sur pied (m3)</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2716"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2693"/>
         <source>Volume (%)</source>
         <translation>Volume (%)</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="2914"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="2891"/>
         <source>Please run first the Sylvaccess cable.</source>
-        <translation>Veuillez d&apos;abord faire tourner le modele cable.</translation>
+        <translation>Veuillez d'abord faire tourner le modele cable.</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4824"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4799"/>
         <source>Software version :</source>
         <translation>Software version :</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="4824"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="4799"/>
         <source> - </source>
         <comment>skidder_results</comment>
         <translation> du </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3499"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3474"/>
         <source> m </source>
         <translation> m </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3685"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3660"/>
         <source>Total yarding distance |   Surface area (ha)   | Surface per class (%) |Cumulative surface (ha)|Cumulative surface (%) 
 </source>
         <comment> each section between | has to be 23 character wide to retain the layout</comment>
@@ -1779,7 +1779,7 @@ Pre-traitement des entrees pour le cable termine
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="3686"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="3661"/>
         <source>Total yarding distance |      Volume (m3)      | Volume per class (%)  |Cumulative volume (m3) |Cumulative volume (%) 
 </source>
         <comment> each section between | has to be 23 character wide to retain the layout</comment>
@@ -1787,29 +1787,29 @@ Pre-traitement des entrees pour le cable termine
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1004"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="991"/>
         <source>--&gt;Line length weight</source>
         <translation>--&gt; Pois longueur total de la ligne</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="1299"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="1277"/>
         <source>Error: </source>
         <translation>Erreure: </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="949"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="936"/>
         <source>No data</source>
         <translation>Pas de données</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="369"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="356"/>
         <source>
 SIMULATION FROM EXISTING SERVICE</source>
         <translation>
 SIMULATION DEPUIS LE SERVICE EXISTANT</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="395"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="382"/>
         <source>
 SIMULATION INCLUDING THE SERVICE PROJECT</source>
         <translation>
@@ -1818,12 +1818,12 @@ SIMULATION INCLUANT LE PROJET SERVICE</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1275"/>
         <source>Error: Could not open the main raster file</source>
-        <translation>Erreur : impossible d&apos;ouvrir le raster principal</translation>
+        <translation type="obsolete">Erreur : impossible d'ouvrir le raster principal</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1281"/>
         <source>Error: Could not get the geotransform of the main raster</source>
-        <translation>Erreur: imposible d&apos;obtenir la géotransforlation du raster principale</translation>
+        <translation type="obsolete">Erreur: imposible d'obtenir la géotransforlation du raster principale</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="1314"/>
@@ -1831,21 +1831,27 @@ SIMULATION INCLUANT LE PROJET SERVICE</translation>
         <translation type="obsolete">Erreur: Le raster est plus petit que le MNT. Merci de le mettre à la bonne taille.</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="475"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="461"/>
         <source> -   Forest layer: The file must be a shapefile or a geopackage !NOT ALWAYS TRUE,KINDA BUGGED
 </source>
-        <translation> -   Couche forêt&#xa0;: Le fichier doit être un fichier shapefile ou un géopackage!PAS TOUJOURS VRAI,ERREUR BUGGÉ
+        <translation> -   Couche forêt : Le fichier doit être un fichier shapefile ou un géopackage!PAS TOUJOURS VRAI,ERREUR BUGGÉ
 </translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="117"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="106"/>
         <source>Select a file</source>
         <translation>Choisir un fichier</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog.py" line="120"/>
+        <location filename="../sylvaccess_plugin_dialog.py" line="109"/>
         <source>Select a folder</source>
         <translation>Choisir un dossier</translation>
+    </message>
+    <message>
+        <location filename="../sylvaccess_plugin_dialog.py" line="492"/>
+        <source>: The raster was oversized but it was cropped to the right side 
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1863,32 +1869,32 @@ SIMULATION INCLUANT LE PROJET SERVICE</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="99"/>
         <source>choose which analysis to do </source>
-        <translation>Choisir l&apos;analyse a faire </translation>
+        <translation>Choisir l'analyse a faire </translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="121"/>
         <source>Forest operating systems to process</source>
-        <translation>Systèmes d&apos;exploitation à tester</translation>
+        <translation>Systèmes d'exploitation à tester</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="133"/>
         <source>Perform skidder analysis</source>
-        <translation>Effectuer l&apos;analyse pour le skidder</translation>
+        <translation>Effectuer l'analyse pour le skidder</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="145"/>
         <source>Perform forwarder analysis</source>
-        <translation>Effectuer l&apos;analyse pour le porteur</translation>
+        <translation>Effectuer l'analyse pour le porteur</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="160"/>
         <source>Perform cable yarding analysis</source>
-        <translation>Effectuer l&apos;analyse pour le cable</translation>
+        <translation>Effectuer l'analyse pour le cable</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="175"/>
         <source>Select best cable lines according to several criteria</source>
-        <translation>Optimiser l&apos;emplacement des lignes de câble</translation>
+        <translation>Optimiser l'emplacement des lignes de câble</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="204"/>
@@ -1978,7 +1984,7 @@ SIMULATION INCLUANT LE PROJET SERVICE</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="772"/>
         <source>Mandatory for cable analysis :</source>
-        <translation>nécessaire pour l&apos;analyse du câble :</translation>
+        <translation>nécessaire pour l'analyse du câble :</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="788"/>
@@ -1993,12 +1999,12 @@ SIMULATION INCLUANT LE PROJET SERVICE</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="852"/>
         <source>Forwarder: obstacles for the free movement of the machine</source>
-        <translation>Porteur : obstacles pour la circulation de l&apos;engin</translation>
+        <translation>Porteur : obstacles pour la circulation de l'engin</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4139"/>
         <source>Average tree volume</source>
-        <translation>volume de l&apos;arbre moyen</translation>
+        <translation>volume de l'arbre moyen</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="949"/>
@@ -2023,7 +2029,7 @@ SIMULATION INCLUANT LE PROJET SERVICE</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="1263"/>
         <source>Spatial data required for cable line optimization</source>
-        <translation>Données spatiales requises pour l&apos;optimisation des lignes de câble</translation>
+        <translation>Données spatiales requises pour l'optimisation des lignes de câble</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="1277"/>
@@ -2083,7 +2089,7 @@ SIMULATION INCLUANT LE PROJET SERVICE</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="1728"/>
         <source>Limit soil damages: force the skidder to proceed from the forest road network</source>
-        <translation>Limiter l&apos;impact sur les sols : forcer le skidder à procéder autant que possible depuis le réseau de desserte forestière</translation>
+        <translation>Limiter l'impact sur les sols : forcer le skidder à procéder autant que possible depuis le réseau de desserte forestière</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="1749"/>
@@ -2233,7 +2239,7 @@ SIMULATION INCLUANT LE PROJET SERVICE</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="2723"/>
         <source>for an uphill yarding (%)</source>
-        <translation>un débardage vers l&apos;amont (%)</translation>
+        <translation>un débardage vers l'amont (%)</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="2749"/>
@@ -2268,7 +2274,7 @@ SIMULATION INCLUANT LE PROJET SERVICE</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="2984"/>
         <source>for an downhill yarding (%)</source>
-        <translation>un débardage vers l&apos;aval (%)</translation>
+        <translation>un débardage vers l'aval (%)</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="2998"/>
@@ -2358,7 +2364,7 @@ SIMULATION INCLUANT LE PROJET SERVICE</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="3797"/>
         <source>intermediate supports and tailspar</source>
-        <translation>aux pylônes intermédiaires et à l&apos;ancrage</translation>
+        <translation>aux pylônes intermédiaires et à l'ancrage</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="3811"/>
@@ -2373,12 +2379,12 @@ SIMULATION INCLUANT LE PROJET SERVICE</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="3858"/>
         <source>Parameters for cable line optimization analysis</source>
-        <translation>Parametres pour l&apos;optimisation des lignes de câble</translation>
+        <translation>Parametres pour l'optimisation des lignes de câble</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="3880"/>
         <source>Cable yarding - Optimization of cable yarding management plan </source>
-        <translation>Module câble - Optimisation d&apos;un plan de câblage </translation>
+        <translation>Module câble - Optimisation d'un plan de câblage </translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="3927"/>
@@ -2388,7 +2394,7 @@ SIMULATION INCLUANT LE PROJET SERVICE</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="3934"/>
         <source>Average tree volume (raster)</source>
-        <translation>Vol. de l&apos;arbre moyen (raster)</translation>
+        <translation>Vol. de l'arbre moyen (raster)</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="3941"/>
@@ -2418,7 +2424,7 @@ SIMULATION INCLUANT LE PROJET SERVICE</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4026"/>
         <source>Criteria used for optimization</source>
-        <translation>Critères utilisés pour l&apos;optimisation</translation>
+        <translation>Critères utilisés pour l'optimisation</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4042"/>
@@ -2463,12 +2469,12 @@ SIMULATION INCLUANT LE PROJET SERVICE</translation>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4165"/>
         <source>-1 : Downhill</source>
-        <translation>-1 : Vers l&apos;aval</translation>
+        <translation>-1 : Vers l'aval</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4175"/>
         <source>1 : Uphill</source>
-        <translation>1 : Vers l&apos;amont</translation>
+        <translation>1 : Vers l'amont</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4185"/>
