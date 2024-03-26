@@ -24,7 +24,6 @@
 import os,gc,datetime
 from qgis.PyQt.QtCore import QCoreApplication
 import numpy as np
-import math
 from .gis import ArrayToGtiff, load_float_raster_simple, get_proj_from_road_network, get_source_src, shapefile_obs_to_np_array, shapefile_to_np_array,load_float_raster
 from .general import heures, raster_get_info, read_info, clear_big_nparray, from_az_to_arr
 from .function_np import focal_stat_max, focal_stat_nb, calcul_distance_de_cout, Dfwd_flat_forest_tracks, Dfwd_flat_forest_road, skid_debusq_RF, skid_debusq_Piste, fill_Link, skid_debusq_contour, pente, Link_RF_res_pub, Link_tracks_res_pub
@@ -103,8 +102,8 @@ def Skidder(Wspace, Rspace, file_MNT, file_shp_Foret, file_shp_Desserte, Dir_Ful
     # Calculation of useful variables for the model process
     Pmax_up = float(abs(Pmax_amont)) / 100.0
     Pmax_down = -float(abs(Pmax_aval)) / 100.0
-    deniv_up = math.sqrt(float(Dtreuil_max_up * Dtreuil_max_up) / float(1 + 1.0 / float(Pmax_up * Pmax_up)))
-    deniv_down = -math.sqrt(float(Dtreuil_max_down * Dtreuil_max_down) / float(1 + 1.0 / float(Pmax_down * Pmax_down)))
+    deniv_up = np.sqrt(float(Dtreuil_max_up * Dtreuil_max_up) / float(1 + 1.0 / float(Pmax_up * Pmax_up)))
+    deniv_down = -np.sqrt(float(Dtreuil_max_down * Dtreuil_max_down) / float(1 + 1.0 / float(Pmax_down * Pmax_down)))
     coeff = float(Dtreuil_max_up - Dtreuil_max_down) / float(deniv_up - deniv_down)
     orig = Dtreuil_max_up - coeff * deniv_up
     Csize = values[4]

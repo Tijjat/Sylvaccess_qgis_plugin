@@ -65,7 +65,7 @@ THE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY:
         <location filename="../sylvaccess_plugin_dialog.py" line="454"/>
         <source> -   Service layer: The &apos;CL_SVAC&apos; field is missing
 </source>
-        <translation> -   Service layer: The 'CL_SVAC' field is missing
+        <translation> -   Service layer: The &apos;CL_SVAC&apos; field is missing
 </translation>
     </message>
     <message>
@@ -79,7 +79,7 @@ THE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY:
         <location filename="../sylvaccess_plugin_dialog.py" line="463"/>
         <source> -   Service layer: The &apos;CABLE&apos; field is missing
 </source>
-        <translation> -   Service layer: The 'CABLE' field is missing
+        <translation> -   Service layer: The &apos;CABLE&apos; field is missing
 </translation>
     </message>
     <message>
@@ -93,7 +93,7 @@ THE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY:
         <location filename="../sylvaccess_plugin_dialog.py" line="473"/>
         <source> -   Forest layer: The &apos;FOREST&apos; field is missing
 </source>
-        <translation> -   Forest layer: The 'FOREST' field is missing
+        <translation> -   Forest layer: The &apos;FOREST&apos; field is missing
 </translation>
     </message>
     <message>
@@ -107,7 +107,7 @@ THE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY:
         <location filename="../sylvaccess_plugin_dialog.py" line="486"/>
         <source> -   Forest layer (optimization cable tab): The &apos;FOREST&apos; field is missing
 </source>
-        <translation> -   Forest layer (optimization cable tab): The 'FOREST' field is missing
+        <translation> -   Forest layer (optimization cable tab): The &apos;FOREST&apos; field is missing
 </translation>
     </message>
     <message>
@@ -121,7 +121,8 @@ THE FOLLOWING PROBLEMS HAVE BEEN IDENTIFIED WITH REGARD TO SPATIAL ENTRY:
         <location filename="../sylvaccess_plugin_dialog.py" line="492"/>
         <source> -   Forest layer (optimization cable tab): The file must be a shapefile or a geopackage
 </source>
-        <translation type="unfinished"></translation>
+        <translation> -   Forest layer (optimization cable tab): The file must be a shapefile or a geopackage
+</translation>
     </message>
     <message>
         <location filename="../sylvaccess_plugin_dialog.py" line="495"/>
@@ -201,17 +202,17 @@ PLEASE CORRECT BEFORE RELAUNCHING SYLVACCESS
         <translation type="obsolete">Optimize skyline height at interlediate supports and tailspar</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="72"/>
+        <location filename="../cable.py" line="71"/>
         <source>Error: please define a projection for DTM raster</source>
         <translation>Error: please define a projection for MNT raster</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="186"/>
+        <location filename="../cable.py" line="185"/>
         <source>    -Initialization performed, start of processing...</source>
         <translation>    -Initialization performed, start of processing...</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="329"/>
+        <location filename="../cable.py" line="328"/>
         <source>    -Processing completed, start of results saving...</source>
         <translation>    -Processing completed, start of results saving...</translation>
     </message>
@@ -355,47 +356,47 @@ Criteria used for optimization :
         <translation type="obsolete">Forest_surface Distance_moy_chariot Volume_total VAM NB_int_sup</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1753"/>
+        <location filename="../cable.py" line="1705"/>
         <source>Xcoord_intsup</source>
         <translation>Xcoord_intsup</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1753"/>
+        <location filename="../cable.py" line="1705"/>
         <source>Ycoord_intsup</source>
         <translation>Ycoord_intsup</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="379"/>
+        <location filename="../cable.py" line="378"/>
         <source>Alt_intsup</source>
         <translation>Alt_intsup</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1754"/>
+        <location filename="../cable.py" line="1706"/>
         <source>Hcable_intsup</source>
         <translation>Hcable_intsup</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1754"/>
+        <location filename="../cable.py" line="1706"/>
         <source>Pression_intsup</source>
         <translation>Pression_intsup</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="400"/>
+        <location filename="../cable.py" line="399"/>
         <source>self-propelled</source>
         <translation>self-propelled</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="402"/>
+        <location filename="../cable.py" line="401"/>
         <source>Classic</source>
         <translation>Classic</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="404"/>
+        <location filename="../cable.py" line="403"/>
         <source>Cable mat</source>
         <translation>Cable mat</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="406"/>
+        <location filename="../cable.py" line="405"/>
         <source>Long/conventional cable</source>
         <translation>Long/conventional cable</translation>
     </message>
@@ -405,7 +406,7 @@ Criteria used for optimization :
         <translation type="obsolete">Parametre_simulation.txt</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="409"/>
+        <location filename="../cable.py" line="408"/>
         <source>SYLVACCESS - CABLE
 
 
@@ -419,11 +420,11 @@ Criteria used for optimization :
         <location filename="../sylvaccess_plugin_dialog.py" line="1702"/>
         <source>Plugin&apos;s version: 1.0.0 from 02/06/2024
 </source>
-        <translation type="obsolete">Plugin's version: 1.0.0 from 02/06/2024
+        <translation type="obsolete">Plugin&apos;s version: 1.0.0 from 02/06/2024
 </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="413"/>
+        <location filename="../cable.py" line="412"/>
         <source>Author: Sylvain DUPIRE. Irstea
 
 </source>
@@ -432,217 +433,217 @@ Criteria used for optimization :
 </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="414"/>
+        <location filename="../cable.py" line="413"/>
         <source>Date and time when launching the script:                          </source>
         <translation>Date and time when launching the script:                          </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="415"/>
+        <location filename="../cable.py" line="414"/>
         <source>Date and time at the end of the script execution                           </source>
         <translation>Date and time at the end of the script execution                           </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="416"/>
+        <location filename="../cable.py" line="415"/>
         <source>Total execution time of the script:                                         </source>
         <translation>Total execution time of the script:                                         </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="417"/>
+        <location filename="../cable.py" line="416"/>
         <source>PROPERTIES OF THE MATERIAL:
 </source>
         <translation>PROPERTIES OF THE MATERIAL:
 </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="418"/>
+        <location filename="../cable.py" line="417"/>
         <source>   - Type of machine:                                                      </source>
         <translation>   - Type of machine:                                                      </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="419"/>
+        <location filename="../cable.py" line="418"/>
         <source>   - Height of mat or cable Forwarder at the depot place:    </source>
         <translation>   - Height of mat or cable Forwarder at the depot place:    </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="420"/>
+        <location filename="../cable.py" line="419"/>
         <source>   - Maximum number of intermediate support:                        </source>
         <translation>   - Maximum number of intermediate support:                        </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="421"/>
+        <location filename="../cable.py" line="420"/>
         <source>   - Maximum length of the Forwarder cable:                                    </source>
         <translation>   - Maximum length of the Forwarder cable:                                    </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="422"/>
+        <location filename="../cable.py" line="421"/>
         <source>   - Minimum length of a line:                                        </source>
         <translation>   - Minimum length of a line:                                        </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="423"/>
+        <location filename="../cable.py" line="422"/>
         <source>   - Minimum length between two supports:                                </source>
         <translation>   - Minimum length between two supports:                                </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="424"/>
+        <location filename="../cable.py" line="423"/>
         <source>   - Trolley type:                                                      </source>
         <translation>   - Trolley type:                                                      </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="425"/>
+        <location filename="../cable.py" line="424"/>
         <source>   - Empty mass of the trolley:                                              </source>
         <translation>   - Empty mass of the trolley:                                              </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="426"/>
+        <location filename="../cable.py" line="425"/>
         <source>   - Maximum mass of load:                                          </source>
         <translation>   - Maximum mass of load:                                          </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="428"/>
+        <location filename="../cable.py" line="427"/>
         <source>   - Max slope of the Forwarder cable for uphill unloading:            </source>
         <translation>   - Max slope of the Forwarder cable for uphill unloading:            </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="429"/>
+        <location filename="../cable.py" line="428"/>
         <source>   - Max slope of the Forwarder cable for downhill unloading:             </source>
         <translation>   - Max slope of the Forwarder cable for downhill unloading:             </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="431"/>
+        <location filename="../cable.py" line="430"/>
         <source>   - Min slope of the Forwarder cable for the trolley to climb down:  </source>
         <translation>   - Min slope of the Forwarder cable for the trolley to climb down:  </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="433"/>
+        <location filename="../cable.py" line="432"/>
         <source>PROPERTIES OF THE FORWARDER CABLE :
 </source>
         <translation>PROPERTIES OF THE FORWARDER CABLE :
 </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="434"/>
+        <location filename="../cable.py" line="433"/>
         <source>   - Diameter of the Forwarder cable:                                            </source>
         <translation>   - Diameter of the Forwarder cable:                                            </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="435"/>
+        <location filename="../cable.py" line="434"/>
         <source>   - Line mass of the Forwarder cable:                                      </source>
         <translation>   - Line mass of the Forwarder cable:                                      </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="436"/>
+        <location filename="../cable.py" line="435"/>
         <source>   - Young’s Module (Elasticity):                                         </source>
         <translation>   - Young’s Module (Elasticity):                                         </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="437"/>
+        <location filename="../cable.py" line="436"/>
         <source>   - Breaking tension of the Forwarder cable                                   </source>
         <translation>   - Breaking tension of the Forwarder cable                                   </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="439"/>
+        <location filename="../cable.py" line="438"/>
         <source>TRACTOR AND RETURN CABLE PROPERTIES:
 </source>
         <translation>TRACTOR AND RETURN CABLE PROPERTIES:
 </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="440"/>
+        <location filename="../cable.py" line="439"/>
         <source>   - Line mass of the tractor cable:                                     </source>
         <translation>   - Line mass of the tractor cable:                                     </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="441"/>
+        <location filename="../cable.py" line="440"/>
         <source>   - Line mass of the return cable:                                       </source>
         <translation>   - Line mass of the return cable:                                       </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="443"/>
+        <location filename="../cable.py" line="442"/>
         <source>MODELISATION PARAMETERS:
 </source>
         <translation>MODELISATION PARAMETERS:
 </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="444"/>
+        <location filename="../cable.py" line="443"/>
         <source>   - Lateral distance of wood pitching:                                </source>
         <translation>   - Lateral distance of wood pitching:                                </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="445"/>
+        <location filename="../cable.py" line="444"/>
         <source>   - Height of Forwarder cable at intermediate pylons:          </source>
         <translation>   - Height of Forwarder cable at intermediate pylons:          </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="446"/>
+        <location filename="../cable.py" line="445"/>
         <source>   - Forwarder cable height at end of line:                             </source>
         <translation>   - Forwarder cable height at end of line:                             </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="447"/>
+        <location filename="../cable.py" line="446"/>
         <source>   - Minimum cable height at any point (load):                  </source>
         <translation>   - Minimum cable height at any point (load):                  </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="448"/>
+        <location filename="../cable.py" line="447"/>
         <source>   - Maximum cable height at any point:                              </source>
         <translation>   - Maximum cable height at any point:                              </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="449"/>
+        <location filename="../cable.py" line="448"/>
         <source>   - Maximum angle of the Forwarder cable at an intermediate pylon:   </source>
         <translation>   - Maximum angle of the Forwarder cable at an intermediate pylon:   </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="450"/>
+        <location filename="../cable.py" line="449"/>
         <source>   - Security factor:                                                  </source>
         <translation>   - Security factor:                                                  </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="451"/>
+        <location filename="../cable.py" line="450"/>
         <source>   - Value of the friction angle:                                      </source>
         <translation>   - Value of the friction angle:                                      </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="452"/>
+        <location filename="../cable.py" line="451"/>
         <source>   - DTM resolution:                                              </source>
         <translation>   - DTM resolution:                                              </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="453"/>
+        <location filename="../cable.py" line="452"/>
         <source>   - Standing volume harvesting applied:                              </source>
         <translation>   - Standing volume harvesting applied:                              </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="455"/>
+        <location filename="../cable.py" line="454"/>
         <source>   - Projection:                                                           </source>
         <translation>   - Projection:                                                           </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="457"/>
+        <location filename="../cable.py" line="456"/>
         <source>   - Projection:                                                           unknown
 </source>
         <translation>   - Projection:                                                           unknown
 </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="464"/>
+        <location filename="../cable.py" line="463"/>
         <source>No</source>
         <translation>No</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="466"/>
+        <location filename="../cable.py" line="465"/>
         <source>Yes</source>
         <translation>Yes</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="462"/>
+        <location filename="../cable.py" line="461"/>
         <source>   - Consideration of obstacle for the cable:                             </source>
         <translation>   - Consideration of obstacle for the cable:                             </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="467"/>
+        <location filename="../cable.py" line="466"/>
         <source>   - Information on the volume of wood provided as input:                  </source>
         <translation>   - Information on the volume of wood provided as input:                  </translation>
     </message>
@@ -652,7 +653,7 @@ Criteria used for optimization :
         <translation type="obsolete">info_Lhormax.txt</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="478"/>
+        <location filename="../cable.py" line="477"/>
         <source>
 All possible lines have been tested.
 </source>
@@ -661,57 +662,57 @@ All possible lines have been tested.
 </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1249"/>
+        <location filename="../cable.py" line="1201"/>
         <source>Forest area impacted [ha] (maximize)                 Minimum: </source>
         <translation>Forest area impacted [ha] (maximize)                 Minimum: </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1250"/>
+        <location filename="../cable.py" line="1202"/>
         <source>Number of intermediate supports (minimize)           Maximum: </source>
         <translation>Number of intermediate supports (minimize)           Maximum: </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1251"/>
+        <location filename="../cable.py" line="1203"/>
         <source>Favour </source>
         <translation>Favour </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1252"/>
+        <location filename="../cable.py" line="1204"/>
         <source>Line length [m] (maximize)                           Minimum: </source>
         <translation>Line length [m] (maximize)                           Minimum: </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1253"/>
+        <location filename="../cable.py" line="1205"/>
         <source>Total volume per line [m3] (maximize)                Minimum: </source>
         <translation>Total volume per line [m3] (maximize)                Minimum: </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1254"/>
+        <location filename="../cable.py" line="1206"/>
         <source>Volume per meter of line  [m3/ml] (maximize)         Minimum: </source>
         <translation>Volume per meter of line  [m3/ml] (maximize)         Minimum: </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1255"/>
+        <location filename="../cable.py" line="1207"/>
         <source>Average tree volume [m3] (maximize)                  Minimum: </source>
         <translation>Average tree volume [m3] (maximize)                  Minimum: </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1256"/>
+        <location filename="../cable.py" line="1208"/>
         <source>Carriage average distance [m] (minimize)             Maximum: </source>
         <translation>Carriage average distance [m] (minimize)             Maximum: </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1257"/>
+        <location filename="../cable.py" line="1209"/>
         <source>Yarding cost [€/ml] (minimize)                       Maximum: </source>
         <translation>Yarding cost [€/ml] (minimize)                       Maximum: </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1260"/>
+        <location filename="../cable.py" line="1212"/>
         <source>(Weight: </source>
         <translation>(Weight: </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1322"/>
+        <location filename="../cable.py" line="1274"/>
         <source>SUMMARY OF THE LINE SELECTION</source>
         <translation>SUMMARY OF THE LINE SELECTION</translation>
     </message>
@@ -721,132 +722,132 @@ All possible lines have been tested.
         <translation type="obsolete">                                                         </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1324"/>
-        <source>From all cable starts<byte value="x9"/><byte value="x9"/></source>
+        <location filename="../cable.py" line="1276"/>
+        <source>From all cable starts		</source>
         <translation>From all cable starts		</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1326"/>
+        <location filename="../cable.py" line="1278"/>
         <source>Only from projects</source>
         <translation>Only from projects</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1327"/>
+        <location filename="../cable.py" line="1279"/>
         <source>   - Total forest area impacted [ha]:                    </source>
         <translation>   - Total forest area impacted [ha]:                    </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1328"/>
+        <location filename="../cable.py" line="1280"/>
         <source>   - Total number of lines:                              </source>
         <translation>   - Total number of lines:                              </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1329"/>
+        <location filename="../cable.py" line="1281"/>
         <source>         + With uphill yarding:                          </source>
         <translation>         + With uphill yarding:                          </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1330"/>
+        <location filename="../cable.py" line="1282"/>
         <source>         + With downhill yarding:                        </source>
         <translation>         + With downhill yarding:                        </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1331"/>
+        <location filename="../cable.py" line="1283"/>
         <source>   - Average number of intermediate support per line:    </source>
         <translation>   - Average number of intermediate support per line:    </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1332"/>
+        <location filename="../cable.py" line="1284"/>
         <source>   - Average length of the line [m]:                     </source>
         <translation>   - Average length of the line [m]:                     </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1333"/>
+        <location filename="../cable.py" line="1285"/>
         <source>   - Total harvested volume (estimate) [m3]:             </source>
         <translation>   - Total harvested volume (estimate) [m3]:             </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1334"/>
+        <location filename="../cable.py" line="1286"/>
         <source>   - Average volume per meter of line (estimate) [m3/m]: </source>
         <translation>   - Average volume per meter of line (estimate) [m3/m]: </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1335"/>
+        <location filename="../cable.py" line="1287"/>
         <source>   - Average tree volume (estimate) [m3]                 </source>
         <translation>   - Average tree volume (estimate) [m3]                 </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1336"/>
+        <location filename="../cable.py" line="1288"/>
         <source>Criteria taken into account for the selection:           </source>
         <translation>Criteria taken into account for the selection:           </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1337"/>
+        <location filename="../cable.py" line="1289"/>
         <source>Lateral yarding distance                             </source>
         <translation>Lateral yarding distance                             </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1338"/>
+        <location filename="../cable.py" line="1290"/>
         <source>Proportion of stand volume removed                   </source>
         <translation>Proportion of stand volume removed                   </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1435"/>
+        <location filename="../cable.py" line="1387"/>
         <source>From existing cable starts</source>
         <translation>From existing cable starts</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1436"/>
+        <location filename="../cable.py" line="1388"/>
         <source>From potential cable start</source>
         <translation>From potential cable start</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="657"/>
+        <location filename="../skidder.py" line="654"/>
         <source>Total accessible forest</source>
         <translation>Total accessible forest</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="658"/>
+        <location filename="../skidder.py" line="655"/>
         <source>Total unaccessible forest</source>
         <translation>Total unaccessible forest</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1439"/>
+        <location filename="../cable.py" line="1391"/>
         <source>    including impossible manual felling</source>
         <translation>    including impossible manual felling</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1440"/>
+        <location filename="../cable.py" line="1392"/>
         <source>Total forest area</source>
         <translation>Total forest area</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1441"/>
+        <location filename="../cable.py" line="1393"/>
         <source>Total number of lines</source>
         <translation>Total number of lines</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1442"/>
+        <location filename="../cable.py" line="1394"/>
         <source>    + With uphill yarding</source>
         <translation>    + With uphill yarding</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1443"/>
+        <location filename="../cable.py" line="1395"/>
         <source>    + With downhill yarding</source>
         <translation>    + With downhill yarding</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1444"/>
+        <location filename="../cable.py" line="1396"/>
         <source>Average length of the line (m)</source>
         <translation>Average length of the line (m)</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1445"/>
+        <location filename="../cable.py" line="1397"/>
         <source>Average number of intermediate support</source>
         <translation>Average number of intermediate support</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1530"/>
+        <location filename="../cable.py" line="1482"/>
         <source>Pre-processing of the inputs for cable model
 </source>
         <translation>Pre-processing of the inputs for cable model
@@ -858,12 +859,12 @@ All possible lines have been tested.
         <translation type="obsolete">FORET</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="1043"/>
+        <location filename="../skidder.py" line="1040"/>
         <source>    - Forest raster processed</source>
         <translation>    - Forest raster processed</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1565"/>
+        <location filename="../cable.py" line="1517"/>
         <source>    - Cable obstacles processed</source>
         <translation>    - Cable obstacles processed</translation>
     </message>
@@ -883,7 +884,7 @@ All possible lines have been tested.
         <translation type="obsolete">Lien_RF_c</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1597"/>
+        <location filename="../cable.py" line="1549"/>
         <source>    - Potential cable yarding starts processed</source>
         <translation>    - Potential cable yarding starts processed</translation>
     </message>
@@ -893,12 +894,12 @@ All possible lines have been tested.
         <translation type="obsolete">CoordRoute.npy</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1613"/>
+        <location filename="../cable.py" line="1565"/>
         <source>    - Table of coordinates created</source>
         <translation>    - Table of coordinates created</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1620"/>
+        <location filename="../cable.py" line="1572"/>
         <source>
 Cable input data processing achieved
 </source>
@@ -907,7 +908,7 @@ Cable input data processing achieved
 </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1625"/>
+        <location filename="../cable.py" line="1577"/>
         <source>Selection of the best lines based on user criteria.</source>
         <translation>Selection of the best lines based on user criteria.</translation>
     </message>
@@ -922,7 +923,7 @@ Cable input data processing achieved
         <translation type="obsolete">Tab_all_lines.npy</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1628"/>
+        <location filename="../cable.py" line="1580"/>
         <source>Start of the best lines selection according to user criteria.</source>
         <translation>Starting the selection of the best lines according to user criteria.</translation>
     </message>
@@ -932,7 +933,7 @@ Cable input data processing achieved
         <translation type="obsolete">Lien_RF_c.npy</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1649"/>
+        <location filename="../cable.py" line="1601"/>
         <source>    - Processing new line characteristics with new input data...</source>
         <translation>    - Processing new line characteristics with new input data...</translation>
     </message>
@@ -947,42 +948,42 @@ Cable input data processing achieved
         <translation type="obsolete">Pente.npy</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1725"/>
+        <location filename="../cable.py" line="1677"/>
         <source>Impossible optimization on volume/ipc criteria (no information available).</source>
         <translation>Impossible optimization on volume/ipc criteria (no information available).</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1731"/>
+        <location filename="../cable.py" line="1683"/>
         <source>Impossible optimization on average tree volume criteria (no information available).</source>
         <translation>Impossible optimization on average tree volume criteria (no information available).</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1744"/>
+        <location filename="../cable.py" line="1696"/>
         <source>Optimization</source>
         <translation>Optimization</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1749"/>
+        <location filename="../cable.py" line="1701"/>
         <source>ID_pixel Azimuth_deg X_Start Y_Start Elevation_Start Hcable_Start X_End Y_End Elevation_End Hcable_End </source>
         <translation>ID_pixel Azimuth_deg X_Start Y_Start Elevation_Start Hcable_Start X_End Y_End Elevation_End Hcable_End </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1750"/>
+        <location filename="../cable.py" line="1702"/>
         <source>Existing_road Cable_length Configuration </source>
         <translation>Existing_road Cable_length Configuration </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1751"/>
+        <location filename="../cable.py" line="1703"/>
         <source>Forest_area Carriage_average_distance Volume_total ATV NB_int_sup</source>
         <translation>Forest_area Carriage_average_distance Volume_total ATV NB_int_sup</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1753"/>
+        <location filename="../cable.py" line="1705"/>
         <source>Elevation_intsup</source>
         <translation>Elevation_intsup</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1755"/>
+        <location filename="../cable.py" line="1707"/>
         <source>IPC cost</source>
         <translation>IPC cost</translation>
     </message>
@@ -1017,7 +1018,7 @@ Cable input data processing achieved
         <translation type="obsolete">Vol_AM.npy</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1790"/>
+        <location filename="../cable.py" line="1742"/>
         <source>Selection of the best cable lines achieved.</source>
         <translation>Selection of the best cable lines achieved.</translation>
     </message>
@@ -1027,47 +1028,47 @@ Cable input data processing achieved
         <translation type="obsolete">Starting the skidder model</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="64"/>
+        <location filename="../skidder.py" line="61"/>
         <source>Error: Please define a projection for the DTM raster.</source>
         <translation>Error: Please define a projection for the MNT raster.</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="140"/>
+        <location filename="../skidder.py" line="137"/>
         <source>    - Initialization achieved, processing...</source>
         <translation>    - Initialization achieved, processing...</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="196"/>
+        <location filename="../skidder.py" line="193"/>
         <source>    - Skidding distance from forest roads network calculated</source>
         <translation>    - Skidding distance from forest roads network calculated</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="205"/>
+        <location filename="../skidder.py" line="202"/>
         <source>    - Winching distance from forest roads calculated</source>
         <translation>    - Winching distance from forest roads calculated</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="214"/>
+        <location filename="../skidder.py" line="211"/>
         <source>    - Winching distance from forest tracks calculated</source>
         <translation>    - Winching distance from forest tracks calculated</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="324"/>
+        <location filename="../skidder.py" line="321"/>
         <source>    - First concatenation done</source>
         <translation>    - First concatenation done</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="370"/>
+        <location filename="../skidder.py" line="367"/>
         <source>    - Distance de debusquage depuis le contour de la zone parcourable calculee</source>
         <translation>    - Distance de debusquage depuis le contour de la zone parcourable calculee</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="419"/>
+        <location filename="../skidder.py" line="416"/>
         <source>    - Concatenation des resultats terminee. Sauvegarde en cours...</source>
         <translation>    - Concatenation des resultats terminee. Sauvegarde en cours...</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="448"/>
+        <location filename="../skidder.py" line="445"/>
         <source>Sylvaccess : AUTOMATIC MAPPING OF FOREST ACCESSIBILITY WITH SKIDDER
 
 
@@ -1078,27 +1079,27 @@ Cable input data processing achieved
 </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="451"/>
+        <location filename="../skidder.py" line="448"/>
         <source>Software version :</source>
         <translation>Software version :</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="454"/>
+        <location filename="../skidder.py" line="451"/>
         <source>Date and time when launching the script:              </source>
         <translation>Date and time when launching the script:              </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="455"/>
+        <location filename="../skidder.py" line="452"/>
         <source>Date and time at the end of execution of the script:  </source>
         <translation>Date and time at the end of execution of the script:  </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="456"/>
+        <location filename="../skidder.py" line="453"/>
         <source>Total execution time of the script:                   </source>
         <translation>Total execution time of the script:                   </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="458"/>
+        <location filename="../skidder.py" line="455"/>
         <source>PARAMETERS USED FOR THE MODELING:
 
 </source>
@@ -1107,112 +1108,112 @@ Cable input data processing achieved
 </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="459"/>
+        <location filename="../skidder.py" line="456"/>
         <source>   - Maximum uphill distance for winching:                        </source>
         <translation>   - Maximum uphill distance for winching:                        </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="460"/>
+        <location filename="../skidder.py" line="457"/>
         <source>   - Maximum downhill distance for winching:                      </source>
         <translation>   - Maximum downhill distance for winching:                      </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="461"/>
+        <location filename="../skidder.py" line="458"/>
         <source>   - Maximum slope to get maximum uphill winching distance:       </source>
         <translation>   - Maximum slope to get maximum uphill winching distance:       </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="462"/>
+        <location filename="../skidder.py" line="459"/>
         <source>   - Maximum slope to get maximum downhill winching distance:     </source>
         <translation>   - Maximum slope to get maximum downhill winching distance:     </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="463"/>
+        <location filename="../skidder.py" line="460"/>
         <source>   - Maximum distance outside forest and forest road network:     </source>
         <translation>   - Maximum distance outside forest and forest road network:     </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="464"/>
+        <location filename="../skidder.py" line="461"/>
         <source>   - Maximum slope for a free access of the parcels with skidder: </source>
         <translation>   - Maximum slope for a free access of the parcels with skidder: </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="465"/>
+        <location filename="../skidder.py" line="462"/>
         <source>   - Maximum slope for manual felling of the trees:               </source>
         <translation>   - Maximum slope for manual felling of the trees:               </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="466"/>
+        <location filename="../skidder.py" line="463"/>
         <source>   - Simulation option:
 </source>
         <translation>   - Simulation option:
 </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="468"/>
+        <location filename="../skidder.py" line="465"/>
         <source>      * Limit soil damages: force the skidder to process as much as possible 
 </source>
         <translation>      * Limit soil damages: force the skidder to process as much as possible 
 </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="469"/>
+        <location filename="../skidder.py" line="466"/>
         <source>        from the forest road network
 </source>
         <translation>        from the forest road network
 </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="471"/>
+        <location filename="../skidder.py" line="468"/>
         <source>      * Limit winching distances: force the skidder to go as close as possible
 </source>
         <translation>      * Limit winching distances: force the skidder to go as close as possible
 </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="472"/>
+        <location filename="../skidder.py" line="469"/>
         <source>        to the timber
 </source>
         <translation>        to the timber
 </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="474"/>
+        <location filename="../skidder.py" line="471"/>
         <source>      * Simulation with areas where skidder operations are forbidden (Full obstacles)
 </source>
         <translation>      * Simulation with areas where skidder operations are forbidden (Full obstacles)
 </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="476"/>
+        <location filename="../skidder.py" line="473"/>
         <source>      * Simulation with areas where skidding is forbidden but winching possible (Partial obstacles)
 </source>
         <translation>      * Simulation with areas where skidding is forbidden but winching possible (Partial obstacles)
 </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="481"/>
+        <location filename="../skidder.py" line="478"/>
         <source>      !!! Warning !!! Some forest tracks are not connected to public network.
 </source>
         <translation>      !!! Warning !!! Some forest tracks are not connected to public network.
 </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="482"/>
+        <location filename="../skidder.py" line="479"/>
         <source>      They were removed from the analysis.
 </source>
         <translation>      They were removed from the analysis.
 </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="485"/>
+        <location filename="../skidder.py" line="482"/>
         <source>      !!! Warning !!! Some forest roads are not connected to public network.
 </source>
         <translation>      !!! Warning !!! Some forest roads are not connected to public network.
 </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="495"/>
+        <location filename="../skidder.py" line="492"/>
         <source>Skidder model finished</source>
         <translation>Skidder model finished</translation>
     </message>
@@ -1231,62 +1232,62 @@ Cable input data processing achieved
 </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="659"/>
+        <location filename="../skidder.py" line="656"/>
         <source>    --&gt; including impossible manual felling</source>
         <translation>    --&gt; including impossible manual felling</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="662"/>
+        <location filename="../skidder.py" line="659"/>
         <source>Total area of forest :</source>
         <translation>Total area of forest :</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="748"/>
+        <location filename="../skidder.py" line="745"/>
         <source>Total supplementary forest area</source>
         <translation>Total supplementary forest area</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="749"/>
+        <location filename="../skidder.py" line="746"/>
         <source>Impacted forest area</source>
         <translation>Impacted forest area</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="805"/>
+        <location filename="../skidder.py" line="802"/>
         <source>Non-forest area</source>
         <translation>Non-forest area</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="805"/>
+        <location filename="../skidder.py" line="802"/>
         <source>Inaccessible forest</source>
         <translation>Inaccessible forest</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="805"/>
+        <location filename="../skidder.py" line="802"/>
         <source>Non harvestable (too steep slope)</source>
         <translation>Non harvestable (too steep slope)</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="814"/>
+        <location filename="../skidder.py" line="811"/>
         <source>Accessible - Skidding class </source>
         <translation>Accessible - Skidding class </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="1022"/>
+        <location filename="../skidder.py" line="1019"/>
         <source>Pre-processing of the inputs for skidder model</source>
         <translation>Pre-processing of the inputs for skidder model</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="1060"/>
+        <location filename="../skidder.py" line="1057"/>
         <source>    - Slope raster processed</source>
         <translation>    - Slope raster processed</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="1106"/>
+        <location filename="../skidder.py" line="1103"/>
         <source>    - Forest road processed</source>
         <translation>    - Forest road processed</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="1140"/>
+        <location filename="../skidder.py" line="1137"/>
         <source>    - Some forest tracks are not connected to public network or forest road.</source>
         <translation>    - Some forest tracks are not connected to public network or forest road.</translation>
     </message>
@@ -1296,22 +1297,22 @@ Cable input data processing achieved
         <translation type="obsolete">      These linears will be removed from the analysis.</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="1143"/>
+        <location filename="../skidder.py" line="1140"/>
         <source>    - Forest tracks processed</source>
         <translation>    - Forest tracks processed</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="1158"/>
+        <location filename="../skidder.py" line="1155"/>
         <source>    - Skidder total obstacle raster processed</source>
         <translation>    - Skidder total obstacle raster processed</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="1167"/>
+        <location filename="../skidder.py" line="1164"/>
         <source>    - Skidder partial obstacle raster processed</source>
         <translation>    - Skidder partial obstacle raster processed</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="1168"/>
+        <location filename="../skidder.py" line="1165"/>
         <source>Input data processing achieved</source>
         <translation>Input data processing achieved</translation>
     </message>
@@ -1743,53 +1744,53 @@ Cable input data processing achieved
         <translation>Line length</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="412"/>
+        <location filename="../cable.py" line="411"/>
         <source>Plugin&apos;s version: </source>
-        <translation>Plugin's version: </translation>
+        <translation>Plugin&apos;s version: </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="412"/>
+        <location filename="../cable.py" line="411"/>
         <source>from </source>
         <translation>from </translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1434"/>
+        <location filename="../cable.py" line="1386"/>
         <source>Surface area (ha)</source>
         <translation>Surface area (ha)</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1434"/>
+        <location filename="../cable.py" line="1386"/>
         <source>Surface (%)</source>
         <translation>Surface (%)</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1434"/>
+        <location filename="../cable.py" line="1386"/>
         <source>Volume (m3)</source>
         <translation>Volume (m3)</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1434"/>
+        <location filename="../cable.py" line="1386"/>
         <source>Volume (%)</source>
         <translation>Volume (%)</translation>
     </message>
     <message>
-        <location filename="../cable.py" line="1632"/>
+        <location filename="../cable.py" line="1584"/>
         <source>Please run first the Sylvaccess cable.</source>
         <translation>Please run first the Sylvaccess cable.</translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="451"/>
+        <location filename="../skidder.py" line="448"/>
         <source> - </source>
         <comment>skidder_results</comment>
         <translation> - </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="452"/>
+        <location filename="../skidder.py" line="449"/>
         <source> m </source>
         <translation> m </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="636"/>
+        <location filename="../skidder.py" line="633"/>
         <source>Total yarding distance |   Surface area (ha)   | Surface per class (%) |Cumulative surface (ha)|Cumulative surface (%) 
 </source>
         <comment> each section between | has to be 23 character wide to retain the layout</comment>
@@ -1797,7 +1798,7 @@ Cable input data processing achieved
 </translation>
     </message>
     <message>
-        <location filename="../skidder.py" line="637"/>
+        <location filename="../skidder.py" line="634"/>
         <source>Total yarding distance |      Volume (m3)      | Volume per class (%)  |Cumulative volume (m3) |Cumulative volume (%) 
 </source>
         <comment> each section between | has to be 23 character wide to retain the layout</comment>
@@ -1934,7 +1935,8 @@ SIMULATION INCLUDING THE SERVICE PROJECT</translation>
         <location filename="../sylvaccess_plugin_dialog.py" line="510"/>
         <source>: The raster was oversized but it was cropped to the right size 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>: The raster was oversized but it was cropped to the right size 
+</translation>
     </message>
 </context>
 <context>
@@ -2610,17 +2612,17 @@ SIMULATION INCLUDING THE SERVICE PROJECT</translation>
         <translation>Carriage average distance</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog_base.ui" line="4717"/>
+        <location filename="../sylvaccess_plugin_dialog_base.ui" line="4720"/>
         <source>Copyright : Sylvain DUPIRE - Sylvalab</source>
         <translation>Copyright : Sylvain DUPIRE - Sylvalab</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog_base.ui" line="4729"/>
+        <location filename="../sylvaccess_plugin_dialog_base.ui" line="4732"/>
         <source>Author : Sylvain DUPIRE</source>
         <translation>Author : Sylvain DUPIRE</translation>
     </message>
     <message>
-        <location filename="../sylvaccess_plugin_dialog_base.ui" line="4741"/>
+        <location filename="../sylvaccess_plugin_dialog_base.ui" line="4744"/>
         <source>Open source software under  GNU-GPL-v3 license</source>
         <translation>Open source software under  GNU-GPL-v3 license</translation>
     </message>
@@ -2628,6 +2630,11 @@ SIMULATION INCLUDING THE SERVICE PROJECT</translation>
         <location filename="../sylvaccess_plugin_dialog_base.ui" line="4522"/>
         <source>Minimiser</source>
         <translation>Minimiser</translation>
+    </message>
+    <message>
+        <location filename="../sylvaccess_plugin_dialog_base.ui" line="4674"/>
+        <source>About</source>
+        <translation>About</translation>
     </message>
 </context>
 </TS>

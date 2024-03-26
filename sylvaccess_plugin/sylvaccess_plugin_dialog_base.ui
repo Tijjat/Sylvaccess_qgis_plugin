@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>874</width>
+    <width>876</width>
     <height>843</height>
    </rect>
   </property>
@@ -27,8 +27,8 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>610</x>
-     <y>700</y>
+     <x>630</x>
+     <y>690</y>
      <width>211</width>
      <height>81</height>
     </rect>
@@ -4669,85 +4669,115 @@
      </layout>
     </widget>
    </widget>
-  </widget>
-  <widget class="QWidget" name="horizontalLayoutWidget_2">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>710</y>
-     <width>423</width>
-     <height>91</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>9</pointsize>
-    </font>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <property name="spacing">
-     <number>0</number>
-    </property>
-    <item>
-     <widget class="QLabel" name="label_8">
-      <property name="font">
-       <font>
-        <pointsize>9</pointsize>
-        <stylestrategy>PreferDefault</stylestrategy>
-       </font>
+   <widget class="QWidget" name="a_propos">
+    <attribute name="title">
+     <string>About</string>
+    </attribute>
+    <widget class="QWidget" name="horizontalLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>80</y>
+       <width>423</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>0</number>
       </property>
-      <property name="pixmap">
-       <pixmap>icon.png</pixmap>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="label_8">
         <property name="font">
          <font>
           <pointsize>9</pointsize>
+          <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
-        <property name="text">
-         <string>Copyright : Sylvain DUPIRE - Sylvalab</string>
+        <property name="pixmap">
+         <pixmap>icon.png</pixmap>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_7">
-        <property name="font">
-         <font>
-          <pointsize>9</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Author : Sylvain DUPIRE</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_6">
-        <property name="font">
-         <font>
-          <pointsize>9</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Open source software under  GNU-GPL-v3 license</string>
-        </property>
-        <property name="textInteractionFlags">
-         <set>Qt::LinksAccessibleByMouse</set>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Copyright : Sylvain DUPIRE - Sylvalab</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Author : Sylvain DUPIRE</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_6">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Open source software under  GNU-GPL-v3 license</string>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
-    </item>
-   </layout>
+    </widget>
+    <widget class="QLabel" name="label_137">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>200</y>
+       <width>291</width>
+       <height>171</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+       <stylestrategy>PreferDefault</stylestrategy>
+      </font>
+     </property>
+     <property name="pixmap">
+      <pixmap>img/Cosylval_logo.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </widget>
   </widget>
  </widget>
  <resources/>
