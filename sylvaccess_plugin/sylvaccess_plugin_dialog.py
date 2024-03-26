@@ -351,7 +351,7 @@ class Sylvaccess_pluginDialog(QtWidgets.QDialog, FORM_CLASS):
                     gc.collect()
                 
                 if test_Forwarder:
-                    process_forwarder(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte_Exist,por_obstacle,file_Vol_ha,pente,
+                    process_forwarder(Wspace,Rspace,file_MNT,file_shp_Foret,file_shp_Desserte,por_obstacle,file_Vol_ha,pente,
                                         Forw_angle_incl,Forw_angle_up,Forw_angle_down,Forw_Lmax,Forw_Dmax_out_for,Forw_portee,Forw_Debclass)
                     gc.collect()
             
